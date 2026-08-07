@@ -115,7 +115,7 @@ export function NotificationsPage({
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#2563eb',
+                  color: 'var(--primary)',
                   cursor: 'pointer',
                   padding: '6px',
                   borderRadius: '6px',
@@ -134,7 +134,7 @@ export function NotificationsPage({
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#64748b',
+                  color: 'var(--text-muted)',
                   cursor: 'pointer',
                   padding: '6px',
                   borderRadius: '6px',
@@ -221,7 +221,7 @@ export function NotificationsPage({
                   flexWrap: 'wrap',
                   gap: '12px'
                 }}>
-                  <div style={{ fontSize: '13px', color: 'var(--text-secondary, #64748b)' }}>
+                  <div style={{ fontSize: '13px', color: 'var(--text-secondary, var(--text-muted))' }}>
                     Showing {Math.min((currentPage - 1) * itemsPerPage + 1, filteredNotifications.length)} to {Math.min(currentPage * itemsPerPage, filteredNotifications.length)} of {filteredNotifications.length} notifications
                   </div>
                   <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -231,19 +231,19 @@ export function NotificationsPage({
                       style={{
                         padding: '6px 12px',
                         borderRadius: '6px',
-                        border: '1px solid var(--border-light, #e2e8f0)',
-                        backgroundColor: '#ffffff',
-                        color: currentPage === 1 ? 'var(--text-muted, #94a3b8)' : 'var(--text-main, #0f172a)',
+                        border: '1px solid var(--border-light, var(--border-light))',
+                        backgroundColor: 'var(--bg-card)',
+                        color: currentPage === 1 ? 'var(--text-muted, var(--text-muted))' : 'var(--text-main, var(--text-main))',
                         fontSize: '13px',
                         fontWeight: 500,
                         cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
                         transition: 'all 0.05s ease'
                       }}
                       onMouseEnter={(e) => {
-                        if (currentPage !== 1) e.currentTarget.style.backgroundColor = '#f8fafc';
+                        if (currentPage !== 1) e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#ffffff';
+                        e.currentTarget.style.backgroundColor = 'var(--bg-card)';
                       }}
                     >
                       Previous
@@ -258,7 +258,7 @@ export function NotificationsPage({
                           height: '32px',
                           borderRadius: '6px',
                           border: '1px solid ' + (currentPage === pageNum ? 'var(--primary)' : 'var(--border-light)'),
-                          backgroundColor: currentPage === pageNum ? 'var(--primary-light)' : '#ffffff',
+                          backgroundColor: currentPage === pageNum ? 'var(--primary-light)' : 'var(--bg-card)',
                           color: currentPage === pageNum ? 'var(--primary)' : 'var(--text-secondary)',
                           fontSize: '13px',
                           fontWeight: 600,
@@ -276,19 +276,19 @@ export function NotificationsPage({
                       style={{
                         padding: '6px 12px',
                         borderRadius: '6px',
-                        border: '1px solid var(--border-light, #e2e8f0)',
-                        backgroundColor: '#ffffff',
-                        color: currentPage === totalPages ? 'var(--text-muted, #94a3b8)' : 'var(--text-main, #0f172a)',
+                        border: '1px solid var(--border-light, var(--border-light))',
+                        backgroundColor: 'var(--bg-card)',
+                        color: currentPage === totalPages ? 'var(--text-muted, var(--text-muted))' : 'var(--text-main, var(--text-main))',
                         fontSize: '13px',
                         fontWeight: 500,
                         cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
                         transition: 'all 0.05s ease'
                       }}
                       onMouseEnter={(e) => {
-                        if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = '#f8fafc';
+                        if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)';
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#ffffff';
+                        e.currentTarget.style.backgroundColor = 'var(--bg-card)';
                       }}
                     >
                       Next

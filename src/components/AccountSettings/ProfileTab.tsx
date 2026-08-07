@@ -166,9 +166,9 @@ export function ProfileTab({
 
   // Rule colors: 100% green, <70 yellow, <40 red
   const getProgressColor = (pct: number) => {
-    if (pct === 100) return '#10b981'; // Green (100% only)
-    if (pct < 40) return '#ef4444'; // Red
-    return '#f59e0b'; // Yellow (includes 70%)
+    if (pct === 100) return 'var(--success)'; // Green (100% only)
+    if (pct < 40) return 'var(--danger)'; // Red
+    return 'var(--warning)'; // Yellow (includes 70%)
   };
   const progressColor = getProgressColor(percent);
 
@@ -198,7 +198,7 @@ export function ProfileTab({
               {/* Progress Ring wrapping the Profile Avatar */}
               <div className="profile-avatar-wrapper" style={{ margin: '16px 0 0 0', width: '150px', height: '150px', position: 'relative' }}>
                 <svg height="150" width="150" className="progress-ring" style={{ transform: 'rotate(-90deg)' }}>
-                  <circle className="progress-ring-bg" stroke="var(--border-light, #e2e8f0)" fill="transparent" strokeWidth={strokeWidth} r={radius} cx="75" cy="75" />
+                  <circle className="progress-ring-bg" stroke="var(--border-light, var(--border-light))" fill="transparent" strokeWidth={strokeWidth} r={radius} cx="75" cy="75" />
                   <circle className="progress-ring-circle" stroke={progressColor} fill="transparent" strokeWidth={strokeWidth} strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={strokeDashoffset} strokeLinecap="round" r={radius} cx="75" cy="75" style={{ stroke: progressColor }} />
                 </svg>
 
@@ -245,7 +245,7 @@ export function ProfileTab({
                 <div 
                   className="profile-progress-pill"
                   style={{ 
-                    color: percent === 100 ? '#10b981' : progressColor, 
+                    color: percent === 100 ? 'var(--success)' : progressColor, 
                     backgroundColor: percent === 100 ? '#ecfdf5' : progressColor + '12',
                     fontSize: '12px',
                     padding: '4px 12px',
@@ -254,7 +254,7 @@ export function ProfileTab({
                     transform: 'translateX(-50%)',
                     whiteSpace: 'nowrap',
                     boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                    border: '1px solid ' + (percent === 100 ? '#10b981' : progressColor) + '30',
+                    border: '1px solid ' + (percent === 100 ? 'var(--success)' : progressColor) + '30',
                     cursor: 'pointer'
                   }}
                 >
@@ -395,7 +395,7 @@ export function ProfileTab({
               {/* Progress Ring wrapping the Profile Avatar in Edit Mode */}
               <div className="profile-avatar-wrapper" style={{ margin: '20px 0', width: '150px', height: '150px', position: 'relative' }}>
                 <svg height="150" width="150" className="progress-ring" style={{ transform: 'rotate(-90deg)' }}>
-                  <circle className="progress-ring-bg" stroke="var(--border-light, #e2e8f0)" fill="transparent" strokeWidth={strokeWidth} r={radius} cx="75" cy="75" />
+                  <circle className="progress-ring-bg" stroke="var(--border-light, var(--border-light))" fill="transparent" strokeWidth={strokeWidth} r={radius} cx="75" cy="75" />
                   <circle className="progress-ring-circle" stroke={progressColor} fill="transparent" strokeWidth={strokeWidth} strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={strokeDashoffset} strokeLinecap="round" r={radius} cx="75" cy="75" style={{ stroke: progressColor }} />
                 </svg>
 
@@ -448,7 +448,7 @@ export function ProfileTab({
                 style={{ display: 'none' }} 
               />
 
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary, #475569)', lineHeight: '1.5', textAlign: 'center', margin: '0 0 16px 0' }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary, var(--text-secondary))', lineHeight: '1.5', textAlign: 'center', margin: '0 0 16px 0' }}>
                 Refining details for <strong>{formData.fullName}</strong>. Remember to click save.
               </p>
             </div>

@@ -28,7 +28,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
     width: '22px',
     height: '22px',
     backgroundColor: '#e9ecef',
-    border: '2px solid #ffffff',
+    border: '2px solid var(--bg-card)',
     borderRadius: '8px',
     boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
     display: 'flex',
@@ -61,7 +61,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'system' || lower.includes('config') || lower.includes('enabled')) {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#eff6ff', color: '#2563eb' }}>
+      <div style={{ ...baseStyle, backgroundColor: '#eff6ff', color: 'var(--primary)' }}>
         <Settings size={12} strokeWidth={2.5} />
       </div>
     );
@@ -69,7 +69,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'warning') {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#fffbeb', color: '#d97706' }}>
+      <div style={{ ...baseStyle, backgroundColor: '#fffbeb', color: 'var(--warning)' }}>
         <span style={{ fontSize: '11px', fontWeight: 'bold', lineHeight: 1 }}>!</span>
       </div>
     );
@@ -183,14 +183,14 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               alignItems: 'center', 
               width: '100%', 
               gap: '8px', 
-              background: '#f1f5f9', 
+              background: 'var(--bg-dashboard)', 
               padding: '4px 12px', 
               borderRadius: '20px',
               height: '34px',
               transition: 'all 0.05s ease'
             }}
           >
-            <Search size={16} style={{ color: '#64748b', flexShrink: 0 }} />
+            <Search size={16} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
             <input
               ref={searchInputRef}
               type="text"
@@ -205,7 +205,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 border: 'none',
                 outline: 'none',
                 fontSize: '13px',
-                color: '#0f172a',
+                color: 'var(--text-main)',
                 background: 'transparent',
                 width: '100%'
               }}
@@ -219,7 +219,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                color: '#64748b',
+                color: 'var(--text-muted)',
                 padding: '4px',
                 display: 'flex',
                 alignItems: 'center',
@@ -251,7 +251,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#475569',
+                  color: 'var(--text-secondary)',
                   padding: '4px',
                   borderRadius: '4px'
                 }}
@@ -272,7 +272,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#475569',
+                  color: 'var(--text-secondary)',
                   padding: '4px',
                   borderRadius: '4px'
                 }}
@@ -352,8 +352,8 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   display: 'flex',
                   alignItems: 'flex-start',
                   padding: '16px 20px',
-                  borderBottom: '1px solid #f8fafc',
-                  background: '#ffffff',
+                  borderBottom: '1px solid var(--bg-dashboard)',
+                  background: 'var(--bg-card)',
                   textAlign: 'left',
                   position: 'relative'
                 }}
@@ -368,8 +368,8 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                       left: '60px',
                       right: '20px',
                       width: 'auto',
-                      backgroundColor: '#f8fafc',
-                      border: '1px solid #e2e8f0',
+                      backgroundColor: 'var(--bg-dashboard)',
+                      border: '1px solid var(--border-light)',
                       boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
                       borderRadius: '8px',
                       padding: '16px',
@@ -407,11 +407,11 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                             {initials}
                           </div>
                         )}
-                        <span style={{ fontWeight: 700, fontSize: '14px', color: '#0f172a' }}>{item.actorName || 'System'}</span>
+                        <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>{item.actorName || 'System'}</span>
                       </div>
                       <button 
                         onClick={() => setExpandedNotificationId(null)}
-                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', padding: '4px' }}
+                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}
                       >
                         <X size={16} />
                       </button>
@@ -420,11 +420,11 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                     {/* Content Section */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '48px' }}>
                       {item.description && (
-                        <p style={{ margin: 0, fontSize: '13px', color: '#475569', lineHeight: '1.5' }}>
+                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                           {item.description}
                         </p>
                       )}
-                      <p style={{ margin: 0, fontSize: '13px', color: '#475569', lineHeight: '1.5' }}>
+                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                         Detailed content expanded version of the notification with logo and all.
                       </p>
                     </div>
@@ -466,21 +466,21 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '12px' }}>
                     
                     {/* Left Side Info */}
-                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', gap: '4px', fontSize: '12px', color: '#64748b' }}>
-                      <span style={{ fontWeight: 700, fontSize: '13px', color: '#0f172a' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', gap: '4px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                      <span style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-main)' }}>
                         {item.actorName || 'System'}
                       </span>
                       <span>{item.actionText || 'alerted'}</span>
-                      <span style={{ color: '#cbd5e1' }}>•</span>
+                      <span style={{ color: 'var(--border-hover)' }}>•</span>
                       <span style={{ fontSize: '12px' }}>{getTargetEmoji(item.targetName, item.category)}</span>
-                      <span style={{ fontWeight: 600, color: '#334155' }}>{item.targetName || item.title}</span>
-                      <span style={{ color: '#cbd5e1' }}>•</span>
+                      <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{item.targetName || item.title}</span>
+                      <span style={{ color: 'var(--border-hover)' }}>•</span>
                       <span>{item.category}</span>
                     </div>
 
                     {/* Right Side: Time & Unread */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                      <span style={{ fontSize: '10px', color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                         {item.dateText || 'Just now'}
                       </span>
                       {!item.isRead && (
@@ -488,7 +488,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                           style={{ 
                             width: '8px', 
                             height: '8px', 
-                            backgroundColor: '#ef4444', 
+                            backgroundColor: 'var(--danger)', 
                             borderRadius: '50%', 
                             display: 'inline-block',
                             flexShrink: 0
@@ -536,10 +536,10 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           alignItems: 'center',
           padding: '12px 20px',
           borderTop: '1px solid rgba(0,0,0,0.06)',
-          background: '#ffffff',
+          background: 'var(--bg-card)',
           flexShrink: 0
         }}>
-          <div style={{ fontSize: '12px', color: '#64748b', fontWeight: 500 }}>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
             Page {currentPage} of {totalPages}
           </div>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -549,19 +549,19 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               style={{
                 padding: '6px 12px',
                 borderRadius: '6px',
-                border: '1px solid var(--border-light, #e2e8f0)',
-                backgroundColor: '#ffffff',
-                color: currentPage === 1 ? '#94a3b8' : '#334155',
+                border: '1px solid var(--border-light, var(--border-light))',
+                backgroundColor: 'var(--bg-card)',
+                color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-secondary)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
                 transition: 'all 0.05s ease'
               }}
               onMouseEnter={(e) => {
-                if (currentPage !== 1) e.currentTarget.style.backgroundColor = '#f1f5f9';
+                if (currentPage !== 1) e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'var(--bg-card)';
               }}
             >
               Prev
@@ -572,19 +572,19 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               style={{
                 padding: '6px 12px',
                 borderRadius: '6px',
-                border: '1px solid var(--border-light, #e2e8f0)',
-                backgroundColor: '#ffffff',
-                color: currentPage === totalPages ? '#94a3b8' : '#334155',
+                border: '1px solid var(--border-light, var(--border-light))',
+                backgroundColor: 'var(--bg-card)',
+                color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-secondary)',
                 fontSize: '12px',
                 fontWeight: 600,
                 cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
                 transition: 'all 0.05s ease'
               }}
               onMouseEnter={(e) => {
-                if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = '#f1f5f9';
+                if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.backgroundColor = 'var(--bg-card)';
               }}
             >
               Next

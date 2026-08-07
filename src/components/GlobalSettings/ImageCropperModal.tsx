@@ -122,7 +122,7 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
     }}>
       <div style={{
         width: '400px',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--bg-card)',
         borderRadius: '16px',
         padding: '24px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
@@ -131,8 +131,8 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, color: '#0f172a' }}>Adjust brand image</h2>
-          <p style={{ margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5' }}>
+          <h2 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, color: 'var(--text-main)' }}>Adjust brand image</h2>
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
             Drag and zoom to fit your signature inside the bright frame. Anything in the dimmed area is cropped out and will not appear on the login screen.
           </p>
         </div>
@@ -148,8 +148,8 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
           style={{
             width: '100%',
             height: '220px',
-            backgroundColor: '#ffffff',
-            backgroundImage: 'linear-gradient(45deg, #f1f5f9 25%, transparent 25%), linear-gradient(-45deg, #f1f5f9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f1f5f9 75%), linear-gradient(-45deg, transparent 75%, #f1f5f9 75%)',
+            backgroundColor: 'var(--bg-card)',
+            backgroundImage: 'linear-gradient(45deg, var(--bg-dashboard) 25%, transparent 25%), linear-gradient(-45deg, var(--bg-dashboard) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--bg-dashboard) 75%), linear-gradient(-45deg, transparent 75%, var(--bg-dashboard) 75%)',
             backgroundSize: '20px 20px',
             backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
             borderRadius: '12px',
@@ -197,14 +197,14 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
 
         {/* Zoom Slider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Zoom</span>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>Zoom</span>
           <input 
             type="range" 
             min="-100" 
             max="100" 
             value={zoomLevel} 
             onChange={(e) => setZoomLevel(Number(e.target.value))}
-            style={{ flex: 1, accentColor: '#e2e8f0', cursor: 'pointer' }}
+            style={{ flex: 1, accentColor: 'var(--border-light)', cursor: 'pointer' }}
           />
         </div>
 
@@ -212,13 +212,13 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
         <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
           <button 
             onClick={onClose}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#475569', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
           >
             Cancel
           </button>
           <button 
             onClick={handleConfirm}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: 'var(--text-main)', color: 'var(--bg-card)', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
           >
             Confirm
           </button>

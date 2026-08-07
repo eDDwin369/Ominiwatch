@@ -62,7 +62,7 @@ const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: 
         width: '42px',
         height: '24px',
         borderRadius: '9999px',
-        backgroundColor: checked ? '#2563eb' : '#cbd5e1',
+        backgroundColor: checked ? 'var(--primary)' : 'var(--border-hover)',
         border: 'none',
         cursor: 'pointer',
         transition: 'background-color 0.05s ease',
@@ -78,7 +78,7 @@ const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: 
           left: checked ? '20px' : '2px',
           width: '20px',
           height: '20px',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'var(--bg-card)',
           borderRadius: '50%',
           transition: 'left 0.05s cubic-bezier(0.4, 0, 0.2, 1)',
           boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
@@ -125,7 +125,7 @@ export function GlobalSettingsWorkspace({
   const [textColor, setTextColor] = useState(headerConfig.textColor);
   const [textColorApply, setTextColorApply] = useState<any>(headerConfig.textColorApply);
   const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
-  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#64748b');
+  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || 'var(--text-muted)');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
   const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
 
@@ -386,7 +386,7 @@ export function GlobalSettingsWorkspace({
       setTextColor('#000000');
       setTextColorApply('both');
       setCompanyNameColor('#000000');
-      setCompanyCaptionColor('#64748b');
+      setCompanyCaptionColor('var(--text-muted)');
       setCompanyNameStyle('h1');
       setCompanyCaptionStyle('h3');
       setFooterPoweredByType('text');
@@ -553,7 +553,7 @@ export function GlobalSettingsWorkspace({
         <div className="gs-header">
           <div className="gs-header-left">
             <h2>
-              <Settings size={20} style={{ color: '#2563eb' }} />
+              <Settings size={20} style={{ color: 'var(--primary)' }} />
               Global Settings
             </h2>
           </div>
@@ -592,14 +592,14 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}>
                       <Image size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Logo Settings <span title="Configure the primary logo displayed in the top-left corner" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Logo Settings <span title="Configure the primary logo displayed in the top-left corner" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: 'var(--text-muted)', cursor: 'help' }} /></span></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1 }}>
@@ -607,20 +607,20 @@ export function GlobalSettingsWorkspace({
                     <div 
                       onClick={() => fileInputRef.current?.click()}
                       style={{ 
-                        border: '1px dashed #94a3b8', 
+                        border: '1px dashed var(--text-muted)', 
                         borderRadius: '12px', 
                         padding: '20px', 
                         display: 'flex', 
                         justifyContent: 'center', 
                         alignItems: 'center',
                         cursor: 'pointer',
-                        background: '#f8fafc',
+                        background: 'var(--bg-dashboard)',
                         transition: 'all 0.1s ease',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = '#f8fafc')}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-dashboard)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--bg-dashboard)')}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: 600, fontSize: '13px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px' }}>
                         <Upload size={16} /> Choose image
                       </div>
                     </div>
@@ -634,25 +634,25 @@ export function GlobalSettingsWorkspace({
 
                     {/* Uploaded image preview */}
                     {logo && (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-card)', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border-light)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <img src={logo} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '4px' }} />
-                          <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
+                          <span style={{ fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: 500 }}>Uploaded image</span>
                         </div>
                         <button type="button" onClick={() => {
                           setLogo('');
                           if (fileInputRef.current) fileInputRef.current.value = '';
                         }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <X size={18} color="#94a3b8" />
+                          <X size={18} color="var(--text-muted)" />
                         </button>
                       </div>
                     )}
                   </div>
 
                   {/* Show Logo toggle at the bottom */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Eye size={16} style={{ color: '#475569' }} />
+                      <Eye size={16} style={{ color: 'var(--text-secondary)' }} />
                       <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>Show Logo</span>
                     </div>
                     <AppleToggle checked={showLogo} onChange={setShowLogo} />
@@ -667,14 +667,14 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}>
                       <Type size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Branding Texts <span title="Configure the text displayed in the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Branding Texts <span title="Configure the text displayed in the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: 'var(--text-muted)', cursor: 'help' }} /></span></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -685,18 +685,18 @@ export function GlobalSettingsWorkspace({
                         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                           {/* Font Style */}
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Style</span>
+                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>Style</span>
                             <select
                               value={companyNameStyle}
                               onChange={(e) => setCompanyNameStyle(e.target.value)}
                               style={{
                                 height: '28px',
                                 borderRadius: '6px',
-                                border: '1px solid #cbd5e1',
+                                border: '1px solid var(--border-hover)',
                                 fontSize: '12px',
                                 padding: '0 4px',
-                                backgroundColor: '#ffffff',
-                                color: '#0f172a',
+                                backgroundColor: 'var(--bg-card)',
+                                color: 'var(--text-main)',
                                 cursor: 'pointer',
                                 outline: 'none'
                               }}
@@ -711,7 +711,7 @@ export function GlobalSettingsWorkspace({
                           </div>
                           {/* Color Picker */}
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Color</span>
+                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>Color</span>
                             <div style={{ position: 'relative' }}>
                               <div
                                 style={{
@@ -719,7 +719,7 @@ export function GlobalSettingsWorkspace({
                                   height: '28px',
                                   borderRadius: '6px',
                                   backgroundColor: companyNameColor,
-                                  border: '1px solid #cbd5e1',
+                                  border: '1px solid var(--border-hover)',
                                   cursor: 'pointer',
                                 }}
                                 onClick={() => document.getElementById('gs-color-picker-name')?.click()}
@@ -736,7 +736,7 @@ export function GlobalSettingsWorkspace({
                         </div>
                         {/* Toggle */}
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>Show</span>
                           <AppleToggle checked={showCompanyName} onChange={setShowCompanyName} />
                         </div>
                       </div>
@@ -750,7 +750,7 @@ export function GlobalSettingsWorkspace({
                           background: '#e8eefb', 
                           padding: '0 4px', 
                           fontSize: '11px', 
-                          color: '#475569',
+                          color: 'var(--text-secondary)',
                           fontWeight: 500
                         }}>
                           Company Name
@@ -764,11 +764,11 @@ export function GlobalSettingsWorkspace({
                             width: '100%',
                             padding: '6px 10px',
                             borderRadius: '10px',
-                            border: '1px solid #cbd5e1',
+                            border: '1px solid var(--border-hover)',
                             fontSize: '14px',
                             outline: 'none',
-                            color: '#0f172a',
-                            backgroundColor: '#ffffff'
+                            color: 'var(--text-main)',
+                            backgroundColor: 'var(--bg-card)'
                           }}
                         />
                       </div>
@@ -781,18 +781,18 @@ export function GlobalSettingsWorkspace({
                         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                           {/* Font Style */}
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Style</span>
+                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>Style</span>
                             <select
                               value={companyCaptionStyle}
                               onChange={(e) => setCompanyCaptionStyle(e.target.value)}
                               style={{
                                 height: '28px',
                                 borderRadius: '6px',
-                                border: '1px solid #cbd5e1',
+                                border: '1px solid var(--border-hover)',
                                 fontSize: '12px',
                                 padding: '0 4px',
-                                backgroundColor: '#ffffff',
-                                color: '#0f172a',
+                                backgroundColor: 'var(--bg-card)',
+                                color: 'var(--text-main)',
                                 cursor: 'pointer',
                                 outline: 'none'
                               }}
@@ -807,7 +807,7 @@ export function GlobalSettingsWorkspace({
                           </div>
                           {/* Color Picker */}
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Color</span>
+                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>Color</span>
                             <div style={{ position: 'relative' }}>
                               <div
                                 style={{
@@ -815,7 +815,7 @@ export function GlobalSettingsWorkspace({
                                   height: '28px',
                                   borderRadius: '6px',
                                   backgroundColor: companyCaptionColor,
-                                  border: '1px solid #cbd5e1',
+                                  border: '1px solid var(--border-hover)',
                                   cursor: 'pointer',
                                 }}
                                 onClick={() => document.getElementById('gs-color-picker-caption')?.click()}
@@ -832,7 +832,7 @@ export function GlobalSettingsWorkspace({
                         </div>
                         {/* Toggle */}
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                          <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 500 }}>Show</span>
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>Show</span>
                           <AppleToggle checked={showCompanyCaption} onChange={setShowCompanyCaption} />
                         </div>
                       </div>
@@ -846,7 +846,7 @@ export function GlobalSettingsWorkspace({
                           background: '#e8eefb', 
                           padding: '0 4px', 
                           fontSize: '11px', 
-                          color: '#475569',
+                          color: 'var(--text-secondary)',
                           fontWeight: 500
                         }}>
                           Company Caption
@@ -860,11 +860,11 @@ export function GlobalSettingsWorkspace({
                             width: '100%',
                             padding: '6px 10px',
                             borderRadius: '10px',
-                            border: '1px solid #cbd5e1',
+                            border: '1px solid var(--border-hover)',
                             fontSize: '14px',
                             outline: 'none',
-                            color: '#0f172a',
-                            backgroundColor: '#ffffff'
+                            color: 'var(--text-main)',
+                            backgroundColor: 'var(--bg-card)'
                           }}
                         />
                       </div>
@@ -886,7 +886,7 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -914,9 +914,9 @@ export function GlobalSettingsWorkspace({
                         gap: '6px',
                         padding: '8px 12px',
                         borderRadius: '8px',
-                        border: footerPoweredByType === 'text' ? 'none' : '1px solid #1a73e8',
+                        border: footerPoweredByType === 'text' ? 'none' : '1px solid var(--primary)',
                         backgroundColor: footerPoweredByType === 'text' ? '#0b57d0' : 'transparent',
-                        color: footerPoweredByType === 'text' ? '#ffffff' : '#1a73e8',
+                        color: footerPoweredByType === 'text' ? 'var(--bg-card)' : 'var(--primary)',
                         fontSize: '12px',
                         fontWeight: 600,
                         cursor: 'pointer',
@@ -936,9 +936,9 @@ export function GlobalSettingsWorkspace({
                         gap: '6px',
                         padding: '8px 12px',
                         borderRadius: '8px',
-                        border: footerPoweredByType === 'image' ? 'none' : '1px solid #1a73e8',
+                        border: footerPoweredByType === 'image' ? 'none' : '1px solid var(--primary)',
                         backgroundColor: footerPoweredByType === 'image' ? '#0b57d0' : 'transparent',
-                        color: footerPoweredByType === 'image' ? '#ffffff' : '#1a73e8',
+                        color: footerPoweredByType === 'image' ? 'var(--bg-card)' : 'var(--primary)',
                         fontSize: '12px',
                         fontWeight: 600,
                         cursor: 'pointer',
@@ -959,7 +959,7 @@ export function GlobalSettingsWorkspace({
                         background: '#f0f4ff', 
                         padding: '0 4px', 
                         fontSize: '11px', 
-                        color: '#475569',
+                        color: 'var(--text-secondary)',
                         fontWeight: 500
                       }}>
                         Powered By Text
@@ -972,14 +972,14 @@ export function GlobalSettingsWorkspace({
                           width: '100%',
                           padding: '10px 12px',
                           borderRadius: '10px',
-                          border: '1px solid #cbd5e1',
+                          border: '1px solid var(--border-hover)',
                           fontSize: '14px',
                           outline: 'none',
-                          color: '#0f172a',
-                          backgroundColor: '#ffffff'
+                          color: 'var(--text-main)',
+                          backgroundColor: 'var(--bg-card)'
                         }}
                       />
-                      <div style={{ fontSize: '11px', color: '#64748b', marginTop: '6px' }}>
+                      <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px' }}>
                         Displayed in the footer bottom-right
                       </div>
                     </div>
@@ -989,20 +989,20 @@ export function GlobalSettingsWorkspace({
                       <div 
                         onClick={() => footerFileInputRef.current?.click()}
                         style={{ 
-                          border: '1px dashed #94a3b8', 
+                          border: '1px dashed var(--text-muted)', 
                           borderRadius: '12px', 
                           padding: '20px', 
                           display: 'flex', 
                           justifyContent: 'center', 
                           alignItems: 'center',
                           cursor: 'pointer',
-                          background: '#f8fafc',
+                          background: 'var(--bg-dashboard)',
                           transition: 'all 0.1s ease',
                         }}
-                        onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
-                        onMouseLeave={(e) => (e.currentTarget.style.background = '#f8fafc')}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-dashboard)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--bg-dashboard)')}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: 600, fontSize: '13px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px' }}>
                           <Upload size={16} /> Choose image
                         </div>
                       </div>
@@ -1016,16 +1016,16 @@ export function GlobalSettingsWorkspace({
 
                       {/* Uploaded image preview */}
                       {footerPoweredByImage && (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-card)', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border-light)' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <img src={footerPoweredByImage} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '4px' }} />
-                            <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
+                            <span style={{ fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: 500 }}>Uploaded image</span>
                           </div>
                           <button type="button" onClick={() => {
                             setFooterPoweredByImage('');
                             if (footerFileInputRef.current) footerFileInputRef.current.value = '';
                           }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <X size={18} color="#94a3b8" />
+                            <X size={18} color="var(--text-muted)" />
                           </button>
                         </div>
                       )}
@@ -1043,19 +1043,19 @@ export function GlobalSettingsWorkspace({
                         height: '36px',
                         borderRadius: '10px',
                         backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        color: '#2563eb',
+                        color: 'var(--primary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
                         <Eye size={18} />
                       </div>
-                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>Footer Visibility <span title="Toggle whether the footer bar is visible" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></label>
+                      <label style={{ fontSize: '13.5px', color: '#1e293b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>Footer Visibility <span title="Toggle whether the footer bar is visible" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: 'var(--text-muted)', cursor: 'help' }} /></span></label>
                     </div>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
 
-                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '4px 0' }} />
+                  <div style={{ borderBottom: '1px solid var(--bg-dashboard)', margin: '4px 0' }} />
 
                   {/* Row 2: Copyright Text */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0' }}>
@@ -1064,7 +1064,7 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -1080,7 +1080,7 @@ export function GlobalSettingsWorkspace({
                         background: '#e8eefb', 
                         padding: '0 4px', 
                         fontSize: '11px', 
-                        color: '#475569',
+                        color: 'var(--text-secondary)',
                         fontWeight: 500
                       }}>
                         Copyright Text
@@ -1093,17 +1093,17 @@ export function GlobalSettingsWorkspace({
                           width: '100%',
                           padding: '10px 12px',
                           borderRadius: '10px',
-                          border: '1px solid #cbd5e1',
+                          border: '1px solid var(--border-hover)',
                           fontSize: '14px',
                           outline: 'none',
-                          color: '#0f172a',
-                          backgroundColor: '#ffffff'
+                          color: 'var(--text-main)',
+                          backgroundColor: 'var(--bg-card)'
                         }}
                       />
                     </div>
                   </div>
 
-                  <div style={{ borderBottom: '1px solid #f1f5f9', margin: '4px 0' }} />
+                  <div style={{ borderBottom: '1px solid var(--bg-dashboard)', margin: '4px 0' }} />
 
                   {/* Row 3: Add Footer Link */}
                   <div style={{ 
@@ -1132,7 +1132,7 @@ export function GlobalSettingsWorkspace({
                           height: '36px',
                           borderRadius: '10px',
                           backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                          color: '#2563eb',
+                          color: 'var(--primary)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center'
@@ -1146,8 +1146,8 @@ export function GlobalSettingsWorkspace({
                         onClick={() => setIsAddingLink(true)}
                         style={{
                           padding: '6px 16px',
-                          background: '#2563eb',
-                          color: '#ffffff',
+                          background: 'var(--primary)',
+                          color: 'var(--on-accent)',
                           border: 'none',
                           borderRadius: '6px',
                           fontSize: '12px',
@@ -1156,7 +1156,7 @@ export function GlobalSettingsWorkspace({
                           transition: 'all 0.05s ease'
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.background = '#1d4ed8'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = '#2563eb'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'var(--primary)'}
                       >
                         ADD LINK
                       </button>
@@ -1184,10 +1184,10 @@ export function GlobalSettingsWorkspace({
                           flex: 1,
                           padding: '12px',
                           borderRadius: '10px',
-                          border: '1px solid #cbd5e1',
+                          border: '1px solid var(--border-hover)',
                           fontSize: '14px',
-                          color: '#0f172a',
-                          backgroundColor: '#ffffff',
+                          color: 'var(--text-main)',
+                          backgroundColor: 'var(--bg-card)',
                           outline: 'none',
                           minWidth: 0
                         }}
@@ -1201,10 +1201,10 @@ export function GlobalSettingsWorkspace({
                           flex: 1.5,
                           padding: '12px',
                           borderRadius: '10px',
-                          border: '1px solid #cbd5e1',
+                          border: '1px solid var(--border-hover)',
                           fontSize: '14px',
-                          color: '#0f172a',
-                          backgroundColor: '#ffffff',
+                          color: 'var(--text-main)',
+                          backgroundColor: 'var(--bg-card)',
                           outline: 'none',
                           minWidth: 0
                         }}
@@ -1226,8 +1226,8 @@ export function GlobalSettingsWorkspace({
                           width: '28px',
                           height: '28px',
                           borderRadius: '10px',
-                          backgroundColor: '#22c55e',
-                          color: '#ffffff',
+                          backgroundColor: 'var(--success)',
+                          color: 'var(--on-accent)',
                           border: 'none',
                           display: 'flex',
                           alignItems: 'center',
@@ -1250,8 +1250,8 @@ export function GlobalSettingsWorkspace({
                           width: '28px',
                           height: '28px',
                           borderRadius: '10px',
-                          backgroundColor: '#ef4444',
-                          color: '#ffffff',
+                          backgroundColor: 'var(--danger)',
+                          color: 'var(--on-accent)',
                           border: 'none',
                           display: 'flex',
                           alignItems: 'center',
@@ -1267,11 +1267,11 @@ export function GlobalSettingsWorkspace({
                   
                   {/* Added Links List inline in the first card */}
                   {footerLinks.length > 0 && (
-                    <div className="no-scrollbar" style={{ fontSize: '12px', color: '#64748b', display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px', overflowY: 'auto', maxHeight: '70px', paddingRight: '4px' }}>
+                    <div className="no-scrollbar" style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px', overflowY: 'auto', maxHeight: '70px', paddingRight: '4px' }}>
                       {footerLinks.map((link, idx) => (
-                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#f8fafc', padding: '6px 10px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                        <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-dashboard)', padding: '6px 10px', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
                           <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{link}</span>
-                          <button type="button" onClick={() => setFooterLinks(prev => prev.filter((_, i) => i !== idx))} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Remove</button>
+                          <button type="button" onClick={() => setFooterLinks(prev => prev.filter((_, i) => i !== idx))} style={{ background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', fontSize: '11px', fontWeight: 600 }}>Remove</button>
                         </div>
                       ))}
                     </div>
@@ -1297,36 +1297,36 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}>
                       <LayoutPanelLeft size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Behavior <span title="Configure how the sidebar behaves" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Behavior <span title="Configure how the sidebar behaves" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: 'var(--text-muted)', cursor: 'help' }} /></span></span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>Start Expanded</span>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>Start Expanded</span>
                       <AppleToggle checked={startExpanded} onChange={setStartExpanded} />
                     </div>
                     <div style={{ borderBottom: '1px solid rgba(0,0,0,0.06)', margin: '-4px 0' }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>Automatically Hide Sidebar</span>
+                        <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>Automatically Hide Sidebar</span>
                         <span title="Hides sidebar automatically when cursor leaves the area, expanding it on hover." style={{ display: 'inline-flex' }}>
-                          <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                          <Info size={14} color="var(--text-muted)" style={{ cursor: 'help' }} />
                         </span>
                       </div>
                       <AppleToggle checked={autoHideSidebar} onChange={setAutoHideSidebar} />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>Show Icons</span>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>Show Icons</span>
                       <AppleToggle checked={showIcons} onChange={setShowIcons} />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 600, color: '#475569' }}>Show Labels</span>
+                      <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)' }}>Show Labels</span>
                       <AppleToggle checked={showLabels} onChange={setShowLabels} />
                     </div>
                   </div>
@@ -1347,7 +1347,7 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.12)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1357,12 +1357,12 @@ export function GlobalSettingsWorkspace({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Expanded Width</span>
                       <span title="Recommended range: 180-300 pixels" style={{ display: 'inline-flex' }}>
-                        <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                        <Info size={14} color="var(--text-muted)" style={{ cursor: 'help' }} />
                       </span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px', marginTop: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#475569' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}>
                       <span>Width: {expandedWidth}px</span>
                     </div>
                     <input 
@@ -1390,7 +1390,7 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
@@ -1400,12 +1400,12 @@ export function GlobalSettingsWorkspace({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b' }}>Collapsed Width</span>
                       <span title="Recommended: 64 pixels for optimal icon spacing" style={{ display: 'inline-flex' }}>
-                        <Info size={14} color="#64748b" style={{ cursor: 'help' }} />
+                        <Info size={14} color="var(--text-muted)" style={{ cursor: 'help' }} />
                       </span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#475569' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--text-secondary)' }}>
                       <span>Width: {collapsedWidth}px</span>
                     </div>
                     <input 
@@ -1441,14 +1441,14 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}>
                       <Image size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Logo <span title="Configure the customer logo displayed in the center of the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Logo <span title="Configure the customer logo displayed in the center of the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: 'var(--text-muted)', cursor: 'help' }} /></span></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1 }}>
@@ -1456,20 +1456,20 @@ export function GlobalSettingsWorkspace({
                     <div 
                       onClick={() => customerLogoInputRef.current?.click()}
                       style={{ 
-                        border: '1px dashed #94a3b8', 
+                        border: '1px dashed var(--text-muted)', 
                         borderRadius: '12px', 
                         padding: '20px', 
                         display: 'flex', 
                         justifyContent: 'center', 
                         alignItems: 'center',
                         cursor: 'pointer',
-                        background: '#f8fafc',
+                        background: 'var(--bg-dashboard)',
                         transition: 'all 0.1s ease',
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = '#f1f5f9')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = '#f8fafc')}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-dashboard)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--bg-dashboard)')}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: 600, fontSize: '13px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px' }}>
                         <Upload size={16} /> Choose image
                       </div>
                     </div>
@@ -1483,25 +1483,25 @@ export function GlobalSettingsWorkspace({
 
                     {/* Uploaded image preview */}
                     {customerLogo && (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: '#ffffff', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #e2e8f0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-card)', borderRadius: '12px', padding: '12px 16px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border-light)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                           <img src={customerLogo} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '4px' }} />
-                          <span style={{ fontSize: '13.5px', color: '#475569', fontWeight: 500 }}>Uploaded image</span>
+                          <span style={{ fontSize: '13.5px', color: 'var(--text-secondary)', fontWeight: 500 }}>Uploaded image</span>
                         </div>
                         <button type="button" onClick={() => {
                           setCustomerLogo('');
                           if (customerLogoInputRef.current) customerLogoInputRef.current.value = '';
                         }} style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <X size={18} color="#94a3b8" />
+                          <X size={18} color="var(--text-muted)" />
                         </button>
                       </div>
                     )}
                   </div>
 
                   {/* Show Logo toggle at the bottom */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid var(--border-light)', paddingTop: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Eye size={16} style={{ color: '#475569' }} />
+                      <Eye size={16} style={{ color: 'var(--text-secondary)' }} />
                       <span style={{ fontSize: '13px', color: '#1e293b', fontWeight: 500 }}>Show Logo</span>
                     </div>
                     <AppleToggle checked={showCustomerLogo} onChange={setShowCustomerLogo} />
@@ -1515,14 +1515,14 @@ export function GlobalSettingsWorkspace({
                       height: '36px',
                       borderRadius: '10px',
                       backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      color: '#2563eb',
+                      color: 'var(--primary)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}>
                       <Type size={18} />
                     </div>
-                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Profile Visibility <span title="Toggle whether the customer profile is visible in the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: '#94a3b8', cursor: 'help' }} /></span></span>
+                    <span style={{ fontSize: '13.5px', fontWeight: 700, color: '#1e293b', display: 'flex', alignItems: 'center', gap: '6px' }}>Customer Profile Visibility <span title="Toggle whether the customer profile is visible in the header" style={{ display: 'inline-flex' }}><Info size={14} style={{ color: 'var(--text-muted)', cursor: 'help' }} /></span></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
@@ -1532,18 +1532,18 @@ export function GlobalSettingsWorkspace({
                         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                           {/* Font Style */}
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>Style</span>
+                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 600 }}>Style</span>
                             <select
                               value={customerNameStyle}
                               onChange={(e) => setCustomerNameStyle(e.target.value)}
                               style={{
                                 height: '28px',
                                 borderRadius: '6px',
-                                border: '1px solid #cbd5e1',
+                                border: '1px solid var(--border-hover)',
                                 fontSize: '12px',
                                 padding: '0 4px',
-                                backgroundColor: '#ffffff',
-                                color: '#0f172a',
+                                backgroundColor: 'var(--bg-card)',
+                                color: 'var(--text-main)',
                                 cursor: 'pointer',
                                 outline: 'none'
                               }}
@@ -1558,7 +1558,7 @@ export function GlobalSettingsWorkspace({
                           </div>
                           {/* Color Picker */}
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '10px', color: '#64748b', fontWeight: 600 }}>Color</span>
+                            <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 600 }}>Color</span>
                             <div style={{ position: 'relative' }}>
                               <div
                                 style={{
@@ -1566,7 +1566,7 @@ export function GlobalSettingsWorkspace({
                                   height: '28px',
                                   borderRadius: '6px',
                                   backgroundColor: customerNameColor,
-                                  border: '1px solid #cbd5e1',
+                                  border: '1px solid var(--border-hover)',
                                   cursor: 'pointer',
                                 }}
                                 onClick={() => document.getElementById('gs-color-picker-customer')?.click()}
@@ -1596,7 +1596,7 @@ export function GlobalSettingsWorkspace({
                           background: '#e8eefb', 
                           padding: '0 4px', 
                           fontSize: '11px', 
-                          color: '#475569',
+                          color: 'var(--text-secondary)',
                           fontWeight: 600
                         }}>
                           Customer Name
@@ -1610,18 +1610,18 @@ export function GlobalSettingsWorkspace({
                             width: '100%', 
                             padding: '10px 12px', 
                             borderRadius: '10px', 
-                            border: '1px solid #cbd5e1', 
+                            border: '1px solid var(--border-hover)', 
                             fontSize: '14px', 
                             outline: 'none', 
-                            color: '#0f172a', 
-                            backgroundColor: '#ffffff' 
+                            color: 'var(--text-main)', 
+                            backgroundColor: 'var(--bg-card)' 
                           }}
                         />
                       </div>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '16px' }}>
-                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: '#475569' }}>Text Color matches theme</span>
+                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-secondary)' }}>Text Color matches theme</span>
                       <AppleToggle checked={customerColorFollow} onChange={setCustomerColorFollow} />
                     </div>
                   </div>
@@ -1652,8 +1652,8 @@ export function GlobalSettingsWorkspace({
                   bottom: '100%',
                   left: 0,
                   marginBottom: '8px',
-                  background: '#ffffff',
-                  border: '1px solid #e2e8f0',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-light)',
                   borderRadius: '8px',
                   boxShadow: '0 -4px 12px rgba(0,0,0,0.1)',
                   padding: '4px',
@@ -1668,7 +1668,7 @@ export function GlobalSettingsWorkspace({
                     <Upload size={18} />
                   </button>
                   <button className="gs-icon-btn" title="Reset to defaults" onClick={handleResetToDefaults}>
-                    <RotateCcw size={18} color="#ef4444" />
+                    <RotateCcw size={18} color="var(--danger)" />
                   </button>
                 </div>
               )}

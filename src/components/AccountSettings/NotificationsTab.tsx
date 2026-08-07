@@ -45,7 +45,7 @@ export function NotificationsTab() {
           width: '42px',
           height: '24px',
           borderRadius: '9999px',
-          backgroundColor: checked ? '#22c55e' : '#cbd5e1',
+          backgroundColor: checked ? 'var(--success)' : 'var(--border-hover)',
           border: 'none',
           cursor: disabled ? 'not-allowed' : 'pointer',
           transition: 'background-color 0.05s ease',
@@ -64,7 +64,7 @@ export function NotificationsTab() {
             width: '20px',
             height: '20px',
             borderRadius: '50%',
-            backgroundColor: '#ffffff',
+            backgroundColor: 'var(--bg-card)',
             boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
             transition: 'left 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
@@ -91,12 +91,12 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isEmailExpanded ? 'none' : '1px solid #f1f5f9',
+            borderBottom: isEmailExpanded ? 'none' : '1px solid var(--bg-dashboard)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div 
@@ -116,8 +116,8 @@ export function NotificationsTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Email Notifications</div>
-                <span title="Configure what emails you want to receive" style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Email Notifications</div>
+                <span title="Configure what emails you want to receive" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -126,7 +126,7 @@ export function NotificationsTab() {
           <ChevronDown 
             size={18} 
             style={{ 
-              color: '#94a3b8', 
+              color: 'var(--text-muted)', 
               transform: isEmailExpanded ? 'rotate(180deg)' : 'none',
               transition: 'transform 0.05s ease'
             }} 
@@ -144,8 +144,8 @@ export function NotificationsTab() {
             pointerEvents: isEmailExpanded ? 'auto' : 'none',
             paddingTop: isEmailExpanded ? '10px' : '0px',
             paddingBottom: isEmailExpanded ? '20px' : '0px',
-            backgroundColor: '#ffffff',
-            borderBottom: isEmailExpanded ? '1px solid #f1f5f9' : '0px solid transparent',
+            backgroundColor: 'var(--bg-card)',
+            borderBottom: isEmailExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -160,36 +160,36 @@ export function NotificationsTab() {
               top: '0px',
               bottom: '36px',
               width: '1px',
-              backgroundColor: '#e2e8f0'
+              backgroundColor: 'var(--border-light)'
             }}
           />
 
           {/* Sub-item 1 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#cbd5e1', border: '1px solid #ffffff', boxShadow: '0 0 0 2px #e2e8f0' }} />
+            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--border-hover)', border: '1px solid var(--bg-card)', boxShadow: '0 0 0 2px var(--border-light)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Security alerts</div>
-              <span title="Get notified about logins, password changes and MFA alerts." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}><Info size={13} /></span>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Security alerts</div>
+              <span title="Get notified about logins, password changes and MFA alerts." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}><Info size={13} /></span>
             </div>
             <AppleToggle checked={emailSecurity} onChange={setEmailSecurity} />
           </div>
 
           {/* Sub-item 2 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#cbd5e1', border: '1px solid #ffffff', boxShadow: '0 0 0 2px #e2e8f0' }} />
+            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--border-hover)', border: '1px solid var(--bg-card)', boxShadow: '0 0 0 2px var(--border-light)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Account activity</div>
-              <span title="Receive updates on workspace updates and team activity." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}><Info size={13} /></span>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Account activity</div>
+              <span title="Receive updates on workspace updates and team activity." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}><Info size={13} /></span>
             </div>
             <AppleToggle checked={emailActivity} onChange={setEmailActivity} />
           </div>
 
           {/* Sub-item 3 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#cbd5e1', border: '1px solid #ffffff', boxShadow: '0 0 0 2px #e2e8f0' }} />
+            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--border-hover)', border: '1px solid var(--bg-card)', boxShadow: '0 0 0 2px var(--border-light)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Marketing & Product updates</div>
-              <span title="Tips, features announcements, and general newsletter updates." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}><Info size={13} /></span>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Marketing & Product updates</div>
+              <span title="Tips, features announcements, and general newsletter updates." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}><Info size={13} /></span>
             </div>
             <AppleToggle checked={emailMarketing} onChange={setEmailMarketing} />
           </div>
@@ -212,12 +212,12 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isInAppExpanded ? 'none' : '1px solid #f1f5f9',
+            borderBottom: isInAppExpanded ? 'none' : '1px solid var(--bg-dashboard)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div 
@@ -226,7 +226,7 @@ export function NotificationsTab() {
                 height: '36px',
                 borderRadius: '8px',
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                color: '#10b981',
+                color: 'var(--success)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -237,8 +237,8 @@ export function NotificationsTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>In-App & Push Notifications</div>
-                <span title="Configure desktop and dashboard alerts" style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>In-App & Push Notifications</div>
+                <span title="Configure desktop and dashboard alerts" style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -247,7 +247,7 @@ export function NotificationsTab() {
           <ChevronDown 
             size={18} 
             style={{ 
-              color: '#94a3b8', 
+              color: 'var(--text-muted)', 
               transform: isInAppExpanded ? 'rotate(180deg)' : 'none',
               transition: 'transform 0.05s ease'
             }} 
@@ -265,8 +265,8 @@ export function NotificationsTab() {
             pointerEvents: isInAppExpanded ? 'auto' : 'none',
             paddingTop: isInAppExpanded ? '10px' : '0px',
             paddingBottom: isInAppExpanded ? '20px' : '0px',
-            backgroundColor: '#ffffff',
-            borderBottom: isInAppExpanded ? '1px solid #f1f5f9' : '1px solid #f1f5f9',
+            backgroundColor: 'var(--bg-card)',
+            borderBottom: isInAppExpanded ? '1px solid var(--bg-dashboard)' : '1px solid var(--bg-dashboard)',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -274,34 +274,34 @@ export function NotificationsTab() {
             transition: 'all 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         >
-          <div style={{ position: 'absolute', left: '42px', top: '0px', bottom: '36px', width: '1px', backgroundColor: '#e2e8f0' }} />
+          <div style={{ position: 'absolute', left: '42px', top: '0px', bottom: '36px', width: '1px', backgroundColor: 'var(--border-light)' }} />
 
           {/* Sub-item 1 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#cbd5e1', border: '1px solid #ffffff', boxShadow: '0 0 0 2px #e2e8f0' }} />
+            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--border-hover)', border: '1px solid var(--bg-card)', boxShadow: '0 0 0 2px var(--border-light)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Direct Messages</div>
-              <span title="Show alerts when team members message you directly." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}><Info size={13} /></span>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Direct Messages</div>
+              <span title="Show alerts when team members message you directly." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}><Info size={13} /></span>
             </div>
             <AppleToggle checked={pushDirectMessage} onChange={setPushDirectMessage} />
           </div>
 
           {/* Sub-item 2 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#cbd5e1', border: '1px solid #ffffff', boxShadow: '0 0 0 2px #e2e8f0' }} />
+            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--border-hover)', border: '1px solid var(--bg-card)', boxShadow: '0 0 0 2px var(--border-light)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Mentions & Replies</div>
-              <span title="Get notified when tagged inside reports or comment sections." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}><Info size={13} /></span>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Mentions & Replies</div>
+              <span title="Get notified when tagged inside reports or comment sections." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}><Info size={13} /></span>
             </div>
             <AppleToggle checked={pushMention} onChange={setPushMention} />
           </div>
 
           {/* Sub-item 3 */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
-            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#cbd5e1', border: '1px solid #ffffff', boxShadow: '0 0 0 2px #e2e8f0' }} />
+            <div style={{ position: 'absolute', left: '-37px', top: '50%', transform: 'translateY(-50%)', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--border-hover)', border: '1px solid var(--bg-card)', boxShadow: '0 0 0 2px var(--border-light)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>System alerts</div>
-              <span title="Realtime alert updates when system exceptions are logged." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}><Info size={13} /></span>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>System alerts</div>
+              <span title="Realtime alert updates when system exceptions are logged." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}><Info size={13} /></span>
             </div>
             <AppleToggle checked={pushSystemAlert} onChange={setPushSystemAlert} />
           </div>
@@ -316,8 +316,8 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid #f1f5f9',
-            backgroundColor: '#ffffff'
+            borderBottom: '1px solid var(--bg-dashboard)',
+            backgroundColor: 'var(--bg-card)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -327,7 +327,7 @@ export function NotificationsTab() {
                 height: '36px',
                 borderRadius: '8px',
                 backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                color: '#f59e0b',
+                color: 'var(--warning)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -338,8 +338,8 @@ export function NotificationsTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Digest Frequency</div>
-                <span title="Select how often you wish to receive system email digests." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Digest Frequency</div>
+                <span title="Select how often you wish to receive system email digests." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -351,10 +351,10 @@ export function NotificationsTab() {
             style={{
               padding: '6px 12px',
               borderRadius: '6px',
-              border: '1px solid #cbd5e1',
+              border: '1px solid var(--border-hover)',
               fontSize: '13px',
-              color: '#334155',
-              background: '#ffffff',
+              color: 'var(--text-secondary)',
+              background: 'var(--bg-card)',
               cursor: 'pointer',
               outline: 'none',
               fontWeight: 500
@@ -375,8 +375,8 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid #f1f5f9',
-            backgroundColor: '#ffffff'
+            borderBottom: '1px solid var(--bg-dashboard)',
+            backgroundColor: 'var(--bg-card)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -397,8 +397,8 @@ export function NotificationsTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Notification Sound</div>
-                <span title="Play an alert chime sound whenever a new notification lands." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Notification Sound</div>
+                <span title="Play an alert chime sound whenever a new notification lands." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -416,7 +416,7 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            backgroundColor: '#ffffff'
+            backgroundColor: 'var(--bg-card)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -437,8 +437,8 @@ export function NotificationsTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Dropdown Notification Limit</div>
-                <span title="Select how many notifications to view in the dropdown header." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Dropdown Notification Limit</div>
+                <span title="Select how many notifications to view in the dropdown header." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -450,10 +450,10 @@ export function NotificationsTab() {
             style={{
               padding: '6px 12px',
               borderRadius: '6px',
-              border: '1px solid #cbd5e1',
+              border: '1px solid var(--border-hover)',
               fontSize: '13px',
-              color: '#334155',
-              background: '#ffffff',
+              color: 'var(--text-secondary)',
+              background: 'var(--bg-card)',
               cursor: 'pointer',
               outline: 'none',
               fontWeight: 500

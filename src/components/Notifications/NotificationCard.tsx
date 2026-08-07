@@ -31,7 +31,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
     width: '22px',
     height: '22px',
     backgroundColor: '#e9ecef',
-    border: '2px solid #ffffff',
+    border: '2px solid var(--bg-card)',
     borderRadius: '8px',
     boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
     display: 'flex',
@@ -64,7 +64,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'system' || lower.includes('config') || lower.includes('enabled')) {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#eff6ff', color: '#2563eb' }}>
+      <div style={{ ...baseStyle, backgroundColor: '#eff6ff', color: 'var(--primary)' }}>
         <Settings size={12} strokeWidth={2.5} />
       </div>
     );
@@ -72,7 +72,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'warning') {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#fffbeb', color: '#d97706' }}>
+      <div style={{ ...baseStyle, backgroundColor: '#fffbeb', color: 'var(--warning)' }}>
         <span style={{ fontSize: '11px', fontWeight: 'bold', lineHeight: 1 }}>!</span>
       </div>
     );
@@ -140,7 +140,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
         alignItems: 'flex-start',
         padding: '16px',
         borderBottom: 'none',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--bg-card)',
         width: '100%',
         border: 'none',
         textAlign: 'left',
@@ -149,8 +149,8 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
         fontFamily: 'inherit',
         position: 'relative'
       }}
-      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
     >
       {/* Left Avatar Column */}
       <div style={{ position: 'relative', width: '42px', height: '42px', flexShrink: 0, marginRight: '14px' }}>
@@ -186,11 +186,11 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', paddingTop: '6px' }}>
         {/* Line 1: Actor Name, Time, Unread Dot */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <span style={{ fontWeight: 700, fontSize: '14px', color: '#0f172a' }}>
+          <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>
             {notification.actorName || 'System'}
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '10px', color: '#94a3b8' }}>
+            <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
               {timeText}
             </span>
             {!notification.isRead && (
@@ -198,7 +198,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
                 style={{ 
                   width: '8px', 
                   height: '8px', 
-                  backgroundColor: '#ef4444', 
+                  backgroundColor: 'var(--danger)', 
                   borderRadius: '50%', 
                   display: 'inline-block' 
                 }} 
@@ -208,12 +208,12 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
         </div>
 
         {/* Line 2: Action, Emoji, Target, Category */}
-        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px', marginTop: '2px', fontSize: '11px', color: '#64748b' }}>
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px', marginTop: '2px', fontSize: '11px', color: 'var(--text-muted)' }}>
           <span>{notification.actionText || 'alerted'}</span>
-          <span style={{ color: '#cbd5e1' }}>•</span>
+          <span style={{ color: 'var(--border-hover)' }}>•</span>
           <span style={{ fontSize: '12px' }}>{getTargetEmoji(notification.targetName, notification.category)}</span>
-          <span style={{ fontWeight: 600, color: '#334155' }}>{notification.targetName || notification.title}</span>
-          <span style={{ color: '#cbd5e1' }}>•</span>
+          <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{notification.targetName || notification.title}</span>
+          <span style={{ color: 'var(--border-hover)' }}>•</span>
           <span>{notification.category}</span>
         </div>
 

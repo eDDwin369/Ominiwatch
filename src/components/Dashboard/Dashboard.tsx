@@ -5,7 +5,7 @@ import { Sidebar } from './Sidebar';
 import { TemplateWelcome } from './TemplateWelcome';
 import { AccountSettings } from '../AccountSettings/AccountSettings';
 import { NotificationsPage } from '../Notifications/NotificationsPage';
-import { ThemeStudioLayout } from './ThemeStudioLayout';
+import { ThemeStudioEmbed } from './ThemeStudioEmbed';
 import { OrdersView } from './OrdersView';
 import { PlaceholderView } from './PlaceholderView';
 import { PreviewLogin } from './PreviewLogin';
@@ -297,19 +297,11 @@ export function Dashboard({
             }}
           >
             {isThemeStudioOpen ? (
-              <ThemeStudioLayout 
+              <ThemeStudioEmbed
                 onClose={() => {
                   setIsThemeStudioOpen(false);
                   handleSetCurrentView('overview');
-                }} 
-                currentView={currentView}
-                onNavigate={handleSetCurrentView}
-                notifications={notifications}
-                handleMarkAllRead={handleMarkAllRead}
-                handleClearRead={handleClearRead}
-                handleNotificationClick={handleNotificationClick}
-                hasUnsavedChanges={hasUnsavedChanges}
-                setHasUnsavedChanges={setHasUnsavedChanges}
+                }}
               />
             ) : (
               <div className={`dashboard-container ${currentView === 'overview' ? 'no-padding' : ''}`}>

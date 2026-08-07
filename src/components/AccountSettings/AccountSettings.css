@@ -9,7 +9,7 @@
 
 /* Horizontal tab list */
 .account-tabs-wrapper {
-  border-bottom: 1px solid var(--border-light, #e2e8f0);
+  border-bottom: 1px solid var(--border-light, var(--border-light));
   margin-bottom: 24px;
 }
 
@@ -26,7 +26,7 @@
   padding: 12px 0;
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-secondary, #475569);
+  color: var(--text-secondary, var(--text-secondary));
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.05s;
@@ -34,13 +34,13 @@
 }
 
 .account-tab:hover {
-  color: var(--text-main, #0f172a);
+  color: var(--text-main, var(--text-main));
 }
 
 .account-tab.active {
-  color: var(--primary, #2563eb);
+  color: var(--primary, var(--primary));
   font-weight: 600;
-  border-bottom: 2px solid var(--primary, #2563eb);
+  border-bottom: 2px solid var(--primary, var(--primary));
 }
 
 .account-tab-content {

@@ -35,7 +35,7 @@ export function PreferencesTab() {
           width: '42px',
           height: '24px',
           borderRadius: '9999px',
-          backgroundColor: checked ? '#22c55e' : '#cbd5e1',
+          backgroundColor: checked ? 'var(--success)' : 'var(--border-hover)',
           border: 'none',
           cursor: disabled ? 'not-allowed' : 'pointer',
           transition: 'background-color 0.05s ease',
@@ -54,7 +54,7 @@ export function PreferencesTab() {
             width: '20px',
             height: '20px',
             borderRadius: '50%',
-            backgroundColor: '#ffffff',
+            backgroundColor: 'var(--bg-card)',
             boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
             transition: 'left 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
@@ -96,12 +96,12 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid #f1f5f9',
+            borderBottom: '1px solid var(--bg-dashboard)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div 
@@ -121,14 +121,14 @@ export function PreferencesTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Export personal data</div>
-                <span title="Download a copy of your personal data and account information." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Export personal data</div>
+                <span title="Download a copy of your personal data and account information." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
             </div>
           </div>
-          <ChevronRight size={18} style={{ color: '#94a3b8' }} />
+          <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
         </div>
 
       </div>
@@ -141,12 +141,12 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isCookiesExpanded ? 'none' : '1px solid #f1f5f9',
+            borderBottom: isCookiesExpanded ? 'none' : '1px solid var(--bg-dashboard)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div 
@@ -166,8 +166,8 @@ export function PreferencesTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Cookie Preference</div>
-                <span title="Manage your cookie settings." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Cookie Preference</div>
+                <span title="Manage your cookie settings." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -176,7 +176,7 @@ export function PreferencesTab() {
           <ChevronDown 
             size={18} 
             style={{ 
-              color: '#94a3b8', 
+              color: 'var(--text-muted)', 
               transform: isCookiesExpanded ? 'rotate(180deg)' : 'none',
               transition: 'transform 0.05s ease'
             }} 
@@ -194,8 +194,8 @@ export function PreferencesTab() {
             pointerEvents: isCookiesExpanded ? 'auto' : 'none',
             paddingTop: isCookiesExpanded ? '10px' : '0px',
             paddingBottom: isCookiesExpanded ? '20px' : '0px',
-            backgroundColor: '#ffffff',
-            borderBottom: isCookiesExpanded ? '1px solid #f1f5f9' : '0px solid transparent',
+            backgroundColor: 'var(--bg-card)',
+            borderBottom: isCookiesExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -211,7 +211,7 @@ export function PreferencesTab() {
               top: '0px',
               bottom: '36px',
               width: '1px',
-              backgroundColor: '#e2e8f0'
+              backgroundColor: 'var(--border-light)'
             }}
           />
 
@@ -227,15 +227,15 @@ export function PreferencesTab() {
                 width: '6px',
                 height: '6px',
                 borderRadius: '50%',
-                backgroundColor: '#cbd5e1',
-                border: '1px solid #ffffff',
-                boxShadow: '0 0 0 2px #e2e8f0'
+                backgroundColor: 'var(--border-hover)',
+                border: '1px solid var(--bg-card)',
+                boxShadow: '0 0 0 2px var(--border-light)'
               }}
             />
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Essential Cookies</div>
-                <span title="These cookies are essential for the website to function." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Essential Cookies</div>
+                <span title="These cookies are essential for the website to function." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={13} />
                 </span>
               </div>
@@ -255,15 +255,15 @@ export function PreferencesTab() {
                 width: '6px',
                 height: '6px',
                 borderRadius: '50%',
-                backgroundColor: '#cbd5e1',
-                border: '1px solid #ffffff',
-                boxShadow: '0 0 0 2px #e2e8f0'
+                backgroundColor: 'var(--border-hover)',
+                border: '1px solid var(--bg-card)',
+                boxShadow: '0 0 0 2px var(--border-light)'
               }}
             />
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Analytic Cookies</div>
-                <span title="Help us understand how users interact with our website." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Analytic Cookies</div>
+                <span title="Help us understand how users interact with our website." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={13} />
                 </span>
               </div>
@@ -283,15 +283,15 @@ export function PreferencesTab() {
                 width: '6px',
                 height: '6px',
                 borderRadius: '50%',
-                backgroundColor: '#cbd5e1',
-                border: '1px solid #ffffff',
-                boxShadow: '0 0 0 2px #e2e8f0'
+                backgroundColor: 'var(--border-hover)',
+                border: '1px solid var(--bg-card)',
+                boxShadow: '0 0 0 2px var(--border-light)'
               }}
             />
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>Marketing Cookies</div>
-                <span title="Used to deliver personalized ads and track performance." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Marketing Cookies</div>
+                <span title="Used to deliver personalized ads and track performance." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={13} />
                 </span>
               </div>
@@ -309,7 +309,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid #f1f5f9'
+            borderBottom: '1px solid var(--bg-dashboard)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -330,8 +330,8 @@ export function PreferencesTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Language</div>
-                <span title="Choose your preferred language." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Language</div>
+                <span title="Choose your preferred language." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -342,14 +342,14 @@ export function PreferencesTab() {
               value={language}
               onChange={(e) => setLanguage(e.target.value)}
               style={{
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border-light)',
                 borderRadius: '8px',
                 padding: '8px 36px 8px 16px',
                 fontSize: '13px',
                 fontWeight: 500,
-                color: '#0f172a',
+                color: 'var(--text-main)',
                 outline: 'none',
-                backgroundColor: '#ffffff',
+                backgroundColor: 'var(--bg-card)',
                 cursor: 'pointer',
                 appearance: 'none',
                 minWidth: '180px'
@@ -360,7 +360,7 @@ export function PreferencesTab() {
               <option value="fr">French</option>
               <option value="de">German</option>
             </select>
-            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', color: '#64748b', pointerEvents: 'none' }} />
+            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', color: 'var(--text-muted)', pointerEvents: 'none' }} />
           </div>
         </div>
 
@@ -373,7 +373,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid #f1f5f9'
+            borderBottom: '1px solid var(--bg-dashboard)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -394,8 +394,8 @@ export function PreferencesTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Timezone</div>
-                <span title="Select your current timezone." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Timezone</div>
+                <span title="Select your current timezone." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -406,14 +406,14 @@ export function PreferencesTab() {
               value={timezone}
               onChange={(e) => setTimezone(e.target.value)}
               style={{
-                border: '1px solid #e2e8f0',
+                border: '1px solid var(--border-light)',
                 borderRadius: '8px',
                 padding: '8px 36px 8px 16px',
                 fontSize: '13px',
                 fontWeight: 500,
-                color: '#0f172a',
+                color: 'var(--text-main)',
                 outline: 'none',
-                backgroundColor: '#ffffff',
+                backgroundColor: 'var(--bg-card)',
                 cursor: 'pointer',
                 appearance: 'none',
                 minWidth: '240px'
@@ -424,7 +424,7 @@ export function PreferencesTab() {
               <option value="pst">(GMT-08:00) Pacific Standard Time</option>
               <option value="est">(GMT-05:00) Eastern Standard Time</option>
             </select>
-            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', color: '#64748b', pointerEvents: 'none' }} />
+            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', color: 'var(--text-muted)', pointerEvents: 'none' }} />
           </div>
         </div>
 
@@ -439,12 +439,12 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid #f1f5f9',
+            borderBottom: '1px solid var(--bg-dashboard)',
             textDecoration: 'none',
             transition: 'background-color 0.05s ease'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div 
@@ -452,8 +452,8 @@ export function PreferencesTab() {
                 width: '36px',
                 height: '36px',
                 borderRadius: '8px',
-                backgroundColor: '#f1f5f9',
-                color: '#64748b',
+                backgroundColor: 'var(--bg-dashboard)',
+                color: 'var(--text-muted)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -464,14 +464,14 @@ export function PreferencesTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Privacy Policy</div>
-                <span title="Read our privacy policy to understand how we protect your data." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Privacy Policy</div>
+                <span title="Read our privacy policy to understand how we protect your data." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
             </div>
           </div>
-          <ChevronRight size={18} style={{ color: '#94a3b8' }} />
+          <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
         </a>
 
       </div>
@@ -485,12 +485,12 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid #f1f5f9',
+            borderBottom: '1px solid var(--bg-dashboard)',
             textDecoration: 'none',
             transition: 'background-color 0.05s ease'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div 
@@ -498,8 +498,8 @@ export function PreferencesTab() {
                 width: '36px',
                 height: '36px',
                 borderRadius: '8px',
-                backgroundColor: '#f1f5f9',
-                color: '#64748b',
+                backgroundColor: 'var(--bg-dashboard)',
+                color: 'var(--text-muted)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -510,14 +510,14 @@ export function PreferencesTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Terms of service</div>
-                <span title="Read the terms of service and user agreement." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Terms of service</div>
+                <span title="Read the terms of service and user agreement." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
             </div>
           </div>
-          <ChevronRight size={18} style={{ color: '#94a3b8' }} />
+          <ChevronRight size={18} style={{ color: 'var(--text-muted)' }} />
         </a>
 
       </div>
@@ -533,8 +533,8 @@ export function PreferencesTab() {
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ffffff'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div 
@@ -543,7 +543,7 @@ export function PreferencesTab() {
                 height: '36px',
                 borderRadius: '8px',
                 backgroundColor: '#fee2e2',
-                color: '#ef4444',
+                color: 'var(--danger)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -554,8 +554,8 @@ export function PreferencesTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#0f172a' }}>Delete your account</div>
-                <span title="Permanently delete your account and all of your data." style={{ display: 'inline-flex', alignItems: 'center', color: '#94a3b8', cursor: 'help' }}>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Delete your account</div>
+                <span title="Permanently delete your account and all of your data." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
               </div>
@@ -567,10 +567,10 @@ export function PreferencesTab() {
               handleDeleteAccount();
             }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--danger)'}
             style={{ 
-              background: '#ef4444', 
-              color: '#ffffff', 
+              background: 'var(--danger)', 
+              color: 'var(--on-accent)', 
               border: 'none',
               padding: '8px 16px', 
               borderRadius: '8px', 

@@ -132,7 +132,7 @@
   width: calc(100vw / var(--app-scale, 1));
   background-color: var(--bg-dashboard);
   color: var(--text-main);
-  font-family: 'Roboto', sans-serif;
+  font-family: var(--app-font-family);
   overflow: hidden;
 }
 

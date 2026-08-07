@@ -353,11 +353,11 @@ export function Sidebar({
             href="#reports"
             className={`nav-item ${activeItemId === 'report-builder' ? 'active' : ''}`}
             onClick={(e) => handleNavItemClick('reports', e, 'report-builder')}
-            onMouseEnter={(e) => handleItemMouseEnter("Report Builder", e)}
+            onMouseEnter={(e) => handleItemMouseEnter("User", e)}
             onMouseLeave={handleItemMouseLeave}
           >
             <BarChart2 size={20} className="nav-icon" color="#8b5cf6" />
-            <span className="nav-label">Report Builder</span>
+            <span className="nav-label">User</span>
           </a>
 
           <div className="nav-section-title">SYSTEM</div>
@@ -366,7 +366,7 @@ export function Sidebar({
           <a
             href="#"
             className="nav-item"
-            onClick={(e) => handleNavItemClick(null, e)}
+            onClick={(e) => handleNavItemClick('theme-studio', e, 'theme-studio')}
             onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
             onMouseLeave={handleItemMouseLeave}
           >

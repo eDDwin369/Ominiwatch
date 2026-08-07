@@ -85,6 +85,16 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
+
+  /* App typography — overwritten live by the Theme Studio bridge (theme-bridge.tsx).
+     Defaults match the previous hardcoded values so nothing changes before it runs. */
+  --app-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --app-heading-family: 'Google Sans', 'Product Sans', 'Roboto', -apple-system, sans-serif;
+  --on-accent: #ffffff;
+  --app-font-size: 1rem;
+  --app-line-height: 1.5;
+  --app-font-weight: 400;
+  --app-letter-spacing: 0;
 }
 
 * {
@@ -94,7 +104,11 @@
 }
 
 body {
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size);
+  line-height: var(--app-line-height);
+  font-weight: var(--app-font-weight);
+  letter-spacing: var(--app-letter-spacing);
   background-color: var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
@@ -106,11 +120,11 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .brand-logo, .dashboard-logo, .account-page-title, .header-profile-title {
-  font-family: 'Google Sans', 'Product Sans', 'Roboto', -apple-system, sans-serif !important;
+  font-family: var(--app-heading-family);
 }
 
 input, button, select, textarea, span, p, div, label, a {
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--app-font-family);
 }
 
 /* Background elements */
