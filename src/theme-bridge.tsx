@@ -57,6 +57,18 @@ function syncCssVars(theme: any, settings: any) {
   set('--app-line-height', body.lineHeight != null ? String(body.lineHeight) : undefined);
   set('--app-font-weight', body.fontWeight != null ? String(body.fontWeight) : undefined);
   set('--app-letter-spacing', settings.letterSpace ? `${settings.letterSpace}px` : '0');
+  // per-heading tokens: size comes from the resolved theme (already folds in
+  // scaleRatio/textSize/baseFontPx/h{n}Size); weight/color from raw settings
+  // (0/'' = auto → fall back to headingWeight / --text-main default in index.css).
+  const ty = theme.typography;
+  for (let n = 1; n <= 6; n++) {
+    const h = ty[`h${n}`] || {};
+    set(`--h${n}-size`, h.fontSize ? `${h.fontSize}px` : undefined);
+    const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
+    set(`--h${n}-weight`, w ? String(w) : undefined);
+    set(`--h${n}-color`, settings[`h${n}Color`] || 'var(--text-main)');
+  }
+  set('--heading-lh', ty.h1?.lineHeight != null ? String(ty.h1.lineHeight) : undefined);
   // radius
   set('--radius-sm', `${theme.shape.borderRadius * 0.5}px`);
   set('--radius-md', `${theme.shape.borderRadius}px`);
