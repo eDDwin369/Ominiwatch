@@ -1146,8 +1146,7 @@ export function GlobalSettingsWorkspace({
                         onClick={() => setIsAddingLink(true)}
                         style={{
                           padding: '6px 16px',
-                          background: 'var(--primary)',
-                          color: 'var(--on-accent)',
+                          background: 'var(--btn-color)', color: 'var(--btn-text)',
                           border: 'none',
                           borderRadius: '6px',
                           fontSize: '12px',

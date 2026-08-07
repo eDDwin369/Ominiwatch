@@ -38,9 +38,9 @@
 }
 
 .account-tab.active {
-  color: var(--primary, var(--primary));
+  color: var(--highlight, var(--primary));
   font-weight: 600;
-  border-bottom: 2px solid var(--primary, var(--primary));
+  border-bottom: 2px solid var(--highlight, var(--primary));
 }
 
 .account-tab-content {

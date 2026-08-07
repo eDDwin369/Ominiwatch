@@ -600,8 +600,7 @@ export function SecurityTab() {
             <button 
               type="submit"
               style={{ 
-                background: 'var(--primary)', 
-                color: 'var(--on-accent)', 
+                background: 'var(--btn-color)', color: 'var(--btn-text)', 
                 border: 'none',
                 padding: '8px 16px', 
                 borderRadius: '8px', 

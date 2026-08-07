@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bell, Settings, X, Camera, User } from 'lucide-react';
+import { useThemeStore } from 'omnieye-theme-studio';
 import { NotificationDropdown } from '../Notifications/NotificationDropdown';
 import type { NotificationItem } from '../Notifications/types';
 import logo from '../../assets/logo.png';
@@ -51,6 +52,11 @@ export function Header({
   showCustomerLogo = false,
   customerLogo = ''
 }: HeaderProps) {
+  // Studio brand identity (appName/appTagline/logo) — used as fallback when the
+  // host's own headerConfig branding is not set, so the studio drives it too.
+  const brand = useThemeStore((s) => s.settings);
+  const studioLogo = brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo;
+
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -192,7 +198,7 @@ export function Header({
       >
         {(!headerConfig || headerConfig.showLogo) && headerConfig?.logo !== '' && (
           <img
-            src={headerConfig?.logo || logo}
+            src={headerConfig?.logo || studioLogo}
             alt="OmniEye Logo"
             style={{ height: '64px', width: 'auto', objectFit: 'contain' }}
           />
@@ -210,7 +216,7 @@ export function Header({
                 letterSpacing: 'normal'
               }}
             >
-              {headerConfig?.companyName || 'OomniEye'}
+              {headerConfig?.companyName || brand.appName || 'OomniEye'}
             </div>
           )}
           {(!headerConfig || headerConfig.showCompanyCaption) && (
@@ -226,7 +232,7 @@ export function Header({
                 letterSpacing: '0.05em'
               }}
             >
-              {headerConfig?.companyCaption || 'Digital Twin Solutions'}
+              {headerConfig?.companyCaption || brand.appTagline || 'Digital Twin Solutions'}
             </div>
           )}
         </div>

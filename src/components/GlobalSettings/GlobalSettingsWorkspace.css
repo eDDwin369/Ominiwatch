@@ -233,8 +233,8 @@
 
 .gs-btn-cancel {
   background: var(--bg-card);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-hover);
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 13px;
@@ -250,8 +250,8 @@
 }
 
 .gs-btn-save {
-  background: var(--primary);
-  color: var(--on-accent);
+  background: var(--btn-color);
+  color: var(--btn-text);
   border: 1px solid transparent;
   padding: 10px 20px;
   border-radius: 8px;

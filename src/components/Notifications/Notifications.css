@@ -715,9 +715,9 @@
 }
 
 .notification-action-accept-btn {
-  background: var(--primary);
+  background: var(--btn-color);
   border: none;
-  color: var(--on-accent);
+  color: var(--btn-text);
   font-size: 12px;
   font-weight: 600;
   padding: 6px 18px;

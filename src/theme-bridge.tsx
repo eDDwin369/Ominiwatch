@@ -37,6 +37,17 @@ function syncCssVars(theme: any, settings: any) {
   set('--success', p.success.main);
   set('--warning', p.warning.main);
   set('--danger', p.error.main);
+  set('--info', p.info?.main);
+  // secondary / highlight / card-header / notification-card / button color —
+  // previously unmapped studio tokens, now emitted so host consumers can follow.
+  set('--secondary', p.secondary?.main);
+  set('--secondary-hover', p.secondary?.dark);
+  const tk = theme.tokens || {};
+  set('--highlight', tk.highlight);
+  set('--card-hdr', tk.cardHdrBg);
+  set('--notif-card', tk.toastBg);
+  set('--btn-color', settings.btnColorHex || p.primary.main);
+  set('--btn-text', settings.btnTextHex || p.primary.contrastText);
   // typography — family + the full body type scale so studio size/weight/
   // line-height/spacing changes actually reach the host (index.css reads these).
   const body = theme.typography.body1 || {};

@@ -91,6 +91,16 @@
   --app-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --app-heading-family: 'Google Sans', 'Product Sans', 'Roboto', -apple-system, sans-serif;
   --on-accent: #ffffff;
+  /* Studio tokens wired to host consumers (defaults keep the current look until
+     the studio overrides them). */
+  --secondary: #00897b;
+  --secondary-hover: #00695f;
+  --info: #0288d1;
+  --highlight: var(--primary);
+  --card-hdr: transparent;
+  --notif-card: var(--bg-card);
+  --btn-color: var(--primary);
+  --btn-text: var(--on-accent);
   --app-font-size: 1rem;
   --app-line-height: 1.5;
   --app-font-weight: 400;
@@ -421,8 +431,8 @@ input, button, select, textarea, span, p, div, label, a {
 
 .submit-btn {
   width: 100%;
-  background: var(--accent);
-  color: white;
+  background: var(--btn-color);
+  color: var(--btn-text);
   border: none;
   border-radius: var(--radius-lg);
   padding: var(--spacing-3);

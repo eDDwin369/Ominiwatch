@@ -64,7 +64,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'system' || lower.includes('config') || lower.includes('enabled')) {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#eff6ff', color: 'var(--primary)' }}>
+      <div style={{ ...baseStyle, backgroundColor: 'var(--info-soft, #eff6ff)', color: 'var(--info)' }}>
         <Settings size={12} strokeWidth={2.5} />
       </div>
     );
@@ -140,7 +140,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
         alignItems: 'flex-start',
         padding: '16px',
         borderBottom: 'none',
-        backgroundColor: 'var(--bg-card)',
+        backgroundColor: 'var(--notif-card)',
         width: '100%',
         border: 'none',
         textAlign: 'left',
@@ -150,7 +150,7 @@ export function NotificationCard({ notification, onClick }: NotificationCardProp
         position: 'relative'
       }}
       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)'}
-      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-card)'}
+      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--notif-card)'}
     >
       {/* Left Avatar Column */}
       <div style={{ position: 'relative', width: '42px', height: '42px', flexShrink: 0, marginRight: '14px' }}>
