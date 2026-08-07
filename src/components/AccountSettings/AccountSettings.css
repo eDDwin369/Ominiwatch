@@ -35,12 +35,21 @@
 
 .account-tab:hover {
   color: var(--text-main, var(--text-main));
+  background: var(--highlight-hover);
+  border-radius: 8px 8px 0 0;
 }
 
 .account-tab.active {
-  color: var(--highlight, var(--primary));
+  color: var(--text-main, var(--primary));
   font-weight: 600;
-  border-bottom: 2px solid var(--highlight, var(--primary));
+  background: var(--highlight-hover, var(--primary-light));
+  border-bottom: 2.5px solid var(--highlight, var(--primary));
+}
+
+.account-tab.active:hover {
+  background: var(--highlight-hover);
+  color: var(--text-main, var(--primary));
+  border-radius: 8px 8px 0 0;
 }
 
 .account-tab-content {

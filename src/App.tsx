@@ -385,7 +385,7 @@ function App() {
     <>
       <div className="ambient-glow"></div>
 
-      <div className="login-container">
+      <div className={`login-container ${brand.loginLayout === 'centered' ? 'layout-centered' : ''}`}>
         {/* Left Side - Visual Branding */}
         <div className="visual-panel">
           {brand.loginShowTagline && brand.appTagline && (
@@ -411,7 +411,11 @@ function App() {
         {/* Right Side - Dynamic Forms */}
         <div className="form-panel">
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <img src={logo} alt="Logo" style={{ maxWidth: '312px', height: 'auto' }} />
+            <img 
+              src={brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo} 
+              alt="Logo" 
+              style={{ maxWidth: '312px', height: 'auto', objectFit: 'contain' }} 
+            />
           </div>
           <div className="outer-auth-card">
 

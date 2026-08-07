@@ -338,9 +338,15 @@
 }
 
 .nav-item.active {
-  background: var(--primary-light);
-  color: var(--primary);
+  background: var(--highlight-hover, var(--primary-light));
+  color: var(--highlight, var(--primary));
   font-weight: 600;
+}
+
+.nav-item.active:hover {
+  background: var(--highlight-hover, var(--primary-light));
+  color: var(--highlight, var(--primary));
+  opacity: 0.9;
 }
 
 .nav-section-title {
@@ -1200,8 +1206,8 @@
 .tw-card:hover {
   transform: translateY(-4px) scale(1.01);
   box-shadow: 0 12px 24px -8px rgba(37, 99, 235, 0.15);
-  border-color: var(--primary);
-  background-color: color-mix(in srgb, var(--primary) 4%, var(--bg-card));
+  border-color: var(--highlight);
+  background-color: color-mix(in srgb, var(--highlight) 4%, var(--bg-card));
 }
 
 .tw-card-header {
@@ -1343,8 +1349,8 @@
 .tw-feature-item:hover {
   transform: translateY(-4px) scale(1.01);
   box-shadow: 0 12px 24px -8px rgba(37, 99, 235, 0.15);
-  background-color: color-mix(in srgb, var(--primary) 4%, var(--bg-card));
-  border-color: var(--primary);
+  background-color: color-mix(in srgb, var(--highlight) 4%, var(--bg-card));
+  border-color: var(--highlight);
 }
 
 .tw-feature-icon-wrapper {

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import type { ReactNode } from 'react';
-import { ThemeProvider } from '@mui/material';
+import { ThemeProvider, alpha } from '@mui/material';
 import { useThemeStore, buildMuiTheme } from 'omnieye-theme-studio';
 
 /**
@@ -44,6 +44,7 @@ function syncCssVars(theme: any, settings: any) {
   set('--secondary-hover', p.secondary?.dark);
   const tk = theme.tokens || {};
   set('--highlight', tk.highlight);
+  set('--highlight-hover', alpha(tk.highlight, 0.25));
   set('--card-hdr', tk.cardHdrBg);
   set('--notif-card', tk.toastBg);
   const btnBase = settings.btnColorHex || p.primary.main;

@@ -325,7 +325,7 @@
 .notification-tab-btn {
   background: transparent;
   border: none;
-  color: #5f6368;
+  color: var(--text-secondary, #5f6368);
   padding: 0 16px;
   font-size: 13.5px;
   font-weight: 500;
@@ -336,23 +336,24 @@
   align-items: center;
   height: 100%;
   border-bottom: 3px solid transparent;
-  border-radius: var(--radius-sm) 4px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 
 .notification-tab-btn:hover {
-  background-color: #f1f3f4;
-  color: #202124;
+  background-color: var(--highlight-hover, #f1f3f4);
+  color: var(--text-main, #202124);
 }
 
 .notification-tab-btn.active:hover {
-  color: var(--primary);
+  color: var(--highlight, var(--primary));
+  background-color: var(--highlight-hover, var(--primary-light));
 }
 
 .notification-tab-btn.active {
-  background-color: transparent;
-  color: var(--primary);
+  background-color: var(--highlight-hover, var(--primary-light));
+  color: var(--text-main, var(--primary));
   font-weight: 600;
-  border-bottom: 3px solid var(--primary);
+  border-bottom: 3px solid var(--highlight, var(--primary));
 }
 
 .notification-action-icon-btn:hover {
