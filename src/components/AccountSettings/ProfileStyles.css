@@ -336,7 +336,7 @@
   padding: 4px 12px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: var(--status-weight);
 }
 
 .status-badge.purple {
@@ -1095,9 +1095,9 @@
 
 .settings-card {
   background: var(--bg-card, var(--bg-card));
-  border: 1px solid var(--border-light, var(--border-light));
+  border: var(--card-border);
   border-radius: 16px;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 8px -1px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
   transition: border-color 0.05s ease, box-shadow 0.05s ease;
   /* Keep each card whole within a column and provide vertical rhythm

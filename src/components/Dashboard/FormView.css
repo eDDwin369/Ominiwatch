@@ -13,7 +13,7 @@
 .form-title {
   font-size: var(--text-3xl);
   font-weight: 700;
-  color: #1E293B;
+  color: var(--text-main);
   margin-bottom: var(--spacing-2);
 }
 
@@ -38,7 +38,7 @@
 .form-card-header h2 {
   font-size: var(--text-xl);
   font-weight: 700;
-  color: #1E293B;
+  color: var(--text-main);
 }
 
 .form-card-body {
@@ -49,7 +49,7 @@
 }
 
 .form-section {
-  background: #F8FAFC;
+  background: var(--bg-dashboard);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
   padding: var(--spacing-6);
@@ -180,7 +180,7 @@
 }
 
 .form-footer-card {
-  background: #F8FAFC;
+  background: var(--bg-dashboard);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
   padding: var(--spacing-5) var(--spacing-6);
@@ -202,8 +202,8 @@
 
 .btn-outline {
   background: white;
-  border: 1px solid #1E293B;
-  color: #1E293B;
+  border: 1px solid var(--text-main);
+  color: var(--text-main);
   padding: var(--spacing-3) var(--spacing-5);
   border-radius: var(--radius-md);
   font-size: 13px;

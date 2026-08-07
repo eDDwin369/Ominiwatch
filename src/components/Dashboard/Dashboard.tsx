@@ -151,7 +151,7 @@ export function Dashboard({
       textColor: '#000000',
       textColorApply: 'both',
       companyNameColor: '#000000',
-      companyCaptionColor: '#64748b',
+      companyCaptionColor: 'var(--text-muted)',
       companyNameStyle: 'h1',
       companyCaptionStyle: 'h3'
     };
@@ -353,14 +353,14 @@ export function Dashboard({
         <footer 
           style={{
             height: '32px',
-            backgroundColor: 'var(--bg-card, #ffffff)',
-            borderTop: '1px solid var(--border-light, #e2e8f0)',
+            backgroundColor: 'var(--bg-card, var(--bg-card))',
+            borderTop: '1px solid var(--border-light, var(--border-light))',
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
             padding: '0 20px',
             fontSize: '11.5px',
-            color: 'var(--text-secondary, #64748b)',
+            color: 'var(--text-secondary, var(--text-muted))',
             flexShrink: 0,
             position: 'relative',
             zIndex: (isGlobalSettingsOpen && activeSettingsTab === 'footer') ? 10000 : 40,
@@ -380,13 +380,13 @@ export function Dashboard({
               const url = match ? match[2] : '#';
               return (
                 <span key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>·</span>
+                  <span style={{ color: 'var(--text-secondary, var(--text-muted))' }}>·</span>
                   <a 
                     href={url.startsWith('http') ? url : `https://${url}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
                     style={{ 
-                      color: 'var(--color-primary, #2563eb)', 
+                      color: 'var(--color-primary, var(--primary))', 
                       textDecoration: 'none',
                       fontWeight: 500
                     }}
@@ -400,7 +400,7 @@ export function Dashboard({
             })}
             {footerPoweredByType === 'image' && footerPoweredByImage ? (
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px' }}>
-                <span style={{ color: 'var(--text-secondary, #94a3b8)' }}>|</span>
+                <span style={{ color: 'var(--text-secondary, var(--text-muted))' }}>|</span>
                 <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
               </span>
             ) : null}
@@ -470,8 +470,8 @@ export function Dashboard({
         >
           <div 
             style={{
-              backgroundColor: '#ffffff',
-              border: '1px solid #e2e8f0',
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-light)',
               borderRadius: '16px',
               width: '480px',
               maxWidth: '90%',
@@ -490,7 +490,7 @@ export function Dashboard({
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                color: '#64748b',
+                color: 'var(--text-muted)',
                 padding: '4px',
                 borderRadius: '50%',
                 display: 'flex',
@@ -508,37 +508,37 @@ export function Dashboard({
                 fontWeight: 600, 
                 textTransform: 'uppercase', 
                 letterSpacing: '0.5px',
-                color: '#2563eb',
+                color: 'var(--primary)',
                 backgroundColor: '#eff6ff',
                 padding: '2px 8px',
                 borderRadius: '4px'
               }}>
                 {selectedFullNotification.category}
               </span>
-              <span style={{ fontSize: '12px', color: '#64748b' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                 {new Date(selectedFullNotification.timestamp).toLocaleString()}
               </span>
             </div>
 
             {/* Title */}
-            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', marginBottom: '12px', lineHeight: '1.4' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '12px', lineHeight: '1.4' }}>
               {selectedFullNotification.title}
             </h3>
 
             {/* Description */}
-            <p style={{ fontSize: '14px', color: '#475569', lineHeight: '1.6', marginBottom: '20px' }}>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6', marginBottom: '20px' }}>
               {selectedFullNotification.description}
             </p>
 
             {/* Actor & details if any */}
             {selectedFullNotification.actorName && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', backgroundColor: 'var(--bg-dashboard)', borderRadius: '8px', border: '1px solid var(--border-light)', marginBottom: '20px' }}>
                 <div style={{
                   width: '32px',
                   height: '32px',
                   borderRadius: '50%',
                   backgroundColor: '#dbeafe',
-                  color: '#2563eb',
+                  color: 'var(--primary)',
                   fontWeight: 600,
                   fontSize: '12px',
                   display: 'flex',
@@ -549,27 +549,27 @@ export function Dashboard({
                   {selectedFullNotification.actorName.split(' ').map((n: string) => n[0]).join('')}
                 </div>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#0f172a' }}>{selectedFullNotification.actorName}</div>
-                  <div style={{ fontSize: '11px', color: '#64748b' }}>{selectedFullNotification.actionText || 'Updated details'}</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{selectedFullNotification.actorName}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{selectedFullNotification.actionText || 'Updated details'}</div>
                 </div>
               </div>
             )}
 
             {/* Attachment if any */}
             {selectedFullNotification.attachment && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', backgroundColor: '#f1f5f9', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '20px' }}>
-                <div style={{ width: '32px', height: '32px', backgroundColor: '#ef4444', color: '#ffffff', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', backgroundColor: 'var(--bg-dashboard)', borderRadius: '8px', border: '1px solid var(--border-light)', marginBottom: '20px' }}>
+                <div style={{ width: '32px', height: '32px', backgroundColor: 'var(--danger)', color: 'var(--on-accent)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <FileText size={18} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: '12px', fontWeight: 600, color: '#0f172a', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-main)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     {selectedFullNotification.attachment.name}
                   </div>
-                  <div style={{ fontSize: '11px', color: '#64748b' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
                     {selectedFullNotification.attachment.size}
                   </div>
                 </div>
-                <button style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}>
+                <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}>
                   <Download size={16} />
                 </button>
               </div>
@@ -582,9 +582,9 @@ export function Dashboard({
                 style={{
                   padding: '8px 16px',
                   borderRadius: '8px',
-                  border: '1px solid #e2e8f0',
-                  backgroundColor: '#ffffff',
-                  color: '#0f172a',
+                  border: '1px solid var(--border-light)',
+                  backgroundColor: 'var(--bg-card)',
+                  color: 'var(--text-main)',
                   fontSize: '13px',
                   fontWeight: 500,
                   cursor: 'pointer'

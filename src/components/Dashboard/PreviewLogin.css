@@ -52,7 +52,7 @@
 
 .preview-login-right {
   flex: 1;
-  background-color: #F8FAFC;
+  background-color: var(--bg-dashboard);
   display: flex;
   align-items: center;
   justify-content: center;

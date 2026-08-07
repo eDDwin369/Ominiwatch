@@ -720,6 +720,7 @@
   color: var(--btn-text);
   font-size: 12px;
   font-weight: 600;
+  text-transform: var(--btn-case);
   padding: 6px 18px;
   border-radius: 6px;
   cursor: pointer;

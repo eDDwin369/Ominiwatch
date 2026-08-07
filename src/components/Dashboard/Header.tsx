@@ -226,7 +226,7 @@ export function Header({
                 fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.75rem'),
                 lineHeight: '1.2',
                 color: headerConfig?.companyCaptionColor || 
-                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption') ? headerConfig.textColor : 'var(--text-muted, #64748b)'),
+                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption') ? headerConfig.textColor : 'var(--text-muted, var(--text-muted))'),
                 marginTop: '2px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
@@ -320,8 +320,8 @@ export function Header({
                 cx="12"
                 cy="6"
                 r="2.5"
-                fill="#ef4444"
-                stroke="#ef4444"
+                fill="var(--danger)"
+                stroke="var(--danger)"
                 style={{
                   transformOrigin: '12px 12px',
                   transform: `rotate(${dotRotation}deg)`,
@@ -337,7 +337,7 @@ export function Header({
               top: 'calc(100% + 8px)',
               right: '0',
               backgroundColor: '#1e293b',
-              border: '1px solid #475569',
+              border: '1px solid var(--text-secondary)',
               borderRadius: '8px',
               padding: isHolding ? '8px 12px' : '10px 14px',
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
@@ -349,7 +349,7 @@ export function Header({
               transition: 'width 0.05s ease, padding 0.05s ease'
             }}>
               {isHolding ? (
-                <div style={{ fontWeight: 600, fontSize: '11.5px', color: '#e2e8f0' }}>
+                <div style={{ fontWeight: 600, fontSize: '11.5px', color: 'var(--border-light)' }}>
                   Hold for 500ms
                 </div>
               ) : (
@@ -357,7 +357,7 @@ export function Header({
                   <div style={{ fontWeight: 700, fontSize: '12px', color: 'color-mix(in srgb, var(--primary) 80%, white)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '6px' }}>
                     Theme: {PRESET_THEMES.find(t => t.id === currentTheme)?.label || 'Corporate Blue'}
                   </div>
-                  <div style={{ fontSize: '11px', color: '#e2e8f0', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--border-light)', display: 'flex', flexDirection: 'column', gap: '6px', lineHeight: '1.4' }}>
                     <div style={{ display: 'flex', gap: '6px' }}>
                       <span>•</span>
                       <span><strong>Click</strong> to cycle through preset themes.</span>
@@ -465,7 +465,7 @@ export function Header({
                 position: 'absolute',
                 top: 'calc(100% + 16px)', // Positions it exactly below the header bottom border
                 right: '-12px', // Very little padding from the right edge of the screen
-                background: '#ffffff',
+                background: 'var(--bg-card)',
                 border: '1px solid rgba(0, 0, 0, 0.08)',
                 borderRadius: '14px',
                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02)',
@@ -479,7 +479,7 @@ export function Header({
             >
               {/* Top User Card section */}
               <div style={{
-                background: '#f8fafc',
+                background: 'var(--bg-dashboard)',
                 padding: '16px',
                 borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
                 display: 'flex',
@@ -502,7 +502,7 @@ export function Header({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#ffffff',
+                    color: 'var(--on-accent)',
                     fontWeight: '600',
                     fontSize: '18px',
                     userSelect: 'none',
@@ -528,7 +528,7 @@ export function Header({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#ffffff',
+                    color: 'var(--on-accent)',
                     opacity: isAvatarHovered ? 1 : 0,
                     transition: 'opacity 0.05s ease',
                     borderRadius: '50%'
@@ -557,7 +557,7 @@ export function Header({
                   <div style={{
                     fontWeight: '600',
                     fontSize: '14px',
-                    color: '#0f172a',
+                    color: 'var(--text-main)',
                     letterSpacing: '-0.1px',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -567,7 +567,7 @@ export function Header({
                     B Anand
                   </div>
                   <div style={{
-                    color: '#64748b',
+                    color: 'var(--text-muted)',
                     fontSize: '11px',
                     fontWeight: '450',
                     width: '100%',
@@ -581,7 +581,7 @@ export function Header({
               </div>
 
               {/* Bottom Menu Items */}
-              <div style={{ padding: '4px 0', background: '#ffffff' }}>
+              <div style={{ padding: '4px 0', background: 'var(--bg-card)' }}>
                 {/* Profile Settings Item */}
                 <div
                   onClick={() => {
@@ -595,9 +595,9 @@ export function Header({
                     width: '24px',
                     height: '24px',
                     borderRadius: '50%',
-                    border: '1.5px solid #2563eb',
+                    border: '1.5px solid var(--primary)',
                     backgroundColor: 'transparent',
-                    color: '#2563eb',
+                    color: 'var(--primary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -630,9 +630,9 @@ export function Header({
                     width: '24px',
                     height: '24px',
                     borderRadius: '50%',
-                    border: '1.5px solid #ef4444',
+                    border: '1.5px solid var(--danger)',
                     backgroundColor: 'transparent',
-                    color: '#ef4444',
+                    color: 'var(--danger)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -643,7 +643,7 @@ export function Header({
                   <span style={{
                     fontSize: '13px',
                     fontWeight: '700',
-                    color: '#ef4444'
+                    color: 'var(--danger)'
                   }}>
                     Sign Out
                   </span>

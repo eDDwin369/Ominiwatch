@@ -78,7 +78,7 @@
   letter-spacing: 0.05em;
   color: var(--text-muted);
   padding: var(--spacing-3) var(--spacing-5);
-  background: #FAFBFC;
+  background: var(--bg-dashboard);
   border-top: 1px solid var(--border-light);
   border-bottom: 1px solid var(--border-light);
 }
@@ -95,7 +95,7 @@
 }
 
 .orders-table tr:hover td {
-  background: #FAFBFC;
+  background: var(--bg-dashboard);
 }
 
 .order-id {
@@ -139,7 +139,7 @@
 
 .status-pending {
   background: var(--warning-light);
-  color: #D97706; /* darker warning */
+  color: var(--warning); /* darker warning */
 }
 
 .status-shipped {

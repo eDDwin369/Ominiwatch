@@ -46,8 +46,19 @@ function syncCssVars(theme: any, settings: any) {
   set('--highlight', tk.highlight);
   set('--card-hdr', tk.cardHdrBg);
   set('--notif-card', tk.toastBg);
-  set('--btn-color', settings.btnColorHex || p.primary.main);
+  const btnBase = settings.btnColorHex || p.primary.main;
+  set('--btn-color', settings.accentGradient ? `linear-gradient(135deg, ${btnBase}, ${p.primary.dark})` : btnBase);
   set('--btn-text', settings.btnTextHex || p.primary.contrastText);
+  // shape / surface / density / misc tokens
+  set('--card-border', tk.cardBodyBorder);
+  set('--card-shadow', tk.cardBodyShadow);
+  set('--card-hdr-accent', tk.cardHdrAccent);
+  set('--card-hdr-border', tk.cardHdrBorder);
+  set('--container-pad', tk.containerPad != null ? `${tk.containerPad}px` : undefined);
+  set('--edge-pad', tk.edgePad != null ? `${tk.edgePad}px` : undefined);
+  set('--card-gap', tk.cardGap != null ? `${tk.cardGap}px` : undefined);
+  set('--btn-case', theme.typography.button?.textTransform);
+  set('--status-weight', tk.statusBold ? '700' : '500');
   // typography — family + the full body type scale so studio size/weight/
   // line-height/spacing changes actually reach the host (index.css reads these).
   const body = theme.typography.body1 || {};

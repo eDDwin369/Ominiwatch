@@ -101,6 +101,16 @@
   --notif-card: var(--bg-card);
   --btn-color: var(--primary);
   --btn-text: var(--on-accent);
+  /* shape / surface / density / misc (defaults = current look until studio drives them) */
+  --card-border: 1px solid var(--border-light);
+  --card-shadow: var(--shadow-sm);
+  --card-hdr-accent: none;
+  --card-hdr-border: 1px solid var(--border-light);
+  --container-pad: var(--spacing-5);
+  --edge-pad: 0px;
+  --card-gap: var(--spacing-5);
+  --btn-case: none;
+  --status-weight: 600;
   --app-font-size: 1rem;
   --app-line-height: 1.5;
   --app-font-weight: 400;
@@ -456,6 +466,7 @@ input, button, select, textarea, span, p, div, label, a {
   padding: var(--spacing-3);
   font-size: 0.9rem;
   font-weight: 600;
+  text-transform: var(--btn-case);
   cursor: pointer;
   transition: all 0.05s ease;
   display: flex;

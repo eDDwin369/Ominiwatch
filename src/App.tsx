@@ -627,29 +627,29 @@ function App() {
                     </div>
                     {newPassword.length === 0 ? (
                       <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '0.75rem', fontSize: '0.78rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary, #64748b)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary, var(--text-muted))' }}>
                           <span style={{ fontWeight: 600 }}>•</span> At least 12 characters
                         </div>
                       </div>
                     ) : (
                       (!passwordReqs.length || !passwordReqs.notCommon || !passwordReqs.noPersonal) && (
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '0.75rem', padding: '10px 12px', backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
-                          <Info size={14} style={{ color: '#ef4444', flexShrink: 0, marginTop: '2px' }} />
+                          <Info size={14} style={{ color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#ef4444' }}>Security requirements not met:</span>
+                            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--danger)' }}>Security requirements not met:</span>
                             <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.78rem' }}>
                               {!passwordReqs.length && (
-                                <div style={{ color: 'var(--text-secondary, #64748b)' }}>
+                                <div style={{ color: 'var(--text-secondary, var(--text-muted))' }}>
                                   • At least 12 characters
                                 </div>
                               )}
                               {!passwordReqs.notCommon && (
-                                <div style={{ color: 'var(--text-secondary, #64748b)' }}>
+                                <div style={{ color: 'var(--text-secondary, var(--text-muted))' }}>
                                   • Not a commonly used password
                                 </div>
                               )}
                               {!passwordReqs.noPersonal && (
-                                <div style={{ color: 'var(--text-secondary, #64748b)' }}>
+                                <div style={{ color: 'var(--text-secondary, var(--text-muted))' }}>
                                   • Doesn't contain your email or personal information
                                 </div>
                               )}
@@ -680,7 +680,7 @@ function App() {
                         alignItems: 'center', 
                         gap: '6px', 
                         fontSize: '0.78rem',
-                        color: newPassword === confirmPassword ? 'var(--success, #10b981)' : 'var(--error, #ef4444)',
+                        color: newPassword === confirmPassword ? 'var(--success, var(--success))' : 'var(--error, var(--danger))',
                         transition: 'color 0.05s'
                       }}>
                         {newPassword === confirmPassword ? (

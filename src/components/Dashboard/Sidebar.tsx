@@ -233,13 +233,13 @@ export function Sidebar({
                   width: '44px',
                   height: '44px',
                   borderRadius: '8px',
-                  backgroundColor: isLogoHovered ? '#f1f5f9' : 'transparent',
+                  backgroundColor: isLogoHovered ? 'var(--bg-dashboard)' : 'transparent',
                   border: 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  color: isLogoHovered ? '#1a73e8' : '#64748b',
+                  color: isLogoHovered ? 'var(--primary)' : 'var(--text-muted)',
                   transition: 'all 0.05s ease'
                 }}
                 onMouseEnter={() => setIsLogoHovered(true)}
@@ -284,7 +284,7 @@ export function Sidebar({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: isLocked ? '#2563eb' : '#94a3b8',
+                    color: isLocked ? 'var(--primary)' : 'var(--text-muted)',
                     padding: '4px',
                     borderRadius: '4px',
                     transition: 'all 0.05s ease'
@@ -314,7 +314,7 @@ export function Sidebar({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: '#94a3b8',
+                    color: 'var(--text-muted)',
                     padding: '4px',
                     borderRadius: '4px',
                     transition: 'all 0.05s ease'
