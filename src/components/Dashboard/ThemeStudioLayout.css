@@ -98,7 +98,7 @@
   font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
-  background: #f1f5f9;
+  background: var(--border-light);
   padding: 4px 12px;
   border-radius: 20px;
 }
@@ -113,7 +113,7 @@
 .ts-layout-mock-avatar {
   width: 32px;
   height: 32px;
-  background: #e2e8f0;
+  background: var(--border-light);
   color: #475569;
   border-radius: 50%;
   display: flex;

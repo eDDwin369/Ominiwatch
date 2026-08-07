@@ -221,7 +221,7 @@ export function Sidebar({
               padding: '0',
               alignItems: 'center',
               transition: 'all 0.05s ease',
-              borderBottom: '1px solid var(--border-light, #e2e8f0)'
+              borderBottom: '1px solid var(--border-light, var(--border-light))'
             }}
           >
             <div

@@ -11,7 +11,7 @@
 }
 
 .form-title {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h1-size);
   font-weight: var(--h1-weight);
   color: var(--h1-color);
@@ -37,7 +37,7 @@
 }
 
 .form-card-header h2 {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h3-size);
   font-weight: var(--h3-weight);
   color: var(--h3-color);
@@ -125,7 +125,7 @@
   color: var(--text-main);
   outline: none;
   padding: 4px 0;
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .btn-text {

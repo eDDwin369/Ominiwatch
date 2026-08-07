@@ -38,7 +38,7 @@
 }
 
 .preview-login-title {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h1-size);
   font-weight: var(--h1-weight);
   letter-spacing: -0.02em;
@@ -64,13 +64,13 @@
   max-width: 420px;
   background: white;
   padding: 40px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   border: 1px solid var(--border-light);
 }
 
 .preview-login-card-title {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h2-size);
   font-weight: var(--h2-weight);
   color: var(--h2-color);
@@ -94,7 +94,7 @@
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 14px;
   font-size: 15px;
   font-weight: 600;

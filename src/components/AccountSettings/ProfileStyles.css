@@ -24,7 +24,7 @@
 .account-profile-header-card {
   background: var(--bg-card, var(--bg-card));
   border: 1px solid var(--border-light, var(--border-light));
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 28px 24px;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 8px -1px rgba(0, 0, 0, 0.02);
   position: relative;
@@ -61,7 +61,7 @@
   padding-bottom: 8px;
   text-align: left;
   width: 100%;
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
 }
 
 /* Purple Wavy Decoration */
@@ -188,7 +188,7 @@
   z-index: 15;
   cursor: pointer;
   transition: transform 0.05s;
-  font-family: inherit;
+  font-family: var(--app-font-family);
   user-select: none;
 }
 
@@ -206,7 +206,7 @@
   background: #1e293b;
   color: white;
   padding: 10px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
@@ -280,7 +280,7 @@
   color: var(--h3-color);
   margin: 0;
   letter-spacing: -0.5px;
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   display: inline-flex;
   align-items: center;
 }
@@ -290,7 +290,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #7c3aed; /* Purple */
+  background: var(--primary); /* Purple */
   color: white;
   width: 15px;
   height: 15px;
@@ -303,16 +303,16 @@
 .header-profile-job-purple {
   font-size: 15px;
   font-weight: 700;
-  color: #7c3aed; /* Purple text */
+  color: var(--primary); /* Purple text */
   margin: 4px 0 0 0;
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .header-profile-company-muted {
   font-size: 13px;
   color: var(--text-muted);
   margin: 4px 0 0 0;
-  font-family: inherit;
+  font-family: var(--app-font-family);
   font-weight: 500;
 }
 
@@ -340,8 +340,8 @@
 }
 
 .status-badge.purple {
-  background: #f3e8ff;
-  color: #7c3aed;
+  background: var(--primary-light);
+  color: var(--primary);
 }
 
 .status-badge.green {
@@ -359,7 +359,7 @@
   color: var(--text-muted);
   align-self: flex-start;
   margin-top: 2px;
-  font-family: inherit;
+  font-family: var(--app-font-family);
   text-align: right;
 }
 
@@ -384,21 +384,21 @@
   align-items: center;
   gap: 8px;
   background: transparent;
-  border: 1.5px solid #7c3aed;
-  border-radius: 12px;
-  color: #7c3aed;
+  border: 1.5px solid var(--primary);
+  border-radius: var(--radius-lg);
+  color: var(--primary);
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.05s;
   align-self: center;
-  font-family: inherit;
+  font-family: var(--app-font-family);
   outline: none;
 }
 
 .header-profile-edit-btn-pill:hover {
-  background: #f3e8ff;
+  background: var(--primary-light);
   transform: translateY(-1px);
 }
 
@@ -453,8 +453,8 @@
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: #f3f0ff; /* Light purple backdrop */
-  color: #7c3aed; /* Purple icon */
+  background: var(--primary-light); /* Light purple backdrop */
+  color: var(--primary); /* Purple icon */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -465,7 +465,7 @@
   display: flex;
   flex-direction: column;
   margin-left: 14px;
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .meta-text-label {
@@ -498,7 +498,7 @@
   background: var(--success);
   color: white;
   padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -541,7 +541,7 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .edit-form-input-container {
@@ -554,16 +554,16 @@
   width: 100%;
   padding: 10px 14px;
   border: 1px solid var(--border-hover);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 14px;
   background: var(--bg-card, var(--bg-card));
   color: var(--text-main, var(--text-main));
   transition: all 0.05s;
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .edit-form-input:focus {
-  border-color: #7c3aed;
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
   outline: none;
 }
@@ -587,7 +587,7 @@
 }
 
 .edit-lock-btn:hover {
-  color: #7c3aed;
+  color: var(--primary);
 }
 
 .edit-form-actions {
@@ -600,20 +600,20 @@
 }
 
 .btn-save {
-  background: #7c3aed;
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.05s;
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .btn-save:hover {
-  background: #6d28d9;
+  background: var(--primary-hover);
 }
 
 .btn-save:disabled {
@@ -625,13 +625,13 @@
   background: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border-hover);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.05s;
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .btn-cancel:hover {
@@ -662,7 +662,7 @@
 .security-summary-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -676,7 +676,7 @@
 .security-menu-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -689,7 +689,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13.5px;
   font-weight: 500;
   color: var(--text-secondary);
@@ -728,7 +728,7 @@
 .security-promo-box {
   background: #f5f3ff;
   border: 1px solid #e0d7ff;
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -750,7 +750,7 @@
 }
 
 .security-promo-title {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h6-size);
   font-weight: var(--h6-weight);
   color: var(--h6-color);
@@ -768,7 +768,7 @@
   background: #5850ec;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 8px 24px;
   font-size: 12.5px;
   font-weight: 600;
@@ -791,7 +791,7 @@
 .security-main-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 24px;
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02), 0 2px 4px -1px rgba(0,0,0,0.01);
   display: flex;
@@ -814,7 +814,7 @@
 .security-card-icon-wrapper {
   width: 44px;
   height: 44px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -836,7 +836,7 @@
   font-weight: var(--h4-weight);
   color: var(--h4-color);
   margin: 0;
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
 }
 
 .security-card-subtitle {
@@ -848,7 +848,7 @@
 .security-refresh-btn {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 6px 14px;
   font-size: 13px;
   font-weight: 500;
@@ -869,7 +869,7 @@
 .security-alert-box {
   background: #ecfdf5;
   border: 1px solid #a7f3d0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 10px 14px;
   display: flex;
   align-items: center;
@@ -892,7 +892,7 @@
   justify-content: space-between;
   padding: 16px;
   border: 1px solid var(--border-light);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   transition: all 0.05s;
 }
 
@@ -919,7 +919,7 @@
   flex-shrink: 0;
 }
 
-.security-device-circle.purple { background: #f5f3ff; color: #7c3aed; }
+.security-device-circle.purple { background: #f5f3ff; color: var(--primary); }
 .security-device-circle.blue { background: #eff6ff; color: #3b82f6; }
 .security-device-circle.green { background: #ecfdf5; color: var(--success); }
 
@@ -942,7 +942,7 @@
   color: #059669;
   font-size: 11px;
   padding: 2px 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-weight: 500;
 }
 
@@ -1097,7 +1097,7 @@
 .settings-card {
   background: var(--bg-card, var(--bg-card));
   border: var(--card-border);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   box-shadow: var(--card-shadow);
   overflow: hidden;
   transition: border-color 0.05s ease, box-shadow 0.05s ease;

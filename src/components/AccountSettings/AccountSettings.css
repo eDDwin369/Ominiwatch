@@ -30,7 +30,7 @@
   cursor: pointer;
   border-bottom: 2px solid transparent;
   transition: all 0.05s;
-  font-family: inherit;
+  font-family: var(--app-font-family);
 }
 
 .account-tab:hover {

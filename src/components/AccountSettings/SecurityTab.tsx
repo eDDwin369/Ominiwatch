@@ -34,7 +34,7 @@ export function SecurityTab() {
       ip: '123.45.67.89',
       lastActive: 'Just now',
       icon: Laptop,
-      circleColor: '#f3e8ff',
+      circleColor: 'var(--primary-light)',
       iconColor: '#9333ea'
     },
     {

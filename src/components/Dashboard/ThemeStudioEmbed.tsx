@@ -27,7 +27,7 @@ export function ThemeStudioEmbed({ onClose }: ThemeStudioEmbedProps) {
           gap: '6px',
           padding: '6px 12px',
           borderRadius: '8px',
-          border: '1px solid var(--border-light, #e2e8f0)',
+          border: '1px solid var(--border-light, var(--border-light))',
           background: 'var(--bg-card, #ffffff)',
           color: 'var(--text-main, #0f172a)',
           fontSize: '13px',

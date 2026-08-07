@@ -520,7 +520,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                               <span>Secondary Text</span>
                             </div>
                             <div className="ts-color-list-item">
-                              <div className="ts-color-swatch-sm" style={{ background: '#e2e8f0', border: '1px solid #cbd5e1' }}></div>
+                              <div className="ts-color-swatch-sm" style={{ background: 'var(--border-light)', border: '1px solid #cbd5e1' }}></div>
                               <span>Divider</span>
                             </div>
                           </div>
@@ -674,7 +674,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                 max="100" 
                 value={zoomLevel} 
                 onChange={(e) => setZoomLevel(Number(e.target.value))}
-                style={{ flex: 1, accentColor: '#e2e8f0', cursor: 'pointer' }}
+                style={{ flex: 1, accentColor: 'var(--border-light)', cursor: 'pointer' }}
               />
             </div>
 
@@ -682,7 +682,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
               <button 
                 onClick={() => setIsCropperOpen(false)}
-                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', backgroundColor: '#ffffff', color: '#475569', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid var(--border-light)', backgroundColor: '#ffffff', color: '#475569', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
               >
                 Cancel
               </button>

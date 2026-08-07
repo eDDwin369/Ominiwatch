@@ -33,7 +33,7 @@
   height: 560px;
   max-height: 90vh;
   background: var(--bg-card);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
@@ -67,7 +67,7 @@
 }
 
 .gs-header-left h2 {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h4-size);
   font-weight: var(--h4-weight);
   color: var(--h4-color);
@@ -89,7 +89,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
@@ -169,7 +169,7 @@
 .gs-config-card {
   background: var(--bg-card);
   border: 1px solid var(--border-light);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 16px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -184,7 +184,7 @@
 }
 
 .gs-card-title {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h5-size);
   font-weight: var(--h5-weight);
   color: var(--h5-color);
@@ -214,7 +214,7 @@
   color: #DC2626;
   border: 1px solid transparent;
   padding: 10px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -238,7 +238,7 @@
   color: var(--secondary);
   border: 1px solid var(--secondary);
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -256,7 +256,7 @@
   color: var(--btn-text);
   border: 1px solid transparent;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13px;
   font-weight: 600;
   text-transform: var(--btn-case);
@@ -292,7 +292,7 @@
 }
 
 .gs-tab-title {
-  font-family: var(--app-heading-family);
+  font-family: var(--app-font-family);
   font-size: var(--h4-size);
   font-weight: var(--h4-weight);
   color: var(--h4-color);
