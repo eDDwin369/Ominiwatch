@@ -38,8 +38,9 @@
 }
 
 .preview-login-title {
-  font-size: 32px;
-  font-weight: 800;
+  font-family: var(--app-heading-family);
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
   letter-spacing: -0.02em;
   margin-bottom: var(--spacing-2);
 }
@@ -69,9 +70,10 @@
 }
 
 .preview-login-card-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text-main);
+  font-family: var(--app-heading-family);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  color: var(--h2-color);
   margin-bottom: 4px;
 }
 

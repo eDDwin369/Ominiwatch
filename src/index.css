@@ -111,6 +111,12 @@
   --card-gap: var(--spacing-5);
   --btn-case: none;
   --status-weight: 600;
+  /* chrome + login layout (defaults = current look until studio drives them) */
+  --appbar-h: 64px;
+  --login-card-w: 360px;
+  --login-img-opacity: 1;
+  --login-panel-color: transparent;
+  --notif-badge-display: block;
   --app-font-size: 1rem;
   --app-line-height: 1.5;
   --app-font-weight: 400;
@@ -216,9 +222,24 @@ input, button, select, textarea, span, p, div, label, a {
   flex: 7.7;
   position: relative;
   display: none;
-  background: url('./assets/login-bg.jpg') center/cover no-repeat;
+  background-color: var(--login-panel-color, transparent);
+  background-image: var(--login-image, url('./assets/login-bg.jpg'));
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border-right: 1px solid var(--border-subtle);
   overflow: hidden;
+}
+
+/* login-image opacity: overlay tints the panel toward its colour as opacity drops */
+.visual-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--login-panel-color, #0f172a);
+  opacity: calc(1 - var(--login-img-opacity, 1));
+  pointer-events: none;
+  z-index: 1;
 }
 
 @media (min-width: 900px) {
@@ -249,9 +270,10 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .visual-content h2 {
-  font-size: 2.75rem;
-  font-weight: 500;
-  line-height: 1.15;
+  font-family: var(--app-heading-family);
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  line-height: var(--heading-lh, 1.15);
   margin-bottom: 1.25rem;
 }
 
@@ -312,7 +334,7 @@ input, button, select, textarea, span, p, div, label, a {
 
 .outer-auth-card {
   width: 100%;
-  max-width: 360px;
+  max-width: var(--login-card-w, 360px);
   background-color: var(--bg-surface);
   border-radius: 24px;
   padding: var(--spacing-6);
@@ -336,8 +358,9 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .form-header h1 {
-  font-size: var(--text-2xl);
-  font-weight: 600;
+  font-family: var(--app-heading-family);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
   margin-bottom: var(--spacing-1);
 }
 
@@ -816,8 +839,9 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .brand-title-large {
-  font-size: 36px;
-  font-weight: 700;
+  font-family: var(--app-heading-family);
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
   margin-bottom: 16px;
 }
 

@@ -67,9 +67,10 @@
 }
 
 .gs-header-left h2 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-main);
+  font-family: var(--app-heading-family);
+  font-size: var(--h4-size);
+  font-weight: var(--h4-weight);
+  color: var(--h4-color);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -183,9 +184,10 @@
 }
 
 .gs-card-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-main);
+  font-family: var(--app-heading-family);
+  font-size: var(--h5-size);
+  font-weight: var(--h5-weight);
+  color: var(--h5-color);
   margin: 0;
 }
 
@@ -290,9 +292,10 @@
 }
 
 .gs-tab-title {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1e3a8a;
+  font-family: var(--app-heading-family);
+  font-size: var(--h4-size);
+  font-weight: var(--h4-weight);
+  color: var(--h4-color);
   margin: 0;
 }
 

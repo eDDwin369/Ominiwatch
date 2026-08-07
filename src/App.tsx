@@ -4,10 +4,13 @@ import './index.css';
 import logo from './assets/logo.png';
 import gmailBg from './assets/gmail-bg.jpg';
 import { Dashboard } from './components/Dashboard/Dashboard';
+import { useThemeStore } from 'omnieye-theme-studio';
 
 type Screen = 'login' | 'forgot-password' | 'otp' | 'new-password' | 'success' | 'dashboard' | 'forgot-username';
 
 function App() {
+  // Studio login tokens: tagline text + whether to show it, on the login panel.
+  const brand = useThemeStore((s) => s.settings);
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
   const [showLanding, setShowLanding] = useState(true);
 
@@ -385,6 +388,24 @@ function App() {
       <div className="login-container">
         {/* Left Side - Visual Branding */}
         <div className="visual-panel">
+          {brand.loginShowTagline && brand.appTagline && (
+            <div
+              style={{
+                position: 'relative',
+                zIndex: 2,
+                margin: 'auto',
+                padding: '3.5rem',
+                color: '#ffffff',
+                fontSize: '2rem',
+                fontWeight: 600,
+                lineHeight: 1.2,
+                textShadow: '0 2px 8px rgba(0,0,0,0.35)',
+                fontFamily: 'var(--app-heading-family)',
+              }}
+            >
+              {brand.appTagline}
+            </div>
+          )}
         </div>
 
         {/* Right Side - Dynamic Forms */}

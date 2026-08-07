@@ -59,6 +59,13 @@ function syncCssVars(theme: any, settings: any) {
   set('--card-gap', tk.cardGap != null ? `${tk.cardGap}px` : undefined);
   set('--btn-case', theme.typography.button?.textTransform);
   set('--status-weight', tk.statusBold ? '700' : '500');
+  // chrome + login layout tokens
+  set('--appbar-h', settings.appBarH > 0 ? `${settings.appBarH}px` : undefined);
+  set('--login-card-w', settings.loginCardW > 0 ? `${settings.loginCardW}px` : undefined);
+  set('--login-img-opacity', settings.loginImgOpacity > 0 ? String(settings.loginImgOpacity / 100) : undefined);
+  set('--login-panel-color', settings.loginPanelColor || undefined);
+  set('--login-image', settings.loginImage ? `url(${settings.loginImage})` : undefined);
+  set('--notif-badge-display', settings.notifBadge === false ? 'none' : 'block');
   // typography — family + the full body type scale so studio size/weight/
   // line-height/spacing changes actually reach the host (index.css reads these).
   const body = theme.typography.body1 || {};

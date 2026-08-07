@@ -11,9 +11,10 @@
 }
 
 .form-title {
-  font-size: var(--text-3xl);
-  font-weight: 700;
-  color: var(--text-main);
+  font-family: var(--app-heading-family);
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  color: var(--h1-color);
   margin-bottom: var(--spacing-2);
 }
 
@@ -36,9 +37,10 @@
 }
 
 .form-card-header h2 {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--text-main);
+  font-family: var(--app-heading-family);
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  color: var(--h3-color);
 }
 
 .form-card-body {

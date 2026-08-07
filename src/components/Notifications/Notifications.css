@@ -55,9 +55,10 @@
 }
 
 .notification-header h3 {
-  font-size: 16px;
-  font-weight: 700;
-  color: #111827;
+  font-family: var(--app-heading-family);
+  font-size: var(--h4-size);
+  font-weight: var(--h4-weight);
+  color: var(--h4-color);
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -175,9 +176,10 @@
 }
 
 .notification-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
+  font-family: var(--app-heading-family);
+  font-size: var(--h5-size);
+  font-weight: var(--h5-weight);
+  color: var(--h5-color);
   margin-bottom: 4px;
   display: flex;
   justify-content: space-between;
@@ -288,9 +290,10 @@
 }
 
 .notifications-page-title {
-  font-size: 32px;
-  font-weight: 600;
-  color: var(--text-main);
+  font-family: var(--app-heading-family);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  color: var(--h2-color);
   letter-spacing: -1px;
 }
 
@@ -411,6 +414,7 @@
   background-color: var(--danger);
   border-radius: 50%;
   border: 2px solid var(--bg-card);
+  display: var(--notif-badge-display, block);
 }
 
 /* Mobile responsive */
@@ -478,9 +482,10 @@
 }
 
 .new-notification-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-main);
+  font-family: var(--app-heading-family);
+  font-size: var(--h4-size);
+  font-weight: var(--h4-weight);
+  color: var(--h4-color);
   margin: 0;
 }
 
