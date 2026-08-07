@@ -88,7 +88,7 @@
 
   /* App typography — overwritten live by the Theme Studio bridge (theme-bridge.tsx).
      Defaults match the previous hardcoded values so nothing changes before it runs. */
-  --app-font-family: var(--app-font-family);
+  --app-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --app-heading-family: 'Google Sans', 'Product Sans', 'Roboto', -apple-system, sans-serif;
   --on-accent: #ffffff;
   /* Studio tokens wired to host consumers (defaults keep the current look until

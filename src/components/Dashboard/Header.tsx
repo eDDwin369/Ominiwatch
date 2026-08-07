@@ -7,12 +7,12 @@ import logo from '../../assets/logo.png';
 import './Dashboard.css';
 
 const PRESET_THEMES = [
-  { id: 'corporate-blue', label: 'Corporate Blue' },
-  { id: 'emerald', label: 'Emerald Green' },
-  { id: 'indigo-violet', label: 'Indigo Violet' },
-  { id: 'graphite', label: 'Graphite Charcoal' },
-  { id: 'ocean-teal', label: 'Ocean Teal' },
-  { id: 'amber', label: 'Amber Orange' }
+  { id: 'corporate', label: 'Corporate Blue', snap: { primaryHex: '#1565c0', secondaryHex: '#00897b', iconColor: '#1565c0' } },
+  { id: 'emerald', label: 'Emerald Green', snap: { primaryHex: '#2e7d32', secondaryHex: '#00897b', iconColor: '#2e7d32' } },
+  { id: 'indigo', label: 'Indigo Violet', snap: { primaryHex: '#3949ab', secondaryHex: '#7c4dff', iconColor: '#3949ab' } },
+  { id: 'slate', label: 'Graphite Charcoal', snap: { primaryHex: '#455a64', secondaryHex: '#78909c', iconColor: '#455a64' } },
+  { id: 'teal', label: 'Ocean Teal', snap: { primaryHex: '#00838f', secondaryHex: '#0277bd', iconColor: '#00838f' } },
+  { id: 'amber', label: 'Amber Orange', snap: { primaryHex: '#e65100', secondaryHex: '#d84315', iconColor: '#e65100' } }
 ];
 
 interface HeaderProps {
@@ -55,6 +55,8 @@ export function Header({
   // Studio brand identity (appName/appTagline/logo) — used as fallback when the
   // host's own headerConfig branding is not set, so the studio drives it too.
   const brand = useThemeStore((s) => s.settings);
+  const set = useThemeStore((s) => s.set);
+  const applyPreset = useThemeStore((s) => s.applyPreset);
   const studioLogo = brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo;
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -64,7 +66,7 @@ export function Header({
   const [isHolding, setIsHolding] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
-  const [currentTheme, setCurrentTheme] = useState<string>('corporate-blue');
+  const [currentTheme, setCurrentTheme] = useState<string>('corporate');
   // Monotonic rotation (degrees) for the orbiting dot so cycling always spins
   // forward — deriving it from index * 60 made the dot spin backwards when the
   // theme index wrapped from the last preset back to the first.
@@ -75,12 +77,15 @@ export function Header({
   const didLongPressRef = useRef<boolean>(false);
   const toastTimeoutRef = useRef<any>(null);
 
-  // Initialize theme from document element on mount
+  // Sync theme status from the Zustand store
   useEffect(() => {
-    const active = document.documentElement.getAttribute('data-theme') || 'corporate-blue';
+    const active = brand.presetId || 'corporate';
     setCurrentTheme(active);
     const activeIndex = PRESET_THEMES.findIndex(t => t.id === active);
     setDotRotation((activeIndex < 0 ? 0 : activeIndex) * 60);
+  }, [brand.presetId]);
+
+  useEffect(() => {
     return () => {
       if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
@@ -90,7 +95,7 @@ export function Header({
     const currentIndex = PRESET_THEMES.findIndex(t => t.id === currentTheme);
     const nextIndex = (currentIndex + 1) % PRESET_THEMES.length;
     const nextTheme = PRESET_THEMES[nextIndex];
-    document.documentElement.setAttribute('data-theme', nextTheme.id);
+    applyPreset(nextTheme.id, nextTheme.snap);
     setCurrentTheme(nextTheme.id);
     // Always advance the dot forward by one step (never snap backwards on wrap).
     setDotRotation(prev => prev + 60);
@@ -100,9 +105,11 @@ export function Header({
     didLongPressRef.current = false;
     setIsHolding(true);
     longPressTimerRef.current = setTimeout(() => {
-      const currentMode = document.documentElement.getAttribute('data-theme-mode') || 'light';
+      const currentMode = brand.mode || 'light';
       const nextMode = currentMode === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme-mode', nextMode);
+      set({ mode: nextMode });
+      
+      // Dispatch event for other components if needed
       window.dispatchEvent(new CustomEvent('theme-mode-change', { detail: nextMode }));
       didLongPressRef.current = true;
       setIsHolding(false);
