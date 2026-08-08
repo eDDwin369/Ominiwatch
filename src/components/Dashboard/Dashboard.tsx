@@ -306,7 +306,10 @@ export function Dashboard({
             ) : (
               <div className={`dashboard-container ${currentView === 'overview' ? 'no-padding' : ''}`}>
                 {currentView === 'overview' ? (
-                  <TemplateWelcome onNavigate={handleSetCurrentView} />
+                  <TemplateWelcome
+                    onNavigate={handleSetCurrentView}
+                    onOpenSettings={() => setIsGlobalSettingsOpen(true)}
+                  />
                 ) : currentView === 'notifications' ? (
                   <NotificationsPage 
                     notifications={notifications}
