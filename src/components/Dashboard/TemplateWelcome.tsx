@@ -1,340 +1,761 @@
-import {
-  CheckCircle2,
-  HelpCircle,
-  Hexagon,
-  ArrowRight,
-  BookOpen,
-  Brush,
-  Palette,
-  Blocks,
-  ShieldCheck,
-  LayoutTemplate,
-  Sliders,
-  PaintBucket,
-  Zap,
-  Boxes,
-  Lock
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { 
+  Play, 
+  Pause, 
+  ChevronLeft, 
+  ChevronRight,
+  Maximize2,
+  Minimize2,
+  Volume2,
+  VolumeX,
+  Settings,
+  CheckCircle2
 } from 'lucide-react';
 import './Dashboard.css';
 
 interface TemplateWelcomeProps {
-  onNavigate?: (view: string) => void;
-  onOpenSettings?: () => void;
+  onNavigate?: (tab: string) => void;
+  onSettingsClick?: () => void;
+  productName?: string;
+  stepGifs?: { [key: number]: string };
 }
 
-// The project's documentation file (resolved to a served asset URL by Vite in
-// both dev and build). "View Docs" opens it in a new tab.
-const DOCS_URL = new URL('../../../README.md', import.meta.url).href;
+export function TemplateWelcome({
+  onNavigate: _onNavigate, 
+  onSettingsClick: _onSettingsClick, 
+  productName: _productName = 'My Product',
+  stepGifs: _stepGifs
+}: TemplateWelcomeProps) {
+  // Related Ventures data for Version 2 layout
+  const venturesData = [
+    {
+      id: 'brand',
+      prefix: 'Set up Your',
+      highlight: 'Brand',
+      gradientClass: 'v6-gradient-brand',
+      title: 'Set up Your Brand',
+      image: '/assets/venture_appliance.png'
+    },
+    {
+      id: 'appearance',
+      prefix: 'Customize Your',
+      highlight: 'Appearance',
+      gradientClass: 'v6-gradient-appearance',
+      title: 'Customize Your Appearance',
+      image: 'https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      id: 'content',
+      prefix: 'Build Your',
+      highlight: 'Content',
+      gradientClass: 'v6-gradient-content',
+      title: 'Build Your Content',
+      image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop'
+    }
+  ];
 
-/* --- Decorative illustrations -------------------------------------------------
-   All artwork is drawn in `currentColor`, which each card sets to --on-accent.
-   That keeps every illustration a "white-glass" motif that contrasts any accent
-   colour AND recolours automatically when the Theme Studio palette changes —
-   no hardcoded hues live here. */
+  const [activeVentureIndex, setActiveVentureIndex] = useState<number>(0);
 
-const HeroArt = () => (
-  <svg className="tw-hero-art" viewBox="0 0 340 220" fill="none" aria-hidden="true"
-       style={{ color: 'var(--on-accent)' }}>
-    {/* circuit traces */}
-    <g stroke="currentColor" strokeWidth="2" fill="none">
-      <path d="M0 46 H108 L136 74 H250" strokeOpacity="0.14" />
-      <path d="M0 104 H70 L100 134 H320" strokeOpacity="0.10" />
-      <path d="M214 0 V54 L244 84 H340" strokeOpacity="0.14" />
-      <path d="M40 160 H150 L176 134" strokeOpacity="0.08" />
-    </g>
-    <g fill="currentColor">
-      <circle cx="108" cy="46" r="4" fillOpacity="0.22" />
-      <circle cx="100" cy="134" r="4" fillOpacity="0.18" />
-      <circle cx="244" cy="84" r="4" fillOpacity="0.22" />
-    </g>
-    {/* glowing shield */}
-    <g transform="translate(196 26)">
-      <path d="M62 6 L114 26 V74 C114 110 90 136 62 150 C34 136 10 110 10 74 V26 Z"
-            fill="currentColor" fillOpacity="0.08"
-            stroke="currentColor" strokeOpacity="0.55" strokeWidth="3" />
-      <path d="M62 30 L92 42 V74 C92 98 80 116 62 126 C44 116 32 98 32 74 V42 Z"
-            fill="currentColor" fillOpacity="0.06"
-            stroke="currentColor" strokeOpacity="0.30" strokeWidth="2" />
-      <path d="M62 30 V126 M32 62 L62 78 M92 62 L62 78 M32 92 L62 78 M92 92 L62 78"
-            stroke="currentColor" strokeOpacity="0.28" strokeWidth="2" />
-    </g>
-  </svg>
-);
+  // Video player state
+  const [isPlayingVideo, setIsPlayingVideo] = useState<boolean>(true);
+  const [videoProgress, setVideoProgress] = useState<number>(35);
+  const [isAutoPlaying] = useState<boolean>(true);
+  const [isVideoExpanded, setIsVideoExpanded] = useState<boolean>(false);
+  const [isClosingCinema, setIsClosingCinema] = useState<boolean>(false);
+  const [isMuted, setIsMuted] = useState<boolean>(false);
+  const [volume, setVolume] = useState<number>(80);
+  const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState<string>('1.0x');
 
-const IllustBranding = () => (
-  <svg className="tw-card-art" viewBox="0 0 140 140" fill="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="tw-brand-card" x1="52" y1="34" x2="112" y2="100" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#ffffff" /><stop offset="1" stopColor="#e2e8f0" />
-      </linearGradient>
-      <linearGradient id="tw-brand-m" x1="64" y1="52" x2="96" y2="86" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#ec4899" /><stop offset="0.5" stopColor="#a855f7" /><stop offset="1" stopColor="#06b6d4" />
-      </linearGradient>
-      <linearGradient id="tw-brand-wood" x1="35" y1="6" x2="49" y2="60" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#a1887f" /><stop offset="1" stopColor="#5d4037" />
-      </linearGradient>
-      <filter id="tw-shadow-a" x="-40%" y="-30%" width="180%" height="170%">
-        <feDropShadow dx="0" dy="6" stdDeviation="5" floodColor="#000000" floodOpacity="0.35" />
-      </filter>
-    </defs>
-    <g filter="url(#tw-shadow-a)">
-      <rect x="52" y="34" width="60" height="66" rx="12" fill="url(#tw-brand-card)" />
-      <path d="M66 84 V56 L79 72 L92 56 V84" fill="none" stroke="url(#tw-brand-m)" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
-    </g>
-    <g filter="url(#tw-shadow-a)" transform="rotate(36 42 58)">
-      <rect x="35" y="6" width="14" height="54" rx="7" fill="url(#tw-brand-wood)" />
-      <rect x="34" y="58" width="16" height="15" fill="#b0bec5" />
-      <rect x="34" y="65" width="16" height="8" fill="#90a4ae" />
-      <path d="M35 73 h14 c3 15 -3 27 -7 27 c-4 0 -10 -12 -7 -27 z" fill="#db2777" />
-      <path d="M42 100 c-3 6 -9 8 -13 5 c3 -6 7 -8 13 -5 z" fill="#f9a8d4" />
-    </g>
-  </svg>
-);
+  // Exact YouTube Controls States from Screenshot
+  const [isAutoplay, setIsAutoplay] = useState<boolean>(true);
+  const [showSubtitles, setShowSubtitles] = useState<boolean>(true);
+  const [isMiniplayer, setIsMiniplayer] = useState<boolean>(false);
 
-const IllustTheme = () => (
-  <svg className="tw-card-art" viewBox="0 0 140 140" fill="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="tw-pal-white" x1="16" y1="24" x2="118" y2="120" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#ffffff" /><stop offset="1" stopColor="#e2e8f0" />
-      </linearGradient>
-      <filter id="tw-shadow-b" x="-25%" y="-25%" width="160%" height="160%">
-        <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#000000" floodOpacity="0.3" />
-      </filter>
-    </defs>
-    <g filter="url(#tw-shadow-b)">
-      <path d="M70 24 C102 24 118 46 118 68 C118 84 106 90 94 90 C86 90 84 98 84 106 C84 116 76 120 66 120 C38 120 16 98 16 72 C16 46 40 24 70 24 Z" fill="url(#tw-pal-white)" />
-      <ellipse cx="62" cy="98" rx="10" ry="8" fill="#0b3e63" opacity="0.22" />
-      <circle cx="50" cy="48" r="8" fill="#ef4444" />
-      <circle cx="78" cy="42" r="9" fill="#f59e0b" />
-      <circle cx="100" cy="58" r="7" fill="#10b981" />
-      <circle cx="102" cy="80" r="8" fill="#3b82f6" />
-      <circle cx="78" cy="88" r="7" fill="#8b5cf6" />
-      <circle cx="50" cy="74" r="6" fill="#ec4899" />
-    </g>
-    <g filter="url(#tw-shadow-b)" transform="translate(92,92)">
-      <rect x="0" y="0" width="46" height="30" rx="6" fill="#1e293b" />
-      <rect x="6" y="6" width="15" height="12" rx="3" fill="#0ea5e9" />
-      <text x="13" y="16" fill="#ffffff" fontSize="10" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">A</text>
-      <text x="26" y="21" fill="#f8fafc" fontSize="9" fontWeight="600" fontFamily="sans-serif">Font</text>
-    </g>
-  </svg>
-);
+  // Completed Video Steps Tracking (Persisted in localStorage)
+  const [completedSteps, setCompletedSteps] = useState<{ [key: string]: boolean }>(() => {
+    try {
+      const saved = localStorage.getItem('twineye_completed_video_steps');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
 
-const IllustContent = () => {
-  const block = (dx: number, dy: number, top: string, left: string, right: string) => (
-    <g transform={`translate(${dx} ${dy})`}>
-      <path d="M0 16 L18 6 L36 16 L18 26 Z" fill={top} />
-      <path d="M0 16 L18 26 L18 48 L0 38 Z" fill={left} />
-      <path d="M36 16 L18 26 L18 48 L36 38 Z" fill={right} />
-    </g>
-  );
+  const markCurrentStepCompleted = () => {
+    const currentId = venturesData[activeVentureIndex]?.id;
+    if (!currentId) return;
+    setCompletedSteps(prev => {
+      if (prev[currentId]) return prev;
+      const updated = { ...prev, [currentId]: true };
+      localStorage.setItem('twineye_completed_video_steps', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleOpenCinema = () => {
+    setIsVideoExpanded(true);
+    // Request native browser fullscreen if supported so it covers tabs & browser header
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  };
+
+  const handleCloseCinema = () => {
+    if (isClosingCinema) return;
+    setIsClosingCinema(true);
+    markCurrentStepCompleted();
+    setTimeout(() => {
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+      setIsVideoExpanded(false);
+      setIsClosingCinema(false);
+    }, 350);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isVideoExpanded) {
+        handleCloseCinema();
+      }
+    };
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement && isVideoExpanded && !isClosingCinema) {
+        setIsClosingCinema(true);
+        setTimeout(() => {
+          setIsVideoExpanded(false);
+          setIsClosingCinema(false);
+        }, 350);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [isVideoExpanded, isClosingCinema]);
+
+  // Ambient Particle Canvas Ref for Version 2
+  const particleCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Intro text sequence for Version 2 video screen ("Welcome to" -> "OmniEye")
+  const [introTextIndex, setIntroTextIndex] = useState<number>(0);
+  const introPhrases = ['Welcome to', 'OmniEye'];
+
+  // Full Dashboard Pure Black Intro Screen State for Version 2 ("Welcome to" -> "OomniEye")
+  const [showFullIntro, setShowFullIntro] = useState<boolean>(true);
+  const [introPhase, setIntroPhase] = useState<'welcome' | 'omni'>('welcome');
+  const [isIntroFadingOut, setIsIntroFadingOut] = useState<boolean>(false);
+
+  const handleDismissIntro = () => {
+    if (isIntroFadingOut) return;
+    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+    setIsIntroFadingOut(true);
+    setTimeout(() => {
+      setShowFullIntro(false);
+    }, 800);
+  };
+
+  useEffect(() => {
+    setShowFullIntro(true);
+    setIntroPhase('welcome');
+    setIsIntroFadingOut(false);
+
+    // Request native browser fullscreen on user interaction to cover browser tabs & header
+    const triggerNativeFullscreen = () => {
+      if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    };
+
+    window.addEventListener('click', triggerNativeFullscreen, { once: true });
+
+    const timer1 = setTimeout(() => {
+      setIntroPhase('omni');
+    }, 2000);
+
+    const timer2 = setTimeout(() => {
+      setIsIntroFadingOut(true);
+    }, 3800);
+
+    const timer3 = setTimeout(() => {
+      setShowFullIntro(false);
+    }, 4600);
+
+    return () => {
+      window.removeEventListener('click', triggerNativeFullscreen);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIntroTextIndex(prev => (prev + 1) % introPhrases.length);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Video scrubbing simulation & step auto-play timer
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>;
+    if (isPlayingVideo) {
+      timer = setInterval(() => {
+        setVideoProgress(prev => {
+          if (prev >= 85) {
+            markCurrentStepCompleted();
+          }
+          if (prev >= 100) {
+            if (isAutoPlaying) {
+              setActiveVentureIndex(current => (current >= venturesData.length - 1 ? 0 : current + 1));
+            }
+            return 0;
+          }
+          return prev + 1.5;
+        });
+      }, 450);
+    }
+    return () => clearInterval(timer);
+  }, [isPlayingVideo, isAutoPlaying, activeVentureIndex, venturesData]);
+
+  // Canvas particle wave animation for Version 2 background
+  useEffect(() => {
+    const canvas = particleCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = (canvas.width = canvas.parentElement?.offsetWidth || window.innerWidth);
+    let height = (canvas.height = canvas.parentElement?.offsetHeight || window.innerHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = canvas.parentElement?.offsetWidth || window.innerWidth;
+      height = canvas.height = canvas.parentElement?.offsetHeight || window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    const numParticles = 45;
+    const particles = Array.from({ length: numParticles }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: Math.random() * 1.2 + 0.4,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: (Math.random() - 0.5) * 0.25,
+      alpha: Math.random() * 0.25 + 0.08
+    }));
+
+    let step = 0;
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+      step += 0.015;
+
+      particles.forEach((p, i) => {
+        p.x += p.vx + Math.sin(step + i) * 0.3;
+        p.y += p.vy + Math.cos(step + i * 0.5) * 0.2;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * 0.25})`;
+        ctx.fill();
+      });
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   return (
-    <svg className="tw-card-art" viewBox="0 0 140 140" fill="none" aria-hidden="true">
-      <defs>
-        <filter id="tw-shadow-c" x="-25%" y="-25%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="5" stdDeviation="5" floodColor="#000000" floodOpacity="0.3" />
-        </filter>
-      </defs>
-      <g filter="url(#tw-shadow-c)">
-        <rect x="12" y="20" width="72" height="54" rx="8" fill="#ffffff" />
-        <path d="M12 28 a8 8 0 0 1 8 -8 h56 a8 8 0 0 1 8 8 v2 H12 Z" fill="#e2e8f0" />
-        <circle cx="20" cy="24" r="2" fill="#94a3b8" /><circle cx="28" cy="24" r="2" fill="#cbd5e1" />
-        <rect x="20" y="40" width="26" height="20" rx="3" fill="#e2e8f0" />
-        <rect x="52" y="40" width="22" height="7" rx="3" fill="#e2e8f0" />
-        <rect x="52" y="52" width="22" height="7" rx="3" fill="#e2e8f0" />
-      </g>
-      <g filter="url(#tw-shadow-c)">
-        {block(74, 44, '#ffffff', '#e2e8f0', '#cbd5e1')}
-        {block(60, 66, '#7dd3fc', '#38bdf8', '#0284c7')}
-        {block(88, 78, '#fdba74', '#f97316', '#c2410c')}
-      </g>
-    </svg>
-  );
-};
+    <>
+      {/* Fixed Full Screen Black Intro Overlay for Version 2 (Rendered at document.body level to prevent sidebar clipping) */}
+      {showFullIntro && typeof document !== 'undefined' && document.body && createPortal(
+        <div 
+          className={`v2-full-dashboard-intro-overlay ${introPhase === 'omni' ? 'phase-omni' : 'phase-welcome'} ${isIntroFadingOut ? 'intro-fade-out' : ''}`}
+          onClick={handleDismissIntro}
+          title="Click anywhere to skip intro"
+        >
+          <div className="v2-sonar-ring ring-1" />
+          <div className="v2-sonar-ring ring-2" />
+          <div className="v2-sonar-ring ring-3" />
 
-/* --- Main component ---------------------------------------------------------- */
-export function TemplateWelcome({ onNavigate, onOpenSettings }: TemplateWelcomeProps) {
-  const openThemeStudio = () => onNavigate?.('theme-studio');
-  const openSettings = () => onOpenSettings?.();
-  const openDocs = () => window.open(DOCS_URL, '_blank', 'noopener,noreferrer');
-
-  return (
-    <div className="template-welcome dashboard-fade-in">
-      <div className="tw-bg-blob tw-blob-1"></div>
-      <div className="tw-bg-blob tw-blob-2"></div>
-      <div className="tw-bg-blob tw-blob-3"></div>
-      <div className="tw-parent-card">
-
-        {/* Hero + Getting Started cards overlap into one block */}
-        <div className="tw-hero-block">
-          <div className="tw-header">
-            <HeroArt />
-            <div className="tw-title-row">
-              <span className="tw-brand-mark" aria-hidden="true"><Hexagon size={24} strokeWidth={2.5} /></span>
-              <h2 className="tw-brand">MyProduct</h2>
-              <div className="tw-badge">
-                <CheckCircle2 size={14} />
-                <span>Template Active</span>
-              </div>
-              <div className="tw-info-tooltip" title="OomniEye dashboard shell — configure branding, theming and content from the cards below.">
-                <HelpCircle size={18} />
-              </div>
-            </div>
-            <p className="tw-hero-subtitle">
-              An enterprise dashboard shell with authentication, a configurable layout, and a
-              token-driven theme engine — branding, theming and content, ready to ship.
-            </p>
-            <h3 className="tw-section-title tw-section-title--onhero">Getting started</h3>
+          <div key={introPhase} className={`v2-full-intro-text ${introPhase === 'welcome' ? 'text-welcome' : 'text-omni'}`}>
+            {introPhase === 'welcome' ? 'Welcome to' : 'OomniEye'}
           </div>
 
-          <div className="tw-grid-3">
-            {/* Card 1 — Branding via Global Settings */}
-            <div className="tw-card tw-card--accent tw-accent-1">
-              <span className="tw-card-illust" aria-hidden="true"><IllustBranding /></span>
-              <div className="tw-card-header">
-                <div className="tw-icon-wrapper"><Brush size={20} /></div>
-                <h4>Configure Branding</h4>
+          <div className="v2-skip-intro-hint">Click anywhere to enter full screen ⤢</div>
+        </div>,
+        document.body
+      )}
+
+      <div className={`dash-layout-container dashboard-fade-in mode-v2 v2-active-${venturesData[activeVentureIndex].id}`}>
+
+      {/* Top Header Row */}
+      <div className="dash-top-header-row">
+        <div className="dash-header-left">
+          <div className="dash-breadcrumb-bar anim-header-entry">
+            <h3 className="dash-breadcrumb-text">
+              <span className="v6-dashboard-title">Dashboard</span>
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      {/* ==================== VERSION 2: Executive Minimal Ice Blue Card Layout ==================== */}
+      <div className="v2-ice-full-container">
+        {/* Ambient Particle Animation Layer */}
+        <div className="ambient-particles-layer" aria-hidden="true">
+          <canvas ref={particleCanvasRef} className="v2-bottom-particle-wave-canvas" />
+          <div className="particle-orb orb-1" />
+          <div className="particle-orb orb-2" />
+          <div className="particle-orb orb-3" />
+          <div className="particle-orb orb-4" />
+          <div className="particle-orb orb-5" />
+          <div className="particle-orb orb-6" />
+          <div className="particle-orb orb-7" />
+          <div className="particle-orb orb-8" />
+        </div>
+
+        <div className="v2-ice-card">
+          <div className="v6-ventures-body">
+            {/* Left Column: Venture Titles */}
+            <div className="v6-ventures-left">
+              {/* Prefix line above */}
+              <div className="v2-prefix-line">
+                {venturesData[activeVentureIndex].prefix}
               </div>
-              <p>
-                Set your product name, logo, header, footer and sidebar from the Global
-                Settings workspace. Every change previews live and is saved to your browser.
-              </p>
-              <div className="tw-card-footer">
-                <button type="button" className="tw-cta-btn" onClick={openSettings}>
-                  Configure <ArrowRight size={14} />
-                </button>
-                <span className="tw-tag">Global Settings</span>
+
+              {/* Step highlights list below */}
+              <div className="v6-highlight-list">
+                {venturesData.map((venture, idx) => {
+                  const isCompleted = !!completedSteps[venture.id];
+                  return (
+                    <div
+                      key={venture.id}
+                      className={`v2-highlight-item ${idx === activeVentureIndex ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
+                      onClick={() => setActiveVentureIndex(idx)}
+                    >
+                      <span className={`v2-text-span ${venture.gradientClass}`}>
+                        {venture.highlight}
+                      </span>
+                      {isCompleted && (
+                        <span className="v2-completed-tick-badge" title="Video watching completed">
+                          <CheckCircle2 size={22} className="v2-completed-tick-icon" />
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Card 2 — Theme Studio */}
-            <div className="tw-card tw-card--accent tw-accent-2">
-              <span className="tw-card-illust" aria-hidden="true"><IllustTheme /></span>
-              <div className="tw-card-header">
-                <div className="tw-icon-wrapper"><Palette size={20} /></div>
-                <h4>Theme Studio</h4>
-              </div>
-              <p>
-                Tune colours, typography, spacing, radius and elevation with live token
-                editing across the brand themes, plus one-tap light and dark mode.
-              </p>
-              <div className="tw-card-footer">
-                <button type="button" className="tw-cta-btn" onClick={openThemeStudio}>
-                  Open Theme Studio <ArrowRight size={14} />
-                </button>
-                <span className="tw-tag">6 brand themes</span>
-              </div>
-            </div>
+            {/* Right Column: Rectangular Video Player Placeholder */}
+            <div className="v5-ventures-right">
+              <div className="v5-video-player-container">
+                {/* Rectangular Video Frame */}
+                <div className="v5-video-screen">
+                  {/* Intro Animated Text Overlay with Sonar Rings */}
+                  <div className="v2-intro-animated-text-stage" aria-hidden="true">
+                    <div className="v2-sonar-ring ring-1" />
+                    <div className="v2-sonar-ring ring-2" />
+                    <div className="v2-sonar-ring ring-3" />
+                    
+                    <div key={introTextIndex} className="v2-intro-text-anim-item">
+                      {introPhrases[introTextIndex]}
+                    </div>
+                  </div>
 
-            {/* Card 3 — Build content / docs */}
-            <div className="tw-card tw-card--accent tw-accent-3">
-              <span className="tw-card-illust" aria-hidden="true"><IllustContent /></span>
-              <div className="tw-card-header">
-                <div className="tw-icon-wrapper"><Blocks size={20} /></div>
-                <h4>Build Your Content</h4>
-              </div>
-              <p>
-                Drop your own pages into the ready-made shell — header, sidebar, footer,
-                routing and display-scaling are already wired. The setup guide walks you through it.
-              </p>
-              <div className="tw-card-footer">
-                <button type="button" className="tw-cta-btn" onClick={openDocs}>
-                  View Docs <BookOpen size={14} />
-                </button>
-                <span className="tw-tag">Setup guide</span>
+                  <img 
+                    src={venturesData[activeVentureIndex].image} 
+                    alt={venturesData[activeVentureIndex].title}
+                    className="v5-video-poster v5-anim-fade-img"
+                    key={venturesData[activeVentureIndex].id}
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/assets/venture_appliance.png';
+                    }}
+                  />
+
+                  {/* Dark Vignette Overlay */}
+                  <div className="v5-video-overlay-gradient" />
+
+
+
+                  {/* Center Glass Play/Pause Button */}
+                  <button 
+                    className="v5-center-play-btn"
+                    onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+                    title={isPlayingVideo ? "Pause Video" : "Play Video"}
+                  >
+                    {isPlayingVideo ? <Pause size={24} /> : <Play size={24} style={{ marginLeft: 3 }} />}
+                  </button>
+
+                  {/* YouTube Style Media Controls Bar */}
+                  <div className="v5-yt-controls-container">
+                    {/* YouTube Red Scrubber Track */}
+                    <div 
+                      className="v5-yt-progress-area"
+                      title="Click to scrub"
+                      onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const clickX = e.clientX - rect.left;
+                        const newPct = Math.min(100, Math.max(0, (clickX / rect.width) * 100));
+                        setVideoProgress(newPct);
+                      }}
+                    >
+                      <div className="v5-yt-progress-bg">
+                        <div className="v5-yt-progress-fill" style={{ width: `${videoProgress}%` }}>
+                          <div className="v5-yt-scrub-handle" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* YouTube Controls Row */}
+                    <div className="v5-yt-controls-row">
+                      {/* Left Controls Group (Play, Volume, Time 0:21 / 0:45) */}
+                      <div className="v5-yt-left-group">
+                        <button 
+                          className="v5-yt-btn"
+                          onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+                          title={isPlayingVideo ? "Pause (k)" : "Play (k)"}
+                        >
+                          {isPlayingVideo ? <Pause size={19} fill="currentColor" /> : <Play size={19} fill="currentColor" style={{ marginLeft: 2 }} />}
+                        </button>
+
+                        <div className="v5-yt-volume-group">
+                          <button 
+                            className="v5-yt-btn"
+                            onClick={() => setIsMuted(!isMuted)}
+                            title={isMuted ? "Unmute (m)" : "Mute (m)"}
+                          >
+                            {isMuted || volume === 0 ? <VolumeX size={19} /> : <Volume2 size={19} />}
+                          </button>
+                          <input 
+                            type="range" 
+                            min="0" 
+                            max="100" 
+                            value={isMuted ? 0 : volume}
+                            onChange={(e) => {
+                              setVolume(Number(e.target.value));
+                              if (Number(e.target.value) > 0) setIsMuted(false);
+                            }}
+                            className="v5-yt-volume-slider"
+                            title="Volume"
+                          />
+                        </div>
+
+                        <div className="v5-yt-time">
+                          <span>{`0:${Math.floor((videoProgress / 100) * 45).toString().padStart(2, '0')} / 0:45`}</span>
+                        </div>
+                      </div>
+
+                      {/* Right Controls Group (Autoplay, CC, Gear + Red HD Badge, Miniplayer, Expand) */}
+                      <div className="v5-yt-right-group">
+                        {/* Autoplay Switch Toggle */}
+                        <button 
+                          className={`v5-yt-autoplay-btn ${isAutoplay ? 'active' : ''}`}
+                          onClick={() => setIsAutoplay(!isAutoplay)}
+                          title={isAutoplay ? "Autoplay is on" : "Autoplay is off"}
+                        >
+                          <div className="v5-yt-autoplay-track">
+                            <div className="v5-yt-autoplay-thumb">
+                              <Play size={8} fill="currentColor" />
+                            </div>
+                          </div>
+                        </button>
+
+                        {/* Subtitles / CC Button */}
+                        <button 
+                          className={`v5-yt-cc-btn ${showSubtitles ? 'active' : ''}`}
+                          onClick={() => setShowSubtitles(!showSubtitles)}
+                          title="Subtitles/closed captions (c)"
+                        >
+                          <span>CC</span>
+                        </button>
+
+                        {/* Settings Gear with Red HD Quality Badge */}
+                        <div style={{ position: 'relative' }}>
+                          <button 
+                            className="v5-yt-btn v5-yt-gear-btn"
+                            onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                            title="Settings"
+                          >
+                            <Settings size={18} style={{ transform: showSettingsMenu ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                            <span className="v5-yt-hd-red-badge">HD</span>
+                          </button>
+
+                          {showSettingsMenu && (
+                            <div className="v5-yt-settings-popup">
+                              <div className="v5-yt-settings-header">Speed: {playbackSpeed}</div>
+                              {['0.5x', '1.0x', '1.5x', '2.0x'].map((speed) => (
+                                <button
+                                  key={speed}
+                                  className={`v5-yt-settings-item ${playbackSpeed === speed ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setPlaybackSpeed(speed);
+                                    setShowSettingsMenu(false);
+                                  }}
+                                >
+                                  {speed} {playbackSpeed === speed ? '✓' : ''}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Miniplayer / Embed Layout Button */}
+                        <button 
+                          className="v5-yt-cc-btn v5-yt-embed-btn"
+                          onClick={() => setIsMiniplayer(!isMiniplayer)}
+                          title="Miniplayer (i)"
+                        >
+                          <span style={{ fontSize: 10, letterSpacing: -1, fontWeight: 700 }}>&lt;/&gt;</span>
+                        </button>
+
+                        {/* Fullscreen / Expand Toggle */}
+                        <button 
+                          className="v5-yt-btn v5-yt-expand-btn"
+                          onClick={handleOpenCinema}
+                          title="Fullscreen (f)"
+                        >
+                          <Maximize2 size={19} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Controls: Step Navigation Arrows & Dots */}
+                <div className="v5-player-footer-row">
+                  <button 
+                    className="v5-nav-btn"
+                    onClick={() => setActiveVentureIndex(prev => (prev <= 0 ? venturesData.length - 1 : prev - 1))}
+                    title="Previous Step"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+
+                  <div className="v5-carousel-dots">
+                    {venturesData.map((_, idx) => (
+                      <span
+                        key={idx}
+                        className={`v5-dot ${idx === activeVentureIndex ? 'active' : ''}`}
+                        onClick={() => setActiveVentureIndex(idx)}
+                      />
+                    ))}
+                  </div>
+
+                  <button 
+                    className="v5-nav-btn"
+                    onClick={() => setActiveVentureIndex(prev => (prev >= venturesData.length - 1 ? 0 : prev + 1))}
+                    title="Next Step"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* What's already built */}
-        <section className="tw-section tw-feature-box">
-          <div className="tw-feature-header">
-            <h3>What's already built</h3>
-          </div>
-
-          <div className="tw-grid-2">
-            <div className="tw-feature-item tw-accent-1">
-              <div className="tw-feature-icon-wrapper icon-gradient-1"><ShieldCheck size={20} /></div>
-              <div>
-                <h4>Authentication</h4>
-                <ul className="tw-feature-list">
-                  <li>Email &amp; password sign-in</li>
-                  <li>5-step OTP password reset</li>
-                  <li>Remember-me with API-ready hooks</li>
-                </ul>
-              </div>
-            </div>
-            <div className="tw-feature-item tw-accent-2">
-              <div className="tw-feature-icon-wrapper icon-gradient-2"><LayoutTemplate size={20} /></div>
-              <div>
-                <h4>Layout Shell</h4>
-                <ul className="tw-feature-list">
-                  <li>Sticky header &amp; pinnable sidebar</li>
-                  <li>Notification center &amp; profile menu</li>
-                  <li>Auto display-scaling to fit any screen</li>
-                </ul>
-              </div>
-            </div>
-            <div className="tw-feature-item tw-accent-3">
-              <div className="tw-feature-icon-wrapper icon-gradient-3"><Sliders size={20} /></div>
-              <div>
-                <h4>Settings System</h4>
-                <ul className="tw-feature-list">
-                  <li>Branding for header, footer &amp; sidebar</li>
-                  <li>Customer profile &amp; logo</li>
-                  <li>Live preview with local persistence</li>
-                </ul>
-              </div>
-            </div>
-            <div className="tw-feature-item tw-accent-4">
-              <div className="tw-feature-icon-wrapper icon-gradient-4"><PaintBucket size={20} /></div>
-              <div>
-                <h4>Theme Engine</h4>
-                <ul className="tw-feature-list">
-                  <li>Multiple brand themes + light/dark</li>
-                  <li>Token-driven colour &amp; typography</li>
-                  <li>Spacing, radius &amp; elevation control</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Platform highlights — anchors the bottom of the page */}
-        <section className="tw-section tw-highlights" aria-label="Platform highlights">
-          <div className="tw-highlights-grid">
-            <div className="tw-highlight">
-              <div className="tw-highlight-icon icon-gradient-2"><Zap size={18} /></div>
-              <div className="tw-highlight-text">
-                <span className="tw-highlight-value">Production-ready</span>
-                <span className="tw-highlight-label">React + TypeScript + Vite</span>
-              </div>
-            </div>
-            <div className="tw-highlight">
-              <div className="tw-highlight-icon icon-gradient-1"><Palette size={18} /></div>
-              <div className="tw-highlight-text">
-                <span className="tw-highlight-value">6 brand themes</span>
-                <span className="tw-highlight-label">with light &amp; dark mode</span>
-              </div>
-            </div>
-            <div className="tw-highlight">
-              <div className="tw-highlight-icon icon-gradient-4"><Boxes size={18} /></div>
-              <div className="tw-highlight-text">
-                <span className="tw-highlight-value">Token-driven</span>
-                <span className="tw-highlight-label">colour, type, spacing &amp; shape</span>
-              </div>
-            </div>
-            <div className="tw-highlight">
-              <div className="tw-highlight-icon icon-gradient-3"><Lock size={18} /></div>
-              <div className="tw-highlight-text">
-                <span className="tw-highlight-value">Secure by default</span>
-                <span className="tw-highlight-label">login &amp; OTP reset flow</span>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
+
+    {/* Cinema 16:9 Lightbox Modal Portal when expanded */}
+    {isVideoExpanded && createPortal(
+      <div 
+        className={`v5-cinema-overlay-backdrop ${isClosingCinema ? 'v5-cinema-closing' : ''}`}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) handleCloseCinema();
+        }}
+      >
+        <div className="v5-cinema-video-frame">
+          {/* Intro Animated Text Overlay */}
+          <div className="v2-intro-animated-text-stage" aria-hidden="true">
+            <div className="v2-sonar-ring ring-1" />
+            <div className="v2-sonar-ring ring-2" />
+            <div className="v2-sonar-ring ring-3" />
+            
+            <div key={introTextIndex} className="v2-intro-text-anim-item">
+              {introPhrases[introTextIndex]}
+            </div>
+          </div>
+
+          <img 
+            src={venturesData[activeVentureIndex].image} 
+            alt={venturesData[activeVentureIndex].title}
+            className="v5-video-poster v5-anim-fade-img"
+            key={venturesData[activeVentureIndex].id}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/assets/venture_appliance.png';
+            }}
+          />
+
+          <div className="v5-video-overlay-gradient" />
+
+
+
+          {/* Center Play/Pause Glass Button */}
+          <button 
+            className="v5-center-play-btn"
+            onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+            title={isPlayingVideo ? "Pause" : "Play"}
+          >
+            {isPlayingVideo ? <Pause size={28} /> : <Play size={28} style={{ marginLeft: 3 }} />}
+          </button>
+
+          {/* YouTube Media Controls Bar */}
+          <div className="v5-yt-controls-container">
+            <div 
+              className="v5-yt-progress-area"
+              title="Click to scrub"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const newPct = Math.min(100, Math.max(0, (clickX / rect.width) * 100));
+                setVideoProgress(newPct);
+              }}
+            >
+              <div className="v5-yt-progress-bg">
+                <div className="v5-yt-progress-fill" style={{ width: `${videoProgress}%` }}>
+                  <div className="v5-yt-scrub-handle" />
+                </div>
+              </div>
+            </div>
+
+            <div className="v5-yt-controls-row">
+              {/* Left Controls Group (Play, Volume, Time 0:21 / 0:45) */}
+              <div className="v5-yt-left-group">
+                <button 
+                  className="v5-yt-btn"
+                  onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+                  title={isPlayingVideo ? "Pause (k)" : "Play (k)"}
+                >
+                  {isPlayingVideo ? <Pause size={19} fill="currentColor" /> : <Play size={19} fill="currentColor" style={{ marginLeft: 2 }} />}
+                </button>
+
+                <div className="v5-yt-volume-group">
+                  <button 
+                    className="v5-yt-btn"
+                    onClick={() => setIsMuted(!isMuted)}
+                    title={isMuted ? "Unmute (m)" : "Mute (m)"}
+                  >
+                    {isMuted || volume === 0 ? <VolumeX size={19} /> : <Volume2 size={19} />}
+                  </button>
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    value={isMuted ? 0 : volume}
+                    onChange={(e) => {
+                      setVolume(Number(e.target.value));
+                      if (Number(e.target.value) > 0) setIsMuted(false);
+                    }}
+                    className="v5-yt-volume-slider"
+                    title="Volume"
+                  />
+                </div>
+
+                <div className="v5-yt-time">
+                  <span>{`0:${Math.floor((videoProgress / 100) * 45).toString().padStart(2, '0')} / 0:45`}</span>
+                </div>
+              </div>
+
+              {/* Right Controls Group (Autoplay, CC, Gear + Red HD Badge, Miniplayer, Expand) */}
+              <div className="v5-yt-right-group">
+                {/* Autoplay Switch Toggle */}
+                <button 
+                  className={`v5-yt-autoplay-btn ${isAutoplay ? 'active' : ''}`}
+                  onClick={() => setIsAutoplay(!isAutoplay)}
+                  title={isAutoplay ? "Autoplay is on" : "Autoplay is off"}
+                >
+                  <div className="v5-yt-autoplay-track">
+                    <div className="v5-yt-autoplay-thumb">
+                      <Play size={8} fill="currentColor" />
+                    </div>
+                  </div>
+                </button>
+
+                {/* Subtitles / CC Button */}
+                <button 
+                  className={`v5-yt-cc-btn ${showSubtitles ? 'active' : ''}`}
+                  onClick={() => setShowSubtitles(!showSubtitles)}
+                  title="Subtitles/closed captions (c)"
+                >
+                  <span>CC</span>
+                </button>
+
+                {/* Settings Gear with Red HD Quality Badge */}
+                <div style={{ position: 'relative' }}>
+                  <button 
+                    className="v5-yt-btn v5-yt-gear-btn"
+                    onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                    title="Settings"
+                  >
+                    <Settings size={18} style={{ transform: showSettingsMenu ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                    <span className="v5-yt-hd-red-badge">HD</span>
+                  </button>
+
+                  {showSettingsMenu && (
+                    <div className="v5-yt-settings-popup">
+                      <div className="v5-yt-settings-header">Speed: {playbackSpeed}</div>
+                      {['0.5x', '1.0x', '1.5x', '2.0x'].map((speed) => (
+                        <button
+                          key={speed}
+                          className={`v5-yt-settings-item ${playbackSpeed === speed ? 'active' : ''}`}
+                          onClick={() => {
+                            setPlaybackSpeed(speed);
+                            setShowSettingsMenu(false);
+                          }}
+                        >
+                          {speed} {playbackSpeed === speed ? '✓' : ''}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Miniplayer / Embed Layout Button */}
+                <button 
+                  className="v5-yt-cc-btn v5-yt-embed-btn"
+                  onClick={() => setIsMiniplayer(!isMiniplayer)}
+                  title="Miniplayer (i)"
+                >
+                  <span style={{ fontSize: 10, letterSpacing: -1, fontWeight: 700 }}>&lt;/&gt;</span>
+                </button>
+
+                {/* Fullscreen / Expand Toggle */}
+                <button 
+                  className="v5-yt-btn v5-yt-expand-btn"
+                  onClick={handleCloseCinema}
+                  title="Exit Fullscreen"
+                >
+                  <Minimize2 size={19} />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
+
+export default TemplateWelcome;

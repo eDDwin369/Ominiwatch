@@ -45,9 +45,9 @@ function App() {
   const [sidebarAutoHide, setSidebarAutoHide] = useState(() => {
     try {
       const saved = localStorage.getItem('gs_autoHideSidebar');
-      return saved !== null ? JSON.parse(saved) : false; // Default: false
+      return saved !== null ? JSON.parse(saved) : true; // Default: true (Hidden by default)
     } catch {
-      return false;
+      return true;
     }
   });
 
