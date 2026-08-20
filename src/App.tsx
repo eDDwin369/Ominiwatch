@@ -45,9 +45,9 @@ function App() {
   const [sidebarAutoHide, setSidebarAutoHide] = useState(() => {
     try {
       const saved = localStorage.getItem('gs_autoHideSidebar');
-      return saved !== null ? JSON.parse(saved) : false; // Default: false
+      return saved !== null ? JSON.parse(saved) : true; // Default: true (Hidden by default)
     } catch {
-      return false;
+      return true;
     }
   });
 
@@ -396,7 +396,7 @@ function App() {
                 margin: 'auto',
                 padding: '3.5rem',
                 color: '#ffffff',
-                fontSize: '2rem',
+                fontSize: 'var(--font-size-display)',
                 fontWeight: 600,
                 lineHeight: 1.2,
                 textShadow: '0 2px 8px rgba(0,0,0,0.35)',
@@ -462,7 +462,7 @@ function App() {
                     <label 
                       className="checkbox-wrapper"
                       style={{
-                        fontSize: '0.78rem',
+                        fontSize: 'var(--font-size-caption)',
                         fontWeight: 400,
                         color: 'var(--text-secondary)'
                       }}
@@ -487,7 +487,7 @@ function App() {
                         href="#"
                         onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
                         style={{
-                          fontSize: '0.78rem',
+                          fontSize: 'var(--font-size-caption)',
                           color: 'var(--text-secondary)',
                           textDecoration: 'none',
                           transition: 'color 0.05s'
@@ -537,7 +537,7 @@ function App() {
                       href="#"
                       onClick={(e) => { e.preventDefault(); setCurrentScreen('login'); }}
                       style={{
-                        fontSize: '0.78rem',
+                        fontSize: 'var(--font-size-caption)',
                         color: 'var(--text-secondary)',
                         textDecoration: 'none',
                         transition: 'color 0.05s'
@@ -554,7 +554,7 @@ function App() {
 
             {currentScreen === 'otp' && (
               <div className="fade-in">
-                <div style={{ textAlign: 'center', marginBottom: '1.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                <div style={{ textAlign: 'center', marginBottom: '1.5rem', fontSize: 'var(--font-size-h4)', color: 'var(--text-secondary)' }}>
                   If the email is registered, we've sent a verification code.
                 </div>
                 <div className="otp-container" style={{ margin: '1rem 0' }}>
@@ -582,13 +582,13 @@ function App() {
                 
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
                   {timeLeft > 0 ? (
-                    <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Resend code in {timeLeft}s</span>
+                    <span style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-secondary)' }}>Resend code in {timeLeft}s</span>
                   ) : (
                     <a
                       href="#"
                       onClick={(e) => { e.preventDefault(); handleResendOtp(); }}
                       style={{
-                        fontSize: '0.78rem',
+                        fontSize: 'var(--font-size-caption)',
                         color: 'var(--accent)',
                         textDecoration: 'none',
                         fontWeight: 500
@@ -613,7 +613,7 @@ function App() {
                     href="#"
                     onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
                     style={{
-                      fontSize: '0.78rem',
+                      fontSize: 'var(--font-size-caption)',
                       color: 'var(--text-secondary)',
                       textDecoration: 'none',
                       transition: 'color 0.05s'
@@ -651,7 +651,7 @@ function App() {
                       </button>
                     </div>
                     {newPassword.length === 0 ? (
-                      <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '0.75rem', fontSize: '0.78rem' }}>
+                      <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '0.75rem', fontSize: 'var(--font-size-caption)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary, var(--text-muted))' }}>
                           <span style={{ fontWeight: 600 }}>•</span> At least 12 characters
                         </div>
@@ -661,8 +661,8 @@ function App() {
                         <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '0.75rem', padding: '10px 12px', backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
                           <Info size={14} style={{ color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--danger)' }}>Security requirements not met:</span>
-                            <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '0.78rem' }}>
+                            <span style={{ fontSize: 'var(--font-size-caption)', fontWeight: 600, color: 'var(--danger)' }}>Security requirements not met:</span>
+                            <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: 'var(--font-size-caption)' }}>
                               {!passwordReqs.length && (
                                 <div style={{ color: 'var(--text-secondary, var(--text-muted))' }}>
                                   • At least 12 characters
@@ -704,7 +704,7 @@ function App() {
                         display: 'flex', 
                         alignItems: 'center', 
                         gap: '6px', 
-                        fontSize: '0.78rem',
+                        fontSize: 'var(--font-size-caption)',
                         color: newPassword === confirmPassword ? 'var(--success, var(--success))' : 'var(--error, var(--danger))',
                         transition: 'color 0.05s'
                       }}>
@@ -734,7 +734,7 @@ function App() {
                       href="#"
                       onClick={(e) => { e.preventDefault(); setCurrentScreen('login'); }}
                       style={{
-                        fontSize: '0.78rem',
+                        fontSize: 'var(--font-size-caption)',
                         color: 'var(--text-secondary)',
                         textDecoration: 'none',
                         transition: 'color 0.05s'
@@ -754,7 +754,7 @@ function App() {
                 <div className="success-icon-wrapper" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
                   <CheckCircle2 className="success-icon" size={64} color="var(--success)" />
                 </div>
-                <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2rem' }}>
+                <div style={{ fontSize: 'var(--font-size-body)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2rem' }}>
                   Password Updated Successfully
                 </div>
                 <button

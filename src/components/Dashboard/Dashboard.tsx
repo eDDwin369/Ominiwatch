@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, FileText, Download } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { X, FileText, Download, CheckCircle2 } from 'lucide-react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { TemplateWelcome } from './TemplateWelcome';
@@ -83,7 +83,7 @@ export function Dashboard({
   const [editProfileOnLoad, setEditProfileOnLoad] = useState(false);
   const [footerVisible, setFooterVisible] = useState(() => {
     const saved = localStorage.getItem('gs_footerVisible');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [copyrightText, setCopyrightText] = useState(() => {
     return localStorage.getItem('gs_copyrightText') || '© {year} OomniEye. All rights reserved.';
@@ -105,16 +105,17 @@ export function Dashboard({
   // Customer Profile states
   const [showCustomerProfile, setShowCustomerProfile] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerProfile');
-    return saved !== null ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : true;
   });
   const [customerName, setCustomerName] = useState(() => {
-    return localStorage.getItem('gs_customerName') || 'Default Customer';
+    return localStorage.getItem('gs_customerName') || 'OomniEye';
   });
   const [customerNameStyle, setCustomerNameStyle] = useState(() => {
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
   });
   const [customerNameColor, setCustomerNameColor] = useState(() => {
-    return localStorage.getItem('gs_customerNameColor') || '#1e293b';
+    const saved = localStorage.getItem('gs_customerNameColor');
+    return (saved && saved !== '#1e293b') ? saved : '#ffffff';
   });
   const [customerColorFollow, setCustomerColorFollow] = useState(() => {
     const saved = localStorage.getItem('gs_customerColorFollow');
@@ -122,10 +123,23 @@ export function Dashboard({
   });
   const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerLogo');
-    return saved !== null ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : true;
   });
   const [customerLogo, setCustomerLogo] = useState(() => {
     return localStorage.getItem('gs_customerLogo') || '';
+  });
+  const [showCustomerCaption, setShowCustomerCaption] = useState(() => {
+    const saved = localStorage.getItem('gs_showCustomerCaption');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [customerCaption, setCustomerCaption] = useState(() => {
+    return localStorage.getItem('gs_customerCaption') || 'Digital Twin Solutions';
+  });
+  const [customerCaptionStyle, setCustomerCaptionStyle] = useState(() => {
+    return localStorage.getItem('gs_customerCaptionStyle') || 'h3';
+  });
+  const [customerCaptionColor, setCustomerCaptionColor] = useState(() => {
+    return localStorage.getItem('gs_customerCaptionColor') || 'rgba(255, 255, 255, 0.65)';
   });
   const [footerLinks, setFooterLinks] = useState<string[]>(() => {
     try {
@@ -139,6 +153,16 @@ export function Dashboard({
   // Global settings modal state
   const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState<string>('');
+  const [globalToast, setGlobalToast] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
+  const globalToastTimeoutRef = useRef<any>(null);
+
+  const showGlobalToast = (message: string) => {
+    if (globalToastTimeoutRef.current) clearTimeout(globalToastTimeoutRef.current);
+    setGlobalToast({ visible: true, message });
+    globalToastTimeoutRef.current = setTimeout(() => {
+      setGlobalToast({ visible: false, message: '' });
+    }, 3500);
+  };
   const [headerConfig, setHeaderConfig] = useState(() => {
     const saved = localStorage.getItem('headerConfig');
     return saved ? JSON.parse(saved) : {
@@ -147,13 +171,14 @@ export function Dashboard({
       companyName: 'OomniEye',
       showCompanyName: true,
       companyCaption: 'Digital Twin Solutions',
-      showCompanyCaption: false,
-      textColor: '#000000',
+      showCompanyCaption: true,
+      textColor: '#ffffff',
       textColorApply: 'both',
-      companyNameColor: '#000000',
-      companyCaptionColor: 'var(--text-muted)',
+      companyNameColor: '#ffffff',
+      companyCaptionColor: 'rgba(255, 255, 255, 0.65)',
       companyNameStyle: 'h1',
-      companyCaptionStyle: 'h3'
+      companyCaptionStyle: 'h3',
+      headerBgColor: 'linear-gradient(135deg, #000000, #011446)'
     };
   });
 
@@ -270,6 +295,10 @@ export function Dashboard({
         customerColorFollow={customerColorFollow}
         showCustomerLogo={showCustomerLogo}
         customerLogo={customerLogo}
+        showCustomerCaption={showCustomerCaption}
+        customerCaption={customerCaption}
+        customerCaptionStyle={customerCaptionStyle}
+        customerCaptionColor={customerCaptionColor}
       />
       <div className="dashboard-body">
         <Sidebar 
@@ -304,12 +333,9 @@ export function Dashboard({
                 }}
               />
             ) : (
-              <div className={`dashboard-container ${currentView === 'overview' ? 'no-padding' : ''}`}>
+              <div className={`dashboard-container ${['overview', 'account'].includes(currentView) ? 'no-padding' : ''}`}>
                 {currentView === 'overview' ? (
-                  <TemplateWelcome
-                    onNavigate={handleSetCurrentView}
-                    onOpenSettings={() => setIsGlobalSettingsOpen(true)}
-                  />
+                  <TemplateWelcome onNavigate={handleSetCurrentView} />
                 ) : currentView === 'notifications' ? (
                   <NotificationsPage 
                     notifications={notifications}
@@ -352,7 +378,7 @@ export function Dashboard({
           </div>
         </div>
       </div>
-      {footerVisible && (
+      {(footerVisible || (isGlobalSettingsOpen && activeSettingsTab === 'footer')) && (
         <footer 
           style={{
             height: '32px',
@@ -401,23 +427,22 @@ export function Dashboard({
                 </span>
               );
             })}
-            {footerPoweredByType === 'image' && footerPoweredByImage ? (
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '4px' }}>
-                <span style={{ color: 'var(--text-secondary, var(--text-muted))' }}>|</span>
-                <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
-              </span>
-            ) : null}
           </div>
 
-          {/* Right column — powered-by text */}
+          {/* Right column — powered-by text and image */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-            {footerPoweredByType === 'text' && resolvedFooterPoweredByText ? (
-              <span>{resolvedFooterPoweredByText}</span>
-            ) : null}
+            {footerPoweredByType === 'image' && footerPoweredByImage ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {resolvedFooterPoweredByText && <span>{resolvedFooterPoweredByText}</span>}
+                <img src={footerPoweredByImage} alt="Powered By Logo" style={{ maxHeight: '20px', objectFit: 'contain', display: 'block' }} />
+              </div>
+            ) : (
+              resolvedFooterPoweredByText ? <span>{resolvedFooterPoweredByText}</span> : null
+            )}
           </div>
         </footer>
       )}
-       {isGlobalSettingsOpen && (
+      {isGlobalSettingsOpen && (
         <GlobalSettingsWorkspace 
           onClose={() => setIsGlobalSettingsOpen(false)} 
           headerConfig={headerConfig}
@@ -450,7 +475,12 @@ export function Dashboard({
             setCustomerLogo(data.customerLogo);
             if (data.customerNameStyle) setCustomerNameStyle(data.customerNameStyle);
             if (data.customerNameColor) setCustomerNameColor(data.customerNameColor);
+            if (data.showCustomerCaption !== undefined) setShowCustomerCaption(data.showCustomerCaption);
+            if (data.customerCaption !== undefined) setCustomerCaption(data.customerCaption);
+            if (data.customerCaptionStyle) setCustomerCaptionStyle(data.customerCaptionStyle);
+            if (data.customerCaptionColor) setCustomerCaptionColor(data.customerCaptionColor);
           }}
+          onShowToast={showGlobalToast}
         />
       )}
 
@@ -597,6 +627,28 @@ export function Dashboard({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {globalToast.visible && (
+        <div 
+          className="theme-toggle-toast" 
+          style={{ 
+            background: 'linear-gradient(135deg, #091638 0%, #06102a 100%)', 
+            border: '1px solid rgba(59, 130, 246, 0.4)', 
+            color: '#ffffff', 
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(29, 78, 216, 0.3)',
+            borderRadius: '12px',
+            padding: '12px 22px',
+            fontSize: '14px',
+            fontWeight: 500,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}
+        >
+          <CheckCircle2 size={18} style={{ color: '#60a5fa', flexShrink: 0 }} />
+          <span>{globalToast.message}</span>
         </div>
       )}
     </div>

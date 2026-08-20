@@ -1,14 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-interface ImageCropperModalProps {
+export interface ImageCropperModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (croppedDataUrl: string) => void;
   imageUrl: string;
+  title?: string;
+  subtitle?: string;
+  cropShape?: 'round' | 'rect';
+  cropWidth?: number;
+  cropHeight?: number;
 }
 
-export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: ImageCropperModalProps) {
+export function ImageCropperModal({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  imageUrl,
+  title = "Adjust image",
+  subtitle = "Drag and zoom to fit your picture inside the bright frame. Anything in the dimmed area is cropped out.",
+  cropShape = "round",
+  cropWidth = 180,
+  cropHeight = 180
+}: ImageCropperModalProps) {
   const [zoomLevel, setZoomLevel] = useState(0); // -100 to 100
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -51,13 +66,13 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
   const handleConfirm = () => {
     if (!imageRef.current || !containerRef.current) return;
     
-    // The fixed dimensions of our crop box
-    const cropWidth = 240;
-    const cropHeight = 140;
+    // Crop box dimensions
+    const cWidth = cropWidth;
+    const cHeight = cropHeight;
 
     const canvas = document.createElement('canvas');
-    canvas.width = cropWidth;
-    canvas.height = cropHeight;
+    canvas.width = cWidth;
+    canvas.height = cHeight;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -84,19 +99,26 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
     const offsetY = (containerHeight - renderedHeight) / 2;
 
     // Crop box coordinates in container space
-    const cropBoxX = (containerWidth - cropWidth) / 2;
-    const cropBoxY = (containerHeight - cropHeight) / 2;
+    const cropBoxX = (containerWidth - cWidth) / 2;
+    const cropBoxY = (containerHeight - cHeight) / 2;
 
     // Transform logic matching CSS
-    ctx.translate(cropWidth / 2, cropHeight / 2);
+    ctx.translate(cWidth / 2, cHeight / 2);
+
+    if (cropShape === 'round') {
+      ctx.beginPath();
+      ctx.arc(0, 0, Math.min(cWidth, cHeight) / 2, 0, Math.PI * 2);
+      ctx.clip();
+    }
+
     ctx.scale(scale, scale);
     ctx.translate(position.x / scale, position.y / scale);
     
     // Draw the image relative to the center of the crop box
-    const drawX = offsetX - cropBoxX - cropWidth / 2;
-    const drawY = offsetY - cropBoxY - cropHeight / 2;
+    const drawX = offsetX - cropBoxX - cWidth / 2;
+    const drawY = offsetY - cropBoxY - cHeight / 2;
     
-    ctx.clearRect(-cropWidth, -cropHeight, cropWidth * 2, cropHeight * 2);
+    ctx.clearRect(-cWidth, -cHeight, cWidth * 2, cHeight * 2);
     ctx.drawImage(
       imageRef.current,
       drawX,
@@ -113,27 +135,27 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
     <div style={{
       position: 'fixed',
       top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(15, 23, 42, 0.4)',
-      backdropFilter: 'blur(4px)',
+      backgroundColor: 'rgba(15, 23, 42, 0.65)',
+      backdropFilter: 'blur(6px)',
       zIndex: 99999,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
     }}>
       <div style={{
-        width: '400px',
+        width: '420px',
         backgroundColor: 'var(--bg-card)',
         borderRadius: '16px',
         padding: '24px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
         display: 'flex',
         flexDirection: 'column',
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, color: 'var(--text-main)' }}>Adjust brand image</h2>
-          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
-            Drag and zoom to fit your signature inside the bright frame. Anything in the dimmed area is cropped out and will not appear on the login screen.
+          <h2 style={{ margin: '0 0 8px 0', fontSize: 'var(--font-size-18)', fontWeight: 700, color: '#0f172a' }}>{title}</h2>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-13)', color: '#64748b', lineHeight: '1.5' }}>
+            {subtitle}
           </p>
         </div>
 
@@ -147,9 +169,9 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
           onTouchEnd={handleMouseUp}
           style={{
             width: '100%',
-            height: '220px',
-            backgroundColor: 'var(--bg-card)',
-            backgroundImage: 'linear-gradient(45deg, var(--bg-dashboard) 25%, transparent 25%), linear-gradient(-45deg, var(--bg-dashboard) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--bg-dashboard) 75%), linear-gradient(-45deg, transparent 75%, var(--bg-dashboard) 75%)',
+            height: '240px',
+            backgroundColor: '#f8fafc',
+            backgroundImage: 'linear-gradient(45deg, #e2e8f0 25%, transparent 25%), linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e2e8f0 75%), linear-gradient(-45deg, transparent 75%, #e2e8f0 75%)',
             backgroundSize: '20px 20px',
             backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
             borderRadius: '12px',
@@ -187,38 +209,41 @@ export function ImageCropperModal({ isOpen, onClose, onConfirm, imageUrl }: Imag
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: '240px',
-            height: '140px',
-            border: '2px solid rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.4)',
+            width: `${cropWidth}px`,
+            height: `${cropHeight}px`,
+            borderRadius: cropShape === 'round' ? '50%' : '12px',
+            border: '2px solid rgba(255, 255, 255, 0.95)',
+            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.45)',
             pointerEvents: 'none'
           }} />
         </div>
 
         {/* Zoom Slider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>Zoom</span>
+          <span style={{ fontSize: 'var(--font-size-14)', fontWeight: 700, color: '#334155' }}>Zoom</span>
           <input 
             type="range" 
             min="-100" 
             max="100" 
             value={zoomLevel} 
             onChange={(e) => setZoomLevel(Number(e.target.value))}
-            style={{ flex: 1, accentColor: 'var(--border-light)', cursor: 'pointer' }}
+            style={{ flex: 1, accentColor: '#0f172a', cursor: 'pointer' }}
           />
         </div>
 
         {/* Buttons */}
         <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
           <button 
+            type="button"
             onClick={onClose}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-card)', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff', color: '#334155', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
           >
             Cancel
           </button>
           <button 
+            type="button"
             onClick={handleConfirm}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: 'var(--text-main)', color: 'var(--bg-card)', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
           >
             Confirm
           </button>

@@ -10,10 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "dts-universal-report-module": "^1.3.0",
+    "dts-universal-report-module": "^1.3.5",
     "lenis": "^1.3.25",
     "lucide-react": "^1.23.0",
-    "omnieye-theme-studio": "^1.1.2",
+    "omnieye-theme-studio": "^1.2.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },

@@ -26,7 +26,7 @@
 
 .btn-primary {
   background-color: var(--primary);
-  color: white;
+  color: var(--on-accent);
   border: none;
   border-radius: var(--radius-md);
   padding: var(--spacing-3) var(--spacing-5);
@@ -135,8 +135,8 @@
 }
 
 .status-processing {
-  background: #EDE9FE;
-  color: #7C3AED;
+  background: var(--info);
+  color: var(--on-accent);
 }
 
 .status-pending {
@@ -145,8 +145,8 @@
 }
 
 .status-shipped {
-  background: #E0F2FE;
-  color: #0284C7;
+  background: var(--primary-light);
+  color: var(--primary-hover);
 }
 
 .btn-view {

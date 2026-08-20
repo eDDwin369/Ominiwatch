@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Settings, X, Camera, User } from 'lucide-react';
-import { useThemeStore } from 'omnieye-theme-studio';
+import { Bell, Settings, X, Camera, User, Maximize2, Minimize2 } from 'lucide-react';
 import { NotificationDropdown } from '../Notifications/NotificationDropdown';
 import type { NotificationItem } from '../Notifications/types';
 import logo from '../../assets/logo.png';
 import './Dashboard.css';
+import { useThemeStore } from 'omnieye-theme-studio';
 
 const PRESET_THEMES = [
   { id: 'corporate', label: 'Corporate Blue', snap: { primaryHex: '#1565c0', secondaryHex: '#00897b', iconColor: '#1565c0' } },
@@ -32,6 +32,10 @@ interface HeaderProps {
   customerColorFollow?: boolean;
   showCustomerLogo?: boolean;
   customerLogo?: string;
+  showCustomerCaption?: boolean;
+  customerCaption?: string;
+  customerCaptionStyle?: string;
+  customerCaptionColor?: string;
 }
 
 export function Header({
@@ -44,13 +48,17 @@ export function Header({
   onSettingsClick,
   headerConfig,
   isEditing = false,
-  showCustomerProfile = false,
-  customerName = 'Default Customer',
+  showCustomerProfile = true,
+  customerName = 'OomniEye',
   customerNameStyle = 'h1',
-  customerNameColor = '#1e293b',
-  customerColorFollow = true,
+  customerNameColor = '#ffffff',
+  customerColorFollow = false,
   showCustomerLogo = false,
-  customerLogo = ''
+  customerLogo = '',
+  showCustomerCaption = true,
+  customerCaption = 'Digital Twin Solutions',
+  customerCaptionStyle = 'h3',
+  customerCaptionColor = 'rgba(255, 255, 255, 0.65)'
 }: HeaderProps) {
   // Studio brand identity (appName/appTagline/logo) — used as fallback when the
   // host's own headerConfig branding is not set, so the studio drives it too.
@@ -178,6 +186,31 @@ export function Header({
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
+  const toggleFullscreen = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  };
+
   const getFontSize = (style?: string, defaultSize: string = '1rem') => {
     switch (style) {
       case 'h1': return '1.5rem';
@@ -190,8 +223,49 @@ export function Header({
     }
   };
 
+  const getHeaderContrastColor = (bgColor?: string) => {
+    if (!bgColor) return undefined;
+    if (bgColor.includes('gradient')) {
+      const hexes = bgColor.match(/#[0-9a-fA-F]{6}/g);
+      if (hexes && hexes.length > 0) {
+        let totalLum = 0;
+        hexes.forEach(h => {
+          const hex = h.replace('#', '');
+          const r = parseInt(hex.substring(0, 2), 16);
+          const g = parseInt(hex.substring(2, 4), 16);
+          const b = parseInt(hex.substring(4, 6), 16);
+          totalLum += (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        });
+        const avgLum = totalLum / hexes.length;
+        return avgLum > 0.55 ? '#0f172a' : '#ffffff';
+      }
+      return '#ffffff';
+    }
+    const hex = bgColor.replace('#', '');
+    if (hex.length !== 6) return undefined;
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.55 ? '#0f172a' : '#ffffff';
+  };
+
+  const getHeaderBorderColor = (bgColor?: string) => {
+    if (!bgColor || bgColor.toLowerCase() === '#ffffff') return 'var(--border-light, #e2e8f0)';
+    const contrast = getHeaderContrastColor(bgColor);
+    return contrast === '#ffffff' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)';
+  };
+
   return (
-    <header className={`dash-header ${isEditing ? 'editing-focus' : ''}`}>
+    <header 
+      className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
+      style={{
+        background: headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)',
+        color: getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') || '#ffffff',
+        borderBottom: `1px solid ${getHeaderBorderColor(headerConfig?.headerBgColor)}`,
+        transition: 'all 0.2s ease'
+      }}
+    >
       <div
         className="header-left"
         onClick={() => onNavigate && onNavigate('overview')}
@@ -203,7 +277,7 @@ export function Header({
           cursor: 'pointer'
         }}
       >
-        {(!headerConfig || headerConfig.showLogo) && headerConfig?.logo !== '' && (
+        {(!headerConfig || headerConfig.showLogo !== false) && (
           <img
             src={headerConfig?.logo || studioLogo}
             alt="OmniEye Logo"
@@ -217,8 +291,7 @@ export function Header({
                 fontWeight: 'bold',
                 fontSize: getFontSize(headerConfig?.companyNameStyle, '1.05rem'),
                 lineHeight: '1.2',
-                color: headerConfig?.companyNameColor || 
-                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'name') ? headerConfig.textColor : 'var(--text-main)'),
+                color: headerConfig?.companyNameColor || getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') || '#ffffff',
                 textTransform: 'none',
                 letterSpacing: 'normal'
               }}
@@ -226,14 +299,14 @@ export function Header({
               {headerConfig?.companyName || brand.appName || 'OomniEye'}
             </div>
           )}
-          {(!headerConfig || headerConfig.showCompanyCaption) && (
+          {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
             <div
               style={{
                 fontWeight: '600',
                 fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.75rem'),
                 lineHeight: '1.2',
                 color: headerConfig?.companyCaptionColor || 
-                  (headerConfig && (headerConfig.textColorApply === 'both' || headerConfig.textColorApply === 'caption') ? headerConfig.textColor : 'var(--text-muted, var(--text-muted))'),
+                  (getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') === '#ffffff' ? 'rgba(255, 255, 255, 0.65)' : 'var(--text-muted, #64748b)'),
                 marginTop: '2px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
@@ -249,23 +322,39 @@ export function Header({
         {showCustomerProfile && (
           <>
             {/* Logo in Center */}
-            {showCustomerLogo && customerLogo && (
+            {showCustomerLogo && (customerLogo || logo) && (
               <img
-                src={customerLogo}
+                src={customerLogo || logo}
                 alt="Customer Logo"
                 style={{ height: '64px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
               />
             )}
 
             {/* Text/Font in Center */}
-            <span style={{ 
-              fontWeight: 700, 
-              fontSize: getFontSize(customerNameStyle), 
-              color: customerColorFollow ? (headerConfig?.textColor || 'var(--text-main)') : customerNameColor, 
-              letterSpacing: '0.02em' 
-            }}>
-              {customerName}
-            </span>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ 
+                fontWeight: 700, 
+                fontSize: getFontSize(customerNameStyle, '1.05rem'), 
+                color: (!customerColorFollow && customerNameColor && customerNameColor !== '#1e293b' && customerNameColor !== 'transparent') ? customerNameColor : '#ffffff', 
+                letterSpacing: '0.02em',
+                lineHeight: '1.2' 
+              }}>
+                {customerName || 'OomniEye'}
+              </span>
+              {showCustomerCaption && (
+                <span style={{
+                  fontWeight: 500,
+                  fontSize: getFontSize(customerCaptionStyle, '0.75rem'),
+                  color: (customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : 'rgba(255, 255, 255, 0.65)',
+                  letterSpacing: '0.04em',
+                  lineHeight: '1.2',
+                  marginTop: '2px',
+                  textTransform: 'uppercase'
+                }}>
+                  {customerCaption || 'Digital Twin Solutions'}
+                </span>
+              )}
+            </div>
           </>
         )}
       </div>
@@ -379,10 +468,20 @@ export function Header({
             </div>
           )}
         </div>
+
+        <button
+          className="header-icon-btn"
+          title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Mode"}
+          onClick={toggleFullscreen}
+        >
+          {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+        </button>
+
         <button 
           className="header-icon-btn" 
-          title="Settings" 
-          onClick={() => {
+          title="Global Settings" 
+          onClick={(e) => {
+            e.stopPropagation();
             setShowNotifications(false);
             setShowProfileMenu(false);
             if (onSettingsClick) onSettingsClick();
@@ -390,6 +489,7 @@ export function Header({
         >
           <Settings size={18} />
         </button>
+
         <div className="header-bell-wrapper">
           <button
             className="header-icon-btn"
