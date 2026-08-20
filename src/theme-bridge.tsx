@@ -83,11 +83,33 @@ function syncCssVars(theme: any, settings: any) {
   for (let n = 1; n <= 6; n++) {
     const h = ty[`h${n}`] || {};
     set(`--h${n}-size`, h.fontSize ? `${h.fontSize}px` : undefined);
+    set(`--font-size-h${n}`, h.fontSize ? `${h.fontSize}px` : undefined);
     const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
     set(`--h${n}-weight`, w ? String(w) : undefined);
     set(`--h${n}-color`, settings[`h${n}Color`] || 'var(--text-main)');
   }
   set('--heading-lh', ty.h1?.lineHeight != null ? String(ty.h1.lineHeight) : undefined);
+  // body typography tokens for Dashboard.css
+  set('--font-size-body', ty.body1?.fontSize ? `${ty.body1.fontSize}px` : undefined);
+  set('--font-size-body-sm', ty.body2?.fontSize ? `${ty.body2.fontSize}px` : undefined);
+  set('--font-size-caption', ty.caption?.fontSize ? `${ty.caption.fontSize}px` : undefined);
+  // mapped pixel sizes for component-specific tokens (e.g. --font-size-24, --font-size-14)
+  const headingFontSizes = [ty.h1?.fontSize, ty.h2?.fontSize, ty.h3?.fontSize, ty.h4?.fontSize, ty.h5?.fontSize, ty.h6?.fontSize];
+  const pixelSizes: Record<string, number | undefined> = {
+    '24': headingFontSizes[0], // h1
+    '20': headingFontSizes[1], // h2
+    '18': 18,
+    '17': headingFontSizes[2], // h3
+    '14-5': 14.5,
+    '14': headingFontSizes[3], // h4
+    '13': 13,
+    '12': 12,
+    '11-5': 11.5,
+    '11': 11,
+  };
+  Object.entries(pixelSizes).forEach(([key, val]) => {
+    if (val) set(`--font-size-${key}`, `${val}px`);
+  });
   // radius
   set('--radius-sm', `${theme.shape.borderRadius * 0.5}px`);
   set('--radius-md', `${theme.shape.borderRadius}px`);

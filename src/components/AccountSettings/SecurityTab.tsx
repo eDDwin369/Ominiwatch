@@ -47,7 +47,7 @@ export function SecurityTab() {
       ip: '103.21.244.1',
       lastActive: '28 min ago',
       icon: Monitor,
-      circleColor: '#eff6ff',
+      circleColor: 'var(--primary-light)',
       iconColor: 'var(--primary)'
     },
     {
@@ -60,7 +60,7 @@ export function SecurityTab() {
       ip: '106.51.23.11',
       lastActive: '2 hours ago',
       icon: Smartphone,
-      circleColor: '#dcfce7',
+      circleColor: 'var(--success-light)',
       iconColor: 'var(--success)'
     }
   ]);
@@ -153,9 +153,9 @@ export function SecurityTab() {
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
-                backgroundColor: '#e0e7ff',
-                color: '#6366f1',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(var(--primary-rgb, 21, 101, 192), 0.1)',
+                color: 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -166,7 +166,7 @@ export function SecurityTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Active Sessions</div>
+                <div style={{ fontSize: 'var(--font-size-14)', fontWeight: 600, color: 'var(--text-main)' }}>Active Sessions</div>
                 <span title="Manage and monitor all active sessions across your devices." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
@@ -261,18 +261,18 @@ export function SecurityTab() {
                     <DevIcon size={16} />
                   </div>
                   <div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ fontSize: 'var(--font-size-body-sm)', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {session.device} • {session.browser}
                       {session.isCurrent && (
-                        <span style={{ fontSize: '10px', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
+                        <span style={{ fontSize: 'var(--font-size-caption)', background: 'var(--success-light)', color: 'var(--success)', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
                           Current
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                    <div style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-muted)', marginTop: '2px' }}>
                       {session.os} • {session.location}
                     </div>
-                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '1px' }}>
+                    <div style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-muted)', marginTop: '1px' }}>
                       IP: {session.ip} • Last active: {session.lastActive}
                     </div>
                   </div>
@@ -283,11 +283,11 @@ export function SecurityTab() {
                     onClick={() => handleRevokeSession(session.id)}
                     style={{
                       border: '1px solid var(--border-hover)',
-                      borderRadius: '6px',
+                      borderRadius: 'var(--radius-sm)',
                       background: 'var(--bg-card)',
                       color: 'var(--text-secondary)',
                       padding: '4px 10px',
-                      fontSize: '11px',
+                      fontSize: 'var(--font-size-caption)',
                       fontWeight: 600,
                       cursor: 'pointer',
                       transition: 'all 0.05s ease'
@@ -295,7 +295,7 @@ export function SecurityTab() {
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = 'var(--danger)';
                       e.currentTarget.style.color = 'var(--danger)';
-                      e.currentTarget.style.backgroundColor = '#fef2f2';
+                      e.currentTarget.style.backgroundColor = 'var(--danger-light)';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'var(--border-hover)';
@@ -333,9 +333,9 @@ export function SecurityTab() {
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
-                backgroundColor: '#e0e7ff',
-                color: '#6366f1',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(var(--primary-rgb, 21, 101, 192), 0.1)',
+                color: 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -346,7 +346,7 @@ export function SecurityTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Login History</div>
+                <div style={{ fontSize: 'var(--font-size-14)', fontWeight: 600, color: 'var(--text-main)' }}>Login History</div>
                 <span title="A log of your recent account access and authentication events." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
@@ -430,12 +430,12 @@ export function SecurityTab() {
                   <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-main)' }}>
                     {activity.text}
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>
+                  <div style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-muted)', marginTop: '1px' }}>
                     {activity.device} • {activity.location}
                   </div>
                 </div>
               </div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-muted)' }}>
                 {activity.time}
               </div>
             </div>
@@ -464,9 +464,9 @@ export function SecurityTab() {
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
-                backgroundColor: '#e0e7ff',
-                color: '#6366f1',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(var(--primary-rgb, 21, 101, 192), 0.1)',
+                color: 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -477,7 +477,7 @@ export function SecurityTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Password</div>
+                <div style={{ fontSize: 'var(--font-size-14)', fontWeight: 600, color: 'var(--text-main)' }}>Password</div>
                 <span title="Last changed: 30 days ago. Update your security password settings." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
@@ -544,7 +544,7 @@ export function SecurityTab() {
             />
 
             <div className="edit-form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Current Password</label>
+              <label style={{ fontSize: 'var(--font-size-caption)', fontWeight: 600, color: 'var(--text-secondary)' }}>Current Password</label>
               <input 
                 type="password" 
                 value={currentPassword}
@@ -552,9 +552,9 @@ export function SecurityTab() {
                 placeholder="••••••••" 
                 style={{ 
                   padding: '8px 12px', 
-                  borderRadius: '6px', 
+                  borderRadius: 'var(--radius-sm)', 
                   border: '1px solid var(--border-hover)',
-                  fontSize: '13px',
+                  fontSize: 'var(--font-size-body-sm)',
                   outline: 'none',
                   backgroundColor: 'var(--bg-card)'
                 }} 
@@ -562,7 +562,7 @@ export function SecurityTab() {
             </div>
             
             <div className="edit-form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>New Password</label>
+              <label style={{ fontSize: 'var(--font-size-caption)', fontWeight: 600, color: 'var(--text-secondary)' }}>New Password</label>
               <input 
                 type="password" 
                 value={newPassword}
@@ -570,9 +570,9 @@ export function SecurityTab() {
                 placeholder="Min. 8 characters" 
                 style={{ 
                   padding: '8px 12px', 
-                  borderRadius: '6px', 
+                  borderRadius: 'var(--radius-sm)', 
                   border: '1px solid var(--border-hover)',
-                  fontSize: '13px',
+                  fontSize: 'var(--font-size-body-sm)',
                   outline: 'none',
                   backgroundColor: 'var(--bg-card)'
                 }} 
@@ -580,7 +580,7 @@ export function SecurityTab() {
             </div>
 
             <div className="edit-form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Confirm New Password</label>
+              <label style={{ fontSize: 'var(--font-size-caption)', fontWeight: 600, color: 'var(--text-secondary)' }}>Confirm New Password</label>
               <input 
                 type="password" 
                 value={confirmPassword}
@@ -588,9 +588,9 @@ export function SecurityTab() {
                 placeholder="Confirm password" 
                 style={{ 
                   padding: '8px 12px', 
-                  borderRadius: '6px', 
+                  borderRadius: 'var(--radius-sm)', 
                   border: '1px solid var(--border-hover)',
-                  fontSize: '13px',
+                  fontSize: 'var(--font-size-body-sm)',
                   outline: 'none',
                   backgroundColor: 'var(--bg-card)'
                 }} 
@@ -603,15 +603,15 @@ export function SecurityTab() {
                 background: 'var(--btn-color)', color: 'var(--btn-text)', 
                 border: 'none',
                 padding: '8px 16px', 
-                borderRadius: '8px', 
-                fontSize: '13px', 
+                borderRadius: 'var(--radius-md)', 
+                fontSize: 'var(--font-size-body-sm)', 
                 fontWeight: 600,
                 cursor: 'pointer',
                 width: 'fit-content',
                 marginTop: '6px',
                 transition: 'background-color 0.05s ease'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-hover)'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary)'}
             >
               Update Password
@@ -641,9 +641,9 @@ export function SecurityTab() {
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
-                backgroundColor: '#e0e7ff',
-                color: '#6366f1',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(var(--primary-rgb, 21, 101, 192), 0.1)',
+                color: 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -654,7 +654,7 @@ export function SecurityTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Two-Factor Authentication</div>
+                <div style={{ fontSize: 'var(--font-size-14)', fontWeight: 600, color: 'var(--text-main)' }}>Two-Factor Authentication</div>
                 <span title="Add an extra layer of security to your account." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
@@ -720,18 +720,18 @@ export function SecurityTab() {
               }}
             />
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Authenticator App</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>Use verification codes generated by Authenticator apps.</div>
+              <div style={{ fontSize: 'var(--font-size-body-sm)', fontWeight: 600, color: 'var(--text-main)' }}>Authenticator App</div>
+              <div style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-muted)', marginTop: '1px' }}>Use verification codes generated by Authenticator apps.</div>
             </div>
             <button 
               onClick={handleConfigure2fa}
               style={{
                 border: '1px solid var(--border-hover)',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-sm)',
                 background: 'var(--bg-card)',
                 color: 'var(--text-secondary)',
                 padding: '6px 12px',
-                fontSize: '12px',
+                fontSize: 'var(--font-size-caption)',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.05s ease'
@@ -739,7 +739,7 @@ export function SecurityTab() {
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = 'var(--primary)';
                 e.currentTarget.style.color = 'var(--primary)';
-                e.currentTarget.style.backgroundColor = '#eff6ff';
+                e.currentTarget.style.backgroundColor = 'var(--primary-light)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = 'var(--border-hover)';
@@ -773,9 +773,9 @@ export function SecurityTab() {
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
-                backgroundColor: '#e0e7ff',
-                color: '#6366f1',
+                borderRadius: 'var(--radius-md)',
+                backgroundColor: 'rgba(var(--primary-rgb, 21, 101, 192), 0.1)',
+                color: 'var(--primary)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -786,7 +786,7 @@ export function SecurityTab() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>API Tokens</div>
+                <div style={{ fontSize: 'var(--font-size-14)', fontWeight: 600, color: 'var(--text-main)' }}>API Tokens</div>
                 <span title="Generate and manage API keys for programmatic access." style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-muted)', cursor: 'help' }}>
                   <Info size={14} />
                 </span>
@@ -851,8 +851,8 @@ export function SecurityTab() {
               }}
             />
             <div>
-              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Personal Access Token</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '1px' }}>Authenticate securely with the OmniEye API.</div>
+              <div style={{ fontSize: 'var(--font-size-body-sm)', fontWeight: 600, color: 'var(--text-main)' }}>Personal Access Token</div>
+              <div style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-muted)', marginTop: '1px' }}>Authenticate securely with the OmniEye API.</div>
             </div>
             <button 
               onClick={handleGenerateApiKey}
@@ -861,8 +861,8 @@ export function SecurityTab() {
                 color: 'var(--on-accent)',
                 border: 'none',
                 padding: '8px 16px',
-                borderRadius: '8px',
-                fontSize: '12px',
+                borderRadius: 'var(--radius-md)',
+                fontSize: 'var(--font-size-caption)',
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'background-color 0.05s ease'
@@ -874,7 +874,6 @@ export function SecurityTab() {
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );
