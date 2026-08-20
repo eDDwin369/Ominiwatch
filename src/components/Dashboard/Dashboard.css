@@ -5506,8 +5506,8 @@ html:has(.mode-v2),
   overflow: hidden !important;
 }
 
-.dashboard-container:has(.mode-v2) .tw-brand:hover,
-.dashboard-container:has(.mode-v2) .tw-section-title:hover {
+.dashboard-container:has(.mode-v2) .tw-brand,
+.dashboard-container:has(.mode-v2) .tw-section-title {
   color: var(--primary) !important;
   font-weight: 700 !important;
   transition: color 0.3s ease, font-weight 0.3s ease !important;

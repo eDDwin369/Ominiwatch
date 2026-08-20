@@ -267,7 +267,7 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Dashboard", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <LayoutGrid size={20} className="nav-icon" color="#3b82f6" />
+            <LayoutGrid size={20} className="nav-icon" color="var(--primary)" />
             <span className="nav-label" style={{ flex: 1 }}>Dashboard</span>
             {!isSidebarCollapsed && (
               <div
@@ -332,7 +332,7 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Menu Item 1", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <Grid size={20} className="nav-icon" color="#10b981" />
+            <Grid size={20} className="nav-icon" color="var(--success)" />
             <span className="nav-label">Menu Item 1</span>
           </a>
           <a
@@ -342,7 +342,7 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Menu Item 2", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <Store size={20} className="nav-icon" color="#f59e0b" />
+            <Store size={20} className="nav-icon" color="var(--warning)" />
             <span className="nav-label">Menu Item 2</span>
           </a>
 
@@ -365,7 +365,7 @@ export function Sidebar({
 
           <a
             href="#"
-            className="nav-item"
+            className={`nav-item ${activeItemId === 'theme-studio' ? 'active' : ''}`}
             onClick={(e) => handleNavItemClick('theme-studio', e, 'theme-studio')}
             onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
             onMouseLeave={handleItemMouseLeave}

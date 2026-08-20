@@ -153,8 +153,8 @@ export function ImageCropperModal({
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700, color: '#0f172a' }}>{title}</h2>
-          <p style={{ margin: 0, fontSize: '13px', color: '#64748b', lineHeight: '1.5' }}>
+          <h2 style={{ margin: '0 0 8px 0', fontSize: 'var(--font-size-18)', fontWeight: 700, color: '#0f172a' }}>{title}</h2>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-13)', color: '#64748b', lineHeight: '1.5' }}>
             {subtitle}
           </p>
         </div>
@@ -220,7 +220,7 @@ export function ImageCropperModal({
 
         {/* Zoom Slider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-          <span style={{ fontSize: '14px', fontWeight: 700, color: '#334155' }}>Zoom</span>
+          <span style={{ fontSize: 'var(--font-size-14)', fontWeight: 700, color: '#334155' }}>Zoom</span>
           <input 
             type="range" 
             min="-100" 
@@ -236,14 +236,14 @@ export function ImageCropperModal({
           <button 
             type="button"
             onClick={onClose}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff', color: '#334155', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff', color: '#334155', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
           >
             Cancel
           </button>
           <button 
             type="button"
             onClick={handleConfirm}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
           >
             Confirm
           </button>

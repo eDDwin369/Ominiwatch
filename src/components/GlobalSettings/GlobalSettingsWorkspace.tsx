@@ -104,7 +104,7 @@ const InfoTooltip = ({
       <Info 
         size={13} 
         style={{ 
-          color: isHovered ? '#60a5fa' : 'rgba(255, 255, 255, 0.45)', 
+          color: isHovered ? 'var(--primary-light)' : 'var(--text-muted)', 
           transition: 'color 0.15s ease',
           flexShrink: 0 
         }} 
@@ -114,11 +114,11 @@ const InfoTooltip = ({
           style={{
             position: 'absolute',
             ...positionStyle,
-            background: '#09142d',
+            background: 'var(--bg-dashboard)',
             border: '1px solid rgba(255, 255, 255, 0.25)',
             borderRadius: '8px',
             padding: '7px 12px',
-            color: '#e2e8f0',
+            color: 'var(--text-main)',
             fontSize: '11.5px',
             fontWeight: 400,
             whiteSpace: 'normal',
@@ -167,7 +167,7 @@ const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: 
           left: checked ? '24px' : '3px',
           width: '21px',
           height: '21px',
-          backgroundColor: '#ffffff',
+          backgroundColor: 'var(--text-main)',
           borderRadius: '50%',
           boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
           transition: 'left 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -695,12 +695,12 @@ export function GlobalSettingsWorkspace({
                 left: '50%',
                 transform: 'translateX(-50%)',
                 zIndex: 100000,
-                background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
+                background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
                 border: '1px solid rgba(255, 255, 255, 0.4)',
                 boxShadow: '0 10px 30px rgba(29, 78, 216, 0.7), 0 0 20px rgba(59, 130, 246, 0.5)',
                 borderRadius: '20px',
                 padding: '8px 24px',
-                color: '#ffffff',
+                color: 'var(--text-main)',
                 fontSize: '13.5px',
                 fontWeight: 600,
                 display: 'flex',
@@ -717,7 +717,7 @@ export function GlobalSettingsWorkspace({
           )}
           <div className="gs-header">
             <div className="gs-header-left">
-              <h2 style={{ fontSize: '20px', fontWeight: 500, color: '#ffffff', letterSpacing: '-0.3px' }}>Global Settings</h2>
+              <h2 style={{ fontSize: '20px', fontWeight: 500, color: 'var(--text-main)', letterSpacing: '-0.3px' }}>Global Settings</h2>
             </div>
             <div className="gs-header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
@@ -729,9 +729,9 @@ export function GlobalSettingsWorkspace({
                   width: '46px',
                   height: '32px',
                   borderRadius: '16px',
-                  background: 'rgba(38, 40, 48, 0.95)',
+                  background: 'rgba(0, 0, 0, 0.7)',
                   border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#ffffff',
+                  color: 'var(--text-main)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -755,9 +755,9 @@ export function GlobalSettingsWorkspace({
                   width: '46px',
                   height: '32px',
                   borderRadius: '16px',
-                  background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
+                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
                   border: 'none',
-                  color: '#ffffff',
+                  color: 'var(--text-main)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -773,7 +773,7 @@ export function GlobalSettingsWorkspace({
 
           {/* CONTENT PANEL BODY (2 Inner Cards) */}
           <div className="gs-content-body">
-            <div style={{ padding: '0 8px 10px 8px', fontSize: '17px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ padding: '0 8px 10px 8px', fontSize: '17px', fontWeight: 500, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span>{activeTab === 'header' ? 'Header' : activeTab === 'profile' ? 'Customer Profile' : activeTab === 'footer' ? 'Footer' : 'Sidebar'}</span>
               {(activeTab === 'header' || activeTab === 'profile') && (
                 <button
@@ -793,7 +793,7 @@ export function GlobalSettingsWorkspace({
 
                 {/* Left Card: Customer Logo */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop the primary customer logo displayed on the page header." /></span>
                     <button
                       type="button"
@@ -840,7 +840,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', boxShadow: '0 0 20px rgba(56, 189, 248, 0.4)' }}>
                         <Upload size={22} color="#ffffff" />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: '#ffffff' }}>Choose customer logo</span>
+                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose customer logo</span>
                     </div>
                     <input
                       ref={fileInputRef}
@@ -854,7 +854,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(50, 53, 62, 0.85)', borderRadius: '14px', padding: '8px 12px', border: '1px solid rgba(255, 255, 255, 0.15)', marginTop: '4px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <img src={logo} alt="Uploaded Preview" style={{ height: '30px', width: '30px', objectFit: 'contain', borderRadius: '6px' }} />
-                          <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: 600 }}>Uploaded logo</span>
+                          <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
                         </div>
                         <button type="button" onClick={() => {
                           setLogo('');
@@ -867,14 +867,14 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle visibility of the customer logo on the header bar." /></span>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle visibility of the customer logo on the header bar." /></span>
                     <AppleToggle checked={showLogo} onChange={setShowLogo} />
                   </div>
                 </div>
 
                 {/* Right Card: Header Branding Visibility */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Header Branding Visibility <InfoTooltip text="Configure font style, color, and visibility for company title and caption." position="below-right" /></span>
                     <button
                       type="button"
@@ -911,8 +911,8 @@ export function GlobalSettingsWorkspace({
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: '#3c3f47',
-                            color: '#ffffff',
+                            backgroundColor: 'var(--bg-card)',
+                            color: 'var(--text-main)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
@@ -973,8 +973,8 @@ export function GlobalSettingsWorkspace({
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: '#3c3f47',
-                            color: '#ffffff',
+                            backgroundColor: 'var(--bg-card)',
+                            color: 'var(--text-main)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
@@ -1022,9 +1022,9 @@ export function GlobalSettingsWorkspace({
             <div className="gs-tab-content-container" style={{ padding: '24px 32px' }}>
               <div className="gs-cards-2x2">
                             {/* Left Card: Powered By Settings */}
-                <div className="gs-config-card" style={{ background: '#282a30', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid rgba(255, 255, 255, 0.08)', justifyContent: 'flex-start' }}>
+                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid rgba(255, 255, 255, 0.08)', justifyContent: 'flex-start' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                    <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                       Powered By <InfoTooltip text="Configure footer 'Powered By' attribution as custom text or logo image." />
                     </div>
 
@@ -1043,7 +1043,7 @@ export function GlobalSettingsWorkspace({
                           borderRadius: '10px',
                           border: 'none',
                           background: footerPoweredByType === 'text' ? 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)' : 'transparent',
-                          color: '#ffffff',
+                          color: 'var(--text-main)',
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
@@ -1065,7 +1065,7 @@ export function GlobalSettingsWorkspace({
                           borderRadius: '10px',
                           border: 'none',
                           background: footerPoweredByType === 'image' ? 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)' : 'transparent',
-                          color: '#ffffff',
+                          color: 'var(--text-main)',
                           fontSize: '12px',
                           fontWeight: 600,
                           cursor: 'pointer',
@@ -1109,7 +1109,7 @@ export function GlobalSettingsWorkspace({
                         <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
                           <Upload size={20} color="#0284c7" />
                         </div>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>Choose image</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Choose image</span>
                       </div>
                       <input
                         ref={footerFileInputRef}
@@ -1124,7 +1124,7 @@ export function GlobalSettingsWorkspace({
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(50, 53, 62, 0.85)', borderRadius: '16px', padding: '12px 16px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <img src={footerPoweredByImage} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '6px' }} />
-                            <span style={{ fontSize: '13.5px', color: '#ffffff', fontWeight: 600 }}>Uploaded image</span>
+                            <span style={{ fontSize: '13.5px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded image</span>
                           </div>
                           <button type="button" onClick={() => {
                             setFooterPoweredByImage('');
@@ -1139,14 +1139,14 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Right Card: Footer Settings */}
-                <div className="gs-config-card" style={{ background: '#282a30', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                     Footer Settings <InfoTooltip text="Control overall footer bar visibility, copyright text, and navigation links." position="below-right" />
                   </div>
 
                   {/* Row 1: Footer Visibility */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
 
@@ -1167,14 +1167,14 @@ export function GlobalSettingsWorkspace({
 
                   {/* Row 3: Add Footer Link */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
                     <button 
                       type="button"
                       onClick={() => setIsAddingLink(true)}
                       style={{
                         padding: '6px 16px',
-                        background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
-                        color: '#ffffff',
+                        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
+                        color: 'var(--text-main)',
                         border: 'none',
                         borderRadius: '14px',
                         fontSize: '12px',
@@ -1197,13 +1197,13 @@ export function GlobalSettingsWorkspace({
               <div className="gs-cards-2x2">
                 
                 {/* Behavior Card */}
-                <div className="gs-config-card" style={{ background: '#282a30', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.85)', display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
                       <AppleToggle checked={startExpanded} onChange={(val) => {
                         setStartExpanded(val);
                         setSidebarCollapsed(!val);
@@ -1211,31 +1211,31 @@ export function GlobalSettingsWorkspace({
                     </div>
                     <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.85)', display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
                       <AppleToggle checked={autoHideSidebar} onChange={setAutoHideSidebar} />
                     </div>
                     <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.85)', display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip text="Display navigation item icons in sidebar." /></span>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip text="Display navigation item icons in sidebar." /></span>
                       <AppleToggle checked={showIcons} onChange={setShowIcons} />
                     </div>
                     <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.85)', display: 'inline-flex', alignItems: 'center' }}>Show Labels <InfoTooltip text="Display navigation item text labels in sidebar." /></span>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Labels <InfoTooltip text="Display navigation item text labels in sidebar." /></span>
                       <AppleToggle checked={showLabels} onChange={setShowLabels} />
                     </div>
                   </div>
                 </div>
 
                 {/* Width Configuration Card */}
-                <div className="gs-config-card" style={{ background: '#282a30', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Dimensions <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', flex: 1 }}>
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(255, 255, 255, 0.85)', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                         <span style={{ display: 'inline-flex', alignItems: 'center' }}>Expanded Width <InfoTooltip text="Set width (in pixels) of sidebar when fully expanded." /></span>
                         <span style={{ fontWeight: 700 }}>{expandedWidth}px</span>
                       </div>
@@ -1269,7 +1269,7 @@ export function GlobalSettingsWorkspace({
                     <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
 
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'rgba(255, 255, 255, 0.85)', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                         <span style={{ display: 'inline-flex', alignItems: 'center' }}>Collapsed Width <InfoTooltip text="Set width (in pixels) of sidebar when in minimal collapsed mode." /></span>
                         <span style={{ fontWeight: 700 }}>{collapsedWidth}px</span>
                       </div>
@@ -1313,7 +1313,7 @@ export function GlobalSettingsWorkspace({
                 
                 {/* Left Card: Customer Logo */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop customer profile logo image." /></span>
                     <button
                       type="button"
@@ -1360,7 +1360,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', boxShadow: '0 0 20px rgba(56, 189, 248, 0.4)' }}>
                         <Upload size={22} color="#ffffff" />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: '#ffffff' }}>Choose customer logo</span>
+                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose customer logo</span>
                     </div>
                     <input
                       ref={customerLogoInputRef}
@@ -1374,7 +1374,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(50, 53, 62, 0.85)', borderRadius: '14px', padding: '8px 12px', border: '1px solid rgba(255, 255, 255, 0.15)', marginTop: '4px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <img src={customerLogo} alt="Uploaded Preview" style={{ height: '30px', width: '30px', objectFit: 'contain', borderRadius: '6px' }} />
-                          <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: 600 }}>Uploaded logo</span>
+                          <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
                         </div>
                         <button type="button" onClick={() => {
                           setCustomerLogo('');
@@ -1387,14 +1387,14 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
-                    <span style={{ fontSize: '14px', color: 'rgba(255, 255, 255, 0.85)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle whether customer profile logo is displayed." /></span>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle whether customer profile logo is displayed." /></span>
                     <AppleToggle checked={showCustomerLogo} onChange={setShowCustomerLogo} />
                   </div>
                 </div>
 
                 {/* Right Card: Customer Profile Visibility */}
-                <div className="gs-config-card" style={{ background: '#282a30', borderRadius: '28px', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: '#ffffff', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Profile Visibility <InfoTooltip text="Manage visibility, typography styles, and color follow settings for customer profile." position="below-right" /></span>
                     <button
                       type="button"
@@ -1431,8 +1431,8 @@ export function GlobalSettingsWorkspace({
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: '#3c3f47',
-                            color: '#ffffff',
+                            backgroundColor: 'var(--bg-card)',
+                            color: 'var(--text-main)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
@@ -1493,8 +1493,8 @@ export function GlobalSettingsWorkspace({
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: '#3c3f47',
-                            color: '#ffffff',
+                            backgroundColor: 'var(--bg-card)',
+                            color: 'var(--text-main)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
