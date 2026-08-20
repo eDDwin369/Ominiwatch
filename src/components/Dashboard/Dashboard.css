@@ -1527,10 +1527,10 @@
 }
 
 /* Vibrant Gradient Icons */
-.icon-gradient-1 { background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4); }
-.icon-gradient-2 { background: linear-gradient(135deg, var(--primary-hover) 0%, #06b6d4 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); }
-.icon-gradient-3 { background: linear-gradient(135deg, var(--warning) 0%, var(--danger) 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4); }
-.icon-gradient-4 { background: linear-gradient(135deg, var(--success) 0%, var(--primary-hover) 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+.icon-gradient-1 { background: linear-gradient(135deg, var(--danger) 0%, var(--secondary) 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
+.icon-gradient-2 { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
+.icon-gradient-3 { background: linear-gradient(135deg, var(--warning) 0%, var(--danger) 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
+.icon-gradient-4 { background: linear-gradient(135deg, var(--success) 0%, var(--primary) 100%); color: var(--on-accent) !important; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); }
 
 .tw-card p {
   color: var(--text-secondary);
@@ -4073,7 +4073,7 @@
   left: 41px;
   top: 38px;
   width: 2px;
-  background: linear-gradient(180deg, var(--primary-hover) 0%, var(--primary-light) 50%, #93c5fd 100%);
+  background: linear-gradient(180deg, var(--primary-hover) 0%, var(--primary-light) 50%);
   box-shadow: 0 0 10px var(--primary-hover);
   z-index: 2;
   transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -5501,9 +5501,16 @@ html:has(.mode-v2),
 .dashboard-content-scrollable:has(.mode-v2),
 .dashboard-container:has(.mode-v2) {
   background-color: #000000 !important;
-  background: linear-gradient(180deg, #000000 0%, #000000 50%, #010d33 75%, #031b54 90%, #052673 100%) !important;
+  background: linear-gradient(180deg, #000000 0%, #000000 50%, color-mix(in srgb, var(--primary) 20%, #000) 75%, color-mix(in srgb, var(--primary) 40%, #000) 90%, color-mix(in srgb, var(--primary) 60%, #000) 100%) !important;
   transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
   overflow: hidden !important;
+}
+
+.dashboard-container:has(.mode-v2) .tw-brand:hover,
+.dashboard-container:has(.mode-v2) .tw-section-title:hover {
+  color: var(--primary) !important;
+  font-weight: 700 !important;
+  transition: color 0.3s ease, font-weight 0.3s ease !important;
 }
 
 /* Appearance Active (Deep Midnight Purple / Violet) */
@@ -6482,7 +6489,7 @@ html:has(.mode-v7),
 }
 
 .v2-highlight-item.active .v2-text-span.v6-gradient-brand {
-  background: linear-gradient(90deg, var(--primary-hover) 0%, var(--primary-light) 55%, #93c5fd 100%) !important;
+  background: linear-gradient(90deg, var(--primary-hover) 0%, var(--primary-light) 55%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
