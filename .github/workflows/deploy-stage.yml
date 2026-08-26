@@ -12,6 +12,30 @@ on:
   workflow_dispatch:
 
 jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_STAGE }}
+          SONAR_HOST_URL: https://sonarqube.oomnieye.com
+        with:
+          args: >
+            -Dsonar.projectKey=base-application-stage
+
+      - name: SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_STAGE }}
+        continue-on-error: true
+
   deploy:
     runs-on: ubuntu-latest
     environment: staging
