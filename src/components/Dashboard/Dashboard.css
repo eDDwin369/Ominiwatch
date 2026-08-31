@@ -228,15 +228,26 @@
   }
 }
 
-/* Sidebar */
+/* Sidebar — always a position: absolute overlay (never a flex item that
+   pushes .dashboard-main), whether pinned or hover-revealed. Positioned
+   relative to .dashboard-body (position: relative). Shown/hidden purely
+   via the .visible modifier below; pinned just keeps .visible on. */
 .dash-sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
   width: var(--sidebar-width);
   background: var(--bg-dashboard);
-  border-right: 1px solid var(--border-light);
+  border-right: none;
   display: flex;
   flex-direction: column;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
+  box-shadow: none;
+  transform: translateX(-100%);
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s ease;
   z-index: 100;
   overflow: hidden;
 }
@@ -257,24 +268,10 @@
   width: var(--sidebar-width-collapsed);
 }
 
-.dash-sidebar.unlocked {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  height: 100%;
-  box-shadow: none;
-  border-right: none !important;
-  transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s ease;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.dash-sidebar.unlocked.visible {
+.dash-sidebar.visible {
   transform: translateX(0);
   box-shadow: 8px 0 20px -5px rgba(0, 0, 0, 0.15);
-  border-right: 1px solid var(--border-light) !important;
+  border-right: 1px solid var(--border-light);
   visibility: visible;
   pointer-events: auto;
 }

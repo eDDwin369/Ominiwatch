@@ -263,10 +263,6 @@ export function Dashboard({
     handleSetCurrentView(notification.actionRoute);
   };
 
-  const headerLeftPadding = (!isLocked && isVisible) 
-    ? (collapsed ? `${sidebarCollapsedWidth}px` : `${sidebarExpandedWidth}px`) 
-    : '0px';
-
   // Resolve Powered By custom footer branding placeholder fallback
   const resolvedFooterPoweredByText = footerPoweredByText || `Powered by ${headerConfig?.companyName || 'OomniEye'} Digital Solutions`;
 
@@ -318,13 +314,7 @@ export function Dashboard({
         />
         
         <div className="dashboard-main">
-          <div 
-            className="dashboard-content-scrollable"
-            style={{
-              paddingLeft: headerLeftPadding,
-              transition: 'padding-left 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
-            }}
-          >
+          <div className="dashboard-content-scrollable">
             {isThemeStudioOpen ? (
               <ThemeStudioEmbed />
             ) : (
