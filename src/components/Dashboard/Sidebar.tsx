@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
   LayoutGrid,
   Grid,
@@ -49,7 +50,7 @@ export function Sidebar({
   // Hover state specifically for logo in collapsed state
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   // Hovered item for tooltip in collapsed state
-  const [hoveredItem, setHoveredItem] = useState<{ label: string; y: number } | null>(null);
+  const [hoveredItem, setHoveredItem] = useState<{ label: string; x: number; y: number } | null>(null);
   // Single source of truth for which nav item is highlighted. Several items
   // map to the same `currentView` (e.g. both report items use 'reports'), so a
   // dedicated id prevents more than one item from appearing selected at once.
@@ -134,6 +135,9 @@ export function Sidebar({
       const rect = e.currentTarget.getBoundingClientRect();
       setHoveredItem({
         label,
+        // rect.right (not a hardcoded rail-width constant) so this tracks the
+        // actual collapsed width, which is user-configurable via Global Settings.
+        x: rect.right + 8,
         y: rect.top + rect.height / 2
       });
     }
@@ -387,13 +391,14 @@ export function Sidebar({
 
       </aside>
 
-      {hoveredItem && (
+      {hoveredItem && createPortal(
         <div
           className="sidebar-fixed-tooltip"
-          style={{ top: `${hoveredItem.y}px` }}
+          style={{ top: `${hoveredItem.y}px`, left: `${hoveredItem.x}px` }}
         >
           {hoveredItem.label}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

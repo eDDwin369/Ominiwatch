@@ -15,6 +15,10 @@
   animation: gsFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+[data-theme-mode="light"] .gs-overlay {
+  background: rgba(241, 245, 249, 0.4);
+}
+
 @keyframes gsFadeIn {
   from {
     opacity: 0;
@@ -37,17 +41,17 @@
   position: relative;
   z-index: 100;
   width: 64px;
-  background: rgba(75, 82, 98, 0.65);
+  background: color-mix(in srgb, var(--bg-card) 75%, transparent) !important;
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid var(--border-light) !important;
   border-radius: 36px;
   padding: 18px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 18px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.15);
   animation: gsDockIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -68,7 +72,7 @@
   border-radius: 50%;
   border: 1px solid transparent;
   background: transparent;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -78,15 +82,15 @@
 }
 
 .gs-dock-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  background: var(--border-light);
+  color: var(--text-main);
   transform: scale(1.08);
 }
 
 .gs-dock-btn.active {
-  background: linear-gradient(135deg, #00f0ff 0%, #0066ff 100%);
-  color: #ffffff;
-  box-shadow: 0 8px 22px rgba(0, 240, 255, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  background: var(--primary);
+  color: var(--btn-text, #ffffff);
+  box-shadow: 0 8px 22px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.5);
   transform: scale(1.06);
 }
 
@@ -122,19 +126,23 @@
   height: 520px !important;
   max-width: 95vw !important;
   max-height: 95vh !important;
-  background: radial-gradient(circle at 50% 30%, #153e9a 0%, #0d276e 55%, #071540 100%) !important;
+  background: radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%) !important;
   backdrop-filter: blur(50px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
   border-radius: 36px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+  border: 1px solid var(--border-light) !important;
+  box-shadow: var(--card-shadow) !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
   transform: scale(0.97) translateY(12px);
   animation: gsModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Roboto", sans-serif;
-  color: #ffffff;
+  color: var(--text-main) !important;
+}
+
+[data-theme-mode="light"] .gs-modal {
+  background: var(--bg-dashboard) !important;
 }
 
 @keyframes gsModalIn {
@@ -155,8 +163,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.12) !important;
+  border-bottom: 1px solid var(--border-light) !important;
   flex-shrink: 0;
+}
+
+[data-theme-mode="light"] .gs-header {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light, var(--primary)) 100%) !important;
 }
 
 .gs-title-group {
@@ -175,10 +188,10 @@
 /* Segmented Control Tabs (Matching VisionOS Pill) */
 .gs-segmented-tabs {
   display: flex;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--border-light) !important;
   border-radius: 20px;
   padding: 3px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-hover) !important;
   gap: 2px;
 }
 
@@ -187,7 +200,7 @@
   border-radius: 16px;
   font-size: var(--font-size-13);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.65);
+  color: var(--text-secondary);
   border: none;
   background: transparent;
   cursor: pointer;
@@ -195,13 +208,13 @@
 }
 
 .gs-tab-btn:hover {
-  color: #ffffff;
+  color: var(--text-main);
 }
 
 .gs-tab-btn.active {
-  background: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: var(--primary) !important;
+  color: var(--btn-text, #ffffff) !important;
+  box-shadow: 0 2px 8px var(--accent-glow) !important;
 }
 
 /* Action Buttons (Top Right) */
@@ -271,18 +284,18 @@
   justify-content: space-between !important;
   gap: 12px !important;
   overflow: visible !important;
-  background: #141518 !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: var(--bg-card) !important;
+  border: var(--card-border) !important;
   border-radius: 28px !important;
   padding: 22px 26px !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.12) !important;
+  box-shadow: var(--card-shadow) !important;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .gs-config-card:hover {
   transform: translateY(-2px) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+  border-color: var(--primary) !important;
+  box-shadow: var(--card-shadow) !important;
 }
 
 /* Eye Icon Button Next to Headings */
@@ -290,9 +303,9 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: rgba(255, 255, 255, 0.85);
+  background: var(--border-light);
+  border: 1px solid var(--border-hover);
+  color: var(--text-secondary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -301,17 +314,17 @@
 }
 
 .gs-eye-preview-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  color: #ffffff;
+  background: var(--border-hover);
+  color: var(--text-main);
   transform: scale(1.1);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
 }
 
 .gs-eye-preview-btn.active {
-  background: #2563eb;
-  border-color: #60a5fa;
-  color: #ffffff;
-  box-shadow: 0 0 16px rgba(37, 99, 235, 0.8);
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: var(--btn-text, #ffffff) !important;
+  box-shadow: 0 0 16px var(--accent-glow) !important;
 }
 
 /* Animated Glowing Spotlight Focus Box Overlay on Page Header */
@@ -319,8 +332,8 @@
   position: fixed !important;
   z-index: 100010 !important;
   border-radius: 12px;
-  border: 2.5px solid #60a5fa;
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.95), 0 0 0 5px rgba(96, 165, 250, 0.4), inset 0 0 20px rgba(59, 130, 246, 0.3);
+  border: 2.5px solid var(--primary);
+  box-shadow: 0 0 30px var(--accent-glow), 0 0 0 5px rgba(59, 130, 246, 0.4), inset 0 0 20px var(--accent-glow);
   pointer-events: none;
   animation: gsSpotlightPulse 1.4s infinite ease-in-out;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -328,12 +341,12 @@
 
 @keyframes gsSpotlightPulse {
   0%, 100% {
-    box-shadow: 0 0 25px rgba(59, 130, 246, 0.9), 0 0 0 3px rgba(96, 165, 250, 0.5), inset 0 0 15px rgba(59, 130, 246, 0.2);
-    border-color: #3b82f6;
+    box-shadow: 0 0 25px var(--accent-glow), 0 0 0 3px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(59, 130, 246, 0.2);
+    border-color: var(--primary);
   }
   50% {
-    box-shadow: 0 0 45px rgba(59, 130, 246, 1), 0 0 0 8px rgba(96, 165, 250, 0.8), inset 0 0 25px rgba(59, 130, 246, 0.5);
-    border-color: #93c5fd;
+    box-shadow: 0 0 45px var(--accent-glow), 0 0 0 8px rgba(59, 130, 246, 0.5), inset 0 0 25px rgba(59, 130, 246, 0.4);
+    border-color: var(--primary-light, #93c5fd);
   }
 }
 
@@ -382,8 +395,6 @@
     transform: translate(-3px, -3px);
   }
 }
-
-
 
 .gs-card-blue,
 .gs-card-green,
@@ -445,235 +456,155 @@
   box-shadow: 0 12px 32px rgba(0, 240, 255, 0.48);
 }
 
-/* VisionOS Dark Glass Dropzone & Input Overrides */
+/* VisionOS Glass Dropzone & Inputs */
 .gs-iphone-dropzone {
-  border: 2px dashed rgba(255, 255, 255, 0.25) !important;
-  border-radius: 20px !important;
-  background: rgba(255, 255, 255, 0.05) !important;
-  padding: 14px 16px !important;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1) !important;
+  border: 1.5px dashed var(--border-hover) !important;
+  border-radius: 24px !important;
+  background: var(--bg-dashboard) !important;
+  padding: 24px 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05) !important;
 }
 
 .gs-iphone-dropzone:hover {
-  border-color: #00f0ff !important;
-  background: rgba(0, 240, 255, 0.08) !important;
+  border-color: var(--primary) !important;
+  background: color-mix(in srgb, var(--primary) 8%, transparent) !important;
+  transform: translateY(-1px);
 }
 
-.gs-iphone-dropzone-title {
+.gs-iphone-orb-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-light, #e0f2fe) 0%, var(--primary) 100%);
+  box-shadow: 0 8px 20px var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gs-iphone-orb-btn svg {
   color: #ffffff !important;
 }
 
-.gs-iphone-dropzone-sub {
-  color: rgba(255, 255, 255, 0.65) !important;
+.gs-iphone-dropzone:hover .gs-iphone-orb-btn {
+  transform: scale(1.06);
 }
 
+/* Uploaded file preview card */
 .gs-iphone-file-card {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: var(--bg-dashboard) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: 14px !important;
+  padding: 8px 12px !important;
+  margin-top: 4px !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
-.gs-iphone-file-name {
-  color: #ffffff !important;
+.gs-iphone-file-remove-btn {
+  background: var(--border-light) !important;
+  color: var(--text-main) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 22px !important;
+  height: 22px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  transition: all 0.15s ease !important;
 }
 
-.gs-iphone-file-meta {
-  color: rgba(255, 255, 255, 0.65) !important;
+.gs-iphone-file-remove-btn:hover {
+  background: #fee2e2 !important;
+  color: #ef4444 !important;
 }
 
-.gs-iphone-file-thumb-box {
-  background: rgba(255, 255, 255, 0.12) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-/* Form Controls Dark Glass Theme */
+/* Form Controls Theme */
 .gs-modal input[type="text"]:not(.gs-underline-input),
 .gs-modal select {
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background: var(--bg-dashboard) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-main) !important;
   border-radius: 12px;
 }
 
-/* Explicit Single Underline Input Line Style (Matching User Request 1:1) */
+/* Explicit Single Underline Input Line Style */
 .gs-modal input[type="text"].gs-underline-input {
   width: 100% !important;
   background: transparent !important;
   border: none !important;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.6) !important;
+  border-bottom: 1.5px solid var(--border-hover) !important;
   border-radius: 0 !important;
-  color: #ffffff !important;
+  color: var(--text-main) !important;
   font-size: var(--font-size-18) !important;
   padding: 4px 0 10px 0 !important;
   outline: none !important;
   box-shadow: none !important;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif !important;
+  transition: border-bottom-color 0.2s ease !important;
+}
+
+.gs-modal input[type="text"].gs-underline-input:focus {
+  border-bottom-color: var(--primary) !important;
 }
 
 .gs-modal input[type="text"].gs-underline-input::placeholder {
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: var(--text-muted) !important;
 }
 
 .gs-modal span,
 .gs-modal label {
-  color: #ffffff !important;
+  color: var(--text-main) !important;
 }
 
-/* ==================== iPhone Style Upload Dropzone & Card (User Spec) ==================== */
-.gs-iphone-dropzone {
-  border: 2px dashed #cbd5e1;
-  border-radius: 24px;
-  background: #ffffff;
-  padding: 22px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
-}
-
-.gs-iphone-dropzone:hover {
-  border-color: #0066ff;
-  background: #f0f7ff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 102, 255, 0.08);
-}
-
-.gs-iphone-orb-btn {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 10px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.gs-iphone-dropzone:hover .gs-iphone-orb-btn {
-  transform: scale(1.08);
-  box-shadow: 0 12px 28px rgba(56, 189, 248, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.9);
-}
-
-.gs-iphone-orb-icon {
-  color: #0066ff;
-  stroke-width: 2.2;
-}
-
-.gs-iphone-dropzone-title {
-  font-size: var(--font-size-14);
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 4px;
-  letter-spacing: -0.01em;
-}
-
-.gs-iphone-dropzone-sub {
-  font-size: var(--font-size-11-5);
-  color: #94a3b8;
-  font-weight: 400;
-  max-width: 270px;
-  line-height: 1.4;
-}
-
-/* iPhone Uploaded Item Card (Matching Screenshot Exactly) */
-.gs-iphone-file-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 12px 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 10px;
-  transition: all 0.2s ease;
-}
-
-.gs-iphone-file-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.gs-iphone-file-thumb-box {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  background: #f0f7ff;
-  border: 1px solid #dbeafe;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.gs-iphone-file-thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 3px;
-}
-
-.gs-iphone-file-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.gs-iphone-file-name {
-  font-size: var(--font-size-13);
-  font-weight: 700;
-  color: #0f172a;
-  line-height: 1.2;
-}
-
-.gs-iphone-file-meta {
-  font-size: var(--font-size-11);
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-.gs-iphone-file-remove-btn {
-  width: 28px;
+/* Apple Toggle Switch styles */
+.gs-apple-toggle {
+  position: relative;
+  width: 50px;
   height: 28px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  color: #64748b;
-  border: none;
+  border-radius: 14px;
+  background: var(--border-hover);
+  border: 1px solid var(--border-light);
   cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-.gs-iphone-file-remove-btn:hover {
-  background: #fee2e2;
-  color: #ef4444;
+.gs-apple-toggle.checked {
+  background: var(--primary);
+  box-shadow: 0 2px 12px var(--accent-glow);
 }
 
-/* Active Progress Bar Line (Matching Screenshot) */
-.gs-iphone-progress-track {
-  width: 100%;
-  height: 4px;
-  background: #e2e8f0;
-  border-radius: 4px;
-  overflow: hidden;
+.gs-apple-toggle-thumb {
+  position: absolute;
+  left: 3px;
+  width: 21px;
+  height: 21px;
+  background-color: var(--bg-card);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: left 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.gs-iphone-progress-fill {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, #0066ff 0%, #38bdf8 100%);
-  border-radius: 4px;
+.gs-apple-toggle.checked .gs-apple-toggle-thumb {
+  left: 24px;
 }
 
 @keyframes gsToastSlideIn {
@@ -685,4 +616,24 @@
     transform: translate(-50%, 0);
     opacity: 1;
   }
+}
+
+/* Header buttons cancel/save overrides */
+.gs-top-btn-cancel {
+  background: var(--border-light) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-hover) !important;
+}
+
+.gs-top-btn-save {
+  background: var(--primary) !important;
+  color: var(--btn-text, #ffffff) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px var(--accent-glow) !important;
+}
+
+.gs-top-btn-cancel:hover,
+.gs-top-btn-save:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
 }
