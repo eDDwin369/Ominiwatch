@@ -6,13 +6,13 @@ import logo from '../../assets/logo.png';
 import './Dashboard.css';
 import { useThemeStore } from 'omnieye-theme-studio';
 
-const PRESET_THEMES = [
-  { id: 'corporate', label: 'Corporate Blue', snap: { primaryHex: '#1565c0', secondaryHex: '#00897b', iconColor: '#1565c0' } },
-  { id: 'emerald', label: 'Emerald Green', snap: { primaryHex: '#2e7d32', secondaryHex: '#00897b', iconColor: '#2e7d32' } },
-  { id: 'indigo', label: 'Indigo Violet', snap: { primaryHex: '#3949ab', secondaryHex: '#7c4dff', iconColor: '#3949ab' } },
-  { id: 'slate', label: 'Graphite Charcoal', snap: { primaryHex: '#455a64', secondaryHex: '#78909c', iconColor: '#455a64' } },
+export const PRESET_THEMES = [
+  { id: 'corporate', label: 'Corporate Blue', snap: { primaryHex: '#4F6BFF', secondaryHex: '#22D3EE', iconColor: '#4F6BFF' } },
+  { id: 'emerald', label: 'Emerald', snap: { primaryHex: '#2EE6A6', secondaryHex: '#FFC255', iconColor: '#2EE6A6' } },
+  { id: 'indigo', label: 'Indigo Violet', snap: { primaryHex: '#A97BFF', secondaryHex: '#FF5FA2', iconColor: '#A97BFF' } },
+  { id: 'slate', label: 'Graphite', snap: { primaryHex: '#455a64', secondaryHex: '#78909c', iconColor: '#455a64' } },
   { id: 'teal', label: 'Ocean Teal', snap: { primaryHex: '#00838f', secondaryHex: '#0277bd', iconColor: '#00838f' } },
-  { id: 'amber', label: 'Amber Orange', snap: { primaryHex: '#e65100', secondaryHex: '#d84315', iconColor: '#e65100' } }
+  { id: 'amber', label: 'Amber Orange', snap: { primaryHex: '#e65100', secondaryHex: '#d84315', iconColor: '#e65100' } },
 ];
 
 interface HeaderProps {

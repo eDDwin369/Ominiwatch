@@ -1,8 +1,7 @@
 /* Dashboard Premium SaaS Design System */
 
 :root {
-  --bg-dashboard: #F8FAFC;
-  /* Subtle grey background */
+  --bg-dashboard: #FFFFFF;
   --bg-card: #FFFFFF;
   --border-light: #E2E8F0;
   --border-hover: #CBD5E1;
@@ -232,7 +231,7 @@
 /* Sidebar */
 .dash-sidebar {
   width: var(--sidebar-width);
-  background: var(--bg-card);
+  background: var(--bg-dashboard);
   border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
@@ -393,6 +392,7 @@
   background: var(--highlight-hover, var(--primary-light));
   color: var(--highlight, var(--primary));
   font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--highlight, var(--primary));
 }
 
 .nav-item.active:hover {
@@ -1834,7 +1834,6 @@
 /* Premium Sidebar Tooltip (Fixed position to bypass overflow clip) */
 .sidebar-fixed-tooltip {
   position: fixed;
-  left: 76px;
   background-color: #0f172a;
   color: #ffffff;
   padding: 6px 12px;
@@ -5493,47 +5492,47 @@ html:has(.mode-v6),
 /* Version 2 Dynamic Background Gradients based on Active Highlighted Label */
 
 /* Default / Brand Active (Deep Midnight Blue) */
-body:has(.mode-v2),
-html:has(.mode-v2),
-.dashboard-wrapper:has(.mode-v2),
-.dashboard-body:has(.mode-v2),
-.dashboard-main:has(.mode-v2),
-.dashboard-content-scrollable:has(.mode-v2),
-.dashboard-container:has(.mode-v2) {
+[data-theme-mode="dark"] body:has(.mode-v2),
+[data-theme-mode="dark"] html:has(.mode-v2),
+[data-theme-mode="dark"] .dashboard-wrapper:has(.mode-v2),
+[data-theme-mode="dark"] .dashboard-body:has(.mode-v2),
+[data-theme-mode="dark"] .dashboard-main:has(.mode-v2),
+[data-theme-mode="dark"] .dashboard-content-scrollable:has(.mode-v2),
+[data-theme-mode="dark"] .dashboard-container:has(.mode-v2) {
   background-color: #000000 !important;
   background: linear-gradient(180deg, #000000 0%, #000000 50%, color-mix(in srgb, var(--primary) 20%, #000) 75%, color-mix(in srgb, var(--primary) 40%, #000) 90%, color-mix(in srgb, var(--primary) 60%, #000) 100%) !important;
   transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
   overflow: hidden !important;
 }
 
-.dashboard-container:has(.mode-v2) .tw-brand,
-.dashboard-container:has(.mode-v2) .tw-section-title {
+[data-theme-mode="dark"] .dashboard-container:has(.mode-v2) .tw-brand,
+[data-theme-mode="dark"] .dashboard-container:has(.mode-v2) .tw-section-title {
   color: var(--primary) !important;
   font-weight: 700 !important;
   transition: color 0.3s ease, font-weight 0.3s ease !important;
 }
 
 /* Appearance Active (Deep Midnight Purple / Violet) */
-body:has(.v2-active-appearance),
-html:has(.v2-active-appearance),
-.dashboard-wrapper:has(.v2-active-appearance),
-.dashboard-body:has(.v2-active-appearance),
-.dashboard-main:has(.v2-active-appearance),
-.dashboard-content-scrollable:has(.v2-active-appearance),
-.dashboard-container:has(.v2-active-appearance) {
+[data-theme-mode="dark"] body:has(.v2-active-appearance),
+[data-theme-mode="dark"] html:has(.v2-active-appearance),
+[data-theme-mode="dark"] .dashboard-wrapper:has(.v2-active-appearance),
+[data-theme-mode="dark"] .dashboard-body:has(.v2-active-appearance),
+[data-theme-mode="dark"] .dashboard-main:has(.v2-active-appearance),
+[data-theme-mode="dark"] .dashboard-content-scrollable:has(.v2-active-appearance),
+[data-theme-mode="dark"] .dashboard-container:has(.v2-active-appearance) {
   background-color: #000000 !important;
   background: linear-gradient(180deg, #000000 0%, #000000 50%, #17032a 75%, #340958 90%, #4d0d7e 100%) !important;
   transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* Content Active (Deep Midnight Cyan / Teal) */
-body:has(.v2-active-content),
-html:has(.v2-active-content),
-.dashboard-wrapper:has(.v2-active-content),
-.dashboard-body:has(.v2-active-content),
-.dashboard-main:has(.v2-active-content),
-.dashboard-content-scrollable:has(.v2-active-content),
-.dashboard-container:has(.v2-active-content) {
+[data-theme-mode="dark"] body:has(.v2-active-content),
+[data-theme-mode="dark"] html:has(.v2-active-content),
+[data-theme-mode="dark"] .dashboard-wrapper:has(.v2-active-content),
+[data-theme-mode="dark"] .dashboard-body:has(.v2-active-content),
+[data-theme-mode="dark"] .dashboard-main:has(.v2-active-content),
+[data-theme-mode="dark"] .dashboard-content-scrollable:has(.v2-active-content),
+[data-theme-mode="dark"] .dashboard-container:has(.v2-active-content) {
   background-color: #000000 !important;
   background: linear-gradient(180deg, #000000 0%, #000000 50%, #021a24 75%, #053748 90%, #084c61 100%) !important;
   transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -5541,7 +5540,7 @@ html:has(.v2-active-content),
 
 .mode-v2 {
   background: transparent !important;
-  color: #ffffff !important;
+  color: var(--text-main) !important;
   width: 100% !important;
   height: calc(100vh - 75px) !important;
   padding: 0 32px !important;
@@ -5570,7 +5569,7 @@ html:has(.v2-active-content),
 .v6-dashboard-title {
   font-size: 34px !important;
   font-weight: 300 !important;
-  color: #ffffff !important;
+  color: var(--text-main) !important;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
@@ -5578,7 +5577,7 @@ html:has(.v2-active-content),
 .dash-breadcrumb-text {
   font-size: 28px;
   font-weight: 300;
-  color: #ffffff;
+  color: var(--text-main);
 }
 
 .breadcrumb-muted {
@@ -5785,6 +5784,10 @@ html:has(.mode-v7),
   z-index: 1;
 }
 
+[data-theme-mode="light"] .ambient-particles-layer {
+  display: none;
+}
+
 .v2-bottom-particle-wave-canvas {
   position: absolute;
   inset: 0;
@@ -5989,8 +5992,12 @@ html:has(.mode-v7),
   aspect-ratio: 16 / 9 !important;
   height: auto !important;
   border-radius: 24px !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 40px color-mix(in srgb, var(--primary) 18%, transparent) !important;
   transition: border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), aspect-ratio 0.6s ease !important;
+}
+
+[data-theme-mode="dark"] .mode-v2 .v5-video-screen {
+  box-shadow: 0 0 60px color-mix(in srgb, var(--primary) 40%, transparent), 0 0 100px color-mix(in srgb, var(--primary) 18%, transparent) !important;
 }
 
 .mode-v2 .v6-ventures-left {
@@ -6049,7 +6056,7 @@ html:has(.mode-v7),
 
 .v5-yt-progress-fill {
   height: 100%;
-  background: #ff0000;
+  background: var(--primary);
   border-radius: 2px;
   position: relative;
 }
@@ -6061,10 +6068,10 @@ html:has(.mode-v7),
   transform: translateY(-50%) scale(0);
   width: 13px;
   height: 13px;
-  background: #ff0000;
+  background: var(--primary);
   border-radius: 50%;
   transition: transform 0.15s ease;
-  box-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 80%, transparent);
 }
 
 .v5-yt-progress-area:hover .v5-yt-scrub-handle {
@@ -6208,9 +6215,9 @@ html:has(.mode-v7),
 }
 
 .v5-yt-cc-btn.active span {
-  border-color: #ff0000;
-  background: #ff0000;
-  color: #ffffff;
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--bg-card, #ffffff);
 }
 
 /* Exact YouTube Gear Icon with Red Quality Badge from Screenshot */
@@ -6222,8 +6229,8 @@ html:has(.mode-v7),
   position: absolute;
   top: 0px;
   right: -2px;
-  background: #ff0000;
-  color: #ffffff;
+  background: var(--secondary, #eab308);
+  color: var(--bg-card, #ffffff);
   font-family: -apple-system, BlinkMacSystemFont, "Roboto", Arial, sans-serif;
   font-size: 7.5px;
   font-weight: 800;
@@ -6399,7 +6406,7 @@ html:has(.mode-v7),
   font-size: 44px;
   white-space: nowrap !important;
   font-weight: 100 !important;
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: var(--text-muted) !important;
   margin-bottom: var(--spacing-3);
   letter-spacing: var(--app-letter-spacing, 0.02em);
   line-height: 1.15;
@@ -6412,8 +6419,8 @@ html:has(.mode-v7),
   font-family: var(--app-font-family) !important;
   font-size: 34px;
   font-weight: 100 !important;
-  color: rgba(255, 255, 255, 0.3) !important;
-  opacity: 0.5;
+  color: var(--text-muted) !important;
+  opacity: 0.7;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   letter-spacing: var(--app-letter-spacing, 0.01em);
@@ -6427,7 +6434,7 @@ html:has(.mode-v7),
 .v2-highlight-item .v2-text-span {
   font-family: var(--app-font-family) !important;
   display: inline-block;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-muted);
   font-weight: 100 !important;
   letter-spacing: var(--app-letter-spacing, 0.01em);
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -6440,7 +6447,7 @@ html:has(.mode-v7),
 }
 
 .v2-highlight-item:hover .v2-text-span {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-main);
   transform: translateX(4px);
 }
 

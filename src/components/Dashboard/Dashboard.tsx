@@ -326,12 +326,7 @@ export function Dashboard({
             }}
           >
             {isThemeStudioOpen ? (
-              <ThemeStudioEmbed
-                onClose={() => {
-                  setIsThemeStudioOpen(false);
-                  handleSetCurrentView('overview');
-                }}
-              />
+              <ThemeStudioEmbed />
             ) : (
               <div className={`dashboard-container ${['overview', 'account'].includes(currentView) ? 'no-padding' : ''}`}>
                 {currentView === 'overview' ? (
