@@ -4,6 +4,7 @@ import {
   Layers, CheckCircle2, Lock, Unlock, User, Briefcase, Calendar, Clock
 } from 'lucide-react';
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
+import { isValidPhone } from './phoneValidation';
 import './ProfileStyles.css';
 
 interface ProfileTabProps {
@@ -115,7 +116,10 @@ export function ProfileTab({
     setIsEditing(false);
   };
 
+  const phoneError = !isValidPhone(tempFormData.phone);
+
   const handleSave = () => {
+    if (phoneError) return;
     setIsSaving(true);
     setTimeout(() => {
       setFormData(tempFormData);
@@ -459,9 +463,9 @@ export function ProfileTab({
               </button>
               <button 
                 type="button" 
-                className="btn-save" 
+                className="btn-save"
                 onClick={handleSave}
-                disabled={isSaving}
+                disabled={isSaving || phoneError}
                 style={{ width: '100%', justifyContent: 'center', padding: '8px' }}
               >
                 {isSaving ? 'Saving...' : 'Save Changes'}
@@ -488,14 +492,21 @@ export function ProfileTab({
 
               <div className="edit-form-group">
                 <label className="edit-form-label">Phone</label>
-                <input 
-                  type="text" 
+                <input
+                  type="tel"
                   name="phone"
-                  className="edit-form-input" 
+                  className="edit-form-input"
                   value={tempFormData.phone}
                   onChange={handleChange}
                   placeholder="+91 98765 43210"
+                  aria-invalid={phoneError}
+                  style={phoneError ? { borderColor: 'var(--danger)' } : undefined}
                 />
+                {phoneError && (
+                  <span style={{ color: 'var(--danger)', fontSize: '11px' }}>
+                    Enter a valid phone number
+                  </span>
+                )}
               </div>
 
               <div className="edit-form-group">

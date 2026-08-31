@@ -362,19 +362,19 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover, var(--primary)) 100%) !important;
+  border: 1px solid var(--border-light) !important;
   padding: 8px 18px;
   border-radius: 20px;
-  color: #ffffff;
+  color: var(--btn-text, #ffffff) !important;
   font-size: var(--font-size-13);
   font-weight: 700;
-  box-shadow: 0 10px 30px rgba(29, 78, 216, 0.7);
+  box-shadow: 0 10px 30px var(--accent-glow) !important;
 }
 
 .gs-arrow-icon {
   font-size: var(--font-size-20);
-  color: #60a5fa;
+  color: var(--primary-light, #ffffff) !important;
   animation: arrowPointMotion 1.2s infinite ease-in-out;
 }
 

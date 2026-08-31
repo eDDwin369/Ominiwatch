@@ -175,17 +175,21 @@ export function TemplateWelcome({
 
     window.addEventListener('click', triggerNativeFullscreen, { once: true });
 
+    // Shortened from 2000/3800/4600ms — the overlay is `position: fixed` at a
+    // very high z-index and blocks all pointer events (including the sidebar's
+    // hover-reveal zone) underneath it for its full duration. Click-to-skip
+    // (handleDismissIntro) still works for anyone who wants out sooner.
     const timer1 = setTimeout(() => {
       setIntroPhase('omni');
-    }, 2000);
+    }, 900);
 
     const timer2 = setTimeout(() => {
       setIsIntroFadingOut(true);
-    }, 3800);
+    }, 1700);
 
     const timer3 = setTimeout(() => {
       setShowFullIntro(false);
-    }, 4600);
+    }, 2100);
 
     return () => {
       window.removeEventListener('click', triggerNativeFullscreen);

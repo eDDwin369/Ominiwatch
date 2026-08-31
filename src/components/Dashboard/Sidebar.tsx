@@ -204,7 +204,7 @@ export function Sidebar({
 
       <aside
         ref={sidebarRef}
-        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${(!isLocked && isVisible) || !autoHideSidebar || isEditing ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''} ${isEditing ? 'editing-focus' : ''}`}
+        className={`dash-sidebar ${!isLocked ? 'unlocked' : ''} ${isLocked || isVisible || !autoHideSidebar || isEditing ? 'visible' : ''} ${isSidebarCollapsed ? 'collapsed' : ''} ${isEditing ? 'editing-focus' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={() => {

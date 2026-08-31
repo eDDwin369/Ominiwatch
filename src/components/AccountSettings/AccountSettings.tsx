@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { ImageCropperModal } from '../GlobalSettings/ImageCropperModal';
+import { isValidPhone } from './phoneValidation';
 import './AccountSettings.css';
 
 interface AccountSettingsProps {
@@ -98,7 +99,10 @@ export function AccountSettings({
     setIsEditingProfile(true);
   };
 
+  const phoneError = !isValidPhone(tempProfile.phone);
+
   const handleSaveProfile = () => {
+    if (phoneError) return;
     setProfile({ ...tempProfile });
     setIsEditingProfile(false);
     if (setHasUnsavedChanges) setHasUnsavedChanges(false);
@@ -251,7 +255,7 @@ export function AccountSettings({
                 >
                   <img src={profile.avatarUrl} alt={profile.fullName} className="figma-avatar-img" />
                   <div className="figma-avatar-hover-overlay">
-                    <Camera size={22} className="figma-camera-icon" />
+                    <Camera size={18} className="figma-camera-icon" />
                   </div>
                 </div>
                 <input 
@@ -305,12 +309,21 @@ export function AccountSettings({
                 <div className="figma-input-field">
                   <label className="figma-input-label">Phone</label>
                   {isEditingProfile ? (
-                    <input 
-                      type="text" 
-                      className="figma-underline-input"
-                      value={tempProfile.phone}
-                      onChange={e => handleProfileChange('phone', e.target.value)}
-                    />
+                    <>
+                      <input
+                        type="tel"
+                        className="figma-underline-input"
+                        value={tempProfile.phone}
+                        onChange={e => handleProfileChange('phone', e.target.value)}
+                        aria-invalid={phoneError}
+                        style={phoneError ? { borderColor: 'var(--danger)' } : undefined}
+                      />
+                      {phoneError && (
+                        <span style={{ color: 'var(--danger)', fontSize: '11px' }}>
+                          Enter a valid phone number
+                        </span>
+                      )}
+                    </>
                   ) : (
                     <div className="figma-underline-value">{profile.phone}</div>
                   )}
@@ -330,7 +343,7 @@ export function AccountSettings({
                   )}
                 </div>
 
-                <div className="figma-input-field figma-input-full">
+                <div className="figma-input-field">
                   <label className="figma-input-label">Organization</label>
                   {isEditingProfile ? (
                     <input 
@@ -358,10 +371,11 @@ export function AccountSettings({
                   >
                     <X size={16} />
                   </button>
-                  <button 
-                    type="button" 
-                    className="figma-btn-icon figma-btn-save" 
+                  <button
+                    type="button"
+                    className="figma-btn-icon figma-btn-save"
                     onClick={handleSaveProfile}
+                    disabled={phoneError}
                     title="Save profile"
                   >
                     <Check size={16} />

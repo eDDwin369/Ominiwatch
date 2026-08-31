@@ -263,8 +263,12 @@ export function Dashboard({
     handleSetCurrentView(notification.actionRoute);
   };
 
-  const headerLeftPadding = (!isLocked && isVisible) 
-    ? (collapsed ? `${sidebarCollapsedWidth}px` : `${sidebarExpandedWidth}px`) 
+  // Sidebar is always position: absolute (overlay), so it never reserves
+  // layout space on its own. Unpinned/hover-revealed stays a true overlay
+  // (no padding — content sits underneath). Only pinning adjusts the view,
+  // padding content by the sidebar's width so it isn't covered.
+  const headerLeftPadding = isLocked
+    ? `${collapsed ? sidebarCollapsedWidth : sidebarExpandedWidth}px`
     : '0px';
 
   // Resolve Powered By custom footer branding placeholder fallback
@@ -318,7 +322,7 @@ export function Dashboard({
         />
         
         <div className="dashboard-main">
-          <div 
+          <div
             className="dashboard-content-scrollable"
             style={{
               paddingLeft: headerLeftPadding,

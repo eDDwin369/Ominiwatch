@@ -159,8 +159,8 @@
 
 .figma-avatar-wrapper {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.15);
@@ -289,10 +289,6 @@
     grid-template-columns: 1fr;
     padding-right: 0;
   }
-}
-
-.figma-input-full {
-  grid-column: 1 / -1;
 }
 
 .figma-input-field {
