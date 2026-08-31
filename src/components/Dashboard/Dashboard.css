@@ -5465,7 +5465,7 @@ html:has(.mode-v6),
 
 /* Color Gradients matching user screenshots - Use background-image to avoid resetting background-clip */
 .v6-highlight-item.active .v6-text-span.v6-gradient-brand {
-  background-image: linear-gradient(90deg, var(--primary-light) 0%, var(--primary-hover) 50%, var(--primary-hover) 100%) !important;
+  background-image: linear-gradient(90deg, var(--primary-light) 0%, var(--primary-hover) 50%, var(--secondary) 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
@@ -5731,21 +5731,21 @@ html:has(.mode-v7),
 
 /* Version 7 Horizontal Text Gradients matching screenshots */
 .v7-italic-serif-text.v6-gradient-brand {
-  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 45%, #0f172a 100%) !important;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 45%, var(--secondary) 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 
 .v7-italic-serif-text.v6-gradient-appearance {
-  background: linear-gradient(90deg, #a855f7 0%, #7e22ce 55%, #3b0764 100%) !important;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 55%, var(--secondary) 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 
 .v7-italic-serif-text.v6-gradient-content {
-  background: linear-gradient(90deg, #06b6d4 0%, #0e7490 55%, #042f2e 100%) !important;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 55%, var(--secondary) 100%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
@@ -6496,7 +6496,7 @@ html:has(.mode-v7),
 }
 
 .v2-highlight-item.active .v2-text-span.v6-gradient-brand {
-  background: linear-gradient(90deg, var(--primary-hover) 0%, var(--primary-light) 55%) !important;
+  background: linear-gradient(90deg, var(--primary-hover) 0%, var(--secondary) 55%) !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;

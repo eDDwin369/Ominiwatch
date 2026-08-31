@@ -6,15 +6,6 @@ import logo from '../../assets/logo.png';
 import './Dashboard.css';
 import { useThemeStore } from 'omnieye-theme-studio';
 
-export const PRESET_THEMES = [
-  { id: 'corporate', label: 'Corporate Blue', snap: { primaryHex: '#4F6BFF', secondaryHex: '#22D3EE', iconColor: '#4F6BFF' } },
-  { id: 'emerald', label: 'Emerald', snap: { primaryHex: '#2EE6A6', secondaryHex: '#FFC255', iconColor: '#2EE6A6' } },
-  { id: 'indigo', label: 'Indigo Violet', snap: { primaryHex: '#A97BFF', secondaryHex: '#FF5FA2', iconColor: '#A97BFF' } },
-  { id: 'slate', label: 'Graphite', snap: { primaryHex: '#455a64', secondaryHex: '#78909c', iconColor: '#455a64' } },
-  { id: 'teal', label: 'Ocean Teal', snap: { primaryHex: '#00838f', secondaryHex: '#0277bd', iconColor: '#00838f' } },
-  { id: 'amber', label: 'Amber Orange', snap: { primaryHex: '#e65100', secondaryHex: '#d84315', iconColor: '#e65100' } },
-];
-
 interface HeaderProps {
   notifications: NotificationItem[];
   onMarkAllRead: () => void;
@@ -64,99 +55,14 @@ export function Header({
   // host's own headerConfig branding is not set, so the studio drives it too.
   const brand = useThemeStore((s) => s.settings);
   const set = useThemeStore((s) => s.set);
-  const applyPreset = useThemeStore((s) => s.applyPreset);
   const studioLogo = brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo;
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isAvatarHovered, setIsAvatarHovered] = useState(false);
-  const [isHolding, setIsHolding] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
-  const [currentTheme, setCurrentTheme] = useState<string>('corporate');
-  // Monotonic rotation (degrees) for the orbiting dot so cycling always spins
-  // forward — deriving it from index * 60 made the dot spin backwards when the
-  // theme index wrapped from the last preset back to the first.
-  const [dotRotation, setDotRotation] = useState(0);
-  const [showThemeTooltip, setShowThemeTooltip] = useState(false);
-  const [themeToast, setThemeToast] = useState<{ message: string; visible: boolean }>({ message: '', visible: false });
-  const longPressTimerRef = useRef<any>(null);
-  const didLongPressRef = useRef<boolean>(false);
-  const toastTimeoutRef = useRef<any>(null);
-
-  // Sync theme status from the Zustand store
-  useEffect(() => {
-    const active = brand.presetId || 'corporate';
-    setCurrentTheme(active);
-    const activeIndex = PRESET_THEMES.findIndex(t => t.id === active);
-    setDotRotation((activeIndex < 0 ? 0 : activeIndex) * 60);
-  }, [brand.presetId]);
-
-  useEffect(() => {
-    return () => {
-      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-    };
-  }, []);
-
-  const handleCycleTheme = () => {
-    const currentIndex = PRESET_THEMES.findIndex(t => t.id === currentTheme);
-    const nextIndex = (currentIndex + 1) % PRESET_THEMES.length;
-    const nextTheme = PRESET_THEMES[nextIndex];
-    applyPreset(nextTheme.id, nextTheme.snap);
-    setCurrentTheme(nextTheme.id);
-    // Always advance the dot forward by one step (never snap backwards on wrap).
-    setDotRotation(prev => prev + 60);
-  };
-
-  const handleMouseDownButton = () => {
-    didLongPressRef.current = false;
-    setIsHolding(true);
-    longPressTimerRef.current = setTimeout(() => {
-      const currentMode = brand.mode || 'light';
-      const nextMode = currentMode === 'dark' ? 'light' : 'dark';
-      set({ mode: nextMode });
-      
-      // Dispatch event for other components if needed
-      window.dispatchEvent(new CustomEvent('theme-mode-change', { detail: nextMode }));
-      didLongPressRef.current = true;
-      setIsHolding(false);
-
-      // Show temporary toast
-      const emoji = nextMode === 'dark' ? '🌙' : '☀️';
-      const capitalized = nextMode.charAt(0).toUpperCase() + nextMode.slice(1);
-      
-      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-      setThemeToast({
-        message: `${emoji} Switched to ${capitalized} Mode`,
-        visible: true
-      });
-      toastTimeoutRef.current = setTimeout(() => {
-        setThemeToast(prev => ({ ...prev, visible: false }));
-      }, 3000);
-    }, 500);
-  };
-
-  const handleMouseUpButton = () => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-    setIsHolding(false);
-    if (!didLongPressRef.current) {
-      handleCycleTheme();
-    }
-    didLongPressRef.current = false;
-  };
-
-  const handleMouseLeaveButton = () => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-    setIsHolding(false);
-    didLongPressRef.current = false;
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -659,12 +565,6 @@ export function Header({
           )}
         </div>
       </div>
-      
-      {themeToast.visible && (
-        <div className="theme-toggle-toast">
-          {themeToast.message}
-        </div>
-      )}
     </header>
   );
 }
