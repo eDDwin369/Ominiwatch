@@ -145,6 +145,7 @@ export function ImageCropperModal({
       <div style={{
         width: '420px',
         backgroundColor: 'var(--bg-card)',
+        border: '1px solid var(--border-light)',
         borderRadius: '16px',
         padding: '24px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
@@ -153,8 +154,8 @@ export function ImageCropperModal({
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: 'var(--font-size-18)', fontWeight: 700, color: '#0f172a' }}>{title}</h2>
-          <p style={{ margin: 0, fontSize: 'var(--font-size-13)', color: '#64748b', lineHeight: '1.5' }}>
+          <h2 style={{ margin: '0 0 8px 0', fontSize: 'var(--font-size-18)', fontWeight: 700, color: 'var(--text-main)' }}>{title}</h2>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-13)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
             {subtitle}
           </p>
         </div>
@@ -170,8 +171,8 @@ export function ImageCropperModal({
           style={{
             width: '100%',
             height: '240px',
-            backgroundColor: '#f8fafc',
-            backgroundImage: 'linear-gradient(45deg, #e2e8f0 25%, transparent 25%), linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e2e8f0 75%), linear-gradient(-45deg, transparent 75%, #e2e8f0 75%)',
+            backgroundColor: 'var(--bg-dashboard)',
+            backgroundImage: 'linear-gradient(45deg, var(--border-light) 25%, transparent 25%), linear-gradient(-45deg, var(--border-light) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--border-light) 75%), linear-gradient(-45deg, transparent 75%, var(--border-light) 75%)',
             backgroundSize: '20px 20px',
             backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
             borderRadius: '12px',
@@ -220,14 +221,14 @@ export function ImageCropperModal({
 
         {/* Zoom Slider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-          <span style={{ fontSize: 'var(--font-size-14)', fontWeight: 700, color: '#334155' }}>Zoom</span>
+          <span style={{ fontSize: 'var(--font-size-14)', fontWeight: 700, color: 'var(--text-main)' }}>Zoom</span>
           <input 
             type="range" 
             min="-100" 
             max="100" 
             value={zoomLevel} 
             onChange={(e) => setZoomLevel(Number(e.target.value))}
-            style={{ flex: 1, accentColor: '#0f172a', cursor: 'pointer' }}
+            style={{ flex: 1, accentColor: 'var(--primary)', cursor: 'pointer' }}
           />
         </div>
 
@@ -236,14 +237,14 @@ export function ImageCropperModal({
           <button 
             type="button"
             onClick={onClose}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff', color: '#334155', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-dashboard)', color: 'var(--text-main)', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
           >
             Cancel
           </button>
           <button 
             type="button"
             onClick={handleConfirm}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: 'var(--primary)', color: '#ffffff', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer', boxShadow: '0 4px 12px var(--accent-glow)' }}
           >
             Confirm
           </button>

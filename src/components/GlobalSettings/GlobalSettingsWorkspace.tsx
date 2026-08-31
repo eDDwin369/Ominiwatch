@@ -145,34 +145,9 @@ const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: 
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      style={{
-        position: 'relative',
-        width: '50px',
-        height: '28px',
-        borderRadius: '14px',
-        background: checked ? 'linear-gradient(135deg, var(--primary) 0%, #4338ca 100%)' : 'var(--border-hover)',
-        border: '1px solid rgba(255, 255, 255, 0.15)',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        padding: 0,
-        display: 'flex',
-        alignItems: 'center',
-        flexShrink: 0,
-        boxShadow: checked ? '0 2px 12px rgba(99, 91, 255, 0.6)' : 'inset 0 1px 3px rgba(0,0,0,0.4)'
-      }}
+      className={`gs-apple-toggle ${checked ? 'checked' : ''}`}
     >
-      <div
-        style={{
-          position: 'absolute',
-          left: checked ? '24px' : '3px',
-          width: '21px',
-          height: '21px',
-          backgroundColor: 'var(--text-main)',
-          borderRadius: '50%',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.4)',
-          transition: 'left 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-        }}
-      />
+      <div className="gs-apple-toggle-thumb" />
     </button>
   );
 };
@@ -717,7 +692,7 @@ export function GlobalSettingsWorkspace({
           )}
           <div className="gs-header">
             <div className="gs-header-left">
-              <h2 style={{ fontSize: '20px', fontWeight: 500, color: 'var(--text-main)', letterSpacing: '-0.3px' }}>Global Settings</h2>
+              <h2 style={{ fontSize: '20px', fontWeight: 500, color: '#ffffff', letterSpacing: '-0.3px' }}>Global Settings</h2>
             </div>
             <div className="gs-header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
@@ -729,14 +704,10 @@ export function GlobalSettingsWorkspace({
                   width: '46px',
                   height: '32px',
                   borderRadius: '16px',
-                  background: 'rgba(0, 0, 0, 0.7)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: 'var(--text-main)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -755,14 +726,10 @@ export function GlobalSettingsWorkspace({
                   width: '46px',
                   height: '32px',
                   borderRadius: '16px',
-                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-                  border: 'none',
-                  color: 'var(--text-main)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  boxShadow: '0 4px 14px rgba(29, 78, 216, 0.6)',
                   transition: 'all 0.2s ease'
                 }}
               >
@@ -825,20 +792,9 @@ export function GlobalSettingsWorkspace({
                           }
                         }
                       }}
-                      style={{ 
-                        borderRadius: '24px', 
-                        padding: '24px 16px', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        justifyContent: 'center', 
-                        alignItems: 'center',
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1.5px dashed rgba(255, 255, 255, 0.25)',
-                        cursor: 'pointer'
-                      }}
                     >
-                      <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', boxShadow: '0 0 20px rgba(56, 189, 248, 0.4)' }}>
-                        <Upload size={22} color="#ffffff" />
+                      <div className="gs-iphone-orb-btn">
+                        <Upload size={22} />
                       </div>
                       <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose customer logo</span>
                     </div>
@@ -851,7 +807,7 @@ export function GlobalSettingsWorkspace({
                     />
 
                     {logo && (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(50, 53, 62, 0.85)', borderRadius: '14px', padding: '8px 12px', border: '1px solid rgba(255, 255, 255, 0.15)', marginTop: '4px' }}>
+                      <div className="gs-iphone-file-card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <img src={logo} alt="Uploaded Preview" style={{ height: '30px', width: '30px', objectFit: 'contain', borderRadius: '6px' }} />
                           <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
@@ -859,7 +815,7 @@ export function GlobalSettingsWorkspace({
                         <button type="button" onClick={() => {
                           setLogo('');
                           if (fileInputRef.current) fileInputRef.current.value = '';
-                        }} style={{ background: '#ffffff', border: 'none', borderRadius: '50%', width: '22px', height: '22px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#111', fontWeight: 700, fontSize: '13px' }}>
+                        }} className="gs-iphone-file-remove-btn">
                           ×
                         </button>
                       </div>
@@ -907,12 +863,12 @@ export function GlobalSettingsWorkspace({
                             width: '58px',
                             height: '30px',
                             borderRadius: '15px',
-                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            border: '1px solid var(--gs-input-border)',
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: 'var(--bg-card)',
-                            color: 'var(--text-main)',
+                            backgroundColor: 'var(--gs-input-bg)',
+                            color: 'var(--gs-text-color)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
@@ -969,12 +925,12 @@ export function GlobalSettingsWorkspace({
                             width: '58px',
                             height: '30px',
                             borderRadius: '15px',
-                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            border: '1px solid var(--gs-input-border)',
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: 'var(--bg-card)',
-                            color: 'var(--text-main)',
+                            backgroundColor: 'var(--gs-input-bg)',
+                            color: 'var(--gs-text-color)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
@@ -1022,32 +978,24 @@ export function GlobalSettingsWorkspace({
             <div className="gs-tab-content-container" style={{ padding: '24px 32px' }}>
               <div className="gs-cards-2x2">
                             {/* Left Card: Powered By Settings */}
-                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid rgba(255, 255, 255, 0.08)', justifyContent: 'flex-start' }}>
+                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'flex-start' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                       Powered By <InfoTooltip text="Configure footer 'Powered By' attribution as custom text or logo image." />
                     </div>
 
                     {/* Tabs: Text vs Image */}
-                    <div style={{ display: 'flex', gap: '8px', background: '#3c3f47', padding: '4px', borderRadius: '14px', border: '1px solid rgba(255, 255, 255, 0.12)' }}>
+                    <div className="gs-segmented-tabs" style={{ display: 'flex', width: '100%' }}>
                       <button
                         type="button"
                         onClick={() => setFooterPoweredByType('text')}
+                        className={`gs-tab-btn ${footerPoweredByType === 'text' ? 'active' : ''}`}
                         style={{
                           flex: 1,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '6px',
-                          padding: '8px 12px',
-                          borderRadius: '10px',
-                          border: 'none',
-                          background: footerPoweredByType === 'text' ? 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)' : 'transparent',
-                          color: 'var(--text-main)',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease'
+                          gap: '6px'
                         }}
                       >
                         <Type size={14} /> TEXT
@@ -1055,21 +1003,13 @@ export function GlobalSettingsWorkspace({
                       <button
                         type="button"
                         onClick={() => setFooterPoweredByType('image')}
+                        className={`gs-tab-btn ${footerPoweredByType === 'image' ? 'active' : ''}`}
                         style={{
                           flex: 1,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          gap: '6px',
-                          padding: '8px 12px',
-                          borderRadius: '10px',
-                          border: 'none',
-                          background: footerPoweredByType === 'image' ? 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)' : 'transparent',
-                          color: 'var(--text-main)',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease'
+                          gap: '6px'
                         }}
                       >
                         <Image size={14} /> IMAGE
@@ -1094,20 +1034,9 @@ export function GlobalSettingsWorkspace({
                       <div 
                         className="gs-iphone-dropzone"
                         onClick={() => footerFileInputRef.current?.click()}
-                        style={{ 
-                          border: '1.5px dashed rgba(255, 255, 255, 0.25)', 
-                          borderRadius: '20px', 
-                          padding: '24px 16px', 
-                          display: 'flex', 
-                          flexDirection: 'column',
-                          justifyContent: 'center', 
-                          alignItems: 'center',
-                          cursor: 'pointer',
-                          background: 'rgba(255, 255, 255, 0.03)',
-                        }}
                       >
-                        <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #e0f2fe 0%, #38bdf8 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
-                          <Upload size={20} color="#0284c7" />
+                        <div className="gs-iphone-orb-btn">
+                          <Upload size={20} />
                         </div>
                         <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Choose image</span>
                       </div>
@@ -1121,7 +1050,7 @@ export function GlobalSettingsWorkspace({
 
                       {/* Uploaded image preview */}
                       {footerPoweredByImage && (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(50, 53, 62, 0.85)', borderRadius: '16px', padding: '12px 16px', border: '1px solid rgba(255, 255, 255, 0.15)' }}>
+                        <div className="gs-iphone-file-card">
                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                             <img src={footerPoweredByImage} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '6px' }} />
                             <span style={{ fontSize: '13.5px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded image</span>
@@ -1129,7 +1058,7 @@ export function GlobalSettingsWorkspace({
                           <button type="button" onClick={() => {
                             setFooterPoweredByImage('');
                             if (footerFileInputRef.current) footerFileInputRef.current.value = '';
-                          }} style={{ background: '#ffffff', border: 'none', borderRadius: '50%', width: '24px', height: '24px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#111', fontWeight: 700 }}>
+                          }} className="gs-iphone-file-remove-btn">
                             ×
                           </button>
                         </div>
@@ -1139,7 +1068,7 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Right Card: Footer Settings */}
-                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                     Footer Settings <InfoTooltip text="Control overall footer bar visibility, copyright text, and navigation links." position="below-right" />
                   </div>
@@ -1197,7 +1126,7 @@ export function GlobalSettingsWorkspace({
               <div className="gs-cards-2x2">
                 
                 {/* Behavior Card */}
-                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
@@ -1228,7 +1157,7 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Width Configuration Card */}
-                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Dimensions <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
                   </div>
@@ -1262,7 +1191,7 @@ export function GlobalSettingsWorkspace({
                           setStartExpanded(true);
                           setSidebarCollapsed(false);
                         }}
-                        style={{ width: '100%', cursor: 'pointer', accentColor: '#1d4ed8' }}
+                        style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--primary)' }}
                       />
                     </div>
 
@@ -1296,7 +1225,7 @@ export function GlobalSettingsWorkspace({
                           setStartExpanded(false);
                           setSidebarCollapsed(true);
                         }}
-                        style={{ width: '100%', cursor: 'pointer', accentColor: '#1d4ed8' }}
+                        style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--primary)' }}
                       />
                     </div>
                   </div>
@@ -1345,20 +1274,9 @@ export function GlobalSettingsWorkspace({
                           }
                         }
                       }}
-                      style={{ 
-                        borderRadius: '24px', 
-                        padding: '24px 16px', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        justifyContent: 'center', 
-                        alignItems: 'center',
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1.5px dashed rgba(255, 255, 255, 0.25)',
-                        cursor: 'pointer'
-                      }}
                     >
-                      <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: 'linear-gradient(135deg, #7dd3fc 0%, #38bdf8 50%, #0284c7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px', boxShadow: '0 0 20px rgba(56, 189, 248, 0.4)' }}>
-                        <Upload size={22} color="#ffffff" />
+                      <div className="gs-iphone-orb-btn">
+                        <Upload size={22} />
                       </div>
                       <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose customer logo</span>
                     </div>
@@ -1371,7 +1289,7 @@ export function GlobalSettingsWorkspace({
                     />
 
                     {customerLogo && (
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(50, 53, 62, 0.85)', borderRadius: '14px', padding: '8px 12px', border: '1px solid rgba(255, 255, 255, 0.15)', marginTop: '4px' }}>
+                      <div className="gs-iphone-file-card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           <img src={customerLogo} alt="Uploaded Preview" style={{ height: '30px', width: '30px', objectFit: 'contain', borderRadius: '6px' }} />
                           <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
@@ -1379,7 +1297,7 @@ export function GlobalSettingsWorkspace({
                         <button type="button" onClick={() => {
                           setCustomerLogo('');
                           if (customerLogoInputRef.current) customerLogoInputRef.current.value = '';
-                        }} style={{ background: '#ffffff', border: 'none', borderRadius: '50%', width: '22px', height: '22px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#111', fontWeight: 700, fontSize: '13px' }}>
+                        }} className="gs-iphone-file-remove-btn">
                           ×
                         </button>
                       </div>
@@ -1393,7 +1311,7 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Right Card: Customer Profile Visibility */}
-                <div className="gs-config-card" style={{ background: 'var(--bg-card)', borderRadius: '28px', padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div className="gs-config-card" style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Profile Visibility <InfoTooltip text="Manage visibility, typography styles, and color follow settings for customer profile." position="below-right" /></span>
                     <button
@@ -1427,12 +1345,12 @@ export function GlobalSettingsWorkspace({
                             width: '58px',
                             height: '30px',
                             borderRadius: '15px',
-                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            border: '1px solid var(--gs-input-border)',
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: 'var(--bg-card)',
-                            color: 'var(--text-main)',
+                            backgroundColor: 'var(--gs-input-bg)',
+                            color: 'var(--gs-text-color)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
@@ -1489,12 +1407,12 @@ export function GlobalSettingsWorkspace({
                             width: '58px',
                             height: '30px',
                             borderRadius: '15px',
-                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            border: '1px solid var(--gs-input-border)',
                             fontSize: '12px',
                             fontWeight: 600,
                             padding: '0 8px',
-                            backgroundColor: 'var(--bg-card)',
-                            color: 'var(--text-main)',
+                            backgroundColor: 'var(--gs-input-bg)',
+                            color: 'var(--gs-text-color)',
                             cursor: 'pointer',
                             outline: 'none'
                           }}
