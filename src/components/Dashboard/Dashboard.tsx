@@ -263,6 +263,14 @@ export function Dashboard({
     handleSetCurrentView(notification.actionRoute);
   };
 
+  // Sidebar is always position: absolute (overlay), so it never reserves
+  // layout space on its own. Unpinned/hover-revealed stays a true overlay
+  // (no padding — content sits underneath). Only pinning adjusts the view,
+  // padding content by the sidebar's width so it isn't covered.
+  const headerLeftPadding = isLocked
+    ? `${collapsed ? sidebarCollapsedWidth : sidebarExpandedWidth}px`
+    : '0px';
+
   // Resolve Powered By custom footer branding placeholder fallback
   const resolvedFooterPoweredByText = footerPoweredByText || `Powered by ${headerConfig?.companyName || 'OomniEye'} Digital Solutions`;
 
@@ -314,7 +322,13 @@ export function Dashboard({
         />
         
         <div className="dashboard-main">
-          <div className="dashboard-content-scrollable">
+          <div
+            className="dashboard-content-scrollable"
+            style={{
+              paddingLeft: headerLeftPadding,
+              transition: 'padding-left 0.05s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+          >
             {isThemeStudioOpen ? (
               <ThemeStudioEmbed />
             ) : (
