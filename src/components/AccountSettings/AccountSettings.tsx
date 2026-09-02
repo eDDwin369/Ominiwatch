@@ -184,8 +184,6 @@ export function AccountSettings({
   // State: Notifications
   // ----------------------------------------------------
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [inAppPushEnabled, setInAppPushEnabled] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationCount, setNotificationCount] = useState('5');
 
   // Sessions mockup
@@ -223,10 +221,6 @@ export function AccountSettings({
       <div className="figma-account-settings-container">
         {/* Top Header / Breadcrumb */}
       <div className="figma-settings-header">
-        <div className="figma-breadcrumb">
-          <span className="figma-breadcrumb-chevron">{`>`}</span>
-          <span>Settings</span>
-        </div>
         <h1 className="figma-settings-title">Account Settings</h1>
       </div>
 
@@ -240,8 +234,8 @@ export function AccountSettings({
           <div className="figma-card figma-card-personal">
             <div className="figma-card-top-bar">
               <h2 className="figma-card-heading">Personal Information</h2>
-              <div className="figma-location-badge">
-                <span>{profile.location}</span>
+              <div className="figma-location-text">
+                <span>{profile.location} .</span>
               </div>
             </div>
 
@@ -292,7 +286,7 @@ export function AccountSettings({
 
               {/* Right Input Fields Grid */}
               <div className="figma-inputs-grid">
-                <div className="figma-input-field figma-input-email">
+                <div className="figma-input-field">
                   <label className="figma-input-label">Email</label>
                   {isEditingProfile ? (
                     <input 
@@ -343,7 +337,7 @@ export function AccountSettings({
                   )}
                 </div>
 
-                <div className="figma-input-field">
+                <div className="figma-input-field figma-input-org">
                   <label className="figma-input-label">Organization</label>
                   {isEditingProfile ? (
                     <input 
@@ -388,7 +382,7 @@ export function AccountSettings({
                   onClick={handleStartEdit}
                   title="Edit Information"
                 >
-                  <Pencil size={16} />
+                  <Pencil size={15} />
                 </button>
               )}
             </div>
@@ -408,15 +402,15 @@ export function AccountSettings({
               </div>
             </div>
 
-            <div className="figma-preferences-controls">
-              {/* Row 1: Cookie Preferences Accordion */}
-              <div className="figma-pref-row-accordion">
+            <div className="figma-preferences-row-inline">
+              {/* Item 1: Cookie Preferences */}
+              <div className="figma-pref-cookie-wrap">
                 <button 
                   type="button" 
-                  className="figma-accordion-trigger"
+                  className="figma-cookie-trigger"
                   onClick={() => setIsCookieExpanded(!isCookieExpanded)}
                 >
-                  <span className="figma-accordion-title">Cookie Preferences</span>
+                  <span>Cookie Preferences</span>
                   {isCookieExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </button>
 
@@ -446,49 +440,48 @@ export function AccountSettings({
                 )}
               </div>
 
-              {/* Select Controls Row */}
-              <div className="figma-selects-row">
-                <div className="figma-select-group">
-                  <label className="figma-select-label">Language</label>
-                  <CustomSmoothDropdown 
-                    value={language}
-                    onChange={setLanguage}
-                    options={[
-                      { label: 'English', value: 'English' },
-                      { label: 'Spanish', value: 'Spanish' },
-                      { label: 'French', value: 'French' },
-                      { label: 'German', value: 'German' },
-                      { label: 'Hindi', value: 'Hindi' }
-                    ]}
-                  />
-                </div>
-
-                <div className="figma-select-group">
-                  <label className="figma-select-label">Timezone</label>
-                  <CustomSmoothDropdown 
-                    value={timezone}
-                    onChange={setTimezone}
-                    options={[
-                      { label: '(GMT + 05:30) Asia', value: '(GMT + 05:30) Asia/Kolkata' },
-                      { label: '(UTC) London / GMT', value: '(UTC) GMT Standard Time' },
-                      { label: '(EST) New York', value: '(EST) Eastern Time' },
-                      { label: '(PST) Los Angeles', value: '(PST) Pacific Time' },
-                      { label: '(SGT) Singapore', value: '(SGT) Singapore Time' }
-                    ]}
-                  />
-                </div>
+              {/* Item 2: Language */}
+              <div className="figma-select-inline-item">
+                <span className="figma-select-label">Language</span>
+                <CustomSmoothDropdown 
+                  value={language}
+                  onChange={setLanguage}
+                  options={[
+                    { label: 'English', value: 'English' },
+                    { label: 'Spanish', value: 'Spanish' },
+                    { label: 'French', value: 'French' },
+                    { label: 'German', value: 'German' },
+                    { label: 'Hindi', value: 'Hindi' }
+                  ]}
+                />
               </div>
-            </div>
 
-            {/* Bottom Right Delete Account Button */}
-            <div className="figma-card-action-bottom-right">
-              <button 
-                type="button" 
-                className="figma-btn-delete-red"
-                onClick={() => setIsDeleteModalOpen(true)}
-              >
-                Delete your account
-              </button>
+              {/* Item 3: Timezone */}
+              <div className="figma-select-inline-item">
+                <span className="figma-select-label">Timezone</span>
+                <CustomSmoothDropdown 
+                  value={timezone}
+                  onChange={setTimezone}
+                  options={[
+                    { label: '(GMT + 05:30) Asia', value: '(GMT + 05:30) Asia/Kolkata' },
+                    { label: '(UTC) London / GMT', value: '(UTC) GMT Standard Time' },
+                    { label: '(EST) New York', value: '(EST) Eastern Time' },
+                    { label: '(PST) Los Angeles', value: '(PST) Pacific Time' },
+                    { label: '(SGT) Singapore', value: '(SGT) Singapore Time' }
+                  ]}
+                />
+              </div>
+
+              {/* Item 4: Delete Account Button */}
+              <div className="figma-delete-btn-wrap">
+                <button 
+                  type="button" 
+                  className="figma-btn-delete-red"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                >
+                  Delete your account
+                </button>
+              </div>
             </div>
           </div>
 
@@ -497,8 +490,8 @@ export function AccountSettings({
         {/* ================= RIGHT COLUMN ================= */}
         <div className="figma-column-right">
 
-          {/* CARD 3: Single Right Card (Security & Sessions + Notifications) */}
-          <div className="figma-card figma-card-security">
+          {/* CARD 3: Single Unified Card (Security & Sessions + Notifications) */}
+          <div className="figma-card figma-card-unified-right">
             
             {/* Top Section: Security & Sessions */}
             <div className="figma-security-section">
@@ -601,6 +594,9 @@ export function AccountSettings({
               </div>
             </div>
 
+            {/* Horizontal Divider Line */}
+            <div className="figma-card-divider" />
+
             {/* Bottom Section: Notifications */}
             <div className="figma-notifications-section">
               <div className="figma-notif-header">
@@ -615,12 +611,13 @@ export function AccountSettings({
                 </button>
               </div>
 
-              {/* Row 1: Notification Dropdown */}
+              {/* Notification Dropdown Row */}
               <div className="figma-notif-row">
                 <span className="figma-notif-label">Notification Dropdown</span>
                 <CustomSmoothDropdown 
                   value={notificationCount}
                   onChange={setNotificationCount}
+                  className="figma-dropdown-compact"
                   options={[
                     { label: '5', value: '5' },
                     { label: '10', value: '10' },
@@ -628,30 +625,6 @@ export function AccountSettings({
                     { label: '20', value: '20' }
                   ]}
                 />
-              </div>
-
-              {/* Row 2: In-App & Push Notifications */}
-              <div className="figma-notif-row">
-                <span className="figma-notif-label">In-App & Push Notifications</span>
-                <button 
-                  type="button"
-                  className={`figma-main-toggle ${inAppPushEnabled && notificationsEnabled ? 'on' : 'off'}`}
-                  onClick={() => setInAppPushEnabled(!inAppPushEnabled)}
-                >
-                  <span className="figma-main-toggle-thumb" />
-                </button>
-              </div>
-
-              {/* Row 3: Notification Sound */}
-              <div className="figma-notif-row">
-                <span className="figma-notif-label">Notification Sound</span>
-                <button 
-                  type="button"
-                  className={`figma-main-toggle ${soundEnabled && notificationsEnabled ? 'on' : 'off'}`}
-                  onClick={() => setSoundEnabled(!soundEnabled)}
-                >
-                  <span className="figma-main-toggle-thumb" />
-                </button>
               </div>
             </div>
 
