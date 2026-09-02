@@ -5,8 +5,6 @@
   right: 0;
   bottom: 0;
   background: rgba(10, 12, 18, 0.72);
-  backdrop-filter: blur(35px);
-  -webkit-backdrop-filter: blur(35px);
   z-index: 9999;
   display: flex;
   align-items: center;
