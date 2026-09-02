@@ -37,17 +37,17 @@ function App() {
     } catch (e) {
       // ignore
     }
-    return true;
+    return false;
   });
 
-  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [sidebarVisible, setSidebarVisible] = useState(true);
 
   const [sidebarAutoHide, setSidebarAutoHide] = useState(() => {
     try {
       const saved = localStorage.getItem('gs_autoHideSidebar');
-      return saved !== null ? JSON.parse(saved) : true; // Default: true (Hidden by default)
+      return saved !== null ? JSON.parse(saved) : false; // Default: false (Pinned / Visible by default)
     } catch {
-      return true;
+      return false;
     }
   });
 

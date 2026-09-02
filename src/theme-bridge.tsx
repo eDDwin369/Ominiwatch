@@ -43,8 +43,19 @@ function syncCssVars(theme: any, settings: any) {
   set('--secondary', p.secondary?.main);
   set('--secondary-hover', p.secondary?.dark);
   const tk = theme.tokens || {};
-  set('--highlight', tk.highlight);
-  set('--highlight-hover', alpha(tk.highlight, 0.25));
+  const isDark = settings.mode === 'dark';
+  const highlight = settings.highlightHex || tk.highlight || p.primary.main || '#2563EB';
+  const hlSoft = tk.highlightSoft && !tk.highlightSoft.includes('255, 212, 0')
+    ? tk.highlightSoft
+    : alpha(highlight, isDark ? 0.20 : 0.12);
+  const hlBd = tk.highlightBd && !tk.highlightBd.includes('255, 212, 0')
+    ? tk.highlightBd
+    : alpha(highlight, isDark ? 0.50 : 0.35);
+
+  set('--highlight', highlight);
+  set('--highlight-soft', hlSoft);
+  set('--highlight-bd', hlBd);
+  set('--highlight-hover', alpha(highlight, 0.25));
   set('--card-hdr', tk.cardHdrBg);
   set('--notif-card', tk.toastBg);
   const btnBase = settings.btnColorHex || p.primary.main;
@@ -110,6 +121,23 @@ function syncCssVars(theme: any, settings: any) {
   Object.entries(pixelSizes).forEach(([key, val]) => {
     if (val) set(`--font-size-${key}`, `${val}px`);
   });
+  // Dedicated Dashboard Ambient & Preset Tokens
+  const primaryHex = settings.primaryHex || p.primary.main || '#2563EB';
+  const secondaryHex = settings.secondaryHex || p.secondary?.main || '#00D2FF';
+  const [pHue] = hexToHsl(primaryHex);
+  const darkHeader = hslToHexStr(pHue, 38, 6.5);
+  const darkSidebar = hslToHexStr(pHue, 35, 7.2);
+  const darkCanvas = hslToHexStr(pHue, 32, 5.5);
+
+  set('--dash-header-bg', darkHeader);
+  set('--dash-sidebar-bg', settings.mode === 'dark' ? darkSidebar : '#ffffff');
+  set('--dash-canvas-bg', settings.mode === 'dark' ? darkCanvas : '#ffffff');
+  set('--dash-brand-gradient', `linear-gradient(90deg, ${primaryHex} 0%, ${secondaryHex} 100%)`);
+  set('--dash-aura-color', primaryHex);
+  set('--dash-active-pill-border', isDark ? highlight : hlBd);
+  set('--dash-active-pill-bg', hlSoft);
+  set('--dash-active-pill-color', highlight);
+
   // radius
   set('--radius-sm', `${theme.shape.borderRadius * 0.5}px`);
   set('--radius-md', `${theme.shape.borderRadius}px`);
@@ -117,6 +145,42 @@ function syncCssVars(theme: any, settings: any) {
   set('--radius-xl', `${theme.shape.borderRadius * 2}px`);
   // flip the host's existing dark-var block to match the studio mode
   root.setAttribute('data-theme-mode', settings.mode);
+}
+
+function hexToHsl(hex: string): [number, number, number] {
+  let c = hex.replace('#', '');
+  if (c.length === 3) c = c.split('').map((x) => x + x).join('');
+  const num = parseInt(c, 16);
+  if (isNaN(num)) return [220, 50, 50];
+  const r = ((num >> 16) & 255) / 255;
+  const g = ((num >> 8) & 255) / 255;
+  const b = (num & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h = Math.round(h * 60);
+  }
+  return [h, Math.round(s * 100), Math.round(l * 100)];
+}
+
+function hslToHexStr(h: number, s: number, l: number): string {
+  s /= 100;
+  l /= 100;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, '0');
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 /**
