@@ -232,35 +232,68 @@
    pushes .dashboard-main), whether pinned or hover-revealed. Positioned
    relative to .dashboard-body (position: relative). Shown/hidden purely
    via the .visible modifier below; pinned just keeps .visible on. */
-/* Sidebar — docked flex column matching Figma reference design */
+/* Sidebar — Base styles */
 .dash-sidebar {
-  position: relative !important;
-  top: auto !important;
-  bottom: auto !important;
-  left: auto !important;
-  height: 100% !important;
-  width: var(--sidebar-width, 260px) !important;
-  flex-shrink: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  transform: none !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-  z-index: 10 !important;
-  overflow: hidden !important;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  height: 100%;
+  width: var(--sidebar-width, 260px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s ease, box-shadow 0.3s ease;
 }
 
 [data-theme-mode="light"] .dash-sidebar {
   background: #ffffff !important;
-  border-right: 1px solid #e2e8f0 !important;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02) !important;
+  border-right: 1px solid #e2e8f0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
 }
 
 [data-theme-mode="dark"] .dash-sidebar {
   background: var(--dash-sidebar-bg, #061510) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: none !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
+
+/* 1. PINNED State (Default when locked / not .unlocked): Consumes space on screen */
+.dash-sidebar:not(.unlocked) {
+  position: relative;
+  flex-shrink: 0;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* 2. UNPINNED State (.unlocked): Acts as an overlay, does NOT consume space */
+.dash-sidebar.unlocked {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  z-index: 1000;
+  transform: translateX(-100%);
+  visibility: hidden;
+  pointer-events: none;
+  box-shadow: none;
+  border-right: none;
+}
+
+/* When UNPINNED and VISIBLE (hover edge or active toggle): Overlays smoothly on top of content */
+.dash-sidebar.unlocked.visible {
+  transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+[data-theme-mode="light"] .dash-sidebar.unlocked.visible {
+  box-shadow: 8px 0 24px rgba(0, 0, 0, 0.12) !important;
+  border-right: 1px solid #e2e8f0 !important;
+}
+
+[data-theme-mode="dark"] .dash-sidebar.unlocked.visible {
+  box-shadow: 8px 0 28px rgba(0, 0, 0, 0.55) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 
 .dash-sidebar.editing-focus {
@@ -270,11 +303,7 @@
 }
 
 .dash-sidebar.collapsed {
-  width: var(--sidebar-width-collapsed, 68px) !important;
-}
-
-.dash-sidebar.visible {
-  visibility: visible !important;
+  width: var(--sidebar-width-collapsed, 68px);
 }
 
 .sidebar-header {
