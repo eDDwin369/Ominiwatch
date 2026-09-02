@@ -360,7 +360,7 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("User", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <BarChart2 size={20} className="nav-icon" color="#8b5cf6" />
+            <BarChart2 size={20} className="nav-icon" color="#a855f7" />
             <span className="nav-label">User</span>
           </a>
 
@@ -374,7 +374,7 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <Palette size={20} className="nav-icon" color="#14b8a6" />
+            <Palette size={20} className="nav-icon" color="#ec4899" />
             <span className="nav-label">Theme Studio</span>
           </a>
           <a
@@ -384,7 +384,7 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Account Settings", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <UserCircle size={20} className="nav-icon" color="#6366f1" />
+            <UserCircle size={20} className="nav-icon" color="#06b6d4" />
             <span className="nav-label">Account Settings</span>
           </a>
         </div>

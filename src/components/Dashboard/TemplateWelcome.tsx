@@ -3,14 +3,11 @@ import { createPortal } from 'react-dom';
 import { 
   Play, 
   Pause, 
-  ChevronLeft, 
-  ChevronRight,
   Maximize2,
   Minimize2,
   Volume2,
   VolumeX,
-  Settings,
-  CheckCircle2
+  Settings
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -57,10 +54,10 @@ export function TemplateWelcome({
 
   const [activeVentureIndex, setActiveVentureIndex] = useState<number>(0);
 
-  // Video player state
-  const [isPlayingVideo, setIsPlayingVideo] = useState<boolean>(true);
-  const [videoProgress, setVideoProgress] = useState<number>(35);
-  const [isAutoPlaying] = useState<boolean>(true);
+  // Video player state (defaults to idle paused preview matching reference design)
+  const [isPlayingVideo, setIsPlayingVideo] = useState<boolean>(false);
+  const [videoProgress, setVideoProgress] = useState<number>(53);
+  const [isAutoPlaying] = useState<boolean>(false);
   const [isVideoExpanded, setIsVideoExpanded] = useState<boolean>(false);
   const [isClosingCinema, setIsClosingCinema] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
@@ -69,12 +66,12 @@ export function TemplateWelcome({
   const [playbackSpeed, setPlaybackSpeed] = useState<string>('1.0x');
 
   // Exact YouTube Controls States from Screenshot
-  const [isAutoplay, setIsAutoplay] = useState<boolean>(true);
+  const [isAutoplay, setIsAutoplay] = useState<boolean>(false);
   const [showSubtitles, setShowSubtitles] = useState<boolean>(true);
   const [isMiniplayer, setIsMiniplayer] = useState<boolean>(false);
 
   // Completed Video Steps Tracking (Persisted in localStorage)
-  const [completedSteps, setCompletedSteps] = useState<{ [key: string]: boolean }>(() => {
+  const [_completedSteps, setCompletedSteps] = useState<{ [key: string]: boolean }>(() => {
     try {
       const saved = localStorage.getItem('twineye_completed_video_steps');
       return saved ? JSON.parse(saved) : {};
@@ -96,7 +93,6 @@ export function TemplateWelcome({
 
   const handleOpenCinema = () => {
     setIsVideoExpanded(true);
-    // Request native browser fullscreen if supported so it covers tabs & browser header
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen().catch(() => {});
     }
@@ -145,20 +141,13 @@ export function TemplateWelcome({
   const [introTextIndex, setIntroTextIndex] = useState<number>(0);
   const introPhrases = ['Welcome to', 'OmniEye'];
 
-  // Full Dashboard Pure Black Intro Screen State for Version 2 ("Welcome to" -> "OomniEye")
-  const [showFullIntro, setShowFullIntro] = useState<boolean>(true);
+  // Full Dashboard Pure Black Intro Screen State disabled to prevent black screen flashing
+  const [showFullIntro, setShowFullIntro] = useState<boolean>(false);
   const [introPhase, setIntroPhase] = useState<'welcome' | 'omni'>('welcome');
   const [isIntroFadingOut, setIsIntroFadingOut] = useState<boolean>(false);
 
   const handleDismissIntro = () => {
-    if (isIntroFadingOut) return;
-    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(() => {});
-    }
-    setIsIntroFadingOut(true);
-    setTimeout(() => {
-      setShowFullIntro(false);
-    }, 800);
+    setShowFullIntro(false);
   };
 
   useEffect(() => {
@@ -347,26 +336,19 @@ export function TemplateWelcome({
               </div>
 
               {/* Step highlights list below */}
+              {/* Step highlights list below */}
               <div className="v6-highlight-list">
-                {venturesData.map((venture, idx) => {
-                  const isCompleted = !!completedSteps[venture.id];
-                  return (
-                    <div
-                      key={venture.id}
-                      className={`v2-highlight-item ${idx === activeVentureIndex ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}
-                      onClick={() => setActiveVentureIndex(idx)}
-                    >
-                      <span className={`v2-text-span ${venture.gradientClass}`}>
-                        {venture.highlight}
-                      </span>
-                      {isCompleted && (
-                        <span className="v2-completed-tick-badge" title="Video watching completed">
-                          <CheckCircle2 size={22} className="v2-completed-tick-icon" />
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
+                {venturesData.map((venture, idx) => (
+                  <div
+                    key={venture.id}
+                    className={`v2-highlight-item ${idx === activeVentureIndex ? 'active' : ''}`}
+                    onClick={() => setActiveVentureIndex(idx)}
+                  >
+                    <span className={`v2-text-span ${venture.gradientClass}`}>
+                      {venture.highlight}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -374,12 +356,17 @@ export function TemplateWelcome({
             <div className="v5-ventures-right">
               <div className="v5-video-player-container">
                 {/* Rectangular Video Frame */}
-                <div className="v5-video-screen">
-                  {/* Intro Animated Text Overlay with Sonar Rings */}
+                <div 
+                  className="v5-video-screen"
+                  onClick={() => setIsPlayingVideo(!isPlayingVideo)}
+                  title="Click to play / pause video"
+                >
+                  {/* Intro Animated Text Overlay with Sonar Rings & Center Watermark */}
                   <div className="v2-intro-animated-text-stage" aria-hidden="true">
                     <div className="v2-sonar-ring ring-1" />
                     <div className="v2-sonar-ring ring-2" />
                     <div className="v2-sonar-ring ring-3" />
+                    <div className="v2-center-disc-watermark" />
                     
                     <div key={introTextIndex} className="v2-intro-text-anim-item">
                       {introPhrases[introTextIndex]}
@@ -398,17 +385,6 @@ export function TemplateWelcome({
 
                   {/* Dark Vignette Overlay */}
                   <div className="v5-video-overlay-gradient" />
-
-
-
-                  {/* Center Glass Play/Pause Button */}
-                  <button 
-                    className="v5-center-play-btn"
-                    onClick={() => setIsPlayingVideo(!isPlayingVideo)}
-                    title={isPlayingVideo ? "Pause Video" : "Play Video"}
-                  >
-                    {isPlayingVideo ? <Pause size={24} /> : <Play size={24} style={{ marginLeft: 3 }} />}
-                  </button>
 
                   {/* YouTube Style Media Controls Bar */}
                   <div className="v5-yt-controls-container">
@@ -470,30 +446,25 @@ export function TemplateWelcome({
                       </div>
 
                       {/* Right Controls Group (Autoplay, CC, Gear + Red HD Badge, Miniplayer, Expand) */}
-                      <div className="v5-yt-right-group">
-                        {/* Autoplay Switch Toggle */}
-                        <button 
-                          className={`v5-yt-autoplay-btn ${isAutoplay ? 'active' : ''}`}
-                          onClick={() => setIsAutoplay(!isAutoplay)}
-                          title={isAutoplay ? "Autoplay is on" : "Autoplay is off"}
+                      {/* Right Controls Group (CC, HD, Gear Settings, Fullscreen) */}
+                      <div className="v5-yt-right-group" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {/* Subtitles / CC Badge */}
+                        <div 
+                          className="v5-badge-cc"
+                          title="Closed Captions"
                         >
-                          <div className="v5-yt-autoplay-track">
-                            <div className="v5-yt-autoplay-thumb">
-                              <Play size={8} fill="currentColor" />
-                            </div>
-                          </div>
-                        </button>
+                          CC
+                        </div>
 
-                        {/* Subtitles / CC Button */}
-                        <button 
-                          className={`v5-yt-cc-btn ${showSubtitles ? 'active' : ''}`}
-                          onClick={() => setShowSubtitles(!showSubtitles)}
-                          title="Subtitles/closed captions (c)"
+                        {/* HD Badge */}
+                        <div 
+                          className="v5-badge-hd"
+                          title="High Definition"
                         >
-                          <span>CC</span>
-                        </button>
+                          HD
+                        </div>
 
-                        {/* Settings Gear with Red HD Quality Badge */}
+                        {/* Settings Gear */}
                         <div style={{ position: 'relative' }}>
                           <button 
                             className="v5-yt-btn v5-yt-gear-btn"
@@ -501,7 +472,6 @@ export function TemplateWelcome({
                             title="Settings"
                           >
                             <Settings size={18} style={{ transform: showSettingsMenu ? 'rotate(45deg)' : 'none', transition: 'transform 0.2s ease' }} />
-                            <span className="v5-yt-hd-red-badge">HD</span>
                           </button>
 
                           {showSettingsMenu && (
@@ -523,55 +493,17 @@ export function TemplateWelcome({
                           )}
                         </div>
 
-                        {/* Miniplayer / Embed Layout Button */}
-                        <button 
-                          className="v5-yt-cc-btn v5-yt-embed-btn"
-                          onClick={() => setIsMiniplayer(!isMiniplayer)}
-                          title="Miniplayer (i)"
-                        >
-                          <span style={{ fontSize: 10, letterSpacing: -1, fontWeight: 700 }}>&lt;/&gt;</span>
-                        </button>
-
                         {/* Fullscreen / Expand Toggle */}
                         <button 
                           className="v5-yt-btn v5-yt-expand-btn"
                           onClick={handleOpenCinema}
-                          title="Fullscreen (f)"
+                          title="Fullscreen"
                         >
-                          <Maximize2 size={19} />
+                          <Maximize2 size={18} />
                         </button>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Footer Controls: Step Navigation Arrows & Dots */}
-                <div className="v5-player-footer-row">
-                  <button 
-                    className="v5-nav-btn"
-                    onClick={() => setActiveVentureIndex(prev => (prev <= 0 ? venturesData.length - 1 : prev - 1))}
-                    title="Previous Step"
-                  >
-                    <ChevronLeft size={18} />
-                  </button>
-
-                  <div className="v5-carousel-dots">
-                    {venturesData.map((_, idx) => (
-                      <span
-                        key={idx}
-                        className={`v5-dot ${idx === activeVentureIndex ? 'active' : ''}`}
-                        onClick={() => setActiveVentureIndex(idx)}
-                      />
-                    ))}
-                  </div>
-
-                  <button 
-                    className="v5-nav-btn"
-                    onClick={() => setActiveVentureIndex(prev => (prev >= venturesData.length - 1 ? 0 : prev + 1))}
-                    title="Next Step"
-                  >
-                    <ChevronRight size={18} />
-                  </button>
                 </div>
               </div>
             </div>

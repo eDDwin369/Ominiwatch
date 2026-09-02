@@ -108,7 +108,7 @@ export function Dashboard({
     return saved !== null ? JSON.parse(saved) : true;
   });
   const [customerName, setCustomerName] = useState(() => {
-    return localStorage.getItem('gs_customerName') || 'OomniEye';
+    return localStorage.getItem('gs_customerName') || 'Default Customer';
   });
   const [customerNameStyle, setCustomerNameStyle] = useState(() => {
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
@@ -130,10 +130,10 @@ export function Dashboard({
   });
   const [showCustomerCaption, setShowCustomerCaption] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerCaption');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerCaption, setCustomerCaption] = useState(() => {
-    return localStorage.getItem('gs_customerCaption') || 'Digital Twin Solutions';
+    return localStorage.getItem('gs_customerCaption') || '';
   });
   const [customerCaptionStyle, setCustomerCaptionStyle] = useState(() => {
     return localStorage.getItem('gs_customerCaptionStyle') || 'h3';
@@ -178,7 +178,7 @@ export function Dashboard({
       companyCaptionColor: 'rgba(255, 255, 255, 0.65)',
       companyNameStyle: 'h1',
       companyCaptionStyle: 'h3',
-      headerBgColor: 'linear-gradient(135deg, #000000, #011446)'
+      headerBgColor: 'transparent'
     };
   });
 
@@ -263,13 +263,8 @@ export function Dashboard({
     handleSetCurrentView(notification.actionRoute);
   };
 
-  // Sidebar is always position: absolute (overlay), so it never reserves
-  // layout space on its own. Unpinned/hover-revealed stays a true overlay
-  // (no padding — content sits underneath). Only pinning adjusts the view,
-  // padding content by the sidebar's width so it isn't covered.
-  const headerLeftPadding = isLocked
-    ? `${collapsed ? sidebarCollapsedWidth : sidebarExpandedWidth}px`
-    : '0px';
+  // Sidebar is a docked in-flow flex item matching the Figma reference design
+  const headerLeftPadding = '0px';
 
   // Resolve Powered By custom footer branding placeholder fallback
   const resolvedFooterPoweredByText = footerPoweredByText || `Powered by ${headerConfig?.companyName || 'OomniEye'} Digital Solutions`;

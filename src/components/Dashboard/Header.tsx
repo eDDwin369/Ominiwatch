@@ -23,10 +23,18 @@ interface HeaderProps {
   customerColorFollow?: boolean;
   showCustomerLogo?: boolean;
   customerLogo?: string;
+  customerLogoShape?: string;
   showCustomerCaption?: boolean;
   customerCaption?: string;
   customerCaptionStyle?: string;
   customerCaptionColor?: string;
+  customerCaptionColorFollow?: boolean;
+  isSidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
+  onResetLayout?: () => void;
+  onSaveLayout?: () => void;
+  hasCustomizations?: boolean;
+  onOpenThemeStudio?: () => void;
 }
 
 export function Header({
@@ -40,19 +48,21 @@ export function Header({
   headerConfig,
   isEditing = false,
   showCustomerProfile = true,
-  customerName = 'OomniEye',
-  customerNameStyle = 'h1',
-  customerNameColor = '#ffffff',
-  customerColorFollow = false,
+  customerName = 'Default Customer',
+  customerNameStyle = 'h4',
+  customerNameColor: _customerNameColor = '',
+  customerColorFollow: _customerColorFollow = true,
   showCustomerLogo = false,
   customerLogo = '',
-  showCustomerCaption = true,
+  customerLogoShape: _customerLogoShape = 'rounded',
+  showCustomerCaption = false,
   customerCaption = 'Digital Twin Solutions',
-  customerCaptionStyle = 'h3',
-  customerCaptionColor = 'rgba(255, 255, 255, 0.65)'
+  customerCaptionStyle = 'h6',
+  customerCaptionColor = '',
+  customerCaptionColorFollow: _customerCaptionColorFollow = true,
+  onOpenThemeStudio: _onOpenThemeStudio
 }: HeaderProps) {
-  // Studio brand identity (appName/appTagline/logo) — used as fallback when the
-  // host's own headerConfig branding is not set, so the studio drives it too.
+  // Studio brand identity (appName/appTagline/logo)
   const brand = useThemeStore((s) => s.settings);
   const set = useThemeStore((s) => s.set);
   const studioLogo = brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo;
@@ -129,46 +139,15 @@ export function Header({
     }
   };
 
-  const getHeaderContrastColor = (bgColor?: string) => {
-    if (!bgColor) return undefined;
-    if (bgColor.includes('gradient')) {
-      const hexes = bgColor.match(/#[0-9a-fA-F]{6}/g);
-      if (hexes && hexes.length > 0) {
-        let totalLum = 0;
-        hexes.forEach(h => {
-          const hex = h.replace('#', '');
-          const r = parseInt(hex.substring(0, 2), 16);
-          const g = parseInt(hex.substring(2, 4), 16);
-          const b = parseInt(hex.substring(4, 6), 16);
-          totalLum += (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        });
-        const avgLum = totalLum / hexes.length;
-        return avgLum > 0.55 ? '#0f172a' : '#ffffff';
-      }
-      return '#ffffff';
-    }
-    const hex = bgColor.replace('#', '');
-    if (hex.length !== 6) return undefined;
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.55 ? '#0f172a' : '#ffffff';
-  };
 
-  const getHeaderBorderColor = (bgColor?: string) => {
-    if (!bgColor || bgColor.toLowerCase() === '#ffffff') return 'var(--border-light, #e2e8f0)';
-    const contrast = getHeaderContrastColor(bgColor);
-    return contrast === '#ffffff' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.1)';
-  };
 
   return (
     <header 
       className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
       style={{
-        background: headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)',
-        color: getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') || '#ffffff',
-        borderBottom: `1px solid ${getHeaderBorderColor(headerConfig?.headerBgColor)}`,
+        background: 'var(--dash-header-bg, #061510)',
+        color: '#ffffff',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         transition: 'all 0.2s ease'
       }}
     >
@@ -197,7 +176,7 @@ export function Header({
                 fontWeight: 'bold',
                 fontSize: getFontSize(headerConfig?.companyNameStyle, '1.05rem'),
                 lineHeight: '1.2',
-                color: headerConfig?.companyNameColor || getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') || '#ffffff',
+                color: '#ffffff',
                 textTransform: 'none',
                 letterSpacing: 'normal'
               }}
@@ -211,8 +190,7 @@ export function Header({
                 fontWeight: '600',
                 fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.75rem'),
                 lineHeight: '1.2',
-                color: headerConfig?.companyCaptionColor || 
-                  (getHeaderContrastColor(headerConfig?.headerBgColor || 'linear-gradient(135deg, #000000, #011446)') === '#ffffff' ? 'rgba(255, 255, 255, 0.65)' : 'var(--text-muted, #64748b)'),
+                color: 'rgba(255, 255, 255, 0.65)',
                 marginTop: '2px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em'
@@ -241,11 +219,11 @@ export function Header({
               <span style={{ 
                 fontWeight: 700, 
                 fontSize: getFontSize(customerNameStyle, '1.05rem'), 
-                color: (!customerColorFollow && customerNameColor && customerNameColor !== '#1e293b' && customerNameColor !== 'transparent') ? customerNameColor : '#ffffff', 
+                color: '#ffffff', 
                 letterSpacing: '0.02em',
                 lineHeight: '1.2' 
               }}>
-                {customerName || 'OomniEye'}
+                {customerName || 'Default Customer'}
               </span>
               {showCustomerCaption && (
                 <span style={{
