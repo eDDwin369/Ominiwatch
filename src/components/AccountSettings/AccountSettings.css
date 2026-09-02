@@ -1048,8 +1048,7 @@
 }
 
 .figma-main-toggle.on {
-  background: #7c3aed;
-  /* Purple/Violet toggle switch matching Figma */
+  background: var(--primary);
 }
 
 .figma-main-toggle.off {

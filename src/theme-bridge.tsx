@@ -138,6 +138,23 @@ function syncCssVars(theme: any, settings: any) {
   set('--dash-active-pill-bg', hlSoft);
   set('--dash-active-pill-color', highlight);
 
+  // Dynamic Card Shadow and Glow Tokens derived from active preset
+  const cardGlow = isDark 
+    ? `color-mix(in srgb, ${primaryHex} 20%, transparent)` 
+    : `color-mix(in srgb, ${primaryHex} 12%, transparent)`;
+  const dynamicCardShadow = tk.cardBodyShadow || (isDark 
+    ? `0 16px 36px rgba(0, 0, 0, 0.45), 0 4px 20px ${cardGlow}, inset 0 1px 0 rgba(255, 255, 255, 0.08)` 
+    : `0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 10px ${cardGlow}`);
+
+  set('--card-shadow', dynamicCardShadow);
+  set('--card-shadow-glow', `0 8px 30px ${cardGlow}`);
+  set('--accent-glow', isDark 
+    ? `color-mix(in srgb, ${primaryHex} 45%, transparent)` 
+    : `color-mix(in srgb, ${primaryHex} 25%, transparent)`);
+  set('--secondary-glow', isDark 
+    ? `color-mix(in srgb, ${secondaryHex} 45%, transparent)` 
+    : `color-mix(in srgb, ${secondaryHex} 25%, transparent)`);
+
   // radius
   set('--radius-sm', `${theme.shape.borderRadius * 0.5}px`);
   set('--radius-md', `${theme.shape.borderRadius}px`);
