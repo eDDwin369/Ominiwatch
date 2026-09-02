@@ -327,7 +327,7 @@ export function Dashboard({
             {isThemeStudioOpen ? (
               <ThemeStudioEmbed />
             ) : (
-              <div className={`dashboard-container ${['overview', 'account'].includes(currentView) ? 'no-padding' : ''}`}>
+              <div className={`dashboard-container`}>
                 {currentView === 'overview' ? (
                   <TemplateWelcome onNavigate={handleSetCurrentView} />
                 ) : currentView === 'notifications' ? (
