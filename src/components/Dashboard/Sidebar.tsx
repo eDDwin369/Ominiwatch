@@ -7,8 +7,8 @@ import {
   BarChart2,
   Palette,
   UserCircle,
-  PanelLeftClose,
-  PanelLeftOpen
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -225,7 +225,6 @@ export function Sidebar({
               padding: '0',
               alignItems: 'center',
               transition: 'all 0.05s ease',
-              borderBottom: '1px solid var(--border-light, var(--border-light))'
             }}
           >
             <div
@@ -253,7 +252,7 @@ export function Sidebar({
                   setCollapsed(false);
                 }}
               >
-                <PanelLeftOpen size={20} />
+                <ChevronRight size={20} />
               </button>
             </div>
           </div>
@@ -324,7 +323,7 @@ export function Sidebar({
                     transition: 'all 0.05s ease'
                   }}
                 >
-                  <PanelLeftClose size={14} />
+                  <ChevronLeft size={14} />
                 </button>
               </div>
             )}
@@ -351,7 +350,6 @@ export function Sidebar({
           </a>
 
           <div className="nav-section-title">REPORTS</div>
-          <div className="nav-divider"></div>
 
           <a
             href="#reports"
@@ -365,7 +363,6 @@ export function Sidebar({
           </a>
 
           <div className="nav-section-title">SYSTEM</div>
-          <div className="nav-divider"></div>
 
           <a
             href="#"
