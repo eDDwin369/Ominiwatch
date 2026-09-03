@@ -5477,6 +5477,7 @@ html:has(.mode-v6),
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-left: 80px;
 }
 
 .v6-prefix-line {
