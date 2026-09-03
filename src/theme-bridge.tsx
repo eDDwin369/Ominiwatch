@@ -125,7 +125,7 @@ function syncCssVars(theme: any, settings: any) {
   const primaryHex = settings.primaryHex || p.primary.main || '#2563EB';
   const secondaryHex = settings.secondaryHex || p.secondary?.main || '#00D2FF';
   const [pHue] = hexToHsl(primaryHex);
-  const darkHeader = hslToHexStr(pHue, 50, 15.7);
+  const darkHeader = hslToHexStr(pHue, 38, 6.5);
   const darkSidebar = hslToHexStr(pHue, 35, 7.2);
   const darkCanvas = hslToHexStr(pHue, 32, 5.5);
 
