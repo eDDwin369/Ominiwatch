@@ -145,9 +145,14 @@ export function Header({
     <header 
       className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
       style={{
-        background: 'var(--dash-header-bg, #061510)',
+        background: (headerConfig?.headerBgColor && headerConfig.headerBgColor !== 'transparent')
+          ? headerConfig.headerBgColor 
+          : 'var(--dash-header-bg, #141b3c)',
         color: '#ffffff',
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        boxShadow: brand.mode === 'dark' 
+          ? '0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4)' 
+          : '0 4px 20px -2px rgba(15, 23, 42, 0.18), 0 2px 6px -1px rgba(15, 23, 42, 0.1)',
         transition: 'all 0.2s ease'
       }}
     >

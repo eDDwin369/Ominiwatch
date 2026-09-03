@@ -7,7 +7,8 @@ import {
   Minimize2,
   Volume2,
   VolumeX,
-  Settings
+  Settings,
+  CheckCircle2
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -347,6 +348,11 @@ export function TemplateWelcome({
                     <span className={`v2-text-span ${venture.gradientClass}`}>
                       {venture.highlight}
                     </span>
+                    {idx === 0 && (
+                      <span className="v2-completed-tick-badge">
+                        <CheckCircle2 size={22} className="v2-completed-tick-icon" />
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -366,10 +372,13 @@ export function TemplateWelcome({
                     <div className="v2-sonar-ring ring-1" />
                     <div className="v2-sonar-ring ring-2" />
                     <div className="v2-sonar-ring ring-3" />
-                    <div className="v2-center-disc-watermark" />
                     
                     <div key={introTextIndex} className="v2-intro-text-anim-item">
                       {introPhrases[introTextIndex]}
+                    </div>
+
+                    <div className="v2-center-disc-watermark">
+                      <Pause size={18} fill="#ffffff" color="#ffffff" strokeWidth={2.5} />
                     </div>
                   </div>
 
