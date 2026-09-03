@@ -5173,6 +5173,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 50px;
 }
 
 .v5-video-poster {
@@ -5590,14 +5591,37 @@ html:has(.mode-v6),
   overflow: hidden !important;
 }
 
+/* mode-v2 fills the scroll area exactly — drop the container's 32px bottom
+   padding and let it stretch. overflow left alone — the <1024px tablet rule
+   relies on the page scrolling. */
+.dashboard-container:has(.mode-v2) {
+  padding: 0 !important;
+  min-height: 0 !important;
+}
+
+/* Desktop: hero fills the scroll area exactly, no phantom scroll / dead band
+   below. Tablet (<1024px) keeps normal page scrolling. */
+@media (min-width: 1024px) {
+  .dashboard-content-scrollable:has(.mode-v2) {
+    overflow: hidden !important;
+  }
+}
+
 .mode-v2 {
   background: transparent !important;
   color: var(--text-main) !important;
   width: 100% !important;
   max-width: 100% !important;
-  height: calc(100vh - 64px) !important;
-  min-height: calc(100vh - 64px) !important;
-  max-height: calc(100vh - 64px) !important;
+  /* Fill the parent, not the viewport: .dashboard-wrapper applies
+     zoom: var(--app-scale), which leaves vh units measuring the *visual*
+     viewport while the wrapper's content box is 100vh/scale tall. A
+     calc(100vh - 64px) height was therefore shorter than the content area
+     whenever --app-scale < 1, leaving dead space below the hero and pushing
+     the video above the visible centre. flex:1 tracks the real parent height. */
+  flex: 1 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
   padding: 0 24px !important;
   box-sizing: border-box !important;
   display: flex !important;
@@ -5711,7 +5735,7 @@ html:has(.mode-v6),
   max-width: 100% !important;
   height: 100% !important;
   margin: 0 !important;
-  padding: 0 clamp(16px, 2.5vw, 40px) !important;
+  padding: 0 !important;
   box-sizing: border-box !important;
 }
 
@@ -5720,6 +5744,7 @@ html:has(.mode-v6),
   flex-direction: column !important;
   justify-content: center !important;
   align-items: flex-start !important;
+  height: 100% !important;
   min-width: 240px !important;
   max-width: 340px !important;
   flex-shrink: 0 !important;
@@ -5730,7 +5755,7 @@ html:has(.mode-v6),
 .mode-v2 .v5-ventures-right {
   display: flex !important;
   flex-direction: column !important;
-  align-items: center !important;
+  align-items: flex-end !important;
   justify-content: center !important;
   flex: 1 !important;
   width: 100% !important;
@@ -5739,7 +5764,7 @@ html:has(.mode-v6),
 }
 
 .mode-v2 .v5-video-player-container {
-  max-width: 100% !important;
+  max-width: min(100%, 1120px) !important;
   width: 100% !important;
   height: 100% !important;
   display: flex !important;
@@ -5747,14 +5772,15 @@ html:has(.mode-v6),
   justify-content: center !important;
   position: relative !important;
   margin: 0 !important;
+  padding: clamp(24px, 5vh, 56px) 0 !important;
+  box-sizing: border-box !important;
 }
 
 .mode-v2 .v5-video-screen {
   width: 100% !important;
   aspect-ratio: 16 / 10.3 !important;
   height: auto !important;
-  max-height: calc(100vh - 88px) !important;
-  max-width: calc((100vh - 88px) * 1.55) !important;
+  max-height: 100% !important;
   border-radius: 28px !important;
   background: #080a09 !important;
   overflow: hidden !important;
