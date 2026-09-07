@@ -503,7 +503,7 @@ export function Header({
                   <span style={{
                     fontSize: '13px',
                     fontWeight: '500',
-                    color: '#1e293b'
+                    color: 'var(--text-main)'
                   }}>
                     Edit Profile
                   </span>
