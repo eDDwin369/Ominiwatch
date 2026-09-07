@@ -626,12 +626,12 @@ export function Dashboard({
 
       {globalToast.visible && (
         <div 
-          className="theme-toggle-toast" 
-          style={{ 
-            background: 'linear-gradient(135deg, #091638 0%, #06102a 100%)', 
-            border: '1px solid rgba(59, 130, 246, 0.4)', 
-            color: '#ffffff', 
-            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(29, 78, 216, 0.3)',
+          className="theme-toggle-toast"
+          style={{
+            background: 'var(--bg-card)',
+            border: '1px solid color-mix(in srgb, var(--primary) 40%, transparent)',
+            color: 'var(--text-main)',
+            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35), 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent)',
             borderRadius: '12px',
             padding: '12px 22px',
             fontSize: '14px',
@@ -641,7 +641,7 @@ export function Dashboard({
             gap: '10px'
           }}
         >
-          <CheckCircle2 size={18} style={{ color: '#60a5fa', flexShrink: 0 }} />
+          <CheckCircle2 size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} />
           <span>{globalToast.message}</span>
         </div>
       )}
