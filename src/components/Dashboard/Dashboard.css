@@ -5477,7 +5477,7 @@ html:has(.mode-v6),
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 80px;
+  margin-left: 20px;
 }
 
 .v6-prefix-line {
@@ -5573,8 +5573,7 @@ html:has(.mode-v6),
 [data-theme-mode="dark"] .dashboard-main:has(.mode-v2),
 [data-theme-mode="dark"] .dashboard-content-scrollable:has(.mode-v2),
 [data-theme-mode="dark"] .dashboard-container:has(.mode-v2) {
-  background-color: var(--dash-canvas-bg, #051510) !important;
-  background: radial-gradient(circle at 68% 48%, color-mix(in srgb, var(--primary) 26%, transparent) 0%, color-mix(in srgb, var(--primary) 8%, transparent) 38%, transparent 70%), var(--dash-canvas-bg, #051510) !important;
+  background: var(--dash-canvas-bg, #051510) !important;
   transition: background 0.4s ease !important;
   overflow: hidden !important;
 }
@@ -5586,8 +5585,7 @@ html:has(.mode-v6),
 [data-theme-mode="light"] .dashboard-main:has(.mode-v2),
 [data-theme-mode="light"] .dashboard-content-scrollable:has(.mode-v2),
 [data-theme-mode="light"] .dashboard-container:has(.mode-v2) {
-  background-color: #ffffff !important;
-  background: radial-gradient(circle at 68% 48%, color-mix(in srgb, var(--primary) 28%, transparent) 0%, color-mix(in srgb, var(--primary) 10%, transparent) 38%, transparent 70%), #ffffff !important;
+  background: #ffffff !important;
   transition: background 0.4s ease !important;
   overflow: hidden !important;
 }
@@ -5614,16 +5612,16 @@ html:has(.mode-v6),
   width: 100% !important;
   max-width: 100% !important;
   /* Fill the parent, not the viewport: .dashboard-wrapper applies
-     zoom: var(--app-scale), which leaves vh units measuring the *visual*
-     viewport while the wrapper's content box is 100vh/scale tall. A
-     calc(100vh - 64px) height was therefore shorter than the content area
-     whenever --app-scale < 1, leaving dead space below the hero and pushing
-     the video above the visible centre. flex:1 tracks the real parent height. */
+    zoom: var(--app-scale), which leaves vh units measuring the *visual*
+    viewport while the wrapper's content box is 100vh/scale tall. A
+    calc(100vh - 64px) height was therefore shorter than the content area
+    whenever --app-scale < 1, leaving dead space below the hero and pushing
+    the video above the visible centre. flex:1 tracks the real parent height. */
   flex: 1 !important;
   height: 100% !important;
   min-height: 0 !important;
   max-height: none !important;
-  padding: 0 24px !important;
+  padding: 0 60px !important;
   box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
@@ -5773,29 +5771,34 @@ html:has(.mode-v6),
   justify-content: center !important;
   position: relative !important;
   margin: 0 !important;
-  padding: clamp(24px, 5vh, 56px) 0 !important;
+  padding: clamp(40px, 8vh, 96px) 0 !important;
   box-sizing: border-box !important;
 }
 
+/* Hero video = card: glow halo tinted by var(--primary), which
+   theme-bridge.tsx keeps in sync with Theme Studio. No gradient. */
 .mode-v2 .v5-video-screen {
   width: 100% !important;
   aspect-ratio: 16 / 10.3 !important;
   height: auto !important;
   max-height: 100% !important;
-  border-radius: 28px !important;
+  border-radius: var(--radius-xl, 28px) !important;
   background: #080a09 !important;
   overflow: hidden !important;
   position: relative !important;
-}
-
-[data-theme-mode="light"] .mode-v2 .v5-video-screen {
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 28px 70px -10px rgba(0, 0, 0, 0.38), 0 14px 28px -6px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent) !important;
+  box-shadow:
+    0 0 110px 18px color-mix(in srgb, var(--primary) 55%, transparent),
+    0 0 48px 4px color-mix(in srgb, var(--primary) 42%, transparent),
+    0 34px 90px -16px rgba(15, 23, 42, 0.45) !important;
 }
 
 [data-theme-mode="dark"] .mode-v2 .v5-video-screen {
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 36px 85px -10px rgba(0, 0, 0, 0.75), 0 18px 40px -6px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 50%, transparent) !important;
+  box-shadow:
+    0 0 130px 24px color-mix(in srgb, var(--primary) 65%, transparent),
+    0 0 56px 6px color-mix(in srgb, var(--primary) 48%, transparent),
+    0 36px 100px -16px rgba(0, 0, 0, 0.65) !important;
 }
 
 /* Inline White Card remains clean & stable during video expansion */
