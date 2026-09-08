@@ -332,7 +332,7 @@
 
 .figma-input-label {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
@@ -1112,7 +1112,7 @@
 .figma-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.75);
+  background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
@@ -1123,14 +1123,14 @@
 }
 
 .figma-modal-box {
-  background: #0f1c3f;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl, 16px);
   width: 100%;
   max-width: 440px;
   padding: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  color: #ffffff;
+  box-shadow: var(--card-shadow, 0 20px 40px rgba(0, 0, 0, 0.35));
+  color: var(--text-main);
 }
 
 .figma-modal-header {
@@ -1144,22 +1144,23 @@
   font-size: 18px;
   margin: 0;
   font-weight: 500;
+  color: var(--text-main);
 }
 
 .figma-modal-close {
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .figma-modal-close:hover {
-  color: #ffffff;
+  color: var(--text-main);
 }
 
 .figma-modal-desc {
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--text-secondary);
   line-height: 1.5;
   margin-bottom: 16px;
 }
@@ -1190,10 +1191,10 @@
 }
 
 .figma-modal-input {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  color: #ffffff;
+  background: var(--bg-dashboard);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md, 8px);
+  color: var(--text-main);
   padding: 8px 12px;
   font-size: 14px;
   width: 100%;
@@ -1201,7 +1202,14 @@
 }
 
 .figma-modal-input:focus {
-  border-color: #3b82f6;
+  border-color: var(--primary);
+}
+
+.figma-modal-error {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--danger, #dc2626);
 }
 
 .figma-modal-footer {
@@ -1213,39 +1221,44 @@
 
 .figma-btn-modal-cancel {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+  border-radius: var(--radius-md, 8px);
   padding: 8px 16px;
   cursor: pointer;
 }
 
+.figma-btn-modal-cancel:hover {
+  background: var(--bg-dashboard);
+  border-color: var(--border-hover);
+}
+
 .figma-btn-modal-confirm {
-  background: #2563eb;
+  background: var(--primary);
   border: none;
-  color: #ffffff;
-  border-radius: 6px;
+  color: var(--on-accent, #ffffff);
+  border-radius: var(--radius-md, 8px);
   padding: 8px 16px;
   cursor: pointer;
   font-weight: 500;
 }
 
 .figma-btn-modal-confirm:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
 }
 
 .figma-btn-modal-danger {
-  background: #dc2626;
+  background: var(--danger, #dc2626);
   border: none;
   color: #ffffff;
-  border-radius: 6px;
+  border-radius: var(--radius-md, 8px);
   padding: 8px 16px;
   cursor: pointer;
   font-weight: 500;
 }
 
 .figma-btn-modal-danger:hover {
-  background: #b91c1c;
+  background: var(--danger-hover, #b91c1c);
 }
 
 .figma-danger-title {
