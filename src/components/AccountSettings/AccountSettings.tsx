@@ -620,7 +620,7 @@ export function AccountSettings({
                     setIsPasswordModalOpen(true);
                   }}
                 >
-                  change Password
+                  Change Password
                 </button>
               </div>
             </div>
