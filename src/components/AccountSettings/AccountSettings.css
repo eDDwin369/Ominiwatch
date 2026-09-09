@@ -225,6 +225,20 @@
   box-sizing: border-box;
 }
 
+/* let the block grow when an inline validation message is shown */
+.figma-profile-labels:has(.figma-field-error) {
+  height: auto;
+  max-height: none;
+}
+
+.figma-field-error {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--danger, #dc2626);
+}
+
 .figma-user-name {
   font-size: 20px;
   font-weight: 500;
