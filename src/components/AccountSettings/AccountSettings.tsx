@@ -176,6 +176,37 @@ export function AccountSettings({
   // Form states for password modal
   const [passForm, setPassForm] = useState({ current: '', next: '', confirm: '' });
   const [passSuccess, setPassSuccess] = useState(false);
+  const [passError, setPassError] = useState('');
+
+  const closePasswordModal = () => {
+    setIsPasswordModalOpen(false);
+    setPassForm({ current: '', next: '', confirm: '' });
+    setPassError('');
+    setPassSuccess(false);
+  };
+
+  const submitPasswordChange = () => {
+    const { current, next, confirm } = passForm;
+    if (!current || !next || !confirm) {
+      setPassError('All fields are required.');
+      return;
+    }
+    if (next.length < 8) {
+      setPassError('New password must be at least 8 characters.');
+      return;
+    }
+    if (next === current) {
+      setPassError('New password must be different from the current password.');
+      return;
+    }
+    if (next !== confirm) {
+      setPassError('New password and confirmation do not match.');
+      return;
+    }
+    setPassError('');
+    setPassSuccess(true);
+    setTimeout(closePasswordModal, 1500);
+  };
 
   // 2FA code input
   const [twoFactorCode, setTwoFactorCode] = useState('');
@@ -589,7 +620,7 @@ export function AccountSettings({
                     setIsPasswordModalOpen(true);
                   }}
                 >
-                  change Password
+                  Change Password
                 </button>
               </div>
             </div>
@@ -685,11 +716,11 @@ export function AccountSettings({
 
       {/* Change Password Modal */}
       {isPasswordModalOpen && (
-        <div className="figma-modal-backdrop" onClick={() => setIsPasswordModalOpen(false)}>
+        <div className="figma-modal-backdrop" onClick={closePasswordModal}>
           <div className="figma-modal-box" onClick={e => e.stopPropagation()}>
             <div className="figma-modal-header">
               <h3>Change Password</h3>
-              <button className="figma-modal-close" onClick={() => setIsPasswordModalOpen(false)}><X size={18} /></button>
+              <button className="figma-modal-close" onClick={closePasswordModal}><X size={18} /></button>
             </div>
             <div className="figma-modal-body">
               {passSuccess ? (
@@ -701,50 +732,47 @@ export function AccountSettings({
                 <>
                   <div className="figma-modal-field">
                     <label className="figma-input-label">Current Password</label>
-                    <input 
-                      type="password" 
-                      className="figma-modal-input" 
+                    <input
+                      type="password"
+                      className="figma-modal-input"
                       placeholder="••••••••"
                       value={passForm.current}
-                      onChange={e => setPassForm({...passForm, current: e.target.value})}
+                      onChange={e => { setPassForm({...passForm, current: e.target.value}); setPassError(''); }}
                     />
                   </div>
                   <div className="figma-modal-field">
                     <label className="figma-input-label">New Password</label>
-                    <input 
-                      type="password" 
-                      className="figma-modal-input" 
+                    <input
+                      type="password"
+                      className="figma-modal-input"
                       placeholder="••••••••"
                       value={passForm.next}
-                      onChange={e => setPassForm({...passForm, next: e.target.value})}
+                      onChange={e => { setPassForm({...passForm, next: e.target.value}); setPassError(''); }}
                     />
                   </div>
                   <div className="figma-modal-field">
                     <label className="figma-input-label">Confirm New Password</label>
-                    <input 
-                      type="password" 
-                      className="figma-modal-input" 
+                    <input
+                      type="password"
+                      className="figma-modal-input"
                       placeholder="••••••••"
                       value={passForm.confirm}
-                      onChange={e => setPassForm({...passForm, confirm: e.target.value})}
+                      onChange={e => { setPassForm({...passForm, confirm: e.target.value}); setPassError(''); }}
+                      onKeyDown={e => { if (e.key === 'Enter') submitPasswordChange(); }}
                     />
                   </div>
+                  {passError && (
+                    <p className="figma-modal-error" role="alert">{passError}</p>
+                  )}
                 </>
               )}
             </div>
             <div className="figma-modal-footer">
-              <button className="figma-btn-modal-cancel" onClick={() => setIsPasswordModalOpen(false)}>Close</button>
+              <button className="figma-btn-modal-cancel" onClick={closePasswordModal}>Close</button>
               {!passSuccess && (
-                <button 
+                <button
                   className="figma-btn-modal-confirm"
-                  onClick={() => {
-                    if (passForm.next && passForm.next === passForm.confirm) {
-                      setPassSuccess(true);
-                      setTimeout(() => setIsPasswordModalOpen(false), 1500);
-                    } else {
-                      alert("Passwords must match and cannot be empty.");
-                    }
-                  }}
+                  onClick={submitPasswordChange}
                 >
                   Save Password
                 </button>
