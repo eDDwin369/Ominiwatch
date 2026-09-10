@@ -5770,8 +5770,9 @@ html:has(.mode-v6),
   box-sizing: border-box !important;
 }
 
-/* Hero video = card: glow halo tinted by var(--primary), which
-   theme-bridge.tsx keeps in sync with Theme Studio. No gradient. */
+/* Hero video card — Figma "Drop shadow" effect stack (not a wide box-shadow
+  halo): a tight primary-tinted ambient glow + one soft elevation shadow.
+   Tint follows var(--primary) via theme-bridge.tsx. */
 .mode-v2 .v5-video-screen {
   width: 100% !important;
   aspect-ratio: 16 / 10.3 !important;
@@ -5781,19 +5782,13 @@ html:has(.mode-v6),
   background: #080a09 !important;
   overflow: hidden !important;
   position: relative !important;
-  border: 1px solid color-mix(in srgb, var(--primary) 40%, transparent) !important;
-  box-shadow:
-    0 0 110px 18px color-mix(in srgb, var(--primary) 55%, transparent),
-    0 0 48px 4px color-mix(in srgb, var(--primary) 42%, transparent),
-    0 34px 90px -16px rgba(15, 23, 42, 0.45) !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
+  box-shadow: 0px 0px 33px 14px color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent) !important;
 }
 
 [data-theme-mode="dark"] .mode-v2 .v5-video-screen {
-  border: 1px solid color-mix(in srgb, var(--primary) 50%, transparent) !important;
-  box-shadow:
-    0 0 130px 24px color-mix(in srgb, var(--primary) 65%, transparent),
-    0 0 56px 6px color-mix(in srgb, var(--primary) 48%, transparent),
-    0 36px 100px -16px rgba(0, 0, 0, 0.65) !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
+  box-shadow: 0px 0px 33px 0px color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent) !important;
 }
 
 /* Inline White Card remains clean & stable during video expansion */
@@ -6847,14 +6842,6 @@ html:has(.mode-v6),
 }
 .mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-1 { opacity: 0.12 !important; }
 .mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-3 { opacity: 0.08 !important; }
-
-/* Video card — single soft themed glow, radius 44 */
-.mode-v2 .v5-video-screen {
-  border-radius: 44px !important;
-  background: #0b1024 !important;
-  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
-  box-shadow: 0 4px 66px 0 color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent) !important;
-}
 
 .mode-v2 .v5-yt-progress-fill,
 .mode-v2 .v5-yt-scrub-handle { background: var(--primary) !important; }
