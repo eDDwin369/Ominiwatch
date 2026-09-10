@@ -1,5 +1,29 @@
-import React, { useState } from 'react';
-import { URMViewer } from 'dts-universal-report-module';
+import React, { useEffect, useRef, useState } from 'react';
+import { URMProvider, URMViewerRaw, useURMContext } from 'dts-universal-report-module';
+import { isValidName } from '../AccountSettings/nameValidation';
+import { isValidPhone } from '../AccountSettings/phoneValidation';
+
+const REPORT_ID = 'users-report';
+
+// URM 1.3.13 persists saved views to localStorage["urm_report_<reportId>"], but its
+// restore-on-mount only re-applies the active view's filters + sortStack — not grouping
+// or column config. Re-selecting the restored active view once runs the full snapshot
+// apply path (handleSelectView), so grouping/columns come back on reload too.
+function RestoreActiveView() {
+  const ctx = useURMContext();
+  const applied = useRef(false);
+  const report = ctx.activeReport;
+  const viewId: string | undefined = report?.activeViewId;
+  const ready = Boolean(report?.schemaLocked && viewId && report?.views?.length);
+
+  useEffect(() => {
+    if (applied.current || !ready || !viewId) return;
+    applied.current = true;
+    ctx.handleSelectView(viewId);
+  }, [ready, viewId, ctx]);
+
+  return null;
+}
 
 // 1000 dummy users, same column shape as user-management/src/data/users-seed.json.
 // Generated (not hand-listed) to keep the file small; deterministic so the table
