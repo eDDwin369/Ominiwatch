@@ -6722,7 +6722,6 @@ html:has(.mode-v6),
   font-size: 12px;
   line-height: 1.2;
   letter-spacing: 0.6px;
-  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.5);
   margin-top: 2px;
 }
