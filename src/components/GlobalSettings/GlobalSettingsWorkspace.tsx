@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Upload,
   LayoutPanelTop, Layout, LayoutPanelLeft, Users,
-  Type, Image, Ban, Save, Eye, CheckCircle2, Info
+  Type, Image, Ban, Save, Eye, CheckCircle2, Info, X, RotateCcw
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 
@@ -23,6 +23,8 @@ interface GlobalSettingsWorkspaceProps {
     companyCaptionColor?: string;
     companyNameStyle?: string;
     companyCaptionStyle?: string;
+    companyNameWeight?: string;
+    companyCaptionWeight?: string;
     headerBgColor?: string;
   };
   onSaveConfig: (config: any) => void;
@@ -36,6 +38,8 @@ interface GlobalSettingsWorkspaceProps {
   setSidebarShowIcons: (val: boolean) => void;
   sidebarShowLabels: boolean;
   setSidebarShowLabels: (val: boolean) => void;
+  sidebarColor?: string;
+  setSidebarColor?: (val: string) => void;
   onSyncFooter: (footerData: any) => void;
   setSidebarCollapsed: (val: boolean) => void;
   onTabChange?: (tab: string) => void;
@@ -47,6 +51,8 @@ interface GlobalSettingsWorkspaceProps {
     customerLogo: string;
     customerNameStyle?: string;
     customerNameColor?: string;
+    customerNameWeight?: string;
+    customerCaptionWeight?: string;
     showCustomerCaption?: boolean;
     customerCaption?: string;
     customerCaptionStyle?: string;
@@ -140,6 +146,14 @@ const InfoTooltip = ({
 };
 
 // Apple-style toggle switch (Matching User Screenshot 1:1)
+// Shared style for the small rounded "pill" <select> controls (H1 / weight).
+const GS_PILL_SELECT: React.CSSProperties = {
+  width: '64px', height: '30px', borderRadius: '15px', border: '1px solid var(--gs-input-border)',
+  fontSize: '12px', fontWeight: 600, padding: '0 6px', backgroundColor: 'var(--gs-input-bg)',
+  color: 'var(--gs-text-color)', cursor: 'pointer', outline: 'none',
+};
+const GS_WEIGHT_OPTIONS = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
+
 const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: boolean) => void }) => {
   return (
     <button
@@ -166,6 +180,8 @@ export function GlobalSettingsWorkspace({
   setSidebarShowIcons,
   sidebarShowLabels,
   setSidebarShowLabels,
+  sidebarColor = '',
+  setSidebarColor,
   onSyncFooter,
   setSidebarCollapsed,
   onTabChange,
@@ -194,6 +210,8 @@ export function GlobalSettingsWorkspace({
   const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
   const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
+  const [companyNameWeight, setCompanyNameWeight] = useState(headerConfig.companyNameWeight || localStorage.getItem('gs_companyNameWeight') || '700');
+  const [companyCaptionWeight, setCompanyCaptionWeight] = useState(headerConfig.companyCaptionWeight || localStorage.getItem('gs_companyCaptionWeight') || '600');
 
   // Footer Config States
   const [footerVisible, setFooterVisible] = useState(() => {
@@ -217,7 +235,7 @@ export function GlobalSettingsWorkspace({
   const [footerPoweredByImage, setFooterPoweredByImage] = useState(() => {
     return localStorage.getItem('gs_footerPoweredByImage') || '';
   });
-  const [footerLinks] = useState<string[]>(() => {
+  const [footerLinks, setFooterLinks] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('gs_footerLinks');
       return saved ? JSON.parse(saved) : [];
@@ -225,7 +243,6 @@ export function GlobalSettingsWorkspace({
       return [];
     }
   });
-  const [, setIsAddingLink] = useState(false);
 
   // Sidebar Config States
   const [startExpanded, setStartExpanded] = useState(() => {
@@ -237,6 +254,7 @@ export function GlobalSettingsWorkspace({
   const [isDraggingExpanded] = useState(false);
   const [isHoveringCollapsed] = useState(false);
   const [isDraggingCollapsed] = useState(false);
+  const [sidebarBg, setSidebarBg] = useState(sidebarColor || localStorage.getItem('gs_sidebarColor') || '');
   const [autoHideSidebar, setAutoHideSidebar] = useState(sidebarAutoHide);
   const [expandedWidth, setExpandedWidth] = useState(sidebarExpandedWidth);
   const [collapsedWidth, setCollapsedWidth] = useState(sidebarCollapsedWidth);
@@ -266,9 +284,11 @@ export function GlobalSettingsWorkspace({
       companyCaptionColor,
       companyNameStyle,
       companyCaptionStyle,
+      companyNameWeight,
+      companyCaptionWeight,
       headerBgColor
     });
-  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle, headerBgColor]);
+  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle, companyNameWeight, companyCaptionWeight, headerBgColor]);
 
   // Sync Footer config in real-time
   useEffect(() => {
@@ -290,6 +310,11 @@ export function GlobalSettingsWorkspace({
     setSidebarShowIcons(showIcons);
     setSidebarShowLabels(showLabels);
   }, [autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels]);
+
+  // Push sidebar custom colour up in real-time.
+  useEffect(() => {
+    if (setSidebarColor) setSidebarColor(sidebarBg);
+  }, [sidebarBg]);
 
   // Sync active settings tab with parent
   useEffect(() => {
@@ -336,10 +361,12 @@ export function GlobalSettingsWorkspace({
     return localStorage.getItem('gs_customerCaptionColor') || 'rgba(255, 255, 255, 0.65)';
   });
 
-  const [customerColorFollow] = useState(() => {
+  const [customerColorFollow, setCustomerColorFollow] = useState(() => {
     const saved = localStorage.getItem('gs_customerColorFollow');
     return saved !== null ? JSON.parse(saved) : true;
   });
+  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '700');
+  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '600');
   const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerLogo');
     return saved !== null ? JSON.parse(saved) : true;
@@ -376,13 +403,15 @@ export function GlobalSettingsWorkspace({
         customerLogo,
         customerNameStyle,
         customerNameColor,
+        customerNameWeight,
+        customerCaptionWeight,
         showCustomerCaption,
         customerCaption,
         customerCaptionStyle,
         customerCaptionColor
       });
     }
-  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, customerNameStyle, customerNameColor, showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor, onSyncCustomerProfile]);
+  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight, showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor, onSyncCustomerProfile]);
 
   // Equal height is now enforced via CSS (.gs-config-card height: 286px) to maintain a perfectly static layout.
   // Notifications Config States
@@ -510,6 +539,12 @@ export function GlobalSettingsWorkspace({
     localStorage.setItem('gs_collapsedWidth', JSON.stringify(collapsedWidth));
     localStorage.setItem('gs_showIcons', JSON.stringify(showIcons));
     localStorage.setItem('gs_showLabels', JSON.stringify(showLabels));
+    localStorage.setItem('gs_sidebarColor', sidebarBg);
+    localStorage.setItem('gs_companyNameWeight', companyNameWeight);
+    localStorage.setItem('gs_companyCaptionWeight', companyCaptionWeight);
+    localStorage.setItem('gs_customerNameWeight', customerNameWeight);
+    localStorage.setItem('gs_customerCaptionWeight', customerCaptionWeight);
+    if (setSidebarColor) setSidebarColor(sidebarBg);
     setSidebarExpandedWidth(expandedWidth);
     setSidebarCollapsedWidth(collapsedWidth);
     setSidebarShowIcons(showIcons);
@@ -533,7 +568,9 @@ export function GlobalSettingsWorkspace({
         showCustomerLogo,
         customerLogo,
         customerNameStyle,
-        customerNameColor
+        customerNameColor,
+        customerNameWeight,
+        customerCaptionWeight
       });
     }
 
@@ -550,6 +587,8 @@ export function GlobalSettingsWorkspace({
       companyCaptionColor,
       companyNameStyle,
       companyCaptionStyle,
+      companyNameWeight,
+      companyCaptionWeight,
       headerBgColor,
       autoHideSidebar,
       startExpanded
@@ -879,6 +918,15 @@ export function GlobalSettingsWorkspace({
                           <option value="h4">H4</option>
                         </select>
 
+                        <select
+                          value={companyNameWeight}
+                          onChange={(e) => setCompanyNameWeight(e.target.value)}
+                          title="Font weight"
+                          style={GS_PILL_SELECT}
+                        >
+                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
+                        </select>
+
                         <div style={{ position: 'relative' }}>
                           <div
                             style={{
@@ -939,6 +987,15 @@ export function GlobalSettingsWorkspace({
                           <option value="h2">H2</option>
                           <option value="h3">H3</option>
                           <option value="h4">H4</option>
+                        </select>
+
+                        <select
+                          value={companyCaptionWeight}
+                          onChange={(e) => setCompanyCaptionWeight(e.target.value)}
+                          title="Font weight"
+                          style={GS_PILL_SELECT}
+                        >
+                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
                         </select>
 
                         <div style={{ position: 'relative' }}>
@@ -1097,9 +1154,9 @@ export function GlobalSettingsWorkspace({
                   {/* Row 3: Add Footer Link */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
-                    <button 
+                    <button
                       type="button"
-                      onClick={() => setIsAddingLink(true)}
+                      onClick={() => setFooterLinks([...footerLinks, 'New Link (https://)'])}
                       style={{
                         padding: '6px 16px',
                         background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
@@ -1114,6 +1171,47 @@ export function GlobalSettingsWorkspace({
                       + ADD LINK
                     </button>
                   </div>
+
+                  {footerLinks.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {footerLinks.map((entry, i) => {
+                        const m = entry.match(/^(.*?)\s*\((.*?)\)$/);
+                        const label = m ? m[1] : entry;
+                        const url = m ? m[2] : '';
+                        const write = (l: string, u: string) => {
+                          const next = [...footerLinks];
+                          next[i] = `${l} (${u})`;
+                          setFooterLinks(next);
+                        };
+                        return (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <input
+                              className="gs-underline-input"
+                              style={{ flex: '1 1 40%' }}
+                              value={label}
+                              placeholder="Label"
+                              onChange={(e) => write(e.target.value, url)}
+                            />
+                            <input
+                              className="gs-underline-input"
+                              style={{ flex: '1 1 60%' }}
+                              value={url}
+                              placeholder="https://example.com"
+                              onChange={(e) => write(label, e.target.value)}
+                            />
+                            <button
+                              type="button"
+                              title="Remove link"
+                              onClick={() => setFooterLinks(footerLinks.filter((_, x) => x !== i))}
+                              style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '4px' }}
+                            >
+                              <X size={15} />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
               </div>
@@ -1126,11 +1224,41 @@ export function GlobalSettingsWorkspace({
               <div className="gs-cards-2x2">
                 
                 {/* Behavior Card */}
-                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div className="gs-config-card" style={{ padding: '22px 32px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {sidebarBg && (
+                          <button
+                            type="button"
+                            title="Reset sidebar color to theme default"
+                            onClick={() => setSidebarBg('')}
+                            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '2px' }}
+                          >
+                            <RotateCcw size={14} />
+                          </button>
+                        )}
+                        <div style={{ position: 'relative' }}>
+                          <div
+                            title="Choose sidebar color"
+                            style={{ width: '30px', height: '30px', borderRadius: '50%', background: sidebarBg || '#ffffff', border: '1.5px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)' }}
+                            onClick={() => document.getElementById('gs-color-picker-sidebar')?.click()}
+                          />
+                          <input
+                            id="gs-color-picker-sidebar"
+                            type="color"
+                            value={sidebarBg || '#ffffff'}
+                            onChange={(e) => setSidebarBg(e.target.value)}
+                            style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
                       <AppleToggle checked={startExpanded} onChange={(val) => {
@@ -1361,6 +1489,15 @@ export function GlobalSettingsWorkspace({
                           <option value="h4">H4</option>
                         </select>
 
+                        <select
+                          value={customerNameWeight}
+                          onChange={(e) => setCustomerNameWeight(e.target.value)}
+                          title="Font weight"
+                          style={GS_PILL_SELECT}
+                        >
+                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
+                        </select>
+
                         <div style={{ position: 'relative' }}>
                           <div
                             style={{
@@ -1423,6 +1560,15 @@ export function GlobalSettingsWorkspace({
                           <option value="h4">H4</option>
                         </select>
 
+                        <select
+                          value={customerCaptionWeight}
+                          onChange={(e) => setCustomerCaptionWeight(e.target.value)}
+                          title="Font weight"
+                          style={GS_PILL_SELECT}
+                        >
+                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
+                        </select>
+
                         <div style={{ position: 'relative' }}>
                           <div
                             style={{
@@ -1448,6 +1594,11 @@ export function GlobalSettingsWorkspace({
                         <AppleToggle checked={showCustomerCaption} onChange={setShowCustomerCaption} />
                       </div>
                     </div>
+                  </div>
+
+                  <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Text Color matches theme <InfoTooltip position="above" text="When on, customer name and caption follow the theme text colour and the colour swatches are ignored." /></span>
+                    <AppleToggle checked={customerColorFollow} onChange={setCustomerColorFollow} />
                   </div>
                 </div>
               </div>

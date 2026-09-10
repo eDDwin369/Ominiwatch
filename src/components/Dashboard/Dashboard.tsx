@@ -141,6 +141,15 @@ export function Dashboard({
   const [customerCaptionColor, setCustomerCaptionColor] = useState(() => {
     return localStorage.getItem('gs_customerCaptionColor') || 'rgba(255, 255, 255, 0.65)';
   });
+  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '700');
+  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '600');
+  const [sidebarColor, setSidebarColor] = useState(() => localStorage.getItem('gs_sidebarColor') || '');
+  // Sidebar "Choose color" override → CSS var consumed by .dash-sidebar (both modes).
+  useEffect(() => {
+    const root = document.documentElement;
+    if (sidebarColor) root.style.setProperty('--gs-sidebar-color', sidebarColor);
+    else root.style.removeProperty('--gs-sidebar-color');
+  }, [sidebarColor]);
   const [footerLinks, setFooterLinks] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('gs_footerLinks');
@@ -291,6 +300,8 @@ export function Dashboard({
         customerName={customerName}
         customerNameStyle={customerNameStyle}
         customerNameColor={customerNameColor}
+        customerNameWeight={customerNameWeight}
+        customerCaptionWeight={customerCaptionWeight}
         customerColorFollow={customerColorFollow}
         showCustomerLogo={showCustomerLogo}
         customerLogo={customerLogo}
@@ -451,6 +462,8 @@ export function Dashboard({
           setSidebarShowIcons={setSidebarShowIcons}
           sidebarShowLabels={sidebarShowLabels}
           setSidebarShowLabels={setSidebarShowLabels}
+          sidebarColor={sidebarColor}
+          setSidebarColor={setSidebarColor}
           onSyncFooter={(footerData) => {
             if (footerData.footerVisible !== undefined) setFooterVisible(footerData.footerVisible);
             if (footerData.copyrightText !== undefined) setCopyrightText(footerData.copyrightText);
@@ -473,6 +486,8 @@ export function Dashboard({
             if (data.customerCaption !== undefined) setCustomerCaption(data.customerCaption);
             if (data.customerCaptionStyle) setCustomerCaptionStyle(data.customerCaptionStyle);
             if (data.customerCaptionColor) setCustomerCaptionColor(data.customerCaptionColor);
+            if (data.customerNameWeight) setCustomerNameWeight(data.customerNameWeight);
+            if (data.customerCaptionWeight) setCustomerCaptionWeight(data.customerCaptionWeight);
           }}
           onShowToast={showGlobalToast}
         />

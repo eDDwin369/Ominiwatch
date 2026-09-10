@@ -7,6 +7,8 @@ import {
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { ImageCropperModal } from '../GlobalSettings/ImageCropperModal';
 import { isValidPhone } from './phoneValidation';
+import { isValidName } from './nameValidation';
+import { isValidEmail } from './emailValidation';
 import './AccountSettings.css';
 
 interface AccountSettingsProps {
@@ -100,9 +102,12 @@ export function AccountSettings({
   };
 
   const phoneError = !isValidPhone(tempProfile.phone);
+  const nameError = !isValidName(tempProfile.fullName);
+  const emailError = !isValidEmail(tempProfile.email);
+  const profileHasErrors = phoneError || nameError || emailError;
 
   const handleSaveProfile = () => {
-    if (phoneError) return;
+    if (profileHasErrors) return;
     setProfile({ ...tempProfile });
     setIsEditingProfile(false);
     if (setHasUnsavedChanges) setHasUnsavedChanges(false);
@@ -293,14 +298,21 @@ export function AccountSettings({
                 <div className="figma-profile-labels">
                   {isEditingProfile ? (
                     <>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         className="figma-edit-input figma-edit-name"
                         value={tempProfile.fullName}
                         onChange={e => handleProfileChange('fullName', e.target.value)}
+                        aria-invalid={nameError}
+                        style={nameError ? { borderColor: 'var(--danger)' } : undefined}
                       />
-                      <input 
-                        type="text" 
+                      {nameError && (
+                        <span className="figma-field-error">
+                          Enter a valid full name (letters only, 2–60 characters)
+                        </span>
+                      )}
+                      <input
+                        type="text"
                         className="figma-edit-input figma-edit-role"
                         value={tempProfile.jobTitle}
                         onChange={e => handleProfileChange('jobTitle', e.target.value)}
@@ -320,12 +332,23 @@ export function AccountSettings({
                 <div className="figma-input-field">
                   <label className="figma-input-label">Email</label>
                   {isEditingProfile ? (
-                    <input 
-                      type="email" 
-                      className="figma-underline-input"
-                      value={tempProfile.email}
-                      onChange={e => handleProfileChange('email', e.target.value)}
-                    />
+                    <>
+                      <input
+                        type="email"
+                        className="figma-underline-input"
+                        value={tempProfile.email}
+                        onChange={e => handleProfileChange('email', e.target.value)}
+                        aria-invalid={emailError}
+                        style={emailError ? { borderColor: 'var(--danger)' } : undefined}
+                      />
+                      {emailError && (
+                        <span className="figma-field-error">
+                          {tempProfile.email.trim()
+                            ? 'Enter a valid email address'
+                            : 'Email is required'}
+                        </span>
+                      )}
+                    </>
                   ) : (
                     <div className="figma-underline-value">{profile.email}</div>
                   )}
@@ -344,8 +367,10 @@ export function AccountSettings({
                         style={phoneError ? { borderColor: 'var(--danger)' } : undefined}
                       />
                       {phoneError && (
-                        <span style={{ color: 'var(--danger)', fontSize: '11px' }}>
-                          Enter a valid phone number
+                        <span className="figma-field-error">
+                          {tempProfile.phone.trim()
+                            ? 'Enter a valid phone number (7–15 digits, optional leading +)'
+                            : 'Phone number is required'}
                         </span>
                       )}
                     </>
@@ -400,7 +425,7 @@ export function AccountSettings({
                     type="button"
                     className="figma-btn-icon figma-btn-save"
                     onClick={handleSaveProfile}
-                    disabled={phoneError}
+                    disabled={profileHasErrors}
                     title="Save profile"
                   >
                     <Check size={16} />

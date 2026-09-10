@@ -64,9 +64,17 @@ export function ReportsPage() {
   const [country, setCountry] = useState('USA');
   const [stateProvince, setStateProvince] = useState('California');
 
+  const nameValid = isValidName(fullName);
+  // phone is optional here (a placeholder is generated when left blank)
+  const phoneValid = phoneNumber.trim() === '' || isValidPhone(phoneNumber);
+  // only surface a message once the field has been typed into
+  const nameError = fullName.trim() !== '' && !nameValid;
+  const phoneError = phoneNumber.trim() !== '' && !phoneValid;
+  const formHasErrors = !nameValid || !phoneValid;
+
   const handleAddUser = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim()) return;
+    if (formHasErrors) return;
 
     const nextId = users.length + 1;
     const seq = String(nextId).padStart(3, '0');
@@ -133,7 +141,16 @@ export function ReportsPage() {
       </div>
 
       <div style={{ flex: 1, overflow: 'hidden' }}>
-        <URMViewer key={users.length} data={users} reportName="User" />
+        <URMProvider
+          key={users.length}
+          data={users}
+          reportId={REPORT_ID}
+          reportName="User"
+          mode="viewer"
+        >
+          <RestoreActiveView />
+          <URMViewerRaw />
+        </URMProvider>
       </div>
 
       {/* Modal for adding user */}
@@ -176,40 +193,52 @@ export function ReportsPage() {
               {/* Full Name */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Full Name</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="John Doe"
                   required
+                  aria-invalid={nameError}
                   style={{
                     padding: '10px 12px',
                     borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
+                    border: `1px solid ${nameError ? 'var(--danger)' : 'var(--border-light)'}`,
                     background: 'var(--bg-card)',
                     color: 'var(--text-main)',
                     outline: 'none'
                   }}
                 />
+                {nameError && (
+                  <span style={{ fontSize: '11px', color: 'var(--danger)' }}>
+                    Enter a valid full name (letters only, 2–60 characters)
+                  </span>
+                )}
               </div>
 
               {/* Phone Number */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Phone Number</label>
-                <input 
-                  type="text" 
+                <input
+                  type="tel"
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="+1-555-0199"
+                  aria-invalid={phoneError}
                   style={{
                     padding: '10px 12px',
                     borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
+                    border: `1px solid ${phoneError ? 'var(--danger)' : 'var(--border-light)'}`,
                     background: 'var(--bg-card)',
                     color: 'var(--text-main)',
                     outline: 'none'
                   }}
                 />
+                {phoneError && (
+                  <span style={{ fontSize: '11px', color: 'var(--danger)' }}>
+                    Enter a valid phone number (7–15 digits, optional leading +)
+                  </span>
+                )}
               </div>
 
               {/* Department */}
@@ -383,15 +412,17 @@ export function ReportsPage() {
               >
                 Cancel
               </button>
-              <button 
+              <button
                 type="submit"
+                disabled={formHasErrors}
                 style={{
                   padding: '10px 20px',
                   borderRadius: '8px',
                   border: 'none',
                   background: 'var(--primary)',
                   color: 'var(--on-accent, #fff)',
-                  cursor: 'pointer',
+                  cursor: formHasErrors ? 'not-allowed' : 'pointer',
+                  opacity: formHasErrors ? 0.6 : 1,
                   fontWeight: 600
                 }}
               >

@@ -20,6 +20,8 @@ interface HeaderProps {
   customerName?: string;
   customerNameStyle?: string;
   customerNameColor?: string;
+  customerNameWeight?: string;
+  customerCaptionWeight?: string;
   customerColorFollow?: boolean;
   showCustomerLogo?: boolean;
   customerLogo?: string;
@@ -49,15 +51,17 @@ export function Header({
   isEditing = false,
   showCustomerProfile = true,
   customerName = 'Default Customer',
-  customerNameStyle = 'h4',
-  customerNameColor: _customerNameColor = '',
-  customerColorFollow: _customerColorFollow = true,
+  customerNameStyle: _customerNameStyle = 'h4',
+  customerNameColor = '',
+  customerNameWeight = '',
+  customerCaptionWeight = '',
+  customerColorFollow = true,
   showCustomerLogo = false,
   customerLogo = '',
   customerLogoShape: _customerLogoShape = 'rounded',
   showCustomerCaption = false,
   customerCaption = 'Digital Twin Solutions',
-  customerCaptionStyle = 'h6',
+  customerCaptionStyle: _customerCaptionStyle = 'h6',
   customerCaptionColor = '',
   customerCaptionColorFollow: _customerCaptionColorFollow = true,
   onOpenThemeStudio: _onOpenThemeStudio
@@ -127,18 +131,6 @@ export function Header({
     }
   };
 
-  const getFontSize = (style?: string, defaultSize: string = '1rem') => {
-    switch (style) {
-      case 'h1': return '1.5rem';
-      case 'h2': return '1.25rem';
-      case 'h3': return '1.05rem';
-      case 'h4': return '0.85rem';
-      case 'h5': return '0.75rem';
-      case 'h6': return '0.65rem';
-      default: return defaultSize;
-    }
-  };
-
 
 
   return (
@@ -146,13 +138,11 @@ export function Header({
       className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
       style={{
         background: (headerConfig?.headerBgColor && headerConfig.headerBgColor !== 'transparent')
-          ? headerConfig.headerBgColor 
-          : 'var(--dash-header-bg, #0b0f16)',
+          ? headerConfig.headerBgColor
+          : 'var(--dash-header-bg)',
         color: '#ffffff',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        boxShadow: brand.mode === 'dark' 
-          ? '0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4)' 
-          : '0 4px 20px -2px rgba(15, 23, 42, 0.18), 0 2px 6px -1px rgba(15, 23, 42, 0.1)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+        boxShadow: '0 4px 20px -2px rgba(15, 23, 42, 0.18), 0 2px 6px -1px rgba(15, 23, 42, 0.1)',
         transition: 'all 0.2s ease'
       }}
     >
@@ -169,37 +159,24 @@ export function Header({
       >
         {(!headerConfig || headerConfig.showLogo !== false) && (
           <img
+            className="hdr-logo-img"
             src={headerConfig?.logo || studioLogo}
             alt="OmniEye Logo"
-            style={{ height: '64px', width: 'auto', objectFit: 'contain' }}
           />
         )}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           {(!headerConfig || headerConfig.showCompanyName) && (
             <div
-              style={{
-                fontWeight: 'bold',
-                fontSize: getFontSize(headerConfig?.companyNameStyle, '1.05rem'),
-                lineHeight: '1.2',
-                color: '#ffffff',
-                textTransform: 'none',
-                letterSpacing: 'normal'
-              }}
+              className="hdr-brand-name"
+              style={headerConfig?.companyNameWeight ? { fontWeight: Number(headerConfig.companyNameWeight) } : undefined}
             >
               {headerConfig?.companyName || brand.appName || 'OomniEye'}
             </div>
           )}
           {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
             <div
-              style={{
-                fontWeight: '600',
-                fontSize: getFontSize(headerConfig?.companyCaptionStyle, '0.75rem'),
-                lineHeight: '1.2',
-                color: 'rgba(255, 255, 255, 0.65)',
-                marginTop: '2px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em'
-              }}
+              className="hdr-brand-caption"
+              style={headerConfig?.companyCaptionWeight ? { fontWeight: Number(headerConfig.companyCaptionWeight) } : undefined}
             >
               {headerConfig?.companyCaption || brand.appTagline || 'Digital Twin Solutions'}
             </div>
@@ -212,34 +189,28 @@ export function Header({
           <>
             {/* Logo in Center */}
             {showCustomerLogo && (customerLogo || logo) && (
-              <img
-                src={customerLogo || logo}
-                alt="Customer Logo"
-                style={{ height: '64px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
-              />
+              <img className="hdr-logo-img" src={customerLogo || logo} alt="Customer Logo" />
             )}
 
             {/* Text/Font in Center */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ 
-                fontWeight: 700, 
-                fontSize: getFontSize(customerNameStyle, '1.05rem'), 
-                color: '#ffffff', 
-                letterSpacing: '0.02em',
-                lineHeight: '1.2' 
-              }}>
+              <span
+                className="hdr-brand-name"
+                style={{
+                  fontWeight: customerNameWeight ? Number(customerNameWeight) : undefined,
+                  color: (!customerColorFollow && customerNameColor && customerNameColor !== 'transparent') ? customerNameColor : undefined,
+                }}
+              >
                 {customerName || 'Default Customer'}
               </span>
               {showCustomerCaption && (
-                <span style={{
-                  fontWeight: 500,
-                  fontSize: getFontSize(customerCaptionStyle, '0.75rem'),
-                  color: (customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : 'rgba(255, 255, 255, 0.65)',
-                  letterSpacing: '0.04em',
-                  lineHeight: '1.2',
-                  marginTop: '2px',
-                  textTransform: 'uppercase'
-                }}>
+                <span
+                  className="hdr-brand-caption"
+                  style={{
+                    fontWeight: customerCaptionWeight ? Number(customerCaptionWeight) : undefined,
+                    color: (!customerColorFollow && customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : undefined,
+                  }}
+                >
                   {customerCaption || 'Digital Twin Solutions'}
                 </span>
               )}
@@ -251,7 +222,7 @@ export function Header({
       <div className="header-right">
         <button
           className="header-icon-btn"
-          title={brand.mode === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          title={brand.mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           onClick={() => set({ mode: brand.mode === 'dark' ? 'light' : 'dark' })}
         >
           {brand.mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -326,15 +297,16 @@ export function Header({
               setShowNotifications(false);
             }}
             style={{
-              background: profileImage ? 'transparent' : '#F3BA2F',
-              color: 'white',
-              width: '42px',
-              height: '42px',
+              background: profileImage ? 'transparent' : '#f3ba2f',
+              color: '#ffffff',
+              fontFamily: "'Roboto', sans-serif",
+              width: '38px',
+              height: '38px',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontWeight: '600',
+              fontWeight: 600,
               fontSize: '18px',
               cursor: 'pointer',
               transition: 'transform 0.05s',
