@@ -6751,14 +6751,14 @@ html:has(.mode-v6),
 .dash-sidebar.collapsed .nav-item.active::before { display: none; }
 [data-theme-mode="light"] .dash-sidebar .nav-item.active,
 [data-theme-mode="dark"] .dash-sidebar .nav-item.active {
-  background: color-mix(in srgb, var(--primary) 12%, transparent) !important;
-  color: var(--primary) !important;
+  background: var(--highlight-soft, color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent)) !important;
+  color: var(--highlight, var(--primary)) !important;
   border: 1px solid transparent !important;
   box-shadow: none !important;
 }
 [data-theme-mode="light"] .dash-sidebar .nav-item.active .nav-label,
 [data-theme-mode="dark"] .dash-sidebar .nav-item.active .nav-label {
-  color: var(--primary) !important;
+  color: var(--highlight, var(--primary)) !important;
 }
 .nav-section-title {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
