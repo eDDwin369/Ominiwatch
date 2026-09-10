@@ -129,11 +129,38 @@ function syncCssVars(theme: any, settings: any) {
   const darkSidebar = hslToHexStr(pHue, 35, 7.2);
   const darkCanvas = hslToHexStr(pHue, 32, 5.5);
 
-  set('--dash-header-bg', darkHeader);
+  // Exact Figma header chrome per colour template (Corporate Blue / Emerald / Indigo Violet).
+  // Corporate + Emerald are flat dark bars; Indigo adds a faint primary->secondary wash.
+  // Any other preset falls back to the primary-hue-derived dark bar.
+  const figmaHeaderBg: Record<string, string> = {
+    corporate: '#141b3c',
+    emerald: '#0d2a20',
+    indigo:
+      'linear-gradient(90deg, rgba(169,123,255,0.25) 0%, rgba(169,123,255,0) 50%, rgba(255,95,162,0) 50%, rgba(255,95,162,0.15) 100%), #0f0726',
+  };
+  set('--dash-header-bg', figmaHeaderBg[settings.presetId] || darkHeader);
   set('--dash-sidebar-bg', settings.mode === 'dark' ? darkSidebar : '#ffffff');
-  set('--dash-canvas-bg', settings.mode === 'dark' ? darkCanvas : '#ffffff');
+  // Dark-mode dashboard canvas — exact Figma vertical gradient per colour template
+  // (Container fill). Other presets fall back to the primary-hue-derived flat dark.
+  const figmaCanvasDark: Record<string, string> = {
+    corporate: 'linear-gradient(180deg, #070A1B 0%, #111734 50%, #090D22 100%)',
+    emerald: 'linear-gradient(180deg, #06140E 0%, #082318 50%, #061910 100%)',
+    indigo: 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
+  };
+  set(
+    '--dash-canvas-bg',
+    settings.mode === 'dark' ? figmaCanvasDark[settings.presetId] || darkCanvas : '#ffffff'
+  );
   set('--dash-brand-gradient', `linear-gradient(90deg, ${primaryHex} 0%, ${secondaryHex} 100%)`);
   set('--dash-aura-color', primaryHex);
+  // Hero video-card ambient shadow — full CSS box-shadow value, explicit per-mode
+  // preset value if set (Figma "Drop shadow" stack), else a primaryHex-derived glow.
+  const videoShadow = isDark ? settings.videoShadowDark : settings.videoShadowLight;
+  set(
+    '--dash-video-shadow',
+    videoShadow ||
+      `0px 0px 33px ${isDark ? 0 : 14}px color-mix(in srgb, ${primaryHex} ${isDark ? 32 : 20}%, transparent)`
+  );
   set('--dash-active-pill-border', isDark ? highlight : hlBd);
   set('--dash-active-pill-bg', hlSoft);
   set('--dash-active-pill-color', highlight);

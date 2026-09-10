@@ -6724,7 +6724,7 @@ html:has(.mode-v6),
 
 /* ---- Sidebar (white, blue accent) ------------------------------------- */
 [data-theme-mode="light"] .dash-sidebar {
-  background: #ffffff !important;
+  background: var(--gs-sidebar-color, #ffffff) !important;
   border-right: 1px solid #dde2f0;
 }
 .nav-item {
@@ -6746,7 +6746,7 @@ html:has(.mode-v6),
   width: 4px;
   height: 24px;
   border-radius: 0 4px 4px 0;
-  background: var(--primary);
+  background: var(--highlight, var(--primary));
 }
 .dash-sidebar.collapsed .nav-item.active::before { display: none; }
 [data-theme-mode="light"] .dash-sidebar .nav-item.active,

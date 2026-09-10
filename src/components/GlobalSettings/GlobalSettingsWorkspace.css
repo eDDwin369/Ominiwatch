@@ -210,7 +210,7 @@
 }
 
 .gs-tab-btn.active {
-  background: var(--highlight, var(--primary)) !important;
+  background: var(--primary) !important;
   color: var(--btn-text, #ffffff) !important;
   box-shadow: 0 2px 8px var(--highlight-hover, var(--accent-glow)) !important;
 }
