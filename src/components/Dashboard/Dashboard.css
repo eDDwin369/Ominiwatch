@@ -238,13 +238,13 @@
 }
 
 [data-theme-mode="light"] .dash-sidebar {
-  background: #ffffff !important;
+  background: var(--gs-sidebar-color, #ffffff) !important;
   border-right: 1px solid #e2e8f0;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
 }
 
 [data-theme-mode="dark"] .dash-sidebar {
-  background: var(--dash-sidebar-bg, #061510) !important;
+  background: var(--gs-sidebar-color, var(--dash-sidebar-bg, #061510)) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: none;
 }
@@ -5783,12 +5783,12 @@ html:has(.mode-v6),
   overflow: hidden !important;
   position: relative !important;
   border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
-  box-shadow: 0px 0px 33px 14px color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent) !important;
+  box-shadow: var(--dash-video-shadow, 0px 0px 33px 14px color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent)) !important;
 }
 
 [data-theme-mode="dark"] .mode-v2 .v5-video-screen {
   border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
-  box-shadow: 0px 0px 33px 0px color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent) !important;
+  box-shadow: var(--dash-video-shadow, 0px 0px 33px 0px color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent)) !important;
 }
 
 /* Inline White Card remains clean & stable during video expansion */
@@ -6278,9 +6278,9 @@ html:has(.mode-v6),
 .v2-highlight-item.active .v2-text-span.v6-gradient-brand {
   background: var(--dash-brand-gradient, linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)) !important;
   background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--primary) 35%, transparent));
+  /* -webkit-background-clip: text !important; */
+  /* -webkit-text-fill-color: transparent !important; */
+  /* filter: drop-shadow(0 0 20px color-mix(in srgb, var(--primary) 35%, transparent)); */
 }
 
 .v2-highlight-item.active .v2-text-span.v6-gradient-appearance {
@@ -6288,15 +6288,11 @@ html:has(.mode-v6),
   background-clip: text !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--primary) 35%, transparent));
 }
 
 .v2-highlight-item.active .v2-text-span.v6-gradient-content {
   background: var(--dash-brand-gradient, linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)) !important;
   background-clip: text !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--primary) 35%, transparent));
 }
 
 /* Badges for CC and HD in Video Controls Toolbar (Matching Reference Design) */
@@ -6814,10 +6810,8 @@ html:has(.mode-v6),
 .v2-highlight-item.active .v2-text-span.v6-gradient-appearance,
 .v2-highlight-item.active .v2-text-span.v6-gradient-content {
   background: var(--dash-brand-gradient, linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)) !important;
-  -webkit-background-clip: text !important;
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--primary) 28%, transparent)) !important;
 }
 
 /* "Welcome to" intro text */

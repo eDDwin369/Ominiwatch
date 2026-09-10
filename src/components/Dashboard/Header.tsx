@@ -6,13 +6,6 @@ import logo from '../../assets/logo.png';
 import './Dashboard.css';
 import { useThemeStore } from 'omnieye-theme-studio';
 
-// Figma header chrome: a dark, primary-hue-tinted bar with a faint left->right
-// primary/secondary wash (Nebula frame 1:2146). Token-driven so it follows the
-// active Theme Studio preset (Aurora blue / Verdant green / Nebula purple-pink).
-const HEADER_BG =
-  'linear-gradient(90deg, color-mix(in srgb, var(--primary) 22%, transparent) 0%, transparent 45%, transparent 55%, color-mix(in srgb, var(--secondary) 16%, transparent) 100%), ' +
-  'color-mix(in srgb, var(--primary) 16%, #0a0a12)';
-
 interface HeaderProps {
   notifications: NotificationItem[];
   onMarkAllRead: () => void;
@@ -27,6 +20,8 @@ interface HeaderProps {
   customerName?: string;
   customerNameStyle?: string;
   customerNameColor?: string;
+  customerNameWeight?: string;
+  customerCaptionWeight?: string;
   customerColorFollow?: boolean;
   showCustomerLogo?: boolean;
   customerLogo?: string;
@@ -57,8 +52,10 @@ export function Header({
   showCustomerProfile = true,
   customerName = 'Default Customer',
   customerNameStyle: _customerNameStyle = 'h4',
-  customerNameColor: _customerNameColor = '',
-  customerColorFollow: _customerColorFollow = true,
+  customerNameColor = '',
+  customerNameWeight = '',
+  customerCaptionWeight = '',
+  customerColorFollow = true,
   showCustomerLogo = false,
   customerLogo = '',
   customerLogoShape: _customerLogoShape = 'rounded',
@@ -142,7 +139,7 @@ export function Header({
       style={{
         background: (headerConfig?.headerBgColor && headerConfig.headerBgColor !== 'transparent')
           ? headerConfig.headerBgColor
-          : HEADER_BG,
+          : 'var(--dash-header-bg)',
         color: '#ffffff',
         borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
         boxShadow: '0 4px 20px -2px rgba(15, 23, 42, 0.18), 0 2px 6px -1px rgba(15, 23, 42, 0.1)',
@@ -169,12 +166,18 @@ export function Header({
         )}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           {(!headerConfig || headerConfig.showCompanyName) && (
-            <div className="hdr-brand-name">
+            <div
+              className="hdr-brand-name"
+              style={headerConfig?.companyNameWeight ? { fontWeight: Number(headerConfig.companyNameWeight) } : undefined}
+            >
               {headerConfig?.companyName || brand.appName || 'OomniEye'}
             </div>
           )}
           {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
-            <div className="hdr-brand-caption">
+            <div
+              className="hdr-brand-caption"
+              style={headerConfig?.companyCaptionWeight ? { fontWeight: Number(headerConfig.companyCaptionWeight) } : undefined}
+            >
               {headerConfig?.companyCaption || brand.appTagline || 'Digital Twin Solutions'}
             </div>
           )}
@@ -191,13 +194,22 @@ export function Header({
 
             {/* Text/Font in Center */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <span className="hdr-brand-name">
+              <span
+                className="hdr-brand-name"
+                style={{
+                  fontWeight: customerNameWeight ? Number(customerNameWeight) : undefined,
+                  color: (!customerColorFollow && customerNameColor && customerNameColor !== 'transparent') ? customerNameColor : undefined,
+                }}
+              >
                 {customerName || 'Default Customer'}
               </span>
               {showCustomerCaption && (
                 <span
                   className="hdr-brand-caption"
-                  style={(customerCaptionColor && customerCaptionColor !== 'transparent') ? { color: customerCaptionColor } : undefined}
+                  style={{
+                    fontWeight: customerCaptionWeight ? Number(customerCaptionWeight) : undefined,
+                    color: (!customerColorFollow && customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : undefined,
+                  }}
                 >
                   {customerCaption || 'Digital Twin Solutions'}
                 </span>
