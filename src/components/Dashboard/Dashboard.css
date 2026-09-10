@@ -107,7 +107,8 @@
 }
 
 [data-theme-mode="dark"] .profile-dropdown-item:hover {
-  background-color: var(--border-light) !important;
+  background-color: var(--highlight-soft, color-mix(in srgb, var(--highlight, var(--primary)) 20%, transparent)) !important;
+  color: var(--highlight, var(--primary)) !important;
 }
 
 [data-theme-mode="dark"] .account-tab-content {
@@ -1838,7 +1839,8 @@
 }
 
 .profile-dropdown-item:hover {
-  background-color: var(--border-light);
+  background-color: var(--highlight-soft, color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent));
+  color: var(--highlight, var(--primary));
 }
 
 .profile-dropdown-item.danger:hover {
@@ -6689,4 +6691,218 @@ html:has(.mode-v6),
   .v5-yt-volume-slider {
     width: 40px !important;
   }
+}
+
+/* ==========================================================================
+   FIGMA PIXEL-MATCH — Welcome / Dashboard screen (Figma nodes 1:891 / 1:1963 /
+   1:2145). Layout + type match the "Blue Gradient" frame; accent colours are
+   token-driven (--primary / --secondary) so the Aurora / Verdant / Nebula
+   presets in Theme Studio re-tint the whole screen. Flat navy header chrome is
+   theme-neutral. Appended last so these win by source order. Fonts: src/index.css.
+   ========================================================================== */
+
+/* ---- Header (flat navy #141b3c, white text) ---------------------------- */
+.hdr-logo-img {
+  height: 100%;
+  max-height: var(--appbar-h, 64px);
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.hdr-brand-name {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.2;
+  color: #ffffff;
+}
+.hdr-brand-caption {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 2px;
+}
+.dash-header .header-icon-btn { color: rgba(255, 255, 255, 0.9); }
+.dash-header .header-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* ---- Sidebar (white, blue accent) ------------------------------------- */
+[data-theme-mode="light"] .dash-sidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #dde2f0;
+}
+.nav-item {
+  border-radius: 12px;
+  padding: 10px 12px;
+  gap: 12px;
+  position: relative;
+}
+.nav-label {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+}
+.dash-sidebar .nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  border-radius: 0 4px 4px 0;
+  background: var(--primary);
+}
+.dash-sidebar.collapsed .nav-item.active::before { display: none; }
+[data-theme-mode="light"] .dash-sidebar .nav-item.active,
+[data-theme-mode="dark"] .dash-sidebar .nav-item.active {
+  background: color-mix(in srgb, var(--primary) 12%, transparent) !important;
+  color: var(--primary) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+[data-theme-mode="light"] .dash-sidebar .nav-item.active .nav-label,
+[data-theme-mode="dark"] .dash-sidebar .nav-item.active .nav-label {
+  color: var(--primary) !important;
+}
+.nav-section-title {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 2px;
+  margin: 20px 0 4px 12px;
+}
+[data-theme-mode="light"] .nav-section-title,
+[data-theme-mode="dark"] .nav-section-title {
+  color: rgba(102, 112, 146, 0.7) !important;
+}
+
+/* ---- Hero body ------------------------------------------------------- */
+.mode-v2 .v6-ventures-left { max-width: 420px !important; }
+
+.v2-prefix-line {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 40px !important;
+  font-weight: 200 !important;
+  letter-spacing: -0.02em !important;
+  color: #888 !important;
+}
+[data-theme-mode="light"] .v2-prefix-line {
+  font-weight: 300 !important;
+  color: #888 !important;
+}
+.v2-highlight-item {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 30px !important;
+  font-weight: 200 !important;
+  opacity: 0.6;
+  color: #94a3b8 !important;
+}
+[data-theme-mode="light"] .v2-highlight-item { color: #888 !important; }
+.v2-highlight-item.active {
+  font-size: 80px !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.022em !important;
+  opacity: 1 !important;
+}
+.v2-highlight-item.active .v2-text-span {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.022em !important;
+}
+/* "Brand" — themed gradient (primary -> secondary, driven by Theme Studio) */
+.v2-highlight-item.active .v2-text-span.v6-gradient-brand,
+.v2-highlight-item.active .v2-text-span.v6-gradient-appearance,
+.v2-highlight-item.active .v2-text-span.v6-gradient-content {
+  background: var(--dash-brand-gradient, linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--primary) 28%, transparent)) !important;
+}
+
+/* "Welcome to" intro text */
+.mode-v2 .v2-intro-text-anim-item,
+.mode-v2 .v2-full-intro-text {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: clamp(52px, 6.4vw, 98px) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+}
+
+/* Sonar ring — Figma shows one large static ring, not the 3-ring pulse */
+.mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring {
+  border: 1.8px solid rgba(255, 255, 255, 0.22) !important;
+  animation-duration: 8s !important;
+}
+.mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-2 {
+  width: 402px !important;
+  height: 402px !important;
+  opacity: 0.43 !important;
+  animation: none !important;
+}
+.mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-1 { opacity: 0.12 !important; }
+.mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-3 { opacity: 0.08 !important; }
+
+/* Video card — single soft themed glow, radius 44 */
+.mode-v2 .v5-video-screen {
+  border-radius: 44px !important;
+  background: #0b1024 !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
+  box-shadow: 0 4px 66px 0 color-mix(in srgb, color-mix(in srgb, var(--primary) 55%, var(--secondary)) 60%, transparent) !important;
+}
+
+.mode-v2 .v5-yt-progress-fill,
+.mode-v2 .v5-yt-scrub-handle { background: var(--primary) !important; }
+.v5-yt-progress-bg { background: rgba(255, 255, 255, 0.2); }
+.v5-yt-time {
+  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.v5-badge-cc {
+  background: color-mix(in srgb, var(--primary) 90%, transparent);
+  color: rgba(255, 255, 255, 0.85);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+.v5-badge-hd {
+  background: var(--secondary);
+  color: #06202a;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+
+/* Re-ramp hero type for the new 40 / 80 / 30 desktop sizes */
+@media (max-width: 1599px) and (min-width: 1280px) {
+  .v2-prefix-line { font-size: 34px !important; }
+  .v2-highlight-item.active { font-size: 64px !important; }
+  .v2-highlight-item { font-size: 26px !important; }
+}
+@media (max-width: 1279px) and (min-width: 1024px) {
+  .v2-prefix-line { font-size: 30px !important; }
+  .v2-highlight-item.active { font-size: 52px !important; }
+  .v2-highlight-item { font-size: 24px !important; }
+}
+@media (max-width: 1023px) {
+  .v2-prefix-line { font-size: 28px !important; }
+  .v2-highlight-item.active { font-size: 44px !important; }
+  .v2-highlight-item { font-size: 22px !important; }
+}
+@media (max-width: 639px) {
+  .v2-prefix-line { font-size: 24px !important; }
+  .v2-highlight-item.active { font-size: 34px !important; }
+  .v2-highlight-item { font-size: 18px !important; }
+  .v5-yt-time { font-size: 11px !important; }
 }
