@@ -161,7 +161,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--gs-header-bg-dark, var(--bg-dashboard)) !important;
   border-bottom: 1px solid var(--border-light) !important;
   flex-shrink: 0;
 }
