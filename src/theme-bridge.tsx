@@ -173,6 +173,13 @@ function syncCssVars(theme: any, settings: any) {
   // export exactly); a preset can pin a literal override when its Figma badges deviate (Emerald).
   set('--dash-badge-cc', settings.ccBadge || `color-mix(in srgb, ${primaryHex} 90%, transparent)`);
   set('--dash-badge-hd', settings.hdBadge || secondaryHex);
+  // Video progress bar fill — Corporate's Figma export uses raw primaryHex (not highlightHex,
+  // despite highlightHex driving the sidebar's active-nav accent); Emerald's uses highlightHex.
+  // Default to primaryHex; only presets confirmed to deviate get an explicit override.
+  const figmaProgressFill: Record<string, string> = {
+    emerald: highlight,
+  };
+  set('--dash-progress-fill', figmaProgressFill[settings.presetId] || primaryHex);
   // Dashboard canvas (Container fill) — exact Figma vertical gradient per colour template in
   // dark mode; Emerald's light canvas is also a confirmed non-white tint (#ecf6f0), not plain
   // white. Any other preset/mode combo falls back to the primary-hue-derived flat dark / white.
@@ -182,6 +189,7 @@ function syncCssVars(theme: any, settings: any) {
     indigo: 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
   };
   const figmaCanvasLight: Record<string, string> = {
+    corporate: '#e1e6fb',
     emerald: '#ecf6f0',
     indigo: '#e1e6fb',
   };
@@ -195,6 +203,12 @@ function syncCssVars(theme: any, settings: any) {
   // primary/secondary in light mode (Indigo's dark stops happen to match primary/secondary
   // exactly, but are listed explicitly here to stay pinned to the verified Figma value).
   const figmaBrandGradient: Record<string, { light: string; dark: string }> = {
+    corporate: {
+      // Light mode's "Brand" gradient is a deep pinned navy, not derived from primary/secondary
+      // (dark mode's stops happen to equal primaryHex/secondaryHex exactly).
+      light: 'linear-gradient(90deg, #0029ff 0%, #00144b 100%)',
+      dark: 'linear-gradient(90deg, #4f6bff 0%, #22d3ee 100%)',
+    },
     emerald: {
       light: 'linear-gradient(90deg, #01b979 0%, #d88b00 100%)',
       dark: 'linear-gradient(90deg, #2ee6a6 0%, #ffc255 100%)',

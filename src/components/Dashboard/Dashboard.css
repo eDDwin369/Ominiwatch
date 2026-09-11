@@ -6587,32 +6587,16 @@ html:has(.mode-v6),
 
 /* 1. Large Laptops / Standard Desktops (1280px - 1599px) */
 @media (max-width: 1599px) and (min-width: 1280px) {
-  /* video column width/gap: handled by the fluid clamp() above — no
+  /* video column width/gap AND hero type: handled by the fluid clamp()
+     declarations on .v2-prefix-line / .v2-highlight-item(.active) — no
      breakpoint override needed here. */
-  .v2-prefix-line {
-    font-size: 38px !important;
-  }
-  .v2-highlight-item.active {
-    font-size: 58px !important;
-  }
-  .v2-highlight-item {
-    font-size: 30px !important;
-  }
 }
 
 /* 2. Compact Laptops / MacBooks / Small Desktop Monitors (1024px - 1279px) */
 @media (max-width: 1279px) and (min-width: 1024px) {
-  /* video column width/gap: handled by the fluid clamp() above — no
+  /* video column width/gap AND hero type: handled by the fluid clamp()
+     declarations on .v2-prefix-line / .v2-highlight-item(.active) — no
      breakpoint override needed here. */
-  .v2-prefix-line {
-    font-size: 32px !important;
-  }
-  .v2-highlight-item.active {
-    font-size: 48px !important;
-  }
-  .v2-highlight-item {
-    font-size: 26px !important;
-  }
 }
 
 /* 3. Tablets / iPad / Vertical Monitors (< 1024px) */
@@ -6779,7 +6763,10 @@ html:has(.mode-v6),
 
 .v2-prefix-line {
   font-family: var(--app-font-family) !important;
-  font-size: 40px !important;
+  /* Fluid scale (was a stepped media-query ramp that jumped too small between
+     breakpoints, e.g. on common 1280-1440px laptop widths): 24px at <=1024px
+     viewport up to the Figma-exact 40px at >=1730px (the reference hero width). */
+  font-size: clamp(24px, 0.8px + 2.27vw, 40px) !important;
   font-weight: 200 !important;
   letter-spacing: -0.02em !important;
   color: #888 !important;
@@ -6790,14 +6777,14 @@ html:has(.mode-v6),
 }
 .v2-highlight-item {
   font-family: var(--app-font-family) !important;
-  font-size: 30px !important;
+  font-size: clamp(18px, 11px + 1.1vw, 30px) !important;
   font-weight: 200 !important;
   opacity: 0.6;
   color: #94a3b8 !important;
 }
 [data-theme-mode="light"] .v2-highlight-item { color: #94a3b8 !important; }
 .v2-highlight-item.active {
-  font-size: 80px !important;
+  font-size: clamp(34px, 7px + 4.22vw, 80px) !important;
   font-weight: 600 !important;
   letter-spacing: -0.022em !important;
   opacity: 1 !important;
@@ -6840,7 +6827,7 @@ html:has(.mode-v6),
 .mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-3 { opacity: 0.08 !important; }
 
 .mode-v2 .v5-yt-progress-fill,
-.mode-v2 .v5-yt-scrub-handle { background: var(--highlight, var(--primary)) !important; }
+.mode-v2 .v5-yt-scrub-handle { background: var(--dash-progress-fill, var(--primary)) !important; }
 .v5-yt-progress-bg { background: rgba(255, 255, 255, 0.2); }
 .v5-yt-time {
   font-family: var(--app-font-family) !important;
@@ -6869,25 +6856,8 @@ html:has(.mode-v6),
   border-radius: 6px;
 }
 
-/* Re-ramp hero type for the new 40 / 80 / 30 desktop sizes */
-@media (max-width: 1599px) and (min-width: 1280px) {
-  .v2-prefix-line { font-size: 34px !important; }
-  .v2-highlight-item.active { font-size: 64px !important; }
-  .v2-highlight-item { font-size: 26px !important; }
-}
-@media (max-width: 1279px) and (min-width: 1024px) {
-  .v2-prefix-line { font-size: 30px !important; }
-  .v2-highlight-item.active { font-size: 52px !important; }
-  .v2-highlight-item { font-size: 24px !important; }
-}
-@media (max-width: 1023px) {
-  .v2-prefix-line { font-size: 28px !important; }
-  .v2-highlight-item.active { font-size: 44px !important; }
-  .v2-highlight-item { font-size: 22px !important; }
-}
+/* Hero type now scales fluidly via clamp() on the base .v2-prefix-line /
+   .v2-highlight-item(.active) rules above — no stepped breakpoints needed. */
 @media (max-width: 639px) {
-  .v2-prefix-line { font-size: 24px !important; }
-  .v2-highlight-item.active { font-size: 34px !important; }
-  .v2-highlight-item { font-size: 18px !important; }
   .v5-yt-time { font-size: 11px !important; }
 }
