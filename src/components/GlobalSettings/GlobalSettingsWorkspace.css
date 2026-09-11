@@ -373,7 +373,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-hover, var(--primary)) 100%) !important;
+  background: var(--gs-arrow-gradient, linear-gradient(135deg, var(--primary-light) 0%, var(--primary-hover, var(--primary)) 100%)) !important;
   border: 1px solid var(--border-light) !important;
   padding: 8px 18px;
   border-radius: 20px;
@@ -565,7 +565,10 @@
   padding: 4px 0 10px 0 !important;
   outline: none !important;
   box-shadow: none !important;
-  font-family: var(--app-font-family) !important;
+  /* Verified against pixelPerfectGlobalSettings_greenDark: the editable value text uses
+     Inter, distinct from the Roboto labels/titles around it (--app-font-family). Already
+     loaded (index.css imports Inter 400/500/600). */
+  font-family: 'Inter', var(--app-font-family) !important;
   transition: border-bottom-color 0.2s ease !important;
 }
 

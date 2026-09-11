@@ -242,6 +242,13 @@ function syncCssVars(theme: any, settings: any) {
       light: 'linear-gradient(135deg, #00ddff 0%, #0c26b1 100%)',
       dark: 'linear-gradient(162deg, #22d3ee 11.886%, #126673 91.492%)',
     },
+    // Dark verified against pixelPerfectGlobalSettings_greenDark (a flat 20% black wash
+    // stacked over the amber gradient, not a plain 2-stop). Light not yet verified — kept
+    // as the same secondary->primary formula the unpinned fallback below produces.
+    emerald: {
+      light: 'linear-gradient(135deg, #F5A524 0%, #10B981 100%)',
+      dark: 'linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(180deg, #FFC255 0%, #997433 100%)',
+    },
   };
   const gsAccentPreset = figmaGsAccentGradient[settings.presetId];
   set(
@@ -273,6 +280,11 @@ function syncCssVars(theme: any, settings: any) {
   const figmaGsModalGradientDark: Record<string, string> = {
     corporate:
       'radial-gradient(circle at 50% 30%, #4f6bff 0%, #3f5adb 13.75%, #2e49b7 27.5%, #1e3892 41.25%, #0d276e 55%, #07153f 100%)',
+    // Verified against pixelPerfectGlobalSettings_greenDark — centre stop is emerald's
+    // highlightHex (#2EE6A6), not primaryHex, and it fades to a dark green (#072D20),
+    // never pure black, unlike the unpinned fallback formula below.
+    emerald:
+      'radial-gradient(circle at 50% 30%, #2EE6A6 0%, #21AB7B 27.5%, #1A8D65 41.25%, #146F4F 55%, #0D4E37 77.5%, #072D20 100%)',
   };
   set(
     '--gs-modal-bg-dark',
@@ -292,6 +304,18 @@ function syncCssVars(theme: any, settings: any) {
     root.style.removeProperty('--gs-eye-active-border');
     root.style.removeProperty('--gs-eye-active-shadow');
   }
+  // Target-callout pointer pill (the "Editing X" beam shown while highlighting a
+  // section) — was plain CSS (primary-light -> primary-hover, unpinned) with no
+  // verified value at all. Dark verified against pixelPerfectGlobalSettings_greenDark;
+  // other presets fall back to the same primary.light -> primary.dark shape the old
+  // CSS produced, so this is a no-op for them until verified.
+  const figmaGsArrowGradient: Record<string, string> = {
+    emerald: 'linear-gradient(169deg, #28C78F 0%, #18855F 100%)',
+  };
+  set(
+    '--gs-arrow-gradient',
+    figmaGsArrowGradient[settings.presetId] || `linear-gradient(135deg, ${p.primary.light} 0%, ${p.primary.dark} 100%)`
+  );
   // Hero video-card ambient shadow — full CSS box-shadow value, explicit per-mode
   // preset value if set (Figma "Drop shadow" stack), else a primaryHex-derived glow.
   const videoShadow = isDark ? settings.videoShadowDark : settings.videoShadowLight;
