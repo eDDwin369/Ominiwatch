@@ -7,6 +7,7 @@ import {
 import './GlobalSettingsWorkspace.css';
 
 import { ImageCropperModal } from './ImageCropperModal';
+import { useThemeStore } from 'omnieye-theme-studio';
 
 interface GlobalSettingsWorkspaceProps {
   onClose: () => void;
@@ -190,6 +191,11 @@ export function GlobalSettingsWorkspace({
 }: GlobalSettingsWorkspaceProps) {
   const [activeTab, setActiveTab] = useState<TabId>('header');
 
+  // Theme Studio is the single source of truth for brand identity (it has the
+  // fuller feature set); Global Settings only edits sidebar / header / footer.
+  const studioSettings = useThemeStore((s) => s.settings);
+  const studioSet = useThemeStore((s) => s.set);
+
   // Local form states (Header Config)
 
   // Cropper State
@@ -199,13 +205,14 @@ export function GlobalSettingsWorkspace({
 
   const [logo, setLogo] = useState(headerConfig.logo);
   const [showLogo, setShowLogo] = useState(headerConfig.showLogo);
-  const [companyName, setCompanyName] = useState(headerConfig.companyName);
+  // Seed from Theme Studio (source of truth), falling back to the legacy header config.
+  const [companyName, setCompanyName] = useState(studioSettings.appName || headerConfig.companyName || '');
   const [showCompanyName, setShowCompanyName] = useState(headerConfig.showCompanyName);
-  const [companyCaption, setCompanyCaption] = useState(headerConfig.companyCaption);
+  const [companyCaption, setCompanyCaption] = useState(studioSettings.appTagline || headerConfig.companyCaption || '');
   const [showCompanyCaption, setShowCompanyCaption] = useState(headerConfig.showCompanyCaption !== undefined ? headerConfig.showCompanyCaption : true);
   const [textColor] = useState(headerConfig.textColor || '#ffffff');
   const [textColorApply] = useState<any>(headerConfig.textColorApply || 'both');
-  const [headerBgColor] = useState(headerConfig.headerBgColor || 'linear-gradient(135deg, #000000, #011446)');
+  const [headerBgColor, setHeaderBgColor] = useState(headerConfig.headerBgColor || 'transparent');
   const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || '#ffffff');
   const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
@@ -268,6 +275,15 @@ export function GlobalSettingsWorkspace({
   const handleCancelAndClose = () => {
     onClose();
   };
+
+  // Brand name / caption edits flow back into Theme Studio (the source of truth),
+  // so both stay identical. Seeded from the store, so the first run is a no-op.
+  useEffect(() => {
+    const patch: Record<string, string> = {};
+    if (companyName !== studioSettings.appName) patch.appName = companyName;
+    if (companyCaption !== studioSettings.appTagline) patch.appTagline = companyCaption;
+    if (Object.keys(patch).length) studioSet(patch);
+  }, [companyName, companyCaption]);
 
   // Sync Header config in real-time
   useEffect(() => {
@@ -799,7 +815,7 @@ export function GlobalSettingsWorkspace({
 
                 {/* Left Card: Customer Logo */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop the primary customer logo displayed on the page header." /></span>
                     <button
                       type="button"
@@ -869,7 +885,7 @@ export function GlobalSettingsWorkspace({
 
                 {/* Right Card: Header Branding Visibility */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Header Branding Visibility <InfoTooltip text="Configure font style, color, and visibility for company title and caption." position="below-right" /></span>
                     <button
                       type="button"
@@ -1024,6 +1040,36 @@ export function GlobalSettingsWorkspace({
                       </div>
                     </div>
                   </div>
+
+                  <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Header background <InfoTooltip position="above" text="Override the theme header colour. Reset to fall back to the active colour template." /></span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {headerBgColor && headerBgColor !== 'transparent' && (
+                        <button
+                          type="button"
+                          title="Reset header background to theme default"
+                          onClick={() => setHeaderBgColor('transparent')}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '2px' }}
+                        >
+                          <RotateCcw size={14} />
+                        </button>
+                      )}
+                      <div style={{ position: 'relative' }}>
+                        <div
+                          title="Choose header background color"
+                          style={{ width: '30px', height: '30px', borderRadius: '50%', background: (headerBgColor && headerBgColor !== 'transparent') ? headerBgColor : '#141b3c', border: '1.5px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)' }}
+                          onClick={() => document.getElementById('gs-color-picker-header-bg')?.click()}
+                        />
+                        <input
+                          id="gs-color-picker-header-bg"
+                          type="color"
+                          value={(headerBgColor && headerBgColor.startsWith('#')) ? headerBgColor : '#141b3c'}
+                          onChange={(e) => setHeaderBgColor(e.target.value)}
+                          style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -1037,7 +1083,7 @@ export function GlobalSettingsWorkspace({
                             {/* Left Card: Powered By Settings */}
                 <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'flex-start' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                    <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
                       Powered By <InfoTooltip text="Configure footer 'Powered By' attribution as custom text or logo image." />
                     </div>
 
@@ -1126,7 +1172,7 @@ export function GlobalSettingsWorkspace({
 
                 {/* Right Card: Footer Settings */}
                 <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
                     Footer Settings <InfoTooltip text="Control overall footer bar visibility, copyright text, and navigation links." position="below-right" />
                   </div>
 
@@ -1225,7 +1271,7 @@ export function GlobalSettingsWorkspace({
                 
                 {/* Behavior Card */}
                 <div className="gs-config-card" style={{ padding: '22px 32px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -1286,7 +1332,7 @@ export function GlobalSettingsWorkspace({
 
                 {/* Width Configuration Card */}
                 <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'inline-flex', alignItems: 'center' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Dimensions <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
                   </div>
 
@@ -1370,7 +1416,7 @@ export function GlobalSettingsWorkspace({
                 
                 {/* Left Card: Customer Logo */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop customer profile logo image." /></span>
                     <button
                       type="button"
@@ -1440,7 +1486,7 @@ export function GlobalSettingsWorkspace({
 
                 {/* Right Card: Customer Profile Visibility */}
                 <div className="gs-config-card" style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Profile Visibility <InfoTooltip text="Manage visibility, typography styles, and color follow settings for customer profile." position="below-right" /></span>
                     <button
                       type="button"

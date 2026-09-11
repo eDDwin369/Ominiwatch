@@ -135,7 +135,7 @@
   overflow: hidden !important;
   transform: scale(0.97) translateY(12px);
   animation: gsModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Roboto", sans-serif;
+  font-family: var(--app-font-family);
   color: var(--text-main) !important;
 }
 
@@ -556,7 +556,7 @@
   padding: 4px 0 10px 0 !important;
   outline: none !important;
   box-shadow: none !important;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif !important;
+  font-family: var(--app-font-family) !important;
   transition: border-bottom-color 0.2s ease !important;
 }
 

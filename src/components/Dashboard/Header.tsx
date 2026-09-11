@@ -51,7 +51,7 @@ export function Header({
   isEditing = false,
   showCustomerProfile = true,
   customerName = 'Default Customer',
-  customerNameStyle: _customerNameStyle = 'h4',
+  customerNameStyle = 'h4',
   customerNameColor = '',
   customerNameWeight = '',
   customerCaptionWeight = '',
@@ -61,7 +61,7 @@ export function Header({
   customerLogoShape: _customerLogoShape = 'rounded',
   showCustomerCaption = false,
   customerCaption = 'Digital Twin Solutions',
-  customerCaptionStyle: _customerCaptionStyle = 'h6',
+  customerCaptionStyle = 'h6',
   customerCaptionColor = '',
   customerCaptionColorFollow: _customerCaptionColorFollow = true,
   onOpenThemeStudio: _onOpenThemeStudio
@@ -70,6 +70,11 @@ export function Header({
   const brand = useThemeStore((s) => s.settings);
   const set = useThemeStore((s) => s.set);
   const studioLogo = brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo;
+
+  // Maps the h1-h6 style picked in Global Settings to the matching --h{n}-size
+  // CSS var, which theme-bridge.tsx keeps in sync with Theme Studio's h1Size..h6Size
+  // (source of truth) and index.css defaults otherwise (20/18/16/14px for h1-h4).
+  const headingSizeVar = (style?: string) => `var(--${style || 'h1'}-size)`;
 
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -168,17 +173,25 @@ export function Header({
           {(!headerConfig || headerConfig.showCompanyName) && (
             <div
               className="hdr-brand-name"
-              style={headerConfig?.companyNameWeight ? { fontWeight: Number(headerConfig.companyNameWeight) } : undefined}
+              style={{
+                fontSize: headingSizeVar(headerConfig?.companyNameStyle),
+                fontWeight: headerConfig?.companyNameWeight ? Number(headerConfig.companyNameWeight) : undefined,
+                color: (headerConfig?.companyNameColor && headerConfig.companyNameColor !== 'transparent') ? headerConfig.companyNameColor : undefined,
+              }}
             >
-              {headerConfig?.companyName || brand.appName || 'OomniEye'}
+              {brand.appName || headerConfig?.companyName || 'OomniEye'}
             </div>
           )}
           {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
             <div
               className="hdr-brand-caption"
-              style={headerConfig?.companyCaptionWeight ? { fontWeight: Number(headerConfig.companyCaptionWeight) } : undefined}
+              style={{
+                fontSize: headingSizeVar(headerConfig?.companyCaptionStyle),
+                fontWeight: headerConfig?.companyCaptionWeight ? Number(headerConfig.companyCaptionWeight) : undefined,
+                color: (headerConfig?.companyCaptionColor && headerConfig.companyCaptionColor !== 'transparent') ? headerConfig.companyCaptionColor : undefined,
+              }}
             >
-              {headerConfig?.companyCaption || brand.appTagline || 'Digital Twin Solutions'}
+              {brand.appTagline || headerConfig?.companyCaption || 'Digital Twin Solutions'}
             </div>
           )}
         </div>
@@ -197,6 +210,7 @@ export function Header({
               <span
                 className="hdr-brand-name"
                 style={{
+                  fontSize: headingSizeVar(customerNameStyle),
                   fontWeight: customerNameWeight ? Number(customerNameWeight) : undefined,
                   color: (!customerColorFollow && customerNameColor && customerNameColor !== 'transparent') ? customerNameColor : undefined,
                 }}
@@ -207,6 +221,7 @@ export function Header({
                 <span
                   className="hdr-brand-caption"
                   style={{
+                    fontSize: headingSizeVar(customerCaptionStyle),
                     fontWeight: customerCaptionWeight ? Number(customerCaptionWeight) : undefined,
                     color: (!customerColorFollow && customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : undefined,
                   }}
@@ -299,7 +314,7 @@ export function Header({
             style={{
               background: profileImage ? 'transparent' : '#f3ba2f',
               color: '#ffffff',
-              fontFamily: "'Roboto', sans-serif",
+              fontFamily: 'var(--app-font-family)',
               width: '38px',
               height: '38px',
               borderRadius: '50%',
@@ -341,7 +356,7 @@ export function Header({
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
-                fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                fontFamily: 'var(--app-font-family)'
               }}
             >
               {/* Top User Card section */}
