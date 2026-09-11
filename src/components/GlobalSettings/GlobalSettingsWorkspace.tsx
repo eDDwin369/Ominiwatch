@@ -214,7 +214,7 @@ export function GlobalSettingsWorkspace({
   const [textColorApply] = useState<any>(headerConfig.textColorApply || 'both');
   const [headerBgColor, setHeaderBgColor] = useState(headerConfig.headerBgColor || 'transparent');
   const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || '#ffffff');
-  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
+  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#000000');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
   const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
   const [companyNameWeight, setCompanyNameWeight] = useState(headerConfig.companyNameWeight || localStorage.getItem('gs_companyNameWeight') || '700');
@@ -271,66 +271,16 @@ export function GlobalSettingsWorkspace({
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
 
-  // Close modal — changes are auto-persisted, no revert needed
+  // Close modal — draft state (unsaved edits) is discarded with the component,
+  // nothing was pushed to the live app until handleSave ran.
   const handleCancelAndClose = () => {
     onClose();
   };
 
-  // Brand name / caption edits flow back into Theme Studio (the source of truth),
-  // so both stay identical. Seeded from the store, so the first run is a no-op.
-  useEffect(() => {
-    const patch: Record<string, string> = {};
-    if (companyName !== studioSettings.appName) patch.appName = companyName;
-    if (companyCaption !== studioSettings.appTagline) patch.appTagline = companyCaption;
-    if (Object.keys(patch).length) studioSet(patch);
-  }, [companyName, companyCaption]);
-
-  // Sync Header config in real-time
-  useEffect(() => {
-    onSaveConfig({
-      logo,
-      showLogo,
-      companyName,
-      showCompanyName,
-      companyCaption,
-      showCompanyCaption,
-      textColor,
-      textColorApply,
-      companyNameColor,
-      companyCaptionColor,
-      companyNameStyle,
-      companyCaptionStyle,
-      companyNameWeight,
-      companyCaptionWeight,
-      headerBgColor
-    });
-  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle, companyNameWeight, companyCaptionWeight, headerBgColor]);
-
-  // Sync Footer config in real-time
-  useEffect(() => {
-    onSyncFooter({
-      footerVisible,
-      copyrightText,
-      footerPoweredByType,
-      footerPoweredByText,
-      footerPoweredByImage,
-      footerLinks
-    });
-  }, [footerVisible, copyrightText, footerPoweredByType, footerPoweredByText, footerPoweredByImage, footerLinks]);
-
-  // Sync Sidebar config in real-time
-  useEffect(() => {
-    setSidebarAutoHide(autoHideSidebar);
-    setSidebarExpandedWidth(expandedWidth);
-    setSidebarCollapsedWidth(collapsedWidth);
-    setSidebarShowIcons(showIcons);
-    setSidebarShowLabels(showLabels);
-  }, [autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels]);
-
-  // Push sidebar custom colour up in real-time.
-  useEffect(() => {
-    if (setSidebarColor) setSidebarColor(sidebarBg);
-  }, [sidebarBg]);
+  // Header/Footer/Sidebar/Customer-Profile/Theme-Studio brand fields are all
+  // draft state here — nothing pushes to the live app (onSaveConfig, onSyncFooter,
+  // setSidebarColor, studioSet, ...) until handleSave runs, so edits only show
+  // once "Save" is clicked, not as each field changes.
 
   // Sync active settings tab with parent
   useEffect(() => {
@@ -355,7 +305,7 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : true;
   });
   const [customerName, setCustomerName] = useState(() => {
-    return localStorage.getItem('gs_customerName') || 'OomniEye';
+    return localStorage.getItem('gs_customerName') || 'Default Customer';
   });
   const [customerNameStyle, setCustomerNameStyle] = useState(() => {
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
@@ -364,11 +314,11 @@ export function GlobalSettingsWorkspace({
     return localStorage.getItem('gs_customerNameColor') || '#ffffff';
   });
   const [customerCaption, setCustomerCaption] = useState(() => {
-    return localStorage.getItem('gs_customerCaption') || 'Digital Twin Solutions';
+    return localStorage.getItem('gs_customerCaption') || '';
   });
   const [showCustomerCaption, setShowCustomerCaption] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerCaption');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerCaptionStyle, setCustomerCaptionStyle] = useState(() => {
     return localStorage.getItem('gs_customerCaptionStyle') || 'h3';
@@ -407,27 +357,6 @@ export function GlobalSettingsWorkspace({
       reader.readAsDataURL(file);
     }
   };
-
-  // Sync Customer Profile config in real-time
-  useEffect(() => {
-    if (onSyncCustomerProfile) {
-      onSyncCustomerProfile({
-        showCustomerProfile,
-        customerName,
-        customerColorFollow,
-        showCustomerLogo,
-        customerLogo,
-        customerNameStyle,
-        customerNameColor,
-        customerNameWeight,
-        customerCaptionWeight,
-        showCustomerCaption,
-        customerCaption,
-        customerCaptionStyle,
-        customerCaptionColor
-      });
-    }
-  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight, showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor, onSyncCustomerProfile]);
 
   // Equal height is now enforced via CSS (.gs-config-card height: 286px) to maintain a perfectly static layout.
   // Notifications Config States
@@ -530,6 +459,14 @@ export function GlobalSettingsWorkspace({
   // Save changes
   const handleSave = () => {
     isSavedRef.current = true;
+
+    // Brand name / caption edits flow back into Theme Studio (the source of truth),
+    // so both stay identical. Only pushed on Save, not as the fields are typed into.
+    const studioPatch: Record<string, string> = {};
+    if (companyName !== studioSettings.appName) studioPatch.appName = companyName;
+    if (companyCaption !== studioSettings.appTagline) studioPatch.appTagline = companyCaption;
+    if (Object.keys(studioPatch).length) studioSet(studioPatch);
+
     localStorage.setItem('gs_footerVisible', JSON.stringify(footerVisible));
     localStorage.setItem('gs_copyrightText', copyrightText);
     localStorage.setItem('gs_startExpanded', JSON.stringify(startExpanded));
@@ -586,7 +523,11 @@ export function GlobalSettingsWorkspace({
         customerNameStyle,
         customerNameColor,
         customerNameWeight,
-        customerCaptionWeight
+        customerCaptionWeight,
+        showCustomerCaption,
+        customerCaption,
+        customerCaptionStyle,
+        customerCaptionColor
       });
     }
 

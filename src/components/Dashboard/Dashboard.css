@@ -409,7 +409,7 @@
 }
 
 [data-theme-mode="dark"] .nav-item {
-  color: #94a3b8;
+  color: var(--dash-nav-inactive-color, #94a3b8);
 }
 
 [data-theme-mode="dark"] .nav-item:hover {
@@ -5775,11 +5775,11 @@ html:has(.mode-v6),
    Tint follows var(--primary) via theme-bridge.tsx. */
 .mode-v2 .v5-video-screen {
   width: 100% !important;
-  aspect-ratio: 16 / 10.3 !important;
+  aspect-ratio: 4 / 3 !important;
   height: auto !important;
   max-height: 100% !important;
-  border-radius: var(--radius-xl, 28px) !important;
-  background: #080a09 !important;
+  border-radius: 43.727px !important;
+  background: var(--dash-video-bg, #080a09) !important;
   overflow: hidden !important;
   position: relative !important;
   border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
@@ -6767,9 +6767,11 @@ html:has(.mode-v6),
   letter-spacing: 2px;
   margin: 20px 0 4px 12px;
 }
-[data-theme-mode="light"] .nav-section-title,
-[data-theme-mode="dark"] .nav-section-title {
+[data-theme-mode="light"] .nav-section-title {
   color: rgba(102, 112, 146, 0.7) !important;
+}
+[data-theme-mode="dark"] .nav-section-title {
+  color: var(--dash-nav-section-color, rgba(102, 112, 146, 0.7)) !important;
 }
 
 /* ---- Hero body ------------------------------------------------------- */
@@ -6845,9 +6847,11 @@ html:has(.mode-v6),
   font-size: 18px;
   color: rgba(255, 255, 255, 0.85);
 }
-/* CC/HD badges — fixed Figma UI-chrome colours, not brand-derived (verified across templates). */
+/* CC/HD badges — derived from primary/secondary by default (Corporate's Figma export); a
+   preset can pin a literal override via --dash-badge-cc/hd when its own export deviates
+   (Emerald). See theme-bridge.tsx. */
 .v5-badge-cc {
-  background: #14b8a6;
+  background: var(--dash-badge-cc, color-mix(in srgb, var(--primary) 90%, transparent));
   color: rgba(255, 255, 255, 0.85);
   font-family: var(--app-font-family);
   font-weight: 700;
@@ -6856,7 +6860,7 @@ html:has(.mode-v6),
   border-radius: 6px;
 }
 .v5-badge-hd {
-  background: #f59e0b;
+  background: var(--dash-badge-hd, var(--secondary));
   color: #06202a;
   font-family: var(--app-font-family);
   font-weight: 700;

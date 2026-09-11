@@ -148,11 +148,31 @@ function syncCssVars(theme: any, settings: any) {
   // Sidebar bg/border — pinned per preset in dark mode (verified against
   // pixelPerfectNewReactCode for Emerald); other presets keep the primary-hue-derived bar.
   const figmaSidebarDark: Record<string, { bg: string; border: string }> = {
+    corporate: { bg: '#090e24', border: '#1b2350' },
     emerald: { bg: '#061a12', border: '#163d2b' },
   };
   const sidebarPreset = isDark ? figmaSidebarDark[settings.presetId] : undefined;
   set('--dash-sidebar-bg', settings.mode === 'dark' ? sidebarPreset?.bg || darkSidebar : '#ffffff');
   set('--dash-sidebar-border', sidebarPreset?.border || (isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'));
+  // Hero video-card fill — differs per colour template in Figma (not theme-neutral #080a09).
+  const figmaVideoBg: Record<string, string> = {
+    corporate: '#0b1024',
+    emerald: '#050505',
+  };
+  set('--dash-video-bg', figmaVideoBg[settings.presetId] || '#080a09');
+  // Sidebar nav text — Figma tints inactive-item text and section labels per colour template in
+  // dark mode rather than using one flat neutral grey. Falls back to the existing neutral CSS
+  // default for any preset not yet verified against a Figma export.
+  const figmaNavText: Record<string, { inactive: string; sectionTitle: string }> = {
+    corporate: { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
+  };
+  const navTextPreset = isDark ? figmaNavText[settings.presetId] : undefined;
+  set('--dash-nav-inactive-color', navTextPreset?.inactive || (isDark ? '#94a3b8' : '#475569'));
+  set('--dash-nav-section-color', navTextPreset?.sectionTitle || 'rgba(102, 112, 146, 0.7)');
+  // CC/HD video badges — derived from primary/secondary by default (matches Corporate's Figma
+  // export exactly); a preset can pin a literal override when its Figma badges deviate (Emerald).
+  set('--dash-badge-cc', settings.ccBadge || `color-mix(in srgb, ${primaryHex} 90%, transparent)`);
+  set('--dash-badge-hd', settings.hdBadge || secondaryHex);
   // Dashboard canvas (Container fill) — exact Figma vertical gradient per colour template in
   // dark mode; Emerald's light canvas is also a confirmed non-white tint (#ecf6f0), not plain
   // white. Any other preset/mode combo falls back to the primary-hue-derived flat dark / white.
