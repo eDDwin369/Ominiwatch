@@ -240,7 +240,7 @@ export function GlobalSettingsWorkspace({
     }
   });
   const [footerPoweredByText, setFooterPoweredByText] = useState(() => {
-    return localStorage.getItem('gs_footerPoweredByText') || 'Powered by OomniEye Digital Solutions';
+    return localStorage.getItem('gs_footerPoweredByText') || '';
   });
   const [footerPoweredByImage, setFooterPoweredByImage] = useState(() => {
     return localStorage.getItem('gs_footerPoweredByImage') || '';
@@ -260,16 +260,12 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : false;
   });
 
-  const [isHoveringExpanded] = useState(false);
-  const [isDraggingExpanded] = useState(false);
-  const [isHoveringCollapsed] = useState(false);
-  const [isDraggingCollapsed] = useState(false);
   const [sidebarBg, setSidebarBg] = useState(sidebarColor || localStorage.getItem('gs_sidebarColor') || '');
   const [autoHideSidebar, setAutoHideSidebar] = useState(sidebarAutoHide);
   const [expandedWidth, setExpandedWidth] = useState(sidebarExpandedWidth);
   const [collapsedWidth, setCollapsedWidth] = useState(sidebarCollapsedWidth);
   const [showIcons, setShowIcons] = useState(sidebarShowIcons);
-  const [showLabels, _setShowLabels] = useState(sidebarShowLabels);
+  const [showLabels, setShowLabels] = useState(sidebarShowLabels);
 
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
@@ -387,22 +383,6 @@ export function GlobalSettingsWorkspace({
 
 
 
-  const isInitialMount = useRef(true);
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-    if (isHoveringExpanded || isDraggingExpanded) {
-      setSidebarCollapsed(false);
-    } else if (isHoveringCollapsed || isDraggingCollapsed) {
-      setSidebarCollapsed(true);
-    } else {
-      setSidebarCollapsed(!startExpanded);
-    }
-  }, [isHoveringExpanded, isDraggingExpanded, isHoveringCollapsed, isDraggingCollapsed, startExpanded, setSidebarCollapsed]);
-
   // Removed unused containerRef
   const fileInputRef = useRef<HTMLInputElement>(null);
   const footerFileInputRef = useRef<HTMLInputElement>(null);
@@ -474,6 +454,7 @@ export function GlobalSettingsWorkspace({
     localStorage.setItem('gs_copyrightText', copyrightText);
     localStorage.setItem('gs_startExpanded', JSON.stringify(startExpanded));
     localStorage.setItem('sidebarCollapsed', JSON.stringify(!startExpanded));
+    setSidebarCollapsed(!startExpanded);
     setSidebarAutoHide(autoHideSidebar);
     localStorage.setItem('gs_footerPoweredByType', JSON.stringify(footerPoweredByType));
     localStorage.setItem('gs_footerPoweredByText', footerPoweredByText);
@@ -757,10 +738,10 @@ export function GlobalSettingsWorkspace({
             <div className="gs-tab-content-container">
               <div className="gs-cards-2x2">
 
-                {/* Left Card: Customer Logo */}
+                {/* Left Card: Company Logo (headerConfig.logo — the main logo, left of the header bar; distinct from the Customer Logo in the Profile tab) */}
                 <div className="gs-config-card">
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop the primary customer logo displayed on the page header." /></span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>Company Logo <InfoTooltip text="Upload or crop the primary company logo displayed on the page header." /></span>
                     <button
                       type="button"
                       className={`gs-eye-preview-btn ${previewTarget === 'logo' ? 'active' : ''}`}
@@ -795,7 +776,7 @@ export function GlobalSettingsWorkspace({
                       <div className="gs-iphone-orb-btn">
                         <Upload size={22} />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose customer logo</span>
+                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose company logo</span>
                     </div>
                     <input
                       ref={fileInputRef}
@@ -822,7 +803,7 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle visibility of the customer logo on the header bar." /></span>
+                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Company Logo <InfoTooltip text="Toggle visibility of the company logo on the header bar." /></span>
                     <AppleToggle checked={showLogo} onChange={setShowLogo} />
                   </div>
                 </div>
@@ -1084,7 +1065,7 @@ export function GlobalSettingsWorkspace({
                         className="gs-underline-input"
                         value={footerPoweredByText}
                         onChange={(e) => setFooterPoweredByText(e.target.value)}
-                        placeholder="Powered By Text"
+                        placeholder={`Powered by ${companyName || 'OomniEye'} Digital Solutions`}
                       />
                     </div>
                   ) : (
@@ -1225,134 +1206,114 @@ export function GlobalSettingsWorkspace({
             <div className="gs-tab-content-container" style={{ padding: '24px 32px' }}>
               <div className="gs-cards-2x2">
                 
-                {/* Behavior Card */}
+                {/* Behavior Card — rows are direct children of .gs-config-card (not wrapped
+                    in an inner flex div) so its `justify-content: space-between` spreads
+                    slack evenly across every row instead of dumping it all into one gap
+                    after the title (which is what a 2-child title+wrapper split does). */}
                 <div className="gs-config-card" style={{ padding: '22px 32px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {sidebarBg && (
-                          <button
-                            type="button"
-                            title="Reset sidebar color to theme default"
-                            onClick={() => setSidebarBg('')}
-                            style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '2px' }}
-                          >
-                            <RotateCcw size={14} />
-                          </button>
-                        )}
-                        <div style={{ position: 'relative' }}>
-                          <div
-                            title="Choose sidebar color"
-                            style={{ width: '30px', height: '30px', borderRadius: '50%', background: sidebarBg || '#ffffff', border: '1.5px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)' }}
-                            onClick={() => document.getElementById('gs-color-picker-sidebar')?.click()}
-                          />
-                          <input
-                            id="gs-color-picker-sidebar"
-                            type="color"
-                            value={sidebarBg || '#ffffff'}
-                            onChange={(e) => setSidebarBg(e.target.value)}
-                            style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
-                          />
-                        </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {sidebarBg && (
+                        <button
+                          type="button"
+                          title="Reset sidebar color to theme default"
+                          onClick={() => setSidebarBg('')}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '2px' }}
+                        >
+                          <RotateCcw size={14} />
+                        </button>
+                      )}
+                      <div style={{ position: 'relative' }}>
+                        <div
+                          title="Choose sidebar color"
+                          style={{ width: '30px', height: '30px', borderRadius: '50%', background: sidebarBg || '#ffffff', border: '1.5px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)' }}
+                          onClick={() => document.getElementById('gs-color-picker-sidebar')?.click()}
+                        />
+                        <input
+                          id="gs-color-picker-sidebar"
+                          type="color"
+                          value={sidebarBg || '#ffffff'}
+                          onChange={(e) => setSidebarBg(e.target.value)}
+                          style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
+                        />
                       </div>
                     </div>
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
-                      <AppleToggle checked={startExpanded} onChange={(val) => {
-                        setStartExpanded(val);
-                        setSidebarCollapsed(!val);
-                      }} />
-                    </div>
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
-                      <AppleToggle checked={autoHideSidebar} onChange={setAutoHideSidebar} />
-                    </div>
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
-                      <AppleToggle checked={showIcons} onChange={(v) => { if (v || showLabels) setShowIcons(v); }} />
-                    </div>
+                  </div>
+                  <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
+                    <AppleToggle checked={startExpanded} onChange={setStartExpanded} />
+                  </div>
+                  <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
+                    <AppleToggle checked={autoHideSidebar} onChange={setAutoHideSidebar} />
+                  </div>
+                  <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
+                    <AppleToggle checked={showIcons} onChange={(v) => { if (v || showLabels) setShowIcons(v); }} />
                   </div>
                 </div>
 
-                {/* Width Configuration Card */}
+                {/* Width Configuration Card — same flattening as the Behavior card above. */}
                 <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Dimensions <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly', flex: 1 }}>
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center' }}>Expanded Width <InfoTooltip text="Set width (in pixels) of sidebar when fully expanded." /></span>
-                        <span style={{ fontWeight: 700 }}>{expandedWidth}px</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="180" 
-                        max="300" 
-                        value={expandedWidth} 
-                        onChange={e => {
-                          setExpandedWidth(Number(e.target.value));
-                          setStartExpanded(true);
-                          setSidebarCollapsed(false);
-                        }}
-                        onInput={e => {
-                          setExpandedWidth(Number((e.target as HTMLInputElement).value));
-                          setStartExpanded(true);
-                          setSidebarCollapsed(false);
-                        }}
-                        onMouseDown={() => {
-                          setStartExpanded(true);
-                          setSidebarCollapsed(false);
-                        }}
-                        onTouchStart={() => {
-                          setStartExpanded(true);
-                          setSidebarCollapsed(false);
-                        }}
-                        style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--primary)' }}
-                      />
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>Expanded Width <InfoTooltip text="Set width (in pixels) of sidebar when fully expanded." /></span>
+                      <span style={{ fontWeight: 700 }}>{expandedWidth}px</span>
                     </div>
+                    <input
+                      type="range"
+                      min="180"
+                      max="300"
+                      value={expandedWidth}
+                      onChange={e => {
+                        setExpandedWidth(Number(e.target.value));
+                        setStartExpanded(true);
+                      }}
+                      onInput={e => {
+                        setExpandedWidth(Number((e.target as HTMLInputElement).value));
+                        setStartExpanded(true);
+                      }}
+                      onMouseDown={() => setStartExpanded(true)}
+                      onTouchStart={() => setStartExpanded(true)}
+                      style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                    />
+                  </div>
 
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
+                  <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
 
-                    <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center' }}>Collapsed Width <InfoTooltip text="Set width (in pixels) of sidebar when in minimal collapsed mode." /></span>
-                        <span style={{ fontWeight: 700 }}>{collapsedWidth}px</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="50" 
-                        max="90" 
-                        value={collapsedWidth} 
-                        onChange={e => {
-                          setCollapsedWidth(Number(e.target.value));
-                          setStartExpanded(false);
-                          setSidebarCollapsed(true);
-                        }}
-                        onInput={e => {
-                          setCollapsedWidth(Number((e.target as HTMLInputElement).value));
-                          setStartExpanded(false);
-                          setSidebarCollapsed(true);
-                        }}
-                        onMouseDown={() => {
-                          setStartExpanded(false);
-                          setSidebarCollapsed(true);
-                        }}
-                        onTouchStart={() => {
-                          setStartExpanded(false);
-                          setSidebarCollapsed(true);
-                        }}
-                        style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--primary)' }}
-                      />
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>Collapsed Width <InfoTooltip text="Set width (in pixels) of sidebar when in minimal collapsed mode." /></span>
+                      <span style={{ fontWeight: 700 }}>{collapsedWidth}px</span>
                     </div>
+                    <input
+                      type="range"
+                      min="50"
+                      max="90"
+                      value={collapsedWidth}
+                      onChange={e => {
+                        setCollapsedWidth(Number(e.target.value));
+                        setStartExpanded(false);
+                      }}
+                      onInput={e => {
+                        setCollapsedWidth(Number((e.target as HTMLInputElement).value));
+                        setStartExpanded(false);
+                      }}
+                      onMouseDown={() => setStartExpanded(false)}
+                      onTouchStart={() => setStartExpanded(false)}
+                      style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                    />
                   </div>
                 </div>
 

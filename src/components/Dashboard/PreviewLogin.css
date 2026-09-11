@@ -7,14 +7,30 @@
 
 .preview-login-left {
   flex: 1;
-  background-color: var(--primary);
+  position: relative;
+  background-color: var(--login-panel-color, var(--primary));
+  background-image: var(--login-image, none);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.05s ease;
 }
 
+.preview-login-left::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--login-panel-color, var(--primary));
+  opacity: calc(1 - var(--login-img-opacity, 1));
+  pointer-events: none;
+}
+
 .preview-login-brand {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
