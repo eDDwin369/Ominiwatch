@@ -161,13 +161,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.12) !important;
+  border-bottom: 1px solid var(--border-light) !important;
   border-bottom: 1px solid var(--border-light) !important;
   flex-shrink: 0;
 }
 
 [data-theme-mode="light"] .gs-header {
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary-light, var(--secondary)) 100%) !important;
+}
 }
 
 .gs-title-group {
