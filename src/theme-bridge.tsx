@@ -42,6 +42,7 @@ function syncCssVars(theme: any, settings: any) {
   // previously unmapped studio tokens, now emitted so host consumers can follow.
   set('--secondary', p.secondary?.main);
   set('--secondary-hover', p.secondary?.dark);
+  set('--secondary-light', p.secondary?.light);
   const tk = theme.tokens || {};
   const isDark = settings.mode === 'dark';
   const highlight = settings.highlightHex || tk.highlight || p.primary.main || '#2563EB';
@@ -224,6 +225,73 @@ function syncCssVars(theme: any, settings: any) {
     brandPreset ? brandPreset[isDark ? 'dark' : 'light'] : `linear-gradient(90deg, ${primaryHex} 0%, ${secondaryHex} 100%)`
   );
   set('--dash-aura-color', primaryHex);
+  // Global Settings panel chrome — verified against pixelPerfectGlobalSettings_blue (Corporate
+  // dark). Other presets fall back to a primary/secondary-derived approximation until verified.
+  const figmaGsHeaderDark: Record<string, string> = {
+    corporate: 'linear-gradient(178deg, #0f172a 0%, #1e3a8a 100%)',
+  };
+  set(
+    '--gs-header-bg-dark',
+    figmaGsHeaderDark[settings.presetId] ||
+      `linear-gradient(178deg, #0f172a 0%, color-mix(in srgb, ${primaryHex} 55%, #0f172a) 100%)`
+  );
+  // Toggle "on" state / upload-orb button — verified as genuinely different gradients per mode
+  // (light: cyan-to-blue-violet; dark: cyan-to-dark-teal), not just a mode-neutral accent.
+  const figmaGsAccentGradient: Record<string, { light: string; dark: string }> = {
+    corporate: {
+      light: 'linear-gradient(135deg, #00ddff 0%, #0c26b1 100%)',
+      dark: 'linear-gradient(162deg, #22d3ee 11.886%, #126673 91.492%)',
+    },
+  };
+  const gsAccentPreset = figmaGsAccentGradient[settings.presetId];
+  set(
+    '--gs-accent-gradient',
+    gsAccentPreset
+      ? gsAccentPreset[isDark ? 'dark' : 'light']
+      : isDark
+      ? `linear-gradient(162deg, ${secondaryHex} 11.886%, color-mix(in srgb, ${secondaryHex} 48%, black) 91.492%)`
+      : `linear-gradient(135deg, ${secondaryHex} 0%, ${primaryHex} 100%)`
+  );
+  set('--gs-save-bg', secondaryHex);
+  const figmaGsSaveShadow: Record<string, string> = {
+    corporate: 'rgba(29, 78, 216, 0.6)',
+  };
+  set('--gs-save-shadow', figmaGsSaveShadow[settings.presetId] || `color-mix(in srgb, ${primaryHex} 60%, transparent)`);
+  // H1-H6 / weight dropdown pills — were reading vars that were never defined anywhere
+  // (rendered as bare browser <select> chrome). Neutral panel look, not preset-tinted.
+  set('--gs-input-bg', isDark ? '#3c3f47' : '#ffffff');
+  set('--gs-input-border', isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.15)');
+  set('--gs-input-shadow', isDark ? 'none' : '0px 4px 4px rgba(0, 0, 0, 0.25)');
+  set('--gs-text-color', isDark ? '#ffffff' : '#0f172a');
+  // Config card fill — Figma-exact neutral panel (not the MUI paper --bg-card).
+  set('--gs-card-bg-dark', '#141518');
+  set('--gs-card-bg-light', '#f1f1f1');
+  // Underline text-input border — pinned neutral per mode, not the generic MUI divider.
+  set('--gs-underline-border', isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(80, 80, 80, 0.6)');
+  // Modal-wide radial glow (dark only) — Figma's real 6-stop falloff from primary to near-black,
+  // replacing a flat 2-stop approximation. Light mode has no modal-wide gradient (verified).
+  const figmaGsModalGradientDark: Record<string, string> = {
+    corporate:
+      'radial-gradient(circle at 50% 30%, #4f6bff 0%, #3f5adb 13.75%, #2e49b7 27.5%, #1e3892 41.25%, #0d276e 55%, #07153f 100%)',
+  };
+  set(
+    '--gs-modal-bg-dark',
+    figmaGsModalGradientDark[settings.presetId] ||
+      `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 78%, black) 13.75%, color-mix(in srgb, ${primaryHex} 57%, black) 27.5%, color-mix(in srgb, ${primaryHex} 36%, black) 41.25%, color-mix(in srgb, ${primaryHex} 16%, black) 55%, black 100%)`
+  );
+  // Active eye-preview button — pinned border/shadow per preset; other presets fall back to
+  // the existing --secondary-light / --accent-glow derived values.
+  const figmaGsEyeActive: Record<string, { border: string; shadow: string }> = {
+    corporate: { border: '#60a5fa', shadow: 'rgba(37, 99, 235, 0.8)' },
+  };
+  const eyeActivePreset = figmaGsEyeActive[settings.presetId];
+  if (eyeActivePreset) {
+    set('--gs-eye-active-border', eyeActivePreset.border);
+    set('--gs-eye-active-shadow', eyeActivePreset.shadow);
+  } else {
+    root.style.removeProperty('--gs-eye-active-border');
+    root.style.removeProperty('--gs-eye-active-shadow');
+  }
   // Hero video-card ambient shadow — full CSS box-shadow value, explicit per-mode
   // preset value if set (Figma "Drop shadow" stack), else a primaryHex-derived glow.
   const videoShadow = isDark ? settings.videoShadowDark : settings.videoShadowLight;

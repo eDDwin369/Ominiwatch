@@ -152,6 +152,9 @@ const GS_PILL_SELECT: React.CSSProperties = {
   width: '64px', height: '30px', borderRadius: '15px', border: '1px solid var(--gs-input-border)',
   fontSize: '12px', fontWeight: 600, padding: '0 6px', backgroundColor: 'var(--gs-input-bg)',
   color: 'var(--gs-text-color)', cursor: 'pointer', outline: 'none',
+  boxShadow: 'var(--gs-input-shadow, none)',
+  // Without this, native <select> chrome ignores the custom bg/border/color above.
+  appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
 };
 const GS_WEIGHT_OPTIONS = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
 
@@ -216,9 +219,9 @@ export function GlobalSettingsWorkspace({
   const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || '#ffffff');
   const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#000000');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
-  const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
-  const [companyNameWeight, setCompanyNameWeight] = useState(headerConfig.companyNameWeight || localStorage.getItem('gs_companyNameWeight') || '700');
-  const [companyCaptionWeight, setCompanyCaptionWeight] = useState(headerConfig.companyCaptionWeight || localStorage.getItem('gs_companyCaptionWeight') || '600');
+  const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h4');
+  const [companyNameWeight, setCompanyNameWeight] = useState(headerConfig.companyNameWeight || localStorage.getItem('gs_companyNameWeight') || '400');
+  const [companyCaptionWeight, setCompanyCaptionWeight] = useState(headerConfig.companyCaptionWeight || localStorage.getItem('gs_companyCaptionWeight') || '300');
 
   // Footer Config States
   const [footerVisible, setFooterVisible] = useState(() => {
@@ -266,7 +269,7 @@ export function GlobalSettingsWorkspace({
   const [expandedWidth, setExpandedWidth] = useState(sidebarExpandedWidth);
   const [collapsedWidth, setCollapsedWidth] = useState(sidebarCollapsedWidth);
   const [showIcons, setShowIcons] = useState(sidebarShowIcons);
-  const [showLabels, setShowLabels] = useState(sidebarShowLabels);
+  const [showLabels, _setShowLabels] = useState(sidebarShowLabels);
 
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
@@ -321,7 +324,7 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerCaptionStyle, setCustomerCaptionStyle] = useState(() => {
-    return localStorage.getItem('gs_customerCaptionStyle') || 'h3';
+    return localStorage.getItem('gs_customerCaptionStyle') || 'h4';
   });
   const [customerCaptionColor, setCustomerCaptionColor] = useState(() => {
     return localStorage.getItem('gs_customerCaptionColor') || 'rgba(255, 255, 255, 0.65)';
@@ -331,8 +334,8 @@ export function GlobalSettingsWorkspace({
     const saved = localStorage.getItem('gs_customerColorFollow');
     return saved !== null ? JSON.parse(saved) : true;
   });
-  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '700');
-  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '600');
+  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '400');
+  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '300');
   const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerLogo');
     return saved !== null ? JSON.parse(saved) : true;
@@ -853,6 +856,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                                                    className="gs-pill-select"
                           value={companyNameStyle}
                           onChange={(e) => setCompanyNameStyle(e.target.value)}
                           style={{
@@ -866,7 +870,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -876,6 +884,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                                                    className="gs-pill-select"
                           value={companyNameWeight}
                           onChange={(e) => setCompanyNameWeight(e.target.value)}
                           title="Font weight"
@@ -924,6 +933,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                          className="gs-pill-select"
                           value={companyCaptionStyle}
                           onChange={(e) => setCompanyCaptionStyle(e.target.value)}
                           style={{
@@ -937,7 +947,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -947,6 +961,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                          className="gs-pill-select"
                           value={companyCaptionWeight}
                           onChange={(e) => setCompanyCaptionWeight(e.target.value)}
                           title="Font weight"
@@ -1449,6 +1464,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                                                    className="gs-pill-select"
                           value={customerNameStyle}
                           onChange={(e) => setCustomerNameStyle(e.target.value)}
                           style={{
@@ -1462,7 +1478,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -1472,6 +1492,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                                                    className="gs-pill-select"
                           value={customerNameWeight}
                           onChange={(e) => setCustomerNameWeight(e.target.value)}
                           title="Font weight"
@@ -1520,6 +1541,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                                                    className="gs-pill-select"
                           value={customerCaptionStyle}
                           onChange={(e) => setCustomerCaptionStyle(e.target.value)}
                           style={{
@@ -1533,7 +1555,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -1543,6 +1569,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                                                    className="gs-pill-select"
                           value={customerCaptionWeight}
                           onChange={(e) => setCustomerCaptionWeight(e.target.value)}
                           title="Font weight"
