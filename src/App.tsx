@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, XCircle, KeyRound, Check, Info, Headset } from 'lucide-react';
 import './index.css';
 import logo from './assets/logo.png';
-import gmailBg from './assets/gmail-bg.jpg';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { useThemeStore } from 'omnieye-theme-studio';
 
@@ -12,7 +11,6 @@ function App() {
   // Studio login tokens: tagline text + whether to show it, on the login panel.
   const brand = useThemeStore((s) => s.settings);
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
-  const [showLanding, setShowLanding] = useState(true);
 
   // Shared state
   const [email, setEmail] = useState('');
@@ -308,45 +306,6 @@ function App() {
       setCurrentScreen('success');
     }, 1500);
   };
-
-
-
-  if (showLanding) {
-    return (
-      <div 
-        className="landing-screen-container" 
-        style={{ 
-          background: '#f4f6f8',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          cursor: 'pointer',
-          overflow: 'hidden',
-        }}
-        onClick={() => setShowLanding(false)}
-      >
-        <img 
-          src={gmailBg} 
-          alt="Welcome Email" 
-          style={{ 
-            maxWidth: '100vw', 
-            maxHeight: '100vh', 
-            objectFit: 'contain',
-            transform: 'scale(1.25) translateZ(0)',
-            backfaceVisibility: 'hidden',
-            imageRendering: '-webkit-optimize-contrast',
-            transition: 'transform 0.05s ease',
-          }} 
-          onMouseOver={(e) => {
-            e.currentTarget.style.transform = 'scale(1.28) translateZ(0)';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.transform = 'scale(1.25) translateZ(0)';
-          }}
-        />
-      </div>
-    );
-  }
 
   const handleLogout = () => {
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';

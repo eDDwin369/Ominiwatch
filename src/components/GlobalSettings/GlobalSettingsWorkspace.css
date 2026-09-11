@@ -124,7 +124,7 @@
   height: 520px !important;
   max-width: 95vw !important;
   max-height: 95vh !important;
-  background: radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%) !important;
+  background: var(--gs-modal-bg-dark, radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%)) !important;
   backdrop-filter: blur(50px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
   border-radius: 36px !important;
@@ -161,13 +161,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(0, 0, 0, 0.12) !important;
   border-bottom: 1px solid var(--border-light) !important;
   flex-shrink: 0;
 }
 
 [data-theme-mode="light"] .gs-header {
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary-light, var(--secondary)) 100%) !important;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%) !important;
 }
 
 .gs-title-group {
@@ -290,6 +289,14 @@
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+/* Figma-exact neutral panel fill (differs from MUI's --bg-card paper in both modes). */
+[data-theme-mode="dark"] .gs-config-card {
+  background: var(--gs-card-bg-dark, var(--bg-card)) !important;
+}
+[data-theme-mode="light"] .gs-config-card {
+  background: var(--gs-card-bg-light, var(--bg-card)) !important;
+}
+
 .gs-config-card:hover {
   transform: translateY(-2px) !important;
   border-color: var(--secondary) !important;
@@ -327,7 +334,8 @@
 
 [data-theme-mode="dark"] .gs-eye-preview-btn.active {
   background: var(--secondary) !important;
-  border-color: var(--secondary-light) !important;
+  border-color: var(--gs-eye-active-border, var(--secondary-light)) !important;
+  box-shadow: 0 0 16px var(--gs-eye-active-shadow, var(--accent-glow)) !important;
 }
 
 /* Animated Glowing Spotlight Focus Box Overlay on Page Header */
@@ -423,15 +431,16 @@
 }
 
 .gs-btn-cancel {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(38, 40, 48, 0.95);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 12px 32px;
   border-radius: 9999px;
   font-size: var(--font-size-14-5);
   font-weight: 600;
   cursor: pointer;
   backdrop-filter: blur(12px);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -442,7 +451,7 @@
 }
 
 .gs-btn-save {
-  background: linear-gradient(135deg, #00f0ff 0%, #0066ff 100%);
+  background: var(--gs-save-bg, var(--secondary));
   color: #ffffff;
   border: none;
   padding: 12px 36px;
@@ -451,12 +460,12 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8px 24px rgba(0, 240, 255, 0.35);
+  box-shadow: 0 8px 24px var(--gs-save-shadow, rgba(0, 240, 255, 0.35));
 }
 
 .gs-btn-save:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 32px rgba(0, 240, 255, 0.48);
+  box-shadow: 0 12px 32px var(--gs-save-shadow, rgba(0, 240, 255, 0.48));
 }
 
 /* VisionOS Glass Dropzone & Inputs */
@@ -484,7 +493,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--secondary, #e0f2fe) 0%, var(--secondary, #3a3a3f) 100%);
+  background: var(--gs-accent-gradient, var(--secondary));
   box-shadow: 0 8px 20px var(--accent-glow);
   display: flex;
   align-items: center;
@@ -537,7 +546,7 @@
 
 /* Form Controls Theme */
 .gs-modal input[type="text"]:not(.gs-underline-input),
-.gs-modal select {
+.gs-modal select:not(.gs-pill-select) {
   background: var(--bg-dashboard) !important;
   border: 1px solid var(--border-light) !important;
   color: var(--text-main) !important;
@@ -549,7 +558,7 @@
   width: 100% !important;
   background: transparent !important;
   border: none !important;
-  border-bottom: 1.5px solid var(--border-hover) !important;
+  border-bottom: 1.5px solid var(--gs-underline-border, var(--border-hover)) !important;
   border-radius: 0 !important;
   color: var(--text-main) !important;
   font-size: var(--font-size-18) !important;
@@ -591,7 +600,7 @@
 }
 
 .gs-apple-toggle.checked {
-  background: var(--secondary);
+  background: var(--gs-accent-gradient, var(--secondary));
   box-shadow: 0 2px 12px var(--accent-glow);
 }
 
@@ -621,11 +630,13 @@
   }
 }
 
-/* Header buttons cancel/save overrides */
+/* Header buttons cancel/save overrides — Figma uses the same dark neutral pill for Cancel in
+   both modes (not theme-derived), unlike Save which does switch (see below/dark override). */
 .gs-top-btn-cancel {
-  background: var(--border-light) !important;
-  color: var(--text-main) !important;
-  border: 1px solid var(--border-hover) !important;
+  background: rgba(38, 40, 48, 0.95) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 .gs-top-btn-save {
@@ -643,4 +654,5 @@
 
 [data-theme-mode="dark"] .gs-top-btn-save {
   background: var(--secondary) !important;
+  box-shadow: 0px 4px 7px var(--gs-save-shadow, var(--accent-glow)) !important;
 }

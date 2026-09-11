@@ -136,13 +136,13 @@ export function Dashboard({
     return localStorage.getItem('gs_customerCaption') || '';
   });
   const [customerCaptionStyle, setCustomerCaptionStyle] = useState(() => {
-    return localStorage.getItem('gs_customerCaptionStyle') || 'h3';
+    return localStorage.getItem('gs_customerCaptionStyle') || 'h4';
   });
   const [customerCaptionColor, setCustomerCaptionColor] = useState(() => {
     return localStorage.getItem('gs_customerCaptionColor') || 'rgba(255, 255, 255, 0.65)';
   });
-  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '700');
-  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '600');
+  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '400');
+  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '300');
   const [sidebarColor, setSidebarColor] = useState(() => localStorage.getItem('gs_sidebarColor') || '');
   // Sidebar "Choose color" override → CSS var consumed by .dash-sidebar (both modes).
   useEffect(() => {
@@ -186,7 +186,9 @@ export function Dashboard({
       companyNameColor: '#ffffff',
       companyCaptionColor: '#636363',
       companyNameStyle: 'h1',
-      companyCaptionStyle: 'h3',
+      companyNameWeight: '400',
+      companyCaptionStyle: 'h4',
+      companyCaptionWeight: '300',
       headerBgColor: 'transparent'
     };
   });

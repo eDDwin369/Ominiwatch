@@ -393,7 +393,7 @@
 }
 
 [data-theme-mode="light"] .nav-item {
-  color: #475569;
+  color: rgba(35, 42, 74, 0.8);
 }
 
 [data-theme-mode="light"] .nav-item:hover {
@@ -409,7 +409,7 @@
 }
 
 [data-theme-mode="dark"] .nav-item {
-  color: #94a3b8;
+  color: var(--dash-nav-inactive-color, #94a3b8);
 }
 
 [data-theme-mode="dark"] .nav-item:hover {
@@ -5775,11 +5775,11 @@ html:has(.mode-v6),
    Tint follows var(--primary) via theme-bridge.tsx. */
 .mode-v2 .v5-video-screen {
   width: 100% !important;
-  aspect-ratio: 16 / 10.3 !important;
+  aspect-ratio: 4 / 3 !important;
   height: auto !important;
   max-height: 100% !important;
-  border-radius: var(--radius-xl, 28px) !important;
-  background: #080a09 !important;
+  border-radius: 43.727px !important;
+  background: var(--dash-video-bg, #080a09) !important;
   overflow: hidden !important;
   position: relative !important;
   border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent) !important;
@@ -6587,32 +6587,16 @@ html:has(.mode-v6),
 
 /* 1. Large Laptops / Standard Desktops (1280px - 1599px) */
 @media (max-width: 1599px) and (min-width: 1280px) {
-  /* video column width/gap: handled by the fluid clamp() above — no
+  /* video column width/gap AND hero type: handled by the fluid clamp()
+     declarations on .v2-prefix-line / .v2-highlight-item(.active) — no
      breakpoint override needed here. */
-  .v2-prefix-line {
-    font-size: 38px !important;
-  }
-  .v2-highlight-item.active {
-    font-size: 58px !important;
-  }
-  .v2-highlight-item {
-    font-size: 30px !important;
-  }
 }
 
 /* 2. Compact Laptops / MacBooks / Small Desktop Monitors (1024px - 1279px) */
 @media (max-width: 1279px) and (min-width: 1024px) {
-  /* video column width/gap: handled by the fluid clamp() above — no
+  /* video column width/gap AND hero type: handled by the fluid clamp()
+     declarations on .v2-prefix-line / .v2-highlight-item(.active) — no
      breakpoint override needed here. */
-  .v2-prefix-line {
-    font-size: 32px !important;
-  }
-  .v2-highlight-item.active {
-    font-size: 48px !important;
-  }
-  .v2-highlight-item {
-    font-size: 26px !important;
-  }
 }
 
 /* 3. Tablets / iPad / Vertical Monitors (< 1024px) */
@@ -6767,9 +6751,11 @@ html:has(.mode-v6),
   letter-spacing: 2px;
   margin: 20px 0 4px 12px;
 }
-[data-theme-mode="light"] .nav-section-title,
-[data-theme-mode="dark"] .nav-section-title {
+[data-theme-mode="light"] .nav-section-title {
   color: rgba(102, 112, 146, 0.7) !important;
+}
+[data-theme-mode="dark"] .nav-section-title {
+  color: var(--dash-nav-section-color, rgba(102, 112, 146, 0.7)) !important;
 }
 
 /* ---- Hero body ------------------------------------------------------- */
@@ -6777,7 +6763,10 @@ html:has(.mode-v6),
 
 .v2-prefix-line {
   font-family: var(--app-font-family) !important;
-  font-size: 40px !important;
+  /* Fluid scale (was a stepped media-query ramp that jumped too small between
+     breakpoints, e.g. on common 1280-1440px laptop widths): 24px at <=1024px
+     viewport up to the Figma-exact 40px at >=1730px (the reference hero width). */
+  font-size: clamp(24px, 0.8px + 2.27vw, 40px) !important;
   font-weight: 200 !important;
   letter-spacing: -0.02em !important;
   color: #888 !important;
@@ -6788,14 +6777,14 @@ html:has(.mode-v6),
 }
 .v2-highlight-item {
   font-family: var(--app-font-family) !important;
-  font-size: 30px !important;
+  font-size: clamp(18px, 11px + 1.1vw, 30px) !important;
   font-weight: 200 !important;
   opacity: 0.6;
   color: #94a3b8 !important;
 }
-[data-theme-mode="light"] .v2-highlight-item { color: #888 !important; }
+[data-theme-mode="light"] .v2-highlight-item { color: #94a3b8 !important; }
 .v2-highlight-item.active {
-  font-size: 80px !important;
+  font-size: clamp(34px, 7px + 4.22vw, 80px) !important;
   font-weight: 600 !important;
   letter-spacing: -0.022em !important;
   opacity: 1 !important;
@@ -6838,16 +6827,18 @@ html:has(.mode-v6),
 .mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-3 { opacity: 0.08 !important; }
 
 .mode-v2 .v5-yt-progress-fill,
-.mode-v2 .v5-yt-scrub-handle { background: var(--highlight, var(--primary)) !important; }
+.mode-v2 .v5-yt-scrub-handle { background: var(--dash-progress-fill, var(--primary)) !important; }
 .v5-yt-progress-bg { background: rgba(255, 255, 255, 0.2); }
 .v5-yt-time {
   font-family: var(--app-font-family) !important;
   font-size: 18px;
   color: rgba(255, 255, 255, 0.85);
 }
-/* CC/HD badges — fixed Figma UI-chrome colours, not brand-derived (verified across templates). */
+/* CC/HD badges — derived from primary/secondary by default (Corporate's Figma export); a
+   preset can pin a literal override via --dash-badge-cc/hd when its own export deviates
+   (Emerald). See theme-bridge.tsx. */
 .v5-badge-cc {
-  background: #14b8a6;
+  background: var(--dash-badge-cc, color-mix(in srgb, var(--primary) 90%, transparent));
   color: rgba(255, 255, 255, 0.85);
   font-family: var(--app-font-family);
   font-weight: 700;
@@ -6856,7 +6847,7 @@ html:has(.mode-v6),
   border-radius: 6px;
 }
 .v5-badge-hd {
-  background: #f59e0b;
+  background: var(--dash-badge-hd, var(--secondary));
   color: #06202a;
   font-family: var(--app-font-family);
   font-weight: 700;
@@ -6865,25 +6856,8 @@ html:has(.mode-v6),
   border-radius: 6px;
 }
 
-/* Re-ramp hero type for the new 40 / 80 / 30 desktop sizes */
-@media (max-width: 1599px) and (min-width: 1280px) {
-  .v2-prefix-line { font-size: 34px !important; }
-  .v2-highlight-item.active { font-size: 64px !important; }
-  .v2-highlight-item { font-size: 26px !important; }
-}
-@media (max-width: 1279px) and (min-width: 1024px) {
-  .v2-prefix-line { font-size: 30px !important; }
-  .v2-highlight-item.active { font-size: 52px !important; }
-  .v2-highlight-item { font-size: 24px !important; }
-}
-@media (max-width: 1023px) {
-  .v2-prefix-line { font-size: 28px !important; }
-  .v2-highlight-item.active { font-size: 44px !important; }
-  .v2-highlight-item { font-size: 22px !important; }
-}
+/* Hero type now scales fluidly via clamp() on the base .v2-prefix-line /
+   .v2-highlight-item(.active) rules above — no stepped breakpoints needed. */
 @media (max-width: 639px) {
-  .v2-prefix-line { font-size: 24px !important; }
-  .v2-highlight-item.active { font-size: 34px !important; }
-  .v2-highlight-item { font-size: 18px !important; }
   .v5-yt-time { font-size: 11px !important; }
 }

@@ -42,6 +42,7 @@ function syncCssVars(theme: any, settings: any) {
   // previously unmapped studio tokens, now emitted so host consumers can follow.
   set('--secondary', p.secondary?.main);
   set('--secondary-hover', p.secondary?.dark);
+  set('--secondary-light', p.secondary?.light);
   const tk = theme.tokens || {};
   const isDark = settings.mode === 'dark';
   const highlight = settings.highlightHex || tk.highlight || p.primary.main || '#2563EB';
@@ -148,11 +149,38 @@ function syncCssVars(theme: any, settings: any) {
   // Sidebar bg/border — pinned per preset in dark mode (verified against
   // pixelPerfectNewReactCode for Emerald); other presets keep the primary-hue-derived bar.
   const figmaSidebarDark: Record<string, { bg: string; border: string }> = {
+    corporate: { bg: '#090e24', border: '#1b2350' },
     emerald: { bg: '#061a12', border: '#163d2b' },
   };
   const sidebarPreset = isDark ? figmaSidebarDark[settings.presetId] : undefined;
   set('--dash-sidebar-bg', settings.mode === 'dark' ? sidebarPreset?.bg || darkSidebar : '#ffffff');
   set('--dash-sidebar-border', sidebarPreset?.border || (isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'));
+  // Hero video-card fill — differs per colour template in Figma (not theme-neutral #080a09).
+  const figmaVideoBg: Record<string, string> = {
+    corporate: '#0b1024',
+    emerald: '#050505',
+  };
+  set('--dash-video-bg', figmaVideoBg[settings.presetId] || '#080a09');
+  // Sidebar nav text — Figma tints inactive-item text and section labels per colour template in
+  // dark mode rather than using one flat neutral grey. Falls back to the existing neutral CSS
+  // default for any preset not yet verified against a Figma export.
+  const figmaNavText: Record<string, { inactive: string; sectionTitle: string }> = {
+    corporate: { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
+  };
+  const navTextPreset = isDark ? figmaNavText[settings.presetId] : undefined;
+  set('--dash-nav-inactive-color', navTextPreset?.inactive || (isDark ? '#94a3b8' : '#475569'));
+  set('--dash-nav-section-color', navTextPreset?.sectionTitle || 'rgba(102, 112, 146, 0.7)');
+  // CC/HD video badges — derived from primary/secondary by default (matches Corporate's Figma
+  // export exactly); a preset can pin a literal override when its Figma badges deviate (Emerald).
+  set('--dash-badge-cc', settings.ccBadge || `color-mix(in srgb, ${primaryHex} 90%, transparent)`);
+  set('--dash-badge-hd', settings.hdBadge || secondaryHex);
+  // Video progress bar fill — Corporate's Figma export uses raw primaryHex (not highlightHex,
+  // despite highlightHex driving the sidebar's active-nav accent); Emerald's uses highlightHex.
+  // Default to primaryHex; only presets confirmed to deviate get an explicit override.
+  const figmaProgressFill: Record<string, string> = {
+    emerald: highlight,
+  };
+  set('--dash-progress-fill', figmaProgressFill[settings.presetId] || primaryHex);
   // Dashboard canvas (Container fill) — exact Figma vertical gradient per colour template in
   // dark mode; Emerald's light canvas is also a confirmed non-white tint (#ecf6f0), not plain
   // white. Any other preset/mode combo falls back to the primary-hue-derived flat dark / white.
@@ -162,6 +190,7 @@ function syncCssVars(theme: any, settings: any) {
     indigo: 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
   };
   const figmaCanvasLight: Record<string, string> = {
+    corporate: '#e1e6fb',
     emerald: '#ecf6f0',
     indigo: '#e1e6fb',
   };
@@ -175,6 +204,12 @@ function syncCssVars(theme: any, settings: any) {
   // primary/secondary in light mode (Indigo's dark stops happen to match primary/secondary
   // exactly, but are listed explicitly here to stay pinned to the verified Figma value).
   const figmaBrandGradient: Record<string, { light: string; dark: string }> = {
+    corporate: {
+      // Light mode's "Brand" gradient is a deep pinned navy, not derived from primary/secondary
+      // (dark mode's stops happen to equal primaryHex/secondaryHex exactly).
+      light: 'linear-gradient(90deg, #0029ff 0%, #00144b 100%)',
+      dark: 'linear-gradient(90deg, #4f6bff 0%, #22d3ee 100%)',
+    },
     emerald: {
       light: 'linear-gradient(90deg, #01b979 0%, #d88b00 100%)',
       dark: 'linear-gradient(90deg, #2ee6a6 0%, #ffc255 100%)',
@@ -190,6 +225,73 @@ function syncCssVars(theme: any, settings: any) {
     brandPreset ? brandPreset[isDark ? 'dark' : 'light'] : `linear-gradient(90deg, ${primaryHex} 0%, ${secondaryHex} 100%)`
   );
   set('--dash-aura-color', primaryHex);
+  // Global Settings panel chrome — verified against pixelPerfectGlobalSettings_blue (Corporate
+  // dark). Other presets fall back to a primary/secondary-derived approximation until verified.
+  const figmaGsHeaderDark: Record<string, string> = {
+    corporate: 'linear-gradient(178deg, #0f172a 0%, #1e3a8a 100%)',
+  };
+  set(
+    '--gs-header-bg-dark',
+    figmaGsHeaderDark[settings.presetId] ||
+      `linear-gradient(178deg, #0f172a 0%, color-mix(in srgb, ${primaryHex} 55%, #0f172a) 100%)`
+  );
+  // Toggle "on" state / upload-orb button — verified as genuinely different gradients per mode
+  // (light: cyan-to-blue-violet; dark: cyan-to-dark-teal), not just a mode-neutral accent.
+  const figmaGsAccentGradient: Record<string, { light: string; dark: string }> = {
+    corporate: {
+      light: 'linear-gradient(135deg, #00ddff 0%, #0c26b1 100%)',
+      dark: 'linear-gradient(162deg, #22d3ee 11.886%, #126673 91.492%)',
+    },
+  };
+  const gsAccentPreset = figmaGsAccentGradient[settings.presetId];
+  set(
+    '--gs-accent-gradient',
+    gsAccentPreset
+      ? gsAccentPreset[isDark ? 'dark' : 'light']
+      : isDark
+      ? `linear-gradient(162deg, ${secondaryHex} 11.886%, color-mix(in srgb, ${secondaryHex} 48%, black) 91.492%)`
+      : `linear-gradient(135deg, ${secondaryHex} 0%, ${primaryHex} 100%)`
+  );
+  set('--gs-save-bg', secondaryHex);
+  const figmaGsSaveShadow: Record<string, string> = {
+    corporate: 'rgba(29, 78, 216, 0.6)',
+  };
+  set('--gs-save-shadow', figmaGsSaveShadow[settings.presetId] || `color-mix(in srgb, ${primaryHex} 60%, transparent)`);
+  // H1-H6 / weight dropdown pills — were reading vars that were never defined anywhere
+  // (rendered as bare browser <select> chrome). Neutral panel look, not preset-tinted.
+  set('--gs-input-bg', isDark ? '#3c3f47' : '#ffffff');
+  set('--gs-input-border', isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.15)');
+  set('--gs-input-shadow', isDark ? 'none' : '0px 4px 4px rgba(0, 0, 0, 0.25)');
+  set('--gs-text-color', isDark ? '#ffffff' : '#0f172a');
+  // Config card fill — Figma-exact neutral panel (not the MUI paper --bg-card).
+  set('--gs-card-bg-dark', '#141518');
+  set('--gs-card-bg-light', '#f1f1f1');
+  // Underline text-input border — pinned neutral per mode, not the generic MUI divider.
+  set('--gs-underline-border', isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(80, 80, 80, 0.6)');
+  // Modal-wide radial glow (dark only) — Figma's real 6-stop falloff from primary to near-black,
+  // replacing a flat 2-stop approximation. Light mode has no modal-wide gradient (verified).
+  const figmaGsModalGradientDark: Record<string, string> = {
+    corporate:
+      'radial-gradient(circle at 50% 30%, #4f6bff 0%, #3f5adb 13.75%, #2e49b7 27.5%, #1e3892 41.25%, #0d276e 55%, #07153f 100%)',
+  };
+  set(
+    '--gs-modal-bg-dark',
+    figmaGsModalGradientDark[settings.presetId] ||
+      `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 78%, black) 13.75%, color-mix(in srgb, ${primaryHex} 57%, black) 27.5%, color-mix(in srgb, ${primaryHex} 36%, black) 41.25%, color-mix(in srgb, ${primaryHex} 16%, black) 55%, black 100%)`
+  );
+  // Active eye-preview button — pinned border/shadow per preset; other presets fall back to
+  // the existing --secondary-light / --accent-glow derived values.
+  const figmaGsEyeActive: Record<string, { border: string; shadow: string }> = {
+    corporate: { border: '#60a5fa', shadow: 'rgba(37, 99, 235, 0.8)' },
+  };
+  const eyeActivePreset = figmaGsEyeActive[settings.presetId];
+  if (eyeActivePreset) {
+    set('--gs-eye-active-border', eyeActivePreset.border);
+    set('--gs-eye-active-shadow', eyeActivePreset.shadow);
+  } else {
+    root.style.removeProperty('--gs-eye-active-border');
+    root.style.removeProperty('--gs-eye-active-shadow');
+  }
   // Hero video-card ambient shadow — full CSS box-shadow value, explicit per-mode
   // preset value if set (Figma "Drop shadow" stack), else a primaryHex-derived glow.
   const videoShadow = isDark ? settings.videoShadowDark : settings.videoShadowLight;

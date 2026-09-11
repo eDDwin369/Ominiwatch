@@ -152,6 +152,9 @@ const GS_PILL_SELECT: React.CSSProperties = {
   width: '64px', height: '30px', borderRadius: '15px', border: '1px solid var(--gs-input-border)',
   fontSize: '12px', fontWeight: 600, padding: '0 6px', backgroundColor: 'var(--gs-input-bg)',
   color: 'var(--gs-text-color)', cursor: 'pointer', outline: 'none',
+  boxShadow: 'var(--gs-input-shadow, none)',
+  // Without this, native <select> chrome ignores the custom bg/border/color above.
+  appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
 };
 const GS_WEIGHT_OPTIONS = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
 
@@ -214,11 +217,11 @@ export function GlobalSettingsWorkspace({
   const [textColorApply] = useState<any>(headerConfig.textColorApply || 'both');
   const [headerBgColor, setHeaderBgColor] = useState(headerConfig.headerBgColor || 'transparent');
   const [companyNameColor, setCompanyNameColor] = useState(headerConfig.companyNameColor || '#ffffff');
-  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyNameColor || headerConfig.textColor || '#000000');
+  const [companyCaptionColor, setCompanyCaptionColor] = useState(headerConfig.companyCaptionColor || headerConfig.textColor || '#000000');
   const [companyNameStyle, setCompanyNameStyle] = useState(headerConfig.companyNameStyle || 'h1');
-  const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h3');
-  const [companyNameWeight, setCompanyNameWeight] = useState(headerConfig.companyNameWeight || localStorage.getItem('gs_companyNameWeight') || '700');
-  const [companyCaptionWeight, setCompanyCaptionWeight] = useState(headerConfig.companyCaptionWeight || localStorage.getItem('gs_companyCaptionWeight') || '600');
+  const [companyCaptionStyle, setCompanyCaptionStyle] = useState(headerConfig.companyCaptionStyle || 'h4');
+  const [companyNameWeight, setCompanyNameWeight] = useState(headerConfig.companyNameWeight || localStorage.getItem('gs_companyNameWeight') || '400');
+  const [companyCaptionWeight, setCompanyCaptionWeight] = useState(headerConfig.companyCaptionWeight || localStorage.getItem('gs_companyCaptionWeight') || '300');
 
   // Footer Config States
   const [footerVisible, setFooterVisible] = useState(() => {
@@ -266,71 +269,21 @@ export function GlobalSettingsWorkspace({
   const [expandedWidth, setExpandedWidth] = useState(sidebarExpandedWidth);
   const [collapsedWidth, setCollapsedWidth] = useState(sidebarCollapsedWidth);
   const [showIcons, setShowIcons] = useState(sidebarShowIcons);
-  const [showLabels, setShowLabels] = useState(sidebarShowLabels);
+  const [showLabels, _setShowLabels] = useState(sidebarShowLabels);
 
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
 
-  // Close modal — changes are auto-persisted, no revert needed
+  // Close modal — draft state (unsaved edits) is discarded with the component,
+  // nothing was pushed to the live app until handleSave ran.
   const handleCancelAndClose = () => {
     onClose();
   };
 
-  // Brand name / caption edits flow back into Theme Studio (the source of truth),
-  // so both stay identical. Seeded from the store, so the first run is a no-op.
-  useEffect(() => {
-    const patch: Record<string, string> = {};
-    if (companyName !== studioSettings.appName) patch.appName = companyName;
-    if (companyCaption !== studioSettings.appTagline) patch.appTagline = companyCaption;
-    if (Object.keys(patch).length) studioSet(patch);
-  }, [companyName, companyCaption]);
-
-  // Sync Header config in real-time
-  useEffect(() => {
-    onSaveConfig({
-      logo,
-      showLogo,
-      companyName,
-      showCompanyName,
-      companyCaption,
-      showCompanyCaption,
-      textColor,
-      textColorApply,
-      companyNameColor,
-      companyCaptionColor,
-      companyNameStyle,
-      companyCaptionStyle,
-      companyNameWeight,
-      companyCaptionWeight,
-      headerBgColor
-    });
-  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, textColor, textColorApply, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle, companyNameWeight, companyCaptionWeight, headerBgColor]);
-
-  // Sync Footer config in real-time
-  useEffect(() => {
-    onSyncFooter({
-      footerVisible,
-      copyrightText,
-      footerPoweredByType,
-      footerPoweredByText,
-      footerPoweredByImage,
-      footerLinks
-    });
-  }, [footerVisible, copyrightText, footerPoweredByType, footerPoweredByText, footerPoweredByImage, footerLinks]);
-
-  // Sync Sidebar config in real-time
-  useEffect(() => {
-    setSidebarAutoHide(autoHideSidebar);
-    setSidebarExpandedWidth(expandedWidth);
-    setSidebarCollapsedWidth(collapsedWidth);
-    setSidebarShowIcons(showIcons);
-    setSidebarShowLabels(showLabels);
-  }, [autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels]);
-
-  // Push sidebar custom colour up in real-time.
-  useEffect(() => {
-    if (setSidebarColor) setSidebarColor(sidebarBg);
-  }, [sidebarBg]);
+  // Header/Footer/Sidebar/Customer-Profile/Theme-Studio brand fields are all
+  // draft state here — nothing pushes to the live app (onSaveConfig, onSyncFooter,
+  // setSidebarColor, studioSet, ...) until handleSave runs, so edits only show
+  // once "Save" is clicked, not as each field changes.
 
   // Sync active settings tab with parent
   useEffect(() => {
@@ -355,7 +308,7 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : true;
   });
   const [customerName, setCustomerName] = useState(() => {
-    return localStorage.getItem('gs_customerName') || 'OomniEye';
+    return localStorage.getItem('gs_customerName') || 'Default Customer';
   });
   const [customerNameStyle, setCustomerNameStyle] = useState(() => {
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
@@ -364,14 +317,14 @@ export function GlobalSettingsWorkspace({
     return localStorage.getItem('gs_customerNameColor') || '#ffffff';
   });
   const [customerCaption, setCustomerCaption] = useState(() => {
-    return localStorage.getItem('gs_customerCaption') || 'Digital Twin Solutions';
+    return localStorage.getItem('gs_customerCaption') || '';
   });
   const [showCustomerCaption, setShowCustomerCaption] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerCaption');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerCaptionStyle, setCustomerCaptionStyle] = useState(() => {
-    return localStorage.getItem('gs_customerCaptionStyle') || 'h3';
+    return localStorage.getItem('gs_customerCaptionStyle') || 'h4';
   });
   const [customerCaptionColor, setCustomerCaptionColor] = useState(() => {
     return localStorage.getItem('gs_customerCaptionColor') || 'rgba(255, 255, 255, 0.65)';
@@ -381,8 +334,8 @@ export function GlobalSettingsWorkspace({
     const saved = localStorage.getItem('gs_customerColorFollow');
     return saved !== null ? JSON.parse(saved) : true;
   });
-  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '700');
-  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '600');
+  const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '400');
+  const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '300');
   const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerLogo');
     return saved !== null ? JSON.parse(saved) : true;
@@ -407,27 +360,6 @@ export function GlobalSettingsWorkspace({
       reader.readAsDataURL(file);
     }
   };
-
-  // Sync Customer Profile config in real-time
-  useEffect(() => {
-    if (onSyncCustomerProfile) {
-      onSyncCustomerProfile({
-        showCustomerProfile,
-        customerName,
-        customerColorFollow,
-        showCustomerLogo,
-        customerLogo,
-        customerNameStyle,
-        customerNameColor,
-        customerNameWeight,
-        customerCaptionWeight,
-        showCustomerCaption,
-        customerCaption,
-        customerCaptionStyle,
-        customerCaptionColor
-      });
-    }
-  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight, showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor, onSyncCustomerProfile]);
 
   // Equal height is now enforced via CSS (.gs-config-card height: 286px) to maintain a perfectly static layout.
   // Notifications Config States
@@ -530,6 +462,14 @@ export function GlobalSettingsWorkspace({
   // Save changes
   const handleSave = () => {
     isSavedRef.current = true;
+
+    // Brand name / caption edits flow back into Theme Studio (the source of truth),
+    // so both stay identical. Only pushed on Save, not as the fields are typed into.
+    const studioPatch: Record<string, string> = {};
+    if (companyName !== studioSettings.appName) studioPatch.appName = companyName;
+    if (companyCaption !== studioSettings.appTagline) studioPatch.appTagline = companyCaption;
+    if (Object.keys(studioPatch).length) studioSet(studioPatch);
+
     localStorage.setItem('gs_footerVisible', JSON.stringify(footerVisible));
     localStorage.setItem('gs_copyrightText', copyrightText);
     localStorage.setItem('gs_startExpanded', JSON.stringify(startExpanded));
@@ -586,7 +526,11 @@ export function GlobalSettingsWorkspace({
         customerNameStyle,
         customerNameColor,
         customerNameWeight,
-        customerCaptionWeight
+        customerCaptionWeight,
+        showCustomerCaption,
+        customerCaption,
+        customerCaptionStyle,
+        customerCaptionColor
       });
     }
 
@@ -912,6 +856,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                                                    className="gs-pill-select"
                           value={companyNameStyle}
                           onChange={(e) => setCompanyNameStyle(e.target.value)}
                           style={{
@@ -925,7 +870,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -935,6 +884,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                                                    className="gs-pill-select"
                           value={companyNameWeight}
                           onChange={(e) => setCompanyNameWeight(e.target.value)}
                           title="Font weight"
@@ -983,6 +933,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                          className="gs-pill-select"
                           value={companyCaptionStyle}
                           onChange={(e) => setCompanyCaptionStyle(e.target.value)}
                           style={{
@@ -996,7 +947,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -1006,6 +961,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                          className="gs-pill-select"
                           value={companyCaptionWeight}
                           onChange={(e) => setCompanyCaptionWeight(e.target.value)}
                           title="Font weight"
@@ -1322,11 +1278,6 @@ export function GlobalSettingsWorkspace({
                       <span style={{ fontSize: '14px', fontWeight: 200, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
                       <AppleToggle checked={showIcons} onChange={(v) => { if (v || showLabels) setShowIcons(v); }} />
                     </div>
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 200, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Labels <InfoTooltip position="above" text="Display navigation item text labels in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
-                      <AppleToggle checked={showLabels} onChange={(v) => { if (v || showIcons) setShowLabels(v); }} />
-                    </div>
                   </div>
                 </div>
 
@@ -1513,6 +1464,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                                                    className="gs-pill-select"
                           value={customerNameStyle}
                           onChange={(e) => setCustomerNameStyle(e.target.value)}
                           style={{
@@ -1526,7 +1478,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -1536,6 +1492,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                                                    className="gs-pill-select"
                           value={customerNameWeight}
                           onChange={(e) => setCustomerNameWeight(e.target.value)}
                           title="Font weight"
@@ -1584,6 +1541,7 @@ export function GlobalSettingsWorkspace({
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <select
+                                                    className="gs-pill-select"
                           value={customerCaptionStyle}
                           onChange={(e) => setCustomerCaptionStyle(e.target.value)}
                           style={{
@@ -1597,7 +1555,11 @@ export function GlobalSettingsWorkspace({
                             backgroundColor: 'var(--gs-input-bg)',
                             color: 'var(--gs-text-color)',
                             cursor: 'pointer',
-                            outline: 'none'
+                            outline: 'none',
+                            boxShadow: 'var(--gs-input-shadow, none)',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
                           }}
                         >
                           <option value="h1">H1</option>
@@ -1607,6 +1569,7 @@ export function GlobalSettingsWorkspace({
                         </select>
 
                         <select
+                                                    className="gs-pill-select"
                           value={customerCaptionWeight}
                           onChange={(e) => setCustomerCaptionWeight(e.target.value)}
                           title="Font weight"
