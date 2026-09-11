@@ -347,24 +347,6 @@ function App() {
       <div className={`login-container ${brand.loginLayout === 'centered' ? 'layout-centered' : ''}`}>
         {/* Left Side - Visual Branding */}
         <div className="visual-panel">
-          {brand.loginShowTagline && brand.appTagline && (
-            <div
-              style={{
-                position: 'relative',
-                zIndex: 2,
-                margin: 'auto',
-                padding: '3.5rem',
-                color: '#ffffff',
-                fontSize: 'var(--font-size-display)',
-                fontWeight: 600,
-                lineHeight: 1.2,
-                textShadow: '0 2px 8px rgba(0,0,0,0.35)',
-                fontFamily: 'var(--app-heading-family)',
-              }}
-            >
-              {brand.appTagline}
-            </div>
-          )}
         </div>
 
         {/* Right Side - Dynamic Forms */}
