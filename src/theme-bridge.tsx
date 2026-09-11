@@ -129,29 +129,66 @@ function syncCssVars(theme: any, settings: any) {
   const darkSidebar = hslToHexStr(pHue, 35, 7.2);
   const darkCanvas = hslToHexStr(pHue, 32, 5.5);
 
-  // Exact Figma header chrome per colour template (Corporate Blue / Emerald / Indigo Violet).
-  // Corporate + Emerald are flat dark bars; Indigo adds a faint primary->secondary wash.
-  // Any other preset falls back to the primary-hue-derived dark bar.
-  const figmaHeaderBg: Record<string, string> = {
-    corporate: '#141b3c',
-    emerald: '#0d2a20',
-    indigo:
-      'linear-gradient(90deg, rgba(169,123,255,0.25) 0%, rgba(169,123,255,0) 50%, rgba(255,95,162,0) 50%, rgba(255,95,162,0.15) 100%), #0f0726',
+  // Exact Figma header chrome per colour template (Corporate Blue / Emerald / Indigo Violet),
+  // per mode — verified against the Figma exports: Corporate + Indigo are the same flat/washed
+  // bar in both modes, but Emerald's header is genuinely darker in dark mode (#0d2a20 light vs
+  // #041610 dark). Any other preset falls back to the primary-hue-derived dark bar.
+  const figmaHeaderBg: Record<string, { light: string; dark: string }> = {
+    corporate: { light: '#141b3c', dark: '#141b3c' },
+    emerald: { light: '#0d2a20', dark: '#041610' },
+    indigo: {
+      light:
+        'linear-gradient(90deg, rgba(169,123,255,0.25) 0%, rgba(169,123,255,0) 50%, rgba(255,95,162,0) 50%, rgba(255,95,162,0.15) 100%), #0f0726',
+      dark:
+        'linear-gradient(90deg, rgba(169,123,255,0.25) 0%, rgba(169,123,255,0) 50%, rgba(255,95,162,0) 50%, rgba(255,95,162,0.15) 100%), #0f0726',
+    },
   };
-  set('--dash-header-bg', figmaHeaderBg[settings.presetId] || darkHeader);
-  set('--dash-sidebar-bg', settings.mode === 'dark' ? darkSidebar : '#ffffff');
-  // Dark-mode dashboard canvas — exact Figma vertical gradient per colour template
-  // (Container fill). Other presets fall back to the primary-hue-derived flat dark.
+  const headerPreset = figmaHeaderBg[settings.presetId];
+  set('--dash-header-bg', headerPreset ? headerPreset[isDark ? 'dark' : 'light'] : darkHeader);
+  // Sidebar bg/border — pinned per preset in dark mode (verified against
+  // pixelPerfectNewReactCode for Emerald); other presets keep the primary-hue-derived bar.
+  const figmaSidebarDark: Record<string, { bg: string; border: string }> = {
+    emerald: { bg: '#061a12', border: '#163d2b' },
+  };
+  const sidebarPreset = isDark ? figmaSidebarDark[settings.presetId] : undefined;
+  set('--dash-sidebar-bg', settings.mode === 'dark' ? sidebarPreset?.bg || darkSidebar : '#ffffff');
+  set('--dash-sidebar-border', sidebarPreset?.border || (isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'));
+  // Dashboard canvas (Container fill) — exact Figma vertical gradient per colour template in
+  // dark mode; Emerald's light canvas is also a confirmed non-white tint (#ecf6f0), not plain
+  // white. Any other preset/mode combo falls back to the primary-hue-derived flat dark / white.
   const figmaCanvasDark: Record<string, string> = {
     corporate: 'linear-gradient(180deg, #070A1B 0%, #111734 50%, #090D22 100%)',
     emerald: 'linear-gradient(180deg, #06140E 0%, #082318 50%, #061910 100%)',
     indigo: 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
   };
+  const figmaCanvasLight: Record<string, string> = {
+    emerald: '#ecf6f0',
+    indigo: '#e1e6fb',
+  };
   set(
     '--dash-canvas-bg',
-    settings.mode === 'dark' ? figmaCanvasDark[settings.presetId] || darkCanvas : '#ffffff'
+    settings.mode === 'dark'
+      ? figmaCanvasDark[settings.presetId] || darkCanvas
+      : figmaCanvasLight[settings.presetId] || '#ffffff'
   );
-  set('--dash-brand-gradient', `linear-gradient(90deg, ${primaryHex} 0%, ${secondaryHex} 100%)`);
+  // Hero "Brand" gradient text — Emerald's and Indigo's Figma stops differ from raw
+  // primary/secondary in light mode (Indigo's dark stops happen to match primary/secondary
+  // exactly, but are listed explicitly here to stay pinned to the verified Figma value).
+  const figmaBrandGradient: Record<string, { light: string; dark: string }> = {
+    emerald: {
+      light: 'linear-gradient(90deg, #01b979 0%, #d88b00 100%)',
+      dark: 'linear-gradient(90deg, #2ee6a6 0%, #ffc255 100%)',
+    },
+    indigo: {
+      light: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
+      dark: 'linear-gradient(90deg, #a97bff 0%, #ff5fa2 100%)',
+    },
+  };
+  const brandPreset = figmaBrandGradient[settings.presetId];
+  set(
+    '--dash-brand-gradient',
+    brandPreset ? brandPreset[isDark ? 'dark' : 'light'] : `linear-gradient(90deg, ${primaryHex} 0%, ${secondaryHex} 100%)`
+  );
   set('--dash-aura-color', primaryHex);
   // Hero video-card ambient shadow — full CSS box-shadow value, explicit per-mode
   // preset value if set (Figma "Drop shadow" stack), else a primaryHex-derived glow.

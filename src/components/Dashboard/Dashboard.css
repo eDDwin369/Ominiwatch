@@ -245,7 +245,7 @@
 
 [data-theme-mode="dark"] .dash-sidebar {
   background: var(--gs-sidebar-color, var(--dash-sidebar-bg, #061510)) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid var(--dash-sidebar-border, rgba(255, 255, 255, 0.08));
   box-shadow: none;
 }
 
@@ -6713,7 +6713,7 @@ html:has(.mode-v6),
   font-size: 12px;
   line-height: 1.2;
   letter-spacing: 0.6px;
-  color: rgba(255, 255, 255, 0.5);
+  color: #636363;
   margin-top: 2px;
 }
 .dash-header .header-icon-btn { color: rgba(255, 255, 255, 0.9); }
@@ -6838,15 +6838,16 @@ html:has(.mode-v6),
 .mode-v2 .v2-intro-animated-text-stage .v2-sonar-ring.ring-3 { opacity: 0.08 !important; }
 
 .mode-v2 .v5-yt-progress-fill,
-.mode-v2 .v5-yt-scrub-handle { background: var(--primary) !important; }
+.mode-v2 .v5-yt-scrub-handle { background: var(--highlight, var(--primary)) !important; }
 .v5-yt-progress-bg { background: rgba(255, 255, 255, 0.2); }
 .v5-yt-time {
   font-family: var(--app-font-family) !important;
   font-size: 18px;
   color: rgba(255, 255, 255, 0.85);
 }
+/* CC/HD badges — fixed Figma UI-chrome colours, not brand-derived (verified across templates). */
 .v5-badge-cc {
-  background: color-mix(in srgb, var(--primary) 90%, transparent);
+  background: #14b8a6;
   color: rgba(255, 255, 255, 0.85);
   font-family: var(--app-font-family);
   font-weight: 700;
@@ -6855,7 +6856,7 @@ html:has(.mode-v6),
   border-radius: 6px;
 }
 .v5-badge-hd {
-  background: var(--secondary);
+  background: #f59e0b;
   color: #06202a;
   font-family: var(--app-font-family);
   font-weight: 700;

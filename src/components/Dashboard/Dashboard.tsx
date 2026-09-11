@@ -184,7 +184,7 @@ export function Dashboard({
       textColor: '#ffffff',
       textColorApply: 'both',
       companyNameColor: '#ffffff',
-      companyCaptionColor: 'rgba(255, 255, 255, 0.65)',
+      companyCaptionColor: '#636363',
       companyNameStyle: 'h1',
       companyCaptionStyle: 'h3',
       headerBgColor: 'transparent'
