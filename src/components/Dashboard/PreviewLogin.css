@@ -8,7 +8,7 @@
 .preview-login-left {
   flex: 1;
   position: relative;
-  background-color: var(--login-panel-color, var(--primary));
+  background-color: var(--primary);
   background-image: var(--login-image, none);
   background-position: center;
   background-size: cover;
@@ -23,7 +23,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--login-panel-color, var(--primary));
+  background: var(--primary);
   opacity: calc(1 - var(--login-img-opacity, 1));
   pointer-events: none;
 }
@@ -69,7 +69,7 @@
 
 .preview-login-right {
   flex: 1;
-  background-color: var(--bg-dashboard);
+  background-color: var(--login-panel-color, var(--bg-dashboard));
   display: flex;
   align-items: center;
   justify-content: center;

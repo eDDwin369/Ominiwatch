@@ -199,6 +199,21 @@ export function GlobalSettingsWorkspace({
   const studioSettings = useThemeStore((s) => s.settings);
   const studioSet = useThemeStore((s) => s.set);
 
+  // Global Settings chrome text (title / tab label / card titles / field labels /
+  // dropzone microcopy) follows Theme Studio's heading scale + a colour priority:
+  // that heading level's own colour (h3Color..h6Color from the Colour Panel) ->
+  // brand primary/secondary -> CSS default. Size/weight reuse the same --h{n}-size/
+  // -weight vars theme-bridge.tsx already syncs from Theme Studio, so both light and
+  // dark mode just work (those vars are theme-mode-aware already).
+  const headingStyle = (level: 3 | 4 | 5 | 6, fallback: 'primary' | 'secondary' = 'primary'): React.CSSProperties => ({
+    fontSize: `var(--h${level}-size)`,
+    fontWeight: `var(--h${level}-weight)` as React.CSSProperties['fontWeight'],
+    fontFamily: 'var(--app-heading-family)',
+    color: (studioSettings as Record<string, string>)[`h${level}Color`]
+      || (fallback === 'secondary' ? studioSettings.secondaryHex : studioSettings.primaryHex)
+      || 'var(--text-main)',
+  });
+
   // Local form states (Header Config)
 
   // Cropper State
@@ -672,7 +687,7 @@ export function GlobalSettingsWorkspace({
           )}
           <div className="gs-header">
             <div className="gs-header-left">
-              <h2 style={{ fontSize: '20px', fontWeight: 500, color: '#ffffff', letterSpacing: '-0.3px' }}>Global Settings</h2>
+              <h2 style={{ ...headingStyle(3, 'primary'), letterSpacing: '-0.3px' }}>Global Settings</h2>
             </div>
             <div className="gs-header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
@@ -720,8 +735,8 @@ export function GlobalSettingsWorkspace({
 
           {/* CONTENT PANEL BODY (2 Inner Cards) */}
           <div className="gs-content-body">
-            <div style={{ padding: '0 8px 10px 8px', fontSize: '17px', fontWeight: 500, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span>{activeTab === 'header' ? 'Header' : activeTab === 'profile' ? 'Customer Profile' : activeTab === 'footer' ? 'Footer' : 'Sidebar'}</span>
+            <div style={{ padding: '0 8px 10px 8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={headingStyle(4, 'primary')}>{activeTab === 'header' ? 'Header' : activeTab === 'profile' ? 'Customer Profile' : activeTab === 'footer' ? 'Footer' : 'Sidebar'}</span>
               {(activeTab === 'header' || activeTab === 'profile') && (
                 <button
                   type="button"
@@ -740,7 +755,7 @@ export function GlobalSettingsWorkspace({
 
                 {/* Left Card: Company Logo (headerConfig.logo — the main logo, left of the header bar; distinct from the Customer Logo in the Profile tab) */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Company Logo <InfoTooltip text="Upload or crop the primary company logo displayed on the page header." /></span>
                     <button
                       type="button"
@@ -776,7 +791,7 @@ export function GlobalSettingsWorkspace({
                       <div className="gs-iphone-orb-btn">
                         <Upload size={22} />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose company logo</span>
+                      <span style={{ ...headingStyle(6, 'secondary') }}>Choose company logo</span>
                     </div>
                     <input
                       ref={fileInputRef}
@@ -803,14 +818,14 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Company Logo <InfoTooltip text="Toggle visibility of the company logo on the header bar." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Company Logo <InfoTooltip text="Toggle visibility of the company logo on the header bar." /></span>
                     <AppleToggle checked={showLogo} onChange={setShowLogo} />
                   </div>
                 </div>
 
                 {/* Right Card: Header Branding Visibility */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Header Branding Visibility <InfoTooltip text="Configure font style, color, and visibility for company title and caption." position="below-right" /></span>
                     <button
                       type="button"
@@ -979,7 +994,7 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Header background <InfoTooltip position="above" text="Override the theme header colour. Reset to fall back to the active colour template." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Header background <InfoTooltip position="above" text="Override the theme header colour. Reset to fall back to the active colour template." /></span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {headerBgColor && headerBgColor !== 'transparent' && (
                         <button
@@ -1020,7 +1035,7 @@ export function GlobalSettingsWorkspace({
                             {/* Left Card: Powered By Settings */}
                 <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'flex-start' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
+                    <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
                       Powered By <InfoTooltip text="Configure footer 'Powered By' attribution as custom text or logo image." />
                     </div>
 
@@ -1078,7 +1093,7 @@ export function GlobalSettingsWorkspace({
                         <div className="gs-iphone-orb-btn">
                           <Upload size={20} />
                         </div>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>Choose image</span>
+                        <span style={{ ...headingStyle(6, 'secondary') }}>Choose image</span>
                       </div>
                       <input
                         ref={footerFileInputRef}
@@ -1109,13 +1124,13 @@ export function GlobalSettingsWorkspace({
 
                 {/* Right Card: Footer Settings */}
                 <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
+                  <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
                     Footer Settings <InfoTooltip text="Control overall footer bar visibility, copyright text, and navigation links." position="below-right" />
                   </div>
 
                   {/* Row 1: Footer Visibility */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
 
@@ -1136,7 +1151,7 @@ export function GlobalSettingsWorkspace({
 
                   {/* Row 3: Add Footer Link */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
                     <button
                       type="button"
                       onClick={() => setFooterLinks([...footerLinks, 'New Link (https://)'])}
@@ -1211,11 +1226,11 @@ export function GlobalSettingsWorkspace({
                     slack evenly across every row instead of dumping it all into one gap
                     after the title (which is what a 2-child title+wrapper split does). */}
                 <div className="gs-config-card" style={{ padding: '22px 32px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
+                  <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {sidebarBg && (
                         <button
@@ -1245,24 +1260,24 @@ export function GlobalSettingsWorkspace({
                   </div>
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
                     <AppleToggle checked={startExpanded} onChange={setStartExpanded} />
                   </div>
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
                     <AppleToggle checked={autoHideSidebar} onChange={setAutoHideSidebar} />
                   </div>
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
                     <AppleToggle checked={showIcons} onChange={(v) => { if (v || showLabels) setShowIcons(v); }} />
                   </div>
                 </div>
 
                 {/* Width Configuration Card — same flattening as the Behavior card above. */}
                 <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'inline-flex', alignItems: 'center' }}>
+                  <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Dimensions <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
                   </div>
 
@@ -1328,7 +1343,7 @@ export function GlobalSettingsWorkspace({
                 
                 {/* Left Card: Customer Logo */}
                 <div className="gs-config-card">
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop customer profile logo image." /></span>
                     <button
                       type="button"
@@ -1364,7 +1379,7 @@ export function GlobalSettingsWorkspace({
                       <div className="gs-iphone-orb-btn">
                         <Upload size={22} />
                       </div>
-                      <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Choose customer logo</span>
+                      <span style={{ ...headingStyle(6, 'secondary') }}>Choose customer logo</span>
                     </div>
                     <input
                       ref={customerLogoInputRef}
@@ -1391,14 +1406,14 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle whether customer profile logo is displayed." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle whether customer profile logo is displayed." /></span>
                     <AppleToggle checked={showCustomerLogo} onChange={setShowCustomerLogo} />
                   </div>
                 </div>
 
                 {/* Right Card: Customer Profile Visibility */}
                 <div className="gs-config-card" style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 500, color: 'var(--text-main)', fontFamily: 'var(--app-font-family)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Profile Visibility <InfoTooltip text="Manage visibility, typography styles, and color follow settings for customer profile." position="below-right" /></span>
                     <button
                       type="button"
@@ -1567,7 +1582,7 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 500, display: 'inline-flex', alignItems: 'center' }}>Text Color matches theme <InfoTooltip position="above" text="When on, customer name and caption follow the theme text colour and the colour swatches are ignored." /></span>
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Text Color matches theme <InfoTooltip position="above" text="When on, customer name and caption follow the theme text colour and the colour swatches are ignored." /></span>
                     <AppleToggle checked={customerColorFollow} onChange={setCustomerColorFollow} />
                   </div>
                 </div>
