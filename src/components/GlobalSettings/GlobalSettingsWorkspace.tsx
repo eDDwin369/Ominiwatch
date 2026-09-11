@@ -1263,11 +1263,6 @@ export function GlobalSettingsWorkspace({
                       <span style={{ fontSize: '14px', fontWeight: 200, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
                       <AppleToggle checked={showIcons} onChange={(v) => { if (v || showLabels) setShowIcons(v); }} />
                     </div>
-                    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '14px', fontWeight: 200, color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center' }}>Show Labels <InfoTooltip position="above" text="Display navigation item text labels in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
-                      <AppleToggle checked={showLabels} onChange={(v) => { if (v || showIcons) setShowLabels(v); }} />
-                    </div>
                   </div>
                 </div>
 
