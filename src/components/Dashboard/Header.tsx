@@ -299,7 +299,7 @@ export function Header({
             style={{
               background: profileImage ? 'transparent' : '#f3ba2f',
               color: '#ffffff',
-              fontFamily: "'Roboto', sans-serif",
+              fontFamily: 'var(--app-font-family)',
               width: '38px',
               height: '38px',
               borderRadius: '50%',
@@ -341,7 +341,7 @@ export function Header({
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
-                fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                fontFamily: 'var(--app-font-family)'
               }}
             >
               {/* Top User Card section */}
