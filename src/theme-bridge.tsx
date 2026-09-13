@@ -300,13 +300,18 @@ function syncCssVars(theme: any, settings: any) {
     // from pprc_darkPink) instead of black.
     indigo: `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 75%, #1a0f24) 27.5%, color-mix(in srgb, ${primaryHex} 55%, #1a0f24) 41.25%, color-mix(in srgb, ${primaryHex} 38%, #1a0f24) 55%, color-mix(in srgb, ${primaryHex} 18%, #1a0f24) 77.5%, #1a0f24 100%)`,
   };
+  // Same anchor idea as the Indigo entry above, generalised: mixing toward literal `black`
+  // (even at a 10% primaryHex tint) still reads as a harsh black band on wide modals once a
+  // preset has no verified export (graphite/teal/amber, or any custom colour edited in Theme
+  // Studio — editing a colour snaps presetId to 'custom', see ColourPanel's setBrand, so this
+  // fallback is actually the common path, not an edge case). Mix toward the app's own dark
+  // chrome slate (#0f172a, matches --dash-canvas-bg's dark fallback) instead of black so the
+  // edge blends with the surrounding UI rather than clipping to a visible black band.
+  const gsModalDarkAnchor = '#0f172a';
   set(
     '--gs-modal-bg-dark',
     figmaGsModalGradientDark[settings.presetId] ||
-      // Same fix as the Indigo entry above, generalised: never fade all the way to literal
-      // black for a preset with no verified export at all (graphite/teal/amber) — keep a
-      // faint tint of primaryHex at the edge instead.
-      `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 78%, black) 13.75%, color-mix(in srgb, ${primaryHex} 57%, black) 27.5%, color-mix(in srgb, ${primaryHex} 36%, black) 41.25%, color-mix(in srgb, ${primaryHex} 16%, black) 55%, color-mix(in srgb, ${primaryHex} 10%, black) 100%)`
+      `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 78%, ${gsModalDarkAnchor}) 13.75%, color-mix(in srgb, ${primaryHex} 57%, ${gsModalDarkAnchor}) 27.5%, color-mix(in srgb, ${primaryHex} 36%, ${gsModalDarkAnchor}) 41.25%, color-mix(in srgb, ${primaryHex} 16%, ${gsModalDarkAnchor}) 55%, color-mix(in srgb, ${primaryHex} 20%, ${gsModalDarkAnchor}) 100%)`
   );
   // Active eye-preview button — pinned border/shadow per preset; other presets fall back to
   // the existing --secondary-light / --accent-glow derived values.

@@ -351,10 +351,10 @@ input, button, select, textarea, span, p, div, label, a {
   width: 100%;
   max-width: var(--login-card-w, 360px);
   background-color: var(--bg-card, var(--bg-surface));
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border: var(--card-border, 1px solid var(--border-subtle));
+  box-shadow: var(--card-shadow, 0 10px 30px rgba(0,0,0,0.3));
   margin: 0 auto;
   max-height: 100%;
   overflow-y: auto;
@@ -364,8 +364,8 @@ input, button, select, textarea, span, p, div, label, a {
   background-color: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: var(--card-border, 1px solid var(--border-subtle));
+  box-shadow: var(--card-shadow, 0 4px 12px rgba(0,0,0,0.15));
 }
 
 .form-header {
@@ -983,7 +983,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .login-container.layout-centered .outer-auth-card {
-  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  box-shadow: var(--card-shadow, 0 24px 60px rgba(0,0,0,0.35));
   background-color: var(--bg-card, var(--bg-surface));
 }
 
