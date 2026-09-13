@@ -8,6 +8,7 @@ import './GlobalSettingsWorkspace.css';
 
 import { ImageCropperModal } from './ImageCropperModal';
 import { useThemeStore } from 'omnieye-theme-studio';
+import { Dropdown } from '../shared/Dropdown';
 
 interface GlobalSettingsWorkspaceProps {
   onClose: () => void;
@@ -147,16 +148,8 @@ const InfoTooltip = ({
 };
 
 // Apple-style toggle switch (Matching User Screenshot 1:1)
-// Shared style for the small rounded "pill" <select> controls (H1 / weight).
-const GS_PILL_SELECT: React.CSSProperties = {
-  width: '64px', height: '30px', borderRadius: '15px', border: '1px solid var(--gs-input-border)',
-  fontSize: '12px', fontWeight: 600, padding: '0 6px', backgroundColor: 'var(--gs-input-bg)',
-  color: 'var(--gs-text-color)', cursor: 'pointer', outline: 'none',
-  boxShadow: 'var(--gs-input-shadow, none)',
-  // Without this, native <select> chrome ignores the custom bg/border/color above.
-  appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
-};
 const GS_WEIGHT_OPTIONS = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
+const GS_STYLE_OPTIONS = ['h1', 'h2', 'h3', 'h4'].map((v) => ({ value: v, label: v.toUpperCase() }));
 
 const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: boolean) => void }) => {
   return (
@@ -201,11 +194,11 @@ export function GlobalSettingsWorkspace({
 
   // Global Settings chrome text (title / tab label / card titles / field labels /
   // dropzone microcopy) follows Theme Studio's heading scale + a colour priority:
-  // that heading level's own colour (h3Color..h6Color from the Colour Panel) ->
+  // that heading level's own colour (h1Color..h6Color from the Colour Panel) ->
   // brand primary/secondary -> CSS default. Size/weight reuse the same --h{n}-size/
   // -weight vars theme-bridge.tsx already syncs from Theme Studio, so both light and
   // dark mode just work (those vars are theme-mode-aware already).
-  const headingStyle = (level: 3 | 4 | 5 | 6, fallback: 'primary' | 'secondary' = 'primary'): React.CSSProperties => ({
+  const headingStyle = (level: 1 | 2 | 3 | 4 | 5 | 6, fallback: 'primary' | 'secondary' = 'primary'): React.CSSProperties => ({
     fontSize: `var(--h${level}-size)`,
     fontWeight: `var(--h${level}-weight)` as React.CSSProperties['fontWeight'],
     fontFamily: 'var(--app-heading-family)',
@@ -687,7 +680,7 @@ export function GlobalSettingsWorkspace({
           )}
           <div className="gs-header">
             <div className="gs-header-left">
-              <h2 style={{ ...headingStyle(3, 'primary'), letterSpacing: '-0.3px' }}>Global Settings</h2>
+              <h2 style={{ ...headingStyle(2), letterSpacing: '-0.3px' }}>Global Settings</h2>
             </div>
             <div className="gs-header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
@@ -851,43 +844,9 @@ export function GlobalSettingsWorkspace({
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                        <select
-                                                    className="gs-pill-select"
-                          value={companyNameStyle}
-                          onChange={(e) => setCompanyNameStyle(e.target.value)}
-                          style={{
-                            width: '58px',
-                            height: '30px',
-                            borderRadius: '15px',
-                            border: '1px solid var(--gs-input-border)',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            padding: '0 8px',
-                            backgroundColor: 'var(--gs-input-bg)',
-                            color: 'var(--gs-text-color)',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            boxShadow: 'var(--gs-input-shadow, none)',
-                            appearance: 'none',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none'
-                          }}
-                        >
-                          <option value="h1">H1</option>
-                          <option value="h2">H2</option>
-                          <option value="h3">H3</option>
-                          <option value="h4">H4</option>
-                        </select>
+                        <Dropdown variant="pill" width="58px" value={companyNameStyle} onChange={setCompanyNameStyle} options={GS_STYLE_OPTIONS} />
 
-                        <select
-                                                    className="gs-pill-select"
-                          value={companyNameWeight}
-                          onChange={(e) => setCompanyNameWeight(e.target.value)}
-                          title="Font weight"
-                          style={GS_PILL_SELECT}
-                        >
-                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
-                        </select>
+                        <Dropdown variant="pill" width="64px" value={companyNameWeight} onChange={setCompanyNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
 
                         <div style={{ position: 'relative' }}>
                           <div
@@ -928,43 +887,9 @@ export function GlobalSettingsWorkspace({
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                        <select
-                          className="gs-pill-select"
-                          value={companyCaptionStyle}
-                          onChange={(e) => setCompanyCaptionStyle(e.target.value)}
-                          style={{
-                            width: '58px',
-                            height: '30px',
-                            borderRadius: '15px',
-                            border: '1px solid var(--gs-input-border)',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            padding: '0 8px',
-                            backgroundColor: 'var(--gs-input-bg)',
-                            color: 'var(--gs-text-color)',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            boxShadow: 'var(--gs-input-shadow, none)',
-                            appearance: 'none',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none'
-                          }}
-                        >
-                          <option value="h1">H1</option>
-                          <option value="h2">H2</option>
-                          <option value="h3">H3</option>
-                          <option value="h4">H4</option>
-                        </select>
+                        <Dropdown variant="pill" width="58px" value={companyCaptionStyle} onChange={setCompanyCaptionStyle} options={GS_STYLE_OPTIONS} />
 
-                        <select
-                          className="gs-pill-select"
-                          value={companyCaptionWeight}
-                          onChange={(e) => setCompanyCaptionWeight(e.target.value)}
-                          title="Font weight"
-                          style={GS_PILL_SELECT}
-                        >
-                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
-                        </select>
+                        <Dropdown variant="pill" width="64px" value={companyCaptionWeight} onChange={setCompanyCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
 
                         <div style={{ position: 'relative' }}>
                           <div
@@ -1439,43 +1364,9 @@ export function GlobalSettingsWorkspace({
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                        <select
-                                                    className="gs-pill-select"
-                          value={customerNameStyle}
-                          onChange={(e) => setCustomerNameStyle(e.target.value)}
-                          style={{
-                            width: '58px',
-                            height: '30px',
-                            borderRadius: '15px',
-                            border: '1px solid var(--gs-input-border)',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            padding: '0 8px',
-                            backgroundColor: 'var(--gs-input-bg)',
-                            color: 'var(--gs-text-color)',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            boxShadow: 'var(--gs-input-shadow, none)',
-                            appearance: 'none',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none'
-                          }}
-                        >
-                          <option value="h1">H1</option>
-                          <option value="h2">H2</option>
-                          <option value="h3">H3</option>
-                          <option value="h4">H4</option>
-                        </select>
+                        <Dropdown variant="pill" width="58px" value={customerNameStyle} onChange={setCustomerNameStyle} options={GS_STYLE_OPTIONS} />
 
-                        <select
-                                                    className="gs-pill-select"
-                          value={customerNameWeight}
-                          onChange={(e) => setCustomerNameWeight(e.target.value)}
-                          title="Font weight"
-                          style={GS_PILL_SELECT}
-                        >
-                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
-                        </select>
+                        <Dropdown variant="pill" width="64px" value={customerNameWeight} onChange={setCustomerNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
 
                         <div style={{ position: 'relative' }}>
                           <div
@@ -1516,43 +1407,9 @@ export function GlobalSettingsWorkspace({
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
-                        <select
-                                                    className="gs-pill-select"
-                          value={customerCaptionStyle}
-                          onChange={(e) => setCustomerCaptionStyle(e.target.value)}
-                          style={{
-                            width: '58px',
-                            height: '30px',
-                            borderRadius: '15px',
-                            border: '1px solid var(--gs-input-border)',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            padding: '0 8px',
-                            backgroundColor: 'var(--gs-input-bg)',
-                            color: 'var(--gs-text-color)',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            boxShadow: 'var(--gs-input-shadow, none)',
-                            appearance: 'none',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none'
-                          }}
-                        >
-                          <option value="h1">H1</option>
-                          <option value="h2">H2</option>
-                          <option value="h3">H3</option>
-                          <option value="h4">H4</option>
-                        </select>
+                        <Dropdown variant="pill" width="58px" value={customerCaptionStyle} onChange={setCustomerCaptionStyle} options={GS_STYLE_OPTIONS} />
 
-                        <select
-                                                    className="gs-pill-select"
-                          value={customerCaptionWeight}
-                          onChange={(e) => setCustomerCaptionWeight(e.target.value)}
-                          title="Font weight"
-                          style={GS_PILL_SELECT}
-                        >
-                          {GS_WEIGHT_OPTIONS.map((w) => <option key={w} value={w}>{w}</option>)}
-                        </select>
+                        <Dropdown variant="pill" width="64px" value={customerCaptionWeight} onChange={setCustomerCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
 
                         <div style={{ position: 'relative' }}>
                           <div

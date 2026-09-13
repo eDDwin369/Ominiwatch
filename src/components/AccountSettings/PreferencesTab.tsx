@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { 
-  Download, Cookie, Globe, Clock, Shield, 
-  FileText, Trash2, ChevronRight, ChevronDown, Info 
+import {
+  Download, Cookie, Globe, Clock, Shield,
+  FileText, Trash2, ChevronRight, ChevronDown, Info
 } from 'lucide-react';
+import { Dropdown } from '../shared/Dropdown';
 
 export function PreferencesTab() {
   // Accordion state
@@ -337,31 +338,18 @@ export function PreferencesTab() {
               </div>
             </div>
           </div>
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              style={{
-                border: '1px solid var(--border-light)',
-                borderRadius: '8px',
-                padding: '8px 36px 8px 16px',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: 'var(--text-main)',
-                outline: 'none',
-                backgroundColor: 'var(--bg-card)',
-                cursor: 'pointer',
-                appearance: 'none',
-                minWidth: '180px'
-              }}
-            >
-              <option value="en">English (US)</option>
-              <option value="es">Spanish</option>
-              <option value="fr">French</option>
-              <option value="de">German</option>
-            </select>
-            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', color: 'var(--text-muted)', pointerEvents: 'none' }} />
-          </div>
+          <Dropdown
+            variant="rect"
+            width="180px"
+            value={language}
+            onChange={setLanguage}
+            options={[
+              { value: 'en', label: 'English (US)' },
+              { value: 'es', label: 'Spanish' },
+              { value: 'fr', label: 'French' },
+              { value: 'de', label: 'German' },
+            ]}
+          />
         </div>
 
       </div>
@@ -401,31 +389,18 @@ export function PreferencesTab() {
               </div>
             </div>
           </div>
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <select
-              value={timezone}
-              onChange={(e) => setTimezone(e.target.value)}
-              style={{
-                border: '1px solid var(--border-light)',
-                borderRadius: '8px',
-                padding: '8px 36px 8px 16px',
-                fontSize: '13px',
-                fontWeight: 500,
-                color: 'var(--text-main)',
-                outline: 'none',
-                backgroundColor: 'var(--bg-card)',
-                cursor: 'pointer',
-                appearance: 'none',
-                minWidth: '240px'
-              }}
-            >
-              <option value="kolkata">(GMT+05:30) Asia/Kolkata</option>
-              <option value="utc">(GMT+00:00) UTC</option>
-              <option value="pst">(GMT-08:00) Pacific Standard Time</option>
-              <option value="est">(GMT-05:00) Eastern Standard Time</option>
-            </select>
-            <ChevronDown size={14} style={{ position: 'absolute', right: '12px', color: 'var(--text-muted)', pointerEvents: 'none' }} />
-          </div>
+          <Dropdown
+            variant="rect"
+            width="240px"
+            value={timezone}
+            onChange={setTimezone}
+            options={[
+              { value: 'kolkata', label: '(GMT+05:30) Asia/Kolkata' },
+              { value: 'utc', label: '(GMT+00:00) UTC' },
+              { value: 'pst', label: '(GMT-08:00) Pacific Standard Time' },
+              { value: 'est', label: '(GMT-05:00) Eastern Standard Time' },
+            ]}
+          />
         </div>
 
       </div>

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { URMProvider, URMViewerRaw, useURMContext } from 'dts-universal-report-module';
 import { isValidName } from '../AccountSettings/nameValidation';
 import { isValidPhone } from '../AccountSettings/phoneValidation';
+import { Dropdown } from '../shared/Dropdown';
 
 const REPORT_ID = 'users-report';
 
@@ -268,96 +269,31 @@ export function ReportsPage() {
               {/* Department */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Department</label>
-                <select 
-                  value={department}
-                  onChange={(e) => setDepartment(e.target.value)}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                >
-                  {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-                </select>
+                <Dropdown variant="rect" value={department} onChange={setDepartment} options={DEPARTMENTS} />
               </div>
 
               {/* Role */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Role</label>
-                <select 
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                >
-                  {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
+                <Dropdown variant="rect" value={role} onChange={setRole} options={ROLES} />
               </div>
 
               {/* Status */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Status</label>
-                <select 
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                >
-                  {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                <Dropdown variant="rect" value={status} onChange={setStatus} options={STATUSES} />
               </div>
 
               {/* Title */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Title</label>
-                <select 
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                >
-                  {TITLES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
+                <Dropdown variant="rect" value={title} onChange={setTitle} options={TITLES} />
               </div>
 
               {/* Territory */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Territory</label>
-                <select 
-                  value={territory}
-                  onChange={(e) => setTerritory(e.target.value)}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                >
-                  {TERRITORIES.map(t => <option key={t} value={t}>{t}</option>)}
-                </select>
+                <Dropdown variant="rect" value={territory} onChange={setTerritory} options={TERRITORIES} />
               </div>
 
               {/* Continent */}
