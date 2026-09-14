@@ -192,17 +192,18 @@ export function GlobalSettingsWorkspace({
 
   // Global Settings chrome text (title / tab label / card titles / field labels /
   // dropzone microcopy) follows Theme Studio's heading scale + a colour priority:
-  // that heading level's own colour (h1Color..h6Color from the Colour Panel) ->
-  // brand primary/secondary -> CSS default. Size/weight reuse the same --h{n}-size/
-  // -weight vars theme-bridge.tsx already syncs from Theme Studio, so both light and
-  // dark mode just work (those vars are theme-mode-aware already).
+  // that heading level's own colour (h1Color..h6Color from the Colour Panel) -> mode-aware
+  // text colour (--text-main / --text-secondary). .gs-config-card's background tracks
+  // light/dark mode (var(--bg-card)), so a fixed colour breaks contrast in whichever mode
+  // it wasn't tuned for — only an explicit per-heading override should be fixed. Size/weight
+  // reuse the same --h{n}-size/-weight vars theme-bridge.tsx already syncs from Theme
+  // Studio, so both light and dark mode just work (those vars are theme-mode-aware already).
   const headingStyle = (level: 1 | 2 | 3 | 4 | 5 | 6, fallback: 'primary' | 'secondary' = 'primary'): React.CSSProperties => ({
     fontSize: `var(--h${level}-size)`,
     fontWeight: `var(--h${level}-weight)` as React.CSSProperties['fontWeight'],
     fontFamily: 'var(--app-heading-family)',
     color: (studioSettings as Record<string, string>)[`h${level}Color`]
-      || (fallback === 'secondary' ? studioSettings.secondaryHex : studioSettings.primaryHex)
-      || 'var(--text-main)',
+      || (fallback === 'secondary' ? 'var(--text-secondary)' : 'var(--text-main)'),
   });
 
   // Local form states (Header Config)
@@ -322,7 +323,7 @@ export function GlobalSettingsWorkspace({
   // Customer Profile Config States
   const [showCustomerProfile, setShowCustomerProfile] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerProfile');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerName, setCustomerName] = useState(() => {
     return localStorage.getItem('gs_customerName') || 'Default Customer';
@@ -742,7 +743,7 @@ export function GlobalSettingsWorkspace({
           )}
           <div className="gs-header">
             <div className="gs-header-left">
-              <h2 style={{ ...headingStyle(2), letterSpacing: '-0.3px' }}>Global Settings</h2>
+              <h2 style={{ ...headingStyle(2), letterSpacing: '-0.3px', color: '#ffffff' }}>Global Settings</h2>
             </div>
             <div className="gs-header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
