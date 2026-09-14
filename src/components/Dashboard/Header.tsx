@@ -49,7 +49,7 @@ export function Header({
   onSettingsClick,
   headerConfig,
   isEditing = false,
-  showCustomerProfile = true,
+  showCustomerProfile = false,
   customerName = 'Default Customer',
   customerNameStyle = 'h1',
   customerNameColor = '',

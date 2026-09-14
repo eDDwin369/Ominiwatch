@@ -323,7 +323,7 @@ export function GlobalSettingsWorkspace({
   // Customer Profile Config States
   const [showCustomerProfile, setShowCustomerProfile] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerProfile');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerName, setCustomerName] = useState(() => {
     return localStorage.getItem('gs_customerName') || 'Default Customer';
