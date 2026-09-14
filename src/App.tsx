@@ -418,13 +418,13 @@ function App() {
                           transition: 'color 0.05s'
                         }}
                         onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                        onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
                       >
                         Forgot password?
                       </a>
                       <div 
                         title="Please contact admin@oomnieye.com" 
-                        style={{ display: 'flex', alignItems: 'center', cursor: 'help', color: 'var(--text-secondary)' }}
+                        style={{ display: 'flex', alignItems: 'center', cursor: 'help', color: 'rgba(255, 255, 255, 0.6)' }}
                       >
                         <Headset size={14} />
                       </div>
