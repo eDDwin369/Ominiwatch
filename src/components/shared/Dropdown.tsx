@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 import './Dropdown.css';
 
@@ -25,30 +26,63 @@ interface DropdownProps {
 // rounded H1/weight control from Global Settings (Figma: closed = gradient pill, open = list
 // with the selected row still shown as the pill, siblings plain). 'rect' variant keeps the
 // existing chevron-box look used by form/preference selects.
+//
+// The open menu is portaled to document.body: several hosts (e.g. Global Settings' modal)
+// wrap this in `overflow: hidden` ancestors for a fixed-size, no-scroll layout, which clips
+// an absolutely-positioned menu no matter how high its z-index is. Portaling + `position:
+// fixed` sized from the trigger's own bounding rect sidesteps that clipping entirely.
 export function Dropdown({ value, onChange, options, variant = 'rect', width, title, className, editable }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
+  const [menuRect, setMenuRect] = useState<{ left: number; width: number; top?: number; bottom?: number } | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const opts: DropdownOption[] = options.map((o) => (typeof o === 'string' ? { value: o, label: o } : o));
   const selected = opts.find((o) => o.value === value);
 
+  const measure = () => {
+    const root = rootRef.current;
+    if (!root) return;
+    const rect = root.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const openUpward = spaceBelow < 220 && rect.top > spaceBelow;
+    // Menu is at least 65px wide even when the trigger itself is narrower (the
+    // weight pill is ~46-64px, too cramped for a comfortable option list).
+    const menuWidth = Math.max(rect.width, 65);
+    setMenuRect({
+      left: rect.left,
+      width: menuWidth,
+      ...(openUpward ? { bottom: window.innerHeight - rect.top + 6 } : { top: rect.bottom + 6 }),
+    });
+  };
+
   useEffect(() => {
     if (!open) return;
+    measure();
     const onDocMouseDown = (e: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      setOpen(false);
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
     };
+    const onReposition = () => measure();
     document.addEventListener('mousedown', onDocMouseDown);
     document.addEventListener('keydown', onKeyDown);
+    window.addEventListener('resize', onReposition);
+    window.addEventListener('scroll', onReposition, true);
     return () => {
       document.removeEventListener('mousedown', onDocMouseDown);
       document.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('resize', onReposition);
+      window.removeEventListener('scroll', onReposition, true);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const commitDraft = () => {
@@ -92,8 +126,13 @@ export function Dropdown({ value, onChange, options, variant = 'rect', width, ti
         </button>
       )}
 
-      {open && (
-        <div className="gs-dd-menu" role="listbox">
+      {open && menuRect && createPortal(
+        <div
+          ref={menuRef}
+          className="gs-dd-menu"
+          role="listbox"
+          style={{ position: 'fixed', left: menuRect.left, width: menuRect.width, top: menuRect.top, bottom: menuRect.bottom }}
+        >
           {opts.map((o) => (
             <button
               type="button"
@@ -109,7 +148,8 @@ export function Dropdown({ value, onChange, options, variant = 'rect', width, ti
               {o.label}
             </button>
           ))}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

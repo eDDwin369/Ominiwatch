@@ -405,7 +405,7 @@ input, button, select, textarea, span, p, div, label, a {
 .input-icon {
   position: absolute;
   left: 1rem;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.55);
   pointer-events: none;
 }
 
@@ -442,7 +442,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .form-input::placeholder {
-  color: rgba(148, 163, 184, 0.5);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .password-toggle {
@@ -450,7 +450,7 @@ input, button, select, textarea, span, p, div, label, a {
   right: 1rem;
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
   padding: var(--spacing-1);
   display: flex;
@@ -460,7 +460,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .password-toggle:hover {
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .form-options {
@@ -486,14 +486,14 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .forgot-password {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.05s ease;
 }
 
 .forgot-password:hover {
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .submit-btn {

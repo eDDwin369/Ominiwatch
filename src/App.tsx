@@ -389,7 +389,7 @@ function App() {
                       style={{
                         fontSize: 'var(--font-size-caption)',
                         fontWeight: 400,
-                        color: 'var(--text-secondary)'
+                        color: 'rgba(255, 255, 255, 0.6)'
                       }}
                     >
                       <input 
