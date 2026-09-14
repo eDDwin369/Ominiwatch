@@ -30,6 +30,7 @@ interface GlobalSettingsWorkspaceProps {
     headerBgColor?: string;
   };
   onSaveConfig: (config: any) => void;
+  onPreviewConfig: (config: any) => void;
   sidebarAutoHide: boolean;
   setSidebarAutoHide: (val: boolean) => void;
   sidebarExpandedWidth: number;
@@ -164,9 +165,10 @@ const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: 
 };
 
 export function GlobalSettingsWorkspace({ 
-  onClose, 
-  headerConfig, 
+  onClose,
+  headerConfig,
   onSaveConfig,
+  onPreviewConfig,
   sidebarAutoHide,
   setSidebarAutoHide,
   sidebarExpandedWidth,
@@ -278,16 +280,33 @@ export function GlobalSettingsWorkspace({
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
 
-  // Close modal — draft state (unsaved edits) is discarded with the component,
-  // nothing was pushed to the live app until handleSave ran.
+  // Close modal without saving — edits were already pushed live to the app for
+  // preview (see the useEffects below), so revert those same paths back to how
+  // things were when the modal opened before closing. Nothing was ever written
+  // to localStorage (that only happens in handleSave), so no persisted state to undo.
   const handleCancelAndClose = () => {
+    if (!isSavedRef.current) {
+      const snap = liveSnapshotRef.current;
+      onPreviewConfig(snap.header);
+      onSyncFooter(snap.footer);
+      if (onSyncCustomerProfile) onSyncCustomerProfile(snap.customer);
+      if (setSidebarColor) setSidebarColor(snap.sidebar.sidebarBg);
+      setSidebarAutoHide(snap.sidebar.autoHideSidebar);
+      setSidebarExpandedWidth(snap.sidebar.expandedWidth);
+      setSidebarCollapsedWidth(snap.sidebar.collapsedWidth);
+      setSidebarShowIcons(snap.sidebar.showIcons);
+      setSidebarShowLabels(snap.sidebar.showLabels);
+      setSidebarCollapsed(!snap.sidebar.startExpanded);
+    }
     onClose();
   };
 
-  // Header/Footer/Sidebar/Customer-Profile/Theme-Studio brand fields are all
-  // draft state here — nothing pushes to the live app (onSaveConfig, onSyncFooter,
-  // setSidebarColor, studioSet, ...) until handleSave runs, so edits only show
-  // once "Save" is clicked, not as each field changes.
+  // Header/Footer/Sidebar/Customer-Profile fields are draft state here, pushed
+  // live to the app as they change (see useEffects below) so the modal previews
+  // instantly. Only handleSave persists them (localStorage); Cancel reverts the
+  // live push back to liveSnapshotRef. Theme-Studio brand fields (appName/
+  // appTagline) stay Save-only — they're a secondary sync, not part of the
+  // header's own live preview.
 
   // Sync active settings tab with parent
   useEffect(() => {
@@ -347,6 +366,58 @@ export function GlobalSettingsWorkspace({
   const [customerLogo, setCustomerLogo] = useState(() => {
     return localStorage.getItem('gs_customerLogo') || '';
   });
+
+  // Snapshot of the live app values as they were when the modal opened — used to
+  // revert the live preview if the user cancels instead of saving.
+  const liveSnapshotRef = useRef({
+    header: { ...headerConfig },
+    footer: { footerVisible, copyrightText, footerPoweredByType, footerPoweredByText, footerPoweredByImage, footerLinks },
+    customer: {
+      showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo,
+      customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight,
+      showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor,
+    },
+    sidebar: { sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels, startExpanded },
+  });
+
+  // Live preview: push draft edits straight to the app as they change. Nothing here
+  // touches localStorage — persistence only happens in handleSave. Cancel reverts
+  // these same paths back to liveSnapshotRef below.
+  useEffect(() => {
+    onPreviewConfig({
+      logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption,
+      textColor, textColorApply, companyNameColor, companyCaptionColor,
+      companyNameStyle, companyCaptionStyle, companyNameWeight, companyCaptionWeight, headerBgColor,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption, companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle, companyNameWeight, companyCaptionWeight, headerBgColor]);
+
+  useEffect(() => {
+    onSyncFooter({ footerVisible, copyrightText, footerPoweredByType, footerPoweredByText, footerPoweredByImage, footerLinks });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [footerVisible, copyrightText, footerPoweredByType, footerPoweredByText, footerPoweredByImage, footerLinks]);
+
+  useEffect(() => {
+    if (onSyncCustomerProfile) {
+      onSyncCustomerProfile({
+        showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo,
+        customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight,
+        showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo, customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight, showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor]);
+
+  useEffect(() => {
+    if (setSidebarColor) setSidebarColor(sidebarBg);
+    setSidebarAutoHide(autoHideSidebar);
+    setSidebarExpandedWidth(expandedWidth);
+    setSidebarCollapsedWidth(collapsedWidth);
+    setSidebarShowIcons(showIcons);
+    setSidebarShowLabels(showLabels);
+    setSidebarCollapsed(!startExpanded);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels, startExpanded]);
 
   const customerLogoInputRef = useRef<HTMLInputElement>(null);
 

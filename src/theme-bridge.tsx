@@ -204,6 +204,16 @@ function syncCssVars(theme: any, settings: any) {
       ? figmaCanvasDark[settings.presetId] || darkCanvas
       : figmaCanvasLight[settings.presetId] || '#ffffff'
   );
+  // Account Settings card fill — Figma light-mode "frosted blue" card look for
+  // Corporate Blue (screenshot-verified). Other presets/dark mode keep the flat
+  // --bg-card so this stays scoped to what's actually confirmed.
+  const figmaAccountCardLight: Record<string, string> = {
+    corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
+  };
+  set(
+    '--account-card-bg',
+    settings.mode === 'dark' ? p.background.paper : figmaAccountCardLight[settings.presetId] || p.background.paper
+  );
   // Hero "Brand" gradient text — Emerald's and Indigo's Figma stops differ from raw
   // primary/secondary in light mode.
   const figmaBrandGradient: Record<string, { light: string; dark: string }> = {

@@ -193,6 +193,12 @@ export function Dashboard({
     };
   });
 
+  // Live-only, no localStorage write — used while Global Settings is open so
+  // header edits preview immediately without persisting until Save.
+  const handlePreviewHeaderConfig = (newConfig: any) => {
+    setHeaderConfig(newConfig);
+  };
+
   const handleSaveHeaderConfig = (newConfig: any) => {
     setHeaderConfig(newConfig);
     localStorage.setItem('headerConfig', JSON.stringify(newConfig));
@@ -454,6 +460,7 @@ export function Dashboard({
           onClose={() => setIsGlobalSettingsOpen(false)} 
           headerConfig={headerConfig}
           onSaveConfig={handleSaveHeaderConfig}
+          onPreviewConfig={handlePreviewHeaderConfig}
           sidebarAutoHide={sidebarAutoHide}
           setSidebarAutoHide={setSidebarAutoHide}
           sidebarExpandedWidth={sidebarExpandedWidth}
