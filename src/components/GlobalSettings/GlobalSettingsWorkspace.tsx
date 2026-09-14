@@ -39,8 +39,6 @@ interface GlobalSettingsWorkspaceProps {
   setSidebarCollapsedWidth: (val: number) => void;
   sidebarShowIcons: boolean;
   setSidebarShowIcons: (val: boolean) => void;
-  sidebarShowLabels: boolean;
-  setSidebarShowLabels: (val: boolean) => void;
   sidebarColor?: string;
   setSidebarColor?: (val: string) => void;
   onSyncFooter: (footerData: any) => void;
@@ -177,8 +175,6 @@ export function GlobalSettingsWorkspace({
   setSidebarCollapsedWidth,
   sidebarShowIcons,
   setSidebarShowIcons,
-  sidebarShowLabels,
-  setSidebarShowLabels,
   sidebarColor = '',
   setSidebarColor,
   onSyncFooter,
@@ -275,7 +271,6 @@ export function GlobalSettingsWorkspace({
   const [expandedWidth, setExpandedWidth] = useState(sidebarExpandedWidth);
   const [collapsedWidth, setCollapsedWidth] = useState(sidebarCollapsedWidth);
   const [showIcons, setShowIcons] = useState(sidebarShowIcons);
-  const [showLabels, setShowLabels] = useState(sidebarShowLabels);
 
   // Track if changes have been saved to avoid reverting on close
   const isSavedRef = useRef(false);
@@ -295,7 +290,6 @@ export function GlobalSettingsWorkspace({
       setSidebarExpandedWidth(snap.sidebar.expandedWidth);
       setSidebarCollapsedWidth(snap.sidebar.collapsedWidth);
       setSidebarShowIcons(snap.sidebar.showIcons);
-      setSidebarShowLabels(snap.sidebar.showLabels);
       setSidebarCollapsed(!snap.sidebar.startExpanded);
     }
     onClose();
@@ -377,7 +371,7 @@ export function GlobalSettingsWorkspace({
       customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight,
       showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor,
     },
-    sidebar: { sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels, startExpanded },
+    sidebar: { sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, startExpanded },
   });
 
   // Live preview: push draft edits straight to the app as they change. Nothing here
@@ -414,10 +408,9 @@ export function GlobalSettingsWorkspace({
     setSidebarExpandedWidth(expandedWidth);
     setSidebarCollapsedWidth(collapsedWidth);
     setSidebarShowIcons(showIcons);
-    setSidebarShowLabels(showLabels);
     setSidebarCollapsed(!startExpanded);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, showLabels, startExpanded]);
+  }, [sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, startExpanded]);
 
   const customerLogoInputRef = useRef<HTMLInputElement>(null);
 
@@ -554,7 +547,6 @@ export function GlobalSettingsWorkspace({
     localStorage.setItem('gs_expandedWidth', JSON.stringify(expandedWidth));
     localStorage.setItem('gs_collapsedWidth', JSON.stringify(collapsedWidth));
     localStorage.setItem('gs_showIcons', JSON.stringify(showIcons));
-    localStorage.setItem('gs_showLabels', JSON.stringify(showLabels));
     localStorage.setItem('gs_sidebarColor', sidebarBg);
     localStorage.setItem('gs_companyNameWeight', companyNameWeight);
     localStorage.setItem('gs_companyCaptionWeight', companyCaptionWeight);
@@ -564,7 +556,6 @@ export function GlobalSettingsWorkspace({
     setSidebarExpandedWidth(expandedWidth);
     setSidebarCollapsedWidth(collapsedWidth);
     setSidebarShowIcons(showIcons);
-    setSidebarShowLabels(showLabels);
 
     // Sync Footer real-time to Dashboard state
     onSyncFooter({
@@ -1266,8 +1257,8 @@ export function GlobalSettingsWorkspace({
                   </div>
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar. At least one of Show Icons or Show Labels must stay on, or the menu would be invisible." /></span>
-                    <AppleToggle checked={showIcons} onChange={(v) => { if (v || showLabels) setShowIcons(v); }} />
+                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar." /></span>
+                    <AppleToggle checked={showIcons} onChange={setShowIcons} />
                   </div>
                 </div>
 
