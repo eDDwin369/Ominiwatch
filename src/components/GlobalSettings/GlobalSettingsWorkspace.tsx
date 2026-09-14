@@ -908,7 +908,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <Dropdown variant="pill" width="58px" value={companyNameStyle} onChange={setCompanyNameStyle} options={GS_STYLE_OPTIONS} />
 
-                        <Dropdown variant="pill" width="64px" value={companyNameWeight} onChange={setCompanyNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
+                        <Dropdown variant="pill" width="64px" value={companyNameWeight} onChange={setCompanyNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
                           <div
@@ -951,7 +951,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <Dropdown variant="pill" width="58px" value={companyCaptionStyle} onChange={setCompanyCaptionStyle} options={GS_STYLE_OPTIONS} />
 
-                        <Dropdown variant="pill" width="64px" value={companyCaptionWeight} onChange={setCompanyCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
+                        <Dropdown variant="pill" width="64px" value={companyCaptionWeight} onChange={setCompanyCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
                           <div
@@ -1428,7 +1428,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <Dropdown variant="pill" width="58px" value={customerNameStyle} onChange={setCustomerNameStyle} options={GS_STYLE_OPTIONS} />
 
-                        <Dropdown variant="pill" width="64px" value={customerNameWeight} onChange={setCustomerNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
+                        <Dropdown variant="pill" width="64px" value={customerNameWeight} onChange={setCustomerNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
                           <div
@@ -1471,7 +1471,7 @@ export function GlobalSettingsWorkspace({
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
                         <Dropdown variant="pill" width="58px" value={customerCaptionStyle} onChange={setCustomerCaptionStyle} options={GS_STYLE_OPTIONS} />
 
-                        <Dropdown variant="pill" width="64px" value={customerCaptionWeight} onChange={setCustomerCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" />
+                        <Dropdown variant="pill" width="64px" value={customerCaptionWeight} onChange={setCustomerCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
                           <div

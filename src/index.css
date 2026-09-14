@@ -350,7 +350,7 @@ input, button, select, textarea, span, p, div, label, a {
 .outer-auth-card {
   width: 100%;
   max-width: var(--login-card-w, 360px);
-  background: radial-gradient(ellipse 120% 70% at 50% 115%, rgba(37, 99, 235, 0.55) 0%, rgba(10, 14, 30, 0.92) 45%, #0b0f1e 100%);
+  background: linear-gradient(180deg, #070E28 0%, #002061 50%, #111111 100%);
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
   border: var(--card-border, 1px solid var(--border-subtle));
@@ -405,43 +405,44 @@ input, button, select, textarea, span, p, div, label, a {
 .input-icon {
   position: absolute;
   left: 1rem;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.55);
   pointer-events: none;
 }
 
 .form-input {
   width: 100%;
-  background: var(--input-bg);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 0.65rem var(--spacing-4) 0.65rem 2.75rem;
-  color: var(--text-primary);
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+  padding: 0.85rem var(--spacing-4) 0.85rem 2.75rem;
+  color: #ffffff;
   font-family: var(--app-font-family);
   font-size: 0.9rem;
   transition: all 0.05s ease;
   outline: none;
 }
 
-/* Fix browser autofill background color */
+/* Fix browser autofill background color — fixed dark, matches the card being
+   the same in light and dark mode. */
 .form-input:-webkit-autofill,
-.form-input:-webkit-autofill:hover, 
-.form-input:-webkit-autofill:focus, 
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus,
 .form-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
-  -webkit-text-fill-color: var(--text-primary) !important;
+  -webkit-box-shadow: 0 0 0 30px #0a0a0a inset !important;
+  -webkit-text-fill-color: #ffffff !important;
   transition: background-color 5000s ease-in-out 0s;
-  caret-color: var(--text-primary);
+  caret-color: #ffffff;
 }
 
 .form-input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 4px var(--accent-glow);
-  background: var(--bg-surface);
+  background: rgba(0, 0, 0, 0.65);
 }
 
 .form-input::placeholder {
-  color: rgba(148, 163, 184, 0.5);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .password-toggle {
@@ -449,7 +450,7 @@ input, button, select, textarea, span, p, div, label, a {
   right: 1rem;
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.55);
   cursor: pointer;
   padding: var(--spacing-1);
   display: flex;
@@ -459,7 +460,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .password-toggle:hover {
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .form-options {
@@ -485,26 +486,27 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .forgot-password {
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.6);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.05s ease;
 }
 
 .forgot-password:hover {
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .submit-btn {
   width: 100%;
-  background: var(--btn-color);
-  color: var(--btn-text);
-  border: none;
-  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
   padding: var(--spacing-3);
   font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: var(--btn-case);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.05s ease;
   display: flex;
@@ -514,9 +516,8 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .submit-btn:hover {
-  background: var(--accent-hover);
+  background: rgba(255, 255, 255, 0.14);
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px -10px var(--accent);
 }
 
 .submit-btn:active {
@@ -984,7 +985,7 @@ input, button, select, textarea, span, p, div, label, a {
 
 .login-container.layout-centered .outer-auth-card {
   box-shadow: var(--card-shadow, 0 24px 60px rgba(0,0,0,0.35));
-  background: radial-gradient(ellipse 120% 70% at 50% 115%, rgba(37, 99, 235, 0.55) 0%, rgba(10, 14, 30, 0.92) 45%, #0b0f1e 100%);
+  background: linear-gradient(180deg, #070E28 0%, #002061 50%, #111111 100%);
 }
 
 
