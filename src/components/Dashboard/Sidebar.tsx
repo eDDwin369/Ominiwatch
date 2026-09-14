@@ -24,7 +24,6 @@ interface SidebarProps {
   setIsVisible: (visible: boolean) => void;
   autoHideSidebar: boolean;
   showIcons: boolean;
-  showLabels: boolean;
   isEditing?: boolean;
 }
 
@@ -40,7 +39,6 @@ export function Sidebar({
   setIsVisible,
   autoHideSidebar,
   showIcons,
-  showLabels,
   isEditing = false
 }: SidebarProps) {
 
@@ -190,13 +188,6 @@ export function Sidebar({
       <style>{`
         ${(!isSidebarCollapsed && !showIcons) ? `
           .dash-sidebar:not(.collapsed) .nav-icon {
-            display: none !important;
-          }
-        ` : ''}
-        ${(!isSidebarCollapsed && !showLabels) ? `
-          .dash-sidebar:not(.collapsed) .nav-label,
-          .dash-sidebar:not(.collapsed) .nav-section-title,
-          .dash-sidebar:not(.collapsed) .nav-divider {
             display: none !important;
           }
         ` : ''}

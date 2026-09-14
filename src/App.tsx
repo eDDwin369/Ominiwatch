@@ -83,15 +83,6 @@ function App() {
     }
   });
 
-  const [sidebarShowLabels, setSidebarShowLabels] = useState(() => {
-    try {
-      const saved = localStorage.getItem('gs_showLabels');
-      return saved !== null ? JSON.parse(saved) : true;
-    } catch {
-      return true;
-    }
-  });
-
   const handleSetSidebarExpandedWidth = (val: number) => {
     setSidebarExpandedWidth(val);
     localStorage.setItem('gs_expandedWidth', JSON.stringify(val));
@@ -105,11 +96,6 @@ function App() {
   const handleSetSidebarShowIcons = (val: boolean) => {
     setSidebarShowIcons(val);
     localStorage.setItem('gs_showIcons', JSON.stringify(val));
-  };
-
-  const handleSetSidebarShowLabels = (val: boolean) => {
-    setSidebarShowLabels(val);
-    localStorage.setItem('gs_showLabels', JSON.stringify(val));
   };
 
   const handleSetSidebarCollapsed = (val: boolean) => {
@@ -334,8 +320,6 @@ function App() {
         setSidebarCollapsedWidth={handleSetSidebarCollapsedWidth}
         sidebarShowIcons={sidebarShowIcons}
         setSidebarShowIcons={handleSetSidebarShowIcons}
-        sidebarShowLabels={sidebarShowLabels}
-        setSidebarShowLabels={handleSetSidebarShowLabels}
       />
     );
   }

@@ -32,8 +32,6 @@ interface DashboardProps {
   setSidebarCollapsedWidth: (val: number) => void;
   sidebarShowIcons: boolean;
   setSidebarShowIcons: (val: boolean) => void;
-  sidebarShowLabels: boolean;
-  setSidebarShowLabels: (val: boolean) => void;
 }
 
 export function Dashboard({ 
@@ -51,9 +49,7 @@ export function Dashboard({
   sidebarCollapsedWidth,
   setSidebarCollapsedWidth,
   sidebarShowIcons,
-  setSidebarShowIcons,
-  sidebarShowLabels,
-  setSidebarShowLabels
+  setSidebarShowIcons
 }: DashboardProps) {
   const [currentView, setCurrentView] = useState('overview');
   const [isThemeStudioOpen, setIsThemeStudioOpen] = useState(false);
@@ -331,7 +327,6 @@ export function Dashboard({
           setIsVisible={setIsVisible}
           autoHideSidebar={sidebarAutoHide}
           showIcons={sidebarShowIcons}
-          showLabels={sidebarShowLabels}
           isEditing={isGlobalSettingsOpen && activeSettingsTab === 'sidebar'}
         />
         
@@ -469,8 +464,6 @@ export function Dashboard({
           setSidebarCollapsedWidth={setSidebarCollapsedWidth}
           sidebarShowIcons={sidebarShowIcons}
           setSidebarShowIcons={setSidebarShowIcons}
-          sidebarShowLabels={sidebarShowLabels}
-          setSidebarShowLabels={setSidebarShowLabels}
           sidebarColor={sidebarColor}
           setSidebarColor={setSidebarColor}
           onSyncFooter={(footerData) => {
