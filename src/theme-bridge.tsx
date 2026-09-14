@@ -137,11 +137,12 @@ function syncCssVars(theme: any, settings: any) {
   const figmaHeaderBg: Record<string, { light: string; dark: string }> = {
     corporate: { light: '#141b3c', dark: '#141b3c' },
     emerald: { light: '#0d2a20', dark: '#041610' },
+    // Verified against pprc_darkPink / pprc_lightPink — the header bar is the same
+    // solid diagonal wash in both modes (not the dual-transparent overlay this
+    // previously assumed).
     indigo: {
-      light:
-        'linear-gradient(90deg, rgba(169,123,255,0.25) 0%, rgba(169,123,255,0) 50%, rgba(255,95,162,0) 50%, rgba(255,95,162,0.15) 100%), #0f0726',
-      dark:
-        'linear-gradient(90deg, rgba(169,123,255,0.25) 0%, rgba(169,123,255,0) 50%, rgba(255,95,162,0) 50%, rgba(255,95,162,0.15) 100%), #0f0726',
+      light: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
+      dark: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
     },
   };
   const headerPreset = figmaHeaderBg[settings.presetId];
@@ -159,6 +160,8 @@ function syncCssVars(theme: any, settings: any) {
   const figmaVideoBg: Record<string, string> = {
     corporate: '#0b1024',
     emerald: '#050505',
+    // Verified against pprc_darkPink / pprc_lightPink (same in both modes).
+    indigo: '#0b1024',
   };
   set('--dash-video-bg', figmaVideoBg[settings.presetId] || '#080a09');
   // Sidebar nav text — Figma tints inactive-item text and section labels per colour template in
@@ -192,7 +195,8 @@ function syncCssVars(theme: any, settings: any) {
   const figmaCanvasLight: Record<string, string> = {
     corporate: '#e1e6fb',
     emerald: '#ecf6f0',
-    indigo: '#e1e6fb',
+    // Verified against pprc_lightPink: plain white, not a pale-lavender tint.
+    indigo: '#ffffff',
   };
   set(
     '--dash-canvas-bg',
@@ -200,9 +204,27 @@ function syncCssVars(theme: any, settings: any) {
       ? figmaCanvasDark[settings.presetId] || darkCanvas
       : figmaCanvasLight[settings.presetId] || '#ffffff'
   );
+  // Account Settings card fill — Figma "tinted" card look, screenshot-verified per
+  // preset (light: exact swatch hexes; dark: eyeballed from the dark-mode screenshots,
+  // not swatch-exact). Other presets keep the flat --bg-card.
+  const figmaAccountCardLight: Record<string, string> = {
+    corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
+    emerald: 'linear-gradient(90deg, #97E1B2 0%, #E6E6E6 100%)',
+    indigo: 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)'
+  };
+  const figmaAccountCardDark: Record<string, string> = {
+    corporate: 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
+    emerald: 'linear-gradient(90deg, #06140e 0%, #0f3d2c 100%)',
+    indigo: 'linear-gradient(90deg, #150a24 0%, #4b2e86 100%)',
+  };
+  set(
+    '--account-card-bg',
+    settings.mode === 'dark'
+      ? figmaAccountCardDark[settings.presetId] || p.background.paper
+      : figmaAccountCardLight[settings.presetId] || p.background.paper
+  );
   // Hero "Brand" gradient text — Emerald's and Indigo's Figma stops differ from raw
-  // primary/secondary in light mode (Indigo's dark stops happen to match primary/secondary
-  // exactly, but are listed explicitly here to stay pinned to the verified Figma value).
+  // primary/secondary in light mode.
   const figmaBrandGradient: Record<string, { light: string; dark: string }> = {
     corporate: {
       // Light mode's "Brand" gradient is a deep pinned navy, not derived from primary/secondary
@@ -214,9 +236,12 @@ function syncCssVars(theme: any, settings: any) {
       light: 'linear-gradient(90deg, #01b979 0%, #d88b00 100%)',
       dark: 'linear-gradient(90deg, #2ee6a6 0%, #ffc255 100%)',
     },
+    // Verified against pprc_darkPink / pprc_lightPink: the "Brand" gradient text is
+    // the SAME literal stops in both modes (previously assumed dark mode just used
+    // raw primaryHex/secondaryHex — #a97bff/#ff5fa2 — which these exports disprove).
     indigo: {
       light: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
-      dark: 'linear-gradient(90deg, #a97bff 0%, #ff5fa2 100%)',
+      dark: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
     },
   };
   const brandPreset = figmaBrandGradient[settings.presetId];
@@ -241,6 +266,13 @@ function syncCssVars(theme: any, settings: any) {
     corporate: {
       light: 'linear-gradient(135deg, #00ddff 0%, #0c26b1 100%)',
       dark: 'linear-gradient(162deg, #22d3ee 11.886%, #126673 91.492%)',
+    },
+    // Dark verified against pixelPerfectGlobalSettings_greenDark (a flat 20% black wash
+    // stacked over the amber gradient, not a plain 2-stop). Light not yet verified — kept
+    // as the same secondary->primary formula the unpinned fallback below produces.
+    emerald: {
+      light: 'linear-gradient(135deg, #F5A524 0%, #10B981 100%)',
+      dark: 'linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(180deg, #FFC255 0%, #997433 100%)',
     },
   };
   const gsAccentPreset = figmaGsAccentGradient[settings.presetId];
@@ -273,11 +305,32 @@ function syncCssVars(theme: any, settings: any) {
   const figmaGsModalGradientDark: Record<string, string> = {
     corporate:
       'radial-gradient(circle at 50% 30%, #4f6bff 0%, #3f5adb 13.75%, #2e49b7 27.5%, #1e3892 41.25%, #0d276e 55%, #07153f 100%)',
+    // Verified against pixelPerfectGlobalSettings_greenDark — centre stop is emerald's
+    // highlightHex (#2EE6A6), not primaryHex, and it fades to a dark green (#072D20),
+    // never pure black, unlike the unpinned fallback formula below.
+    emerald:
+      'radial-gradient(circle at 50% 30%, #2EE6A6 0%, #21AB7B 27.5%, #1A8D65 41.25%, #146F4F 55%, #0D4E37 77.5%, #072D20 100%)',
+    // Not a pixel-verified Global Settings export (no such file exists for Indigo yet) —
+    // but the unpinned fallback below fades all the way to literal black, which read as a
+    // harsh black band behind the modal header (reported against pprc_darkPink). Both
+    // verified presets above never end at true black — they fade to a *dark tint of their
+    // own hue* (#07153f still reads blue, #072D20 still reads green) — so this anchors the
+    // same shape on Indigo's own verified deep-plum header tone (rgb(51,34,88)/rgb(50,20,56)
+    // from pprc_darkPink) instead of black.
+    indigo: `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 75%, #1a0f24) 27.5%, color-mix(in srgb, ${primaryHex} 55%, #1a0f24) 41.25%, color-mix(in srgb, ${primaryHex} 38%, #1a0f24) 55%, color-mix(in srgb, ${primaryHex} 18%, #1a0f24) 77.5%, #1a0f24 100%)`,
   };
+  // Same anchor idea as the Indigo entry above, generalised: mixing toward literal `black`
+  // (even at a 10% primaryHex tint) still reads as a harsh black band on wide modals once a
+  // preset has no verified export (graphite/teal/amber, or any custom colour edited in Theme
+  // Studio — editing a colour snaps presetId to 'custom', see ColourPanel's setBrand, so this
+  // fallback is actually the common path, not an edge case). Mix toward the app's own dark
+  // chrome slate (#0f172a, matches --dash-canvas-bg's dark fallback) instead of black so the
+  // edge blends with the surrounding UI rather than clipping to a visible black band.
+  const gsModalDarkAnchor = '#0f172a';
   set(
     '--gs-modal-bg-dark',
     figmaGsModalGradientDark[settings.presetId] ||
-      `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 78%, black) 13.75%, color-mix(in srgb, ${primaryHex} 57%, black) 27.5%, color-mix(in srgb, ${primaryHex} 36%, black) 41.25%, color-mix(in srgb, ${primaryHex} 16%, black) 55%, black 100%)`
+      `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 78%, ${gsModalDarkAnchor}) 13.75%, color-mix(in srgb, ${primaryHex} 57%, ${gsModalDarkAnchor}) 27.5%, color-mix(in srgb, ${primaryHex} 36%, ${gsModalDarkAnchor}) 41.25%, color-mix(in srgb, ${primaryHex} 16%, ${gsModalDarkAnchor}) 55%, color-mix(in srgb, ${primaryHex} 20%, ${gsModalDarkAnchor}) 100%)`
   );
   // Active eye-preview button — pinned border/shadow per preset; other presets fall back to
   // the existing --secondary-light / --accent-glow derived values.
@@ -292,6 +345,18 @@ function syncCssVars(theme: any, settings: any) {
     root.style.removeProperty('--gs-eye-active-border');
     root.style.removeProperty('--gs-eye-active-shadow');
   }
+  // Target-callout pointer pill (the "Editing X" beam shown while highlighting a
+  // section) — was plain CSS (primary-light -> primary-hover, unpinned) with no
+  // verified value at all. Dark verified against pixelPerfectGlobalSettings_greenDark;
+  // other presets fall back to the same primary.light -> primary.dark shape the old
+  // CSS produced, so this is a no-op for them until verified.
+  const figmaGsArrowGradient: Record<string, string> = {
+    emerald: 'linear-gradient(169deg, #28C78F 0%, #18855F 100%)',
+  };
+  set(
+    '--gs-arrow-gradient',
+    figmaGsArrowGradient[settings.presetId] || `linear-gradient(135deg, ${p.primary.light} 0%, ${p.primary.dark} 100%)`
+  );
   // Hero video-card ambient shadow — full CSS box-shadow value, explicit per-mode
   // preset value if set (Figma "Drop shadow" stack), else a primaryHex-derived glow.
   const videoShadow = isDark ? settings.videoShadowDark : settings.videoShadowLight;

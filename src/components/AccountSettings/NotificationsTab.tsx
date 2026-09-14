@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { 
+import {
   Bell, Mail, Volume2, Info, ChevronDown, ListFilter, Activity
 } from 'lucide-react';
+import { Dropdown } from '../shared/Dropdown';
 
 export function NotificationsTab() {
   // Toggle states
@@ -345,25 +346,17 @@ export function NotificationsTab() {
               </div>
             </div>
           </div>
-          <select
+          <Dropdown
+            variant="rect"
+            width="160px"
             value={frequency}
-            onChange={(e) => setFrequency(e.target.value)}
-            style={{
-              padding: '6px 12px',
-              borderRadius: '6px',
-              border: '1px solid var(--border-hover)',
-              fontSize: 'var(--font-size-13)',
-              color: 'var(--text-secondary)',
-              background: 'var(--bg-card)',
-              cursor: 'pointer',
-              outline: 'none',
-              fontWeight: 500
-            }}
-          >
-            <option value="immediate">Immediate</option>
-            <option value="daily">Daily Digest</option>
-            <option value="weekly">Weekly Summary</option>
-          </select>
+            onChange={setFrequency}
+            options={[
+              { value: 'immediate', label: 'Immediate' },
+              { value: 'daily', label: 'Daily Digest' },
+              { value: 'weekly', label: 'Weekly Summary' },
+            ]}
+          />
         </div>
 
       </div>
@@ -444,24 +437,16 @@ export function NotificationsTab() {
               </div>
             </div>
           </div>
-          <select
+          <Dropdown
+            variant="rect"
+            width="150px"
             value={dropdownLimit}
-            onChange={(e) => handleDropdownLimitChange(e.target.value)}
-            style={{
-              padding: '6px 12px',
-              borderRadius: '6px',
-              border: '1px solid var(--border-hover)',
-              fontSize: 'var(--font-size-13)',
-              color: 'var(--text-secondary)',
-              background: 'var(--bg-card)',
-              cursor: 'pointer',
-              outline: 'none',
-              fontWeight: 500
-            }}
-          >
-            <option value="5">5 Notifications</option>
-            <option value="10">10 Notifications</option>
-          </select>
+            onChange={handleDropdownLimitChange}
+            options={[
+              { value: '5', label: '5 Notifications' },
+              { value: '10', label: '10 Notifications' },
+            ]}
+          />
         </div>
 
       </div>

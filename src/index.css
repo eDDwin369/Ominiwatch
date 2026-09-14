@@ -237,7 +237,6 @@ input, button, select, textarea, span, p, div, label, a {
   flex: 7.7;
   position: relative;
   display: none;
-  background-color: var(--login-panel-color, transparent);
   background-image: var(--login-image, url('./assets/login-bg.jpg'));
   background-position: center;
   background-size: cover;
@@ -246,12 +245,12 @@ input, button, select, textarea, span, p, div, label, a {
   overflow: hidden;
 }
 
-/* login-image opacity: overlay tints the panel toward its colour as opacity drops */
+/* login-image opacity: fades the image toward transparent as opacity drops */
 .visual-panel::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: var(--login-panel-color, #0f172a);
+  background: var(--bg-dashboard, #0f172a);
   opacity: calc(1 - var(--login-img-opacity, 1));
   pointer-events: none;
   z-index: 1;
@@ -331,6 +330,7 @@ input, button, select, textarea, span, p, div, label, a {
   padding: var(--spacing-6) var(--spacing-5);
   padding-top: 8vh;
   width: 100%;
+  background-color: var(--login-panel-color, transparent);
 }
 
 @media (min-width: 768px) {
@@ -351,10 +351,10 @@ input, button, select, textarea, span, p, div, label, a {
   width: 100%;
   max-width: var(--login-card-w, 360px);
   background-color: var(--bg-card, var(--bg-surface));
-  border-radius: 24px;
+  border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  border: var(--card-border, 1px solid var(--border-subtle));
+  box-shadow: var(--card-shadow, 0 10px 30px rgba(0,0,0,0.3));
   margin: 0 auto;
   max-height: 100%;
   overflow-y: auto;
@@ -364,8 +364,8 @@ input, button, select, textarea, span, p, div, label, a {
   background-color: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: var(--card-border, 1px solid var(--border-subtle));
+  box-shadow: var(--card-shadow, 0 4px 12px rgba(0,0,0,0.15));
 }
 
 .form-header {
@@ -983,7 +983,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .login-container.layout-centered .outer-auth-card {
-  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  box-shadow: var(--card-shadow, 0 24px 60px rgba(0,0,0,0.35));
   background-color: var(--bg-card, var(--bg-surface));
 }
 

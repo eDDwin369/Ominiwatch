@@ -1,0 +1,94 @@
+.gs-dd-root {
+  position: relative;
+  display: inline-flex;
+}
+
+.gs-dd-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+}
+
+.gs-dd-trigger-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Pill variant — Global Settings H1 / weight controls */
+.gs-dd-trigger-pill {
+  width: 64px;
+  height: 30px;
+  border-radius: 15px;
+  border: 1px solid var(--gs-input-border, var(--border-light));
+  background: var(--gs-input-bg, var(--bg-card));
+  color: var(--gs-text-color, var(--text-main));
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 10px;
+  box-shadow: var(--gs-input-shadow, none);
+  justify-content: center;
+}
+
+/* Rect variant — form / preference selects */
+.gs-dd-trigger-rect {
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  min-width: 160px;
+}
+
+.gs-dd-chevron {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.gs-dd-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 40;
+  min-width: 100%;
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--card-shadow, 0 12px 32px rgba(0, 0, 0, 0.25));
+}
+
+.gs-dd-option {
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  font-size: 15px;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.gs-dd-option:hover {
+  background: var(--bg-dashboard);
+}
+
+.gs-dd-option-selected,
+.gs-dd-option-selected:hover {
+  background: var(--gs-accent-gradient, var(--primary));
+  color: #ffffff;
+  font-weight: 700;
+}

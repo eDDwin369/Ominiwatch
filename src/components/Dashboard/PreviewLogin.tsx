@@ -32,8 +32,6 @@ export function PreviewLogin() {
               {initials}
             </div>
           )}
-          <h1 className="preview-login-title">{brand.appName || 'Nexus ERP'}</h1>
-          <p className="preview-login-subtitle">{brand.appTagline || 'Run your whole business in one place'}</p>
         </div>
       </div>
       
