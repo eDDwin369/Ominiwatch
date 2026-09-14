@@ -227,7 +227,7 @@ input, button, select, textarea, span, p, div, label, a {
   display: flex;
   width: 100vw;
   height: 100vh;
-  background: var(--bg-dashboard, var(--bg-base));
+  background: radial-gradient(ellipse at 50% 0%, #101E39 0%, #090909 70%);
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -350,7 +350,7 @@ input, button, select, textarea, span, p, div, label, a {
 .outer-auth-card {
   width: 100%;
   max-width: var(--login-card-w, 360px);
-  background-color: var(--bg-card, var(--bg-surface));
+  background: radial-gradient(ellipse 120% 70% at 50% 115%, rgba(37, 99, 235, 0.55) 0%, rgba(10, 14, 30, 0.92) 45%, #0b0f1e 100%);
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
   border: var(--card-border, 1px solid var(--border-subtle));
@@ -984,7 +984,7 @@ input, button, select, textarea, span, p, div, label, a {
 
 .login-container.layout-centered .outer-auth-card {
   box-shadow: var(--card-shadow, 0 24px 60px rgba(0,0,0,0.35));
-  background-color: var(--bg-card, var(--bg-surface));
+  background: radial-gradient(ellipse 120% 70% at 50% 115%, rgba(37, 99, 235, 0.55) 0%, rgba(10, 14, 30, 0.92) 45%, #0b0f1e 100%);
 }
 
 
