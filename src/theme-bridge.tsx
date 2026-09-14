@@ -209,6 +209,8 @@ function syncCssVars(theme: any, settings: any) {
   // not swatch-exact). Other presets keep the flat --bg-card.
   const figmaAccountCardLight: Record<string, string> = {
     corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
+    emerald: 'linear-gradient(90deg, #97E1B2 0%, #E6E6E6 100%)',
+    indigo: 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)'
   };
   const figmaAccountCardDark: Record<string, string> = {
     corporate: 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
