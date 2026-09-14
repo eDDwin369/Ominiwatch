@@ -498,14 +498,15 @@ input, button, select, textarea, span, p, div, label, a {
 
 .submit-btn {
   width: 100%;
-  background: var(--btn-color);
-  color: var(--btn-text);
-  border: none;
-  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
   padding: var(--spacing-3);
   font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: var(--btn-case);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.05s ease;
   display: flex;
@@ -515,9 +516,8 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .submit-btn:hover {
-  background: var(--accent-hover);
+  background: rgba(255, 255, 255, 0.14);
   transform: translateY(-1px);
-  box-shadow: 0 10px 20px -10px var(--accent);
 }
 
 .submit-btn:active {
