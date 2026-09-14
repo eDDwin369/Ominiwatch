@@ -198,39 +198,37 @@ export function Header({
       </div>
 
       <div className="header-center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
-        {showCustomerProfile && (
-          <>
-            {/* Logo in Center */}
-            {showCustomerLogo && (customerLogo || logo) && (
-              <img className="hdr-logo-img" src={customerLogo || logo} alt="Customer Logo" />
-            )}
+        {/* Logo in Center — governed only by its own toggle, independent of the name/caption block below. */}
+        {showCustomerLogo && (customerLogo || logo) && (
+          <img className="hdr-logo-img" src={customerLogo || '/src/assets/logo-customer.png'} alt="Customer Logo" />
+        )}
 
-            {/* Text/Font in Center */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        {/* Text/Font in Center */}
+        {showCustomerProfile && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <span
+              className="hdr-brand-name"
+              style={{
+                fontSize: headingSizeVar(customerNameStyle),
+                fontWeight: customerNameWeight ? Number(customerNameWeight) : undefined,
+                color: (!customerColorFollow && customerNameColor && customerNameColor !== 'transparent') ? customerNameColor : undefined,
+              }}
+            >
+              {customerName || 'Default Customer'}
+            </span>
+            {showCustomerCaption && (
               <span
-                className="hdr-brand-name"
+                className="hdr-brand-caption"
                 style={{
-                  fontSize: headingSizeVar(customerNameStyle),
-                  fontWeight: customerNameWeight ? Number(customerNameWeight) : undefined,
-                  color: (!customerColorFollow && customerNameColor && customerNameColor !== 'transparent') ? customerNameColor : undefined,
+                  fontSize: headingSizeVar(customerCaptionStyle),
+                  fontWeight: customerCaptionWeight ? Number(customerCaptionWeight) : undefined,
+                  color: (!customerColorFollow && customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : undefined,
                 }}
               >
-                {customerName || 'Default Customer'}
+                {customerCaption || 'Digital Twin Solutions'}
               </span>
-              {showCustomerCaption && (
-                <span
-                  className="hdr-brand-caption"
-                  style={{
-                    fontSize: headingSizeVar(customerCaptionStyle),
-                    fontWeight: customerCaptionWeight ? Number(customerCaptionWeight) : undefined,
-                    color: (!customerColorFollow && customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : undefined,
-                  }}
-                >
-                  {customerCaption || 'Digital Twin Solutions'}
-                </span>
-              )}
-            </div>
-          </>
+            )}
+          </div>
         )}
       </div>
 

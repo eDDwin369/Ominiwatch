@@ -193,7 +193,7 @@ export function GlobalSettingsWorkspace({
   // Global Settings chrome text (title / tab label / card titles / field labels /
   // dropzone microcopy) follows Theme Studio's heading scale + a colour priority:
   // that heading level's own colour (h1Color..h6Color from the Colour Panel) ->
-  // brand primary/secondary -> CSS default. Size/weight reuse the same --h{n}-size/
+  // mode-aware text colour (--text-main / --text-secondary). Size/weight reuse the same --h{n}-size/
   // -weight vars theme-bridge.tsx already syncs from Theme Studio, so both light and
   // dark mode just work (those vars are theme-mode-aware already).
   const headingStyle = (level: 1 | 2 | 3 | 4 | 5 | 6, fallback: 'primary' | 'secondary' = 'primary'): React.CSSProperties => ({
@@ -201,8 +201,7 @@ export function GlobalSettingsWorkspace({
     fontWeight: `var(--h${level}-weight)` as React.CSSProperties['fontWeight'],
     fontFamily: 'var(--app-heading-family)',
     color: (studioSettings as Record<string, string>)[`h${level}Color`]
-      || (fallback === 'secondary' ? studioSettings.secondaryHex : studioSettings.primaryHex)
-      || 'var(--text-main)',
+      || (fallback === 'secondary' ? 'var(--text-secondary)' : 'var(--text-main)'),
   });
 
   // Local form states (Header Config)
