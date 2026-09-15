@@ -3,6 +3,7 @@ import { Bell, Settings, X, Camera, User, Maximize2, Minimize2, Sun, Moon } from
 import { NotificationDropdown } from '../Notifications/NotificationDropdown';
 import type { NotificationItem } from '../Notifications/types';
 import logo from '../../assets/logo.png';
+import defaultCustomerLogo from '../../assets/logo-customer.png';
 import './Dashboard.css';
 import { useThemeStore } from 'omnieye-theme-studio';
 
@@ -200,7 +201,7 @@ export function Header({
       <div className="header-center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
         {/* Logo in Center — governed only by its own toggle, independent of the name/caption block below. */}
         {showCustomerLogo && (customerLogo || logo) && (
-          <img className="hdr-logo-img" src={customerLogo || '/src/assets/logo-customer.png'} alt="Customer Logo" />
+          <img className="hdr-logo-img" src={customerLogo || defaultCustomerLogo} alt="Customer Logo" />
         )}
 
         {/* Text/Font in Center */}
