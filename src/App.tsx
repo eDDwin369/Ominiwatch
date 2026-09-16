@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, XCircle, KeyRound, Check, Info, Headset } from 'lucide-react';
 import './index.css';
 import logo from './assets/logo.png';
+import loginBg from './assets/login-bg.jpg';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { useThemeStore } from 'omnieye-theme-studio';
 
@@ -329,8 +330,11 @@ function App() {
       <div className="ambient-glow"></div>
 
       <div className={`login-container ${brand.loginLayout === 'centered' ? 'layout-centered' : ''}`}>
-        {/* Left Side - Visual Branding only image will be there no taglines */}
-        <div className="visual-panel"></div>
+        {/* Left Side - Visual Branding only image will be there no taglines.
+            backgroundImage set directly from store here (not the --login-image CSS
+            var) so it always reflects the latest Theme Studio upload, falling back
+            to the bundled default when nothing's uploaded. */}
+        <div className="visual-panel" style={{ backgroundImage: `url(${brand.loginImage || loginBg})` }}></div>
 
         {/* Right Side - Dynamic Forms */}
         <div className="form-panel">
