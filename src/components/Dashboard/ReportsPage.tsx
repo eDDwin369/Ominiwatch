@@ -139,6 +139,7 @@ export function ReportsPage() {
   };
 
   return (
+<<<<<<< HEAD
     <div 
       className="user-tab-page"
       style={{ 
@@ -169,6 +170,12 @@ export function ReportsPage() {
           flexShrink: 0
         }}
       >
+=======
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      
+      {/* Custom Button for Adding Users */}
+      <div style={{ padding: '12px 24px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)' }}>
+>>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
         <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)' }}>Users</h2>
         <button 
           onClick={() => setIsAddModalOpen(true)}
@@ -191,6 +198,7 @@ export function ReportsPage() {
         </button>
       </div>
 
+<<<<<<< HEAD
       <div 
         className="user-tab-grid-container"
         style={{ 
@@ -200,6 +208,9 @@ export function ReportsPage() {
           borderRadius: 'var(--radius-lg, 12px)'
         }}
       >
+=======
+      <div style={{ flex: 1, overflow: 'hidden' }}>
+>>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
         <URMProvider
           key={users.length}
           data={users}

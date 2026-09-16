@@ -5,23 +5,40 @@ import './PreviewLogin.css';
 export function PreviewLogin() {
   const brand = useThemeStore((s) => s.settings);
 
+<<<<<<< HEAD
   return (
     <div className={`preview-login-container dashboard-fade-in ${brand.loginLayout === 'centered' ? 'layout-centered' : ''}`}>
       {brand.loginLayout !== 'centered' && (
         <div className="preview-login-left">
           <div className="preview-login-brand">
+=======
+  const initials = brand.appName
+    ? brand.appName.split(' ').map((w: string) => w[0] || '').join('').substring(0, 2).toUpperCase()
+    : 'NE';
+
+  return (
+    <div className="preview-login-container dashboard-fade-in">
+      <div className="preview-login-left">
+        <div className="preview-login-brand">
+          {brand.logoMode === 'image' ? (
+>>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
             <img 
               src={brand.logoUrl || logo} 
               alt="Logo" 
               style={{ 
+<<<<<<< HEAD
                 maxWidth: '140px', 
                 maxHeight: '140px',
                 width: 'auto',
+=======
+                maxWidth: '120px', 
+>>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
                 height: 'auto', 
                 marginBottom: '1rem',
                 objectFit: 'contain'
               }} 
             />
+<<<<<<< HEAD
           </div>
         </div>
       )}
@@ -38,6 +55,23 @@ export function PreviewLogin() {
           <div className="preview-login-card">
             <h2 className="preview-login-card-title">Sign in</h2>
             <p className="preview-login-card-subtitle">Welcome back to {brand.appName || 'Nexus ERP'}</p>
+=======
+          ) : (
+            <div 
+              className="preview-login-logo"
+              style={{ backgroundColor: brand.iconColor || 'var(--primary)' }}
+            >
+              {initials}
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div className="preview-login-right">
+        <div className="preview-login-card">
+          <h2 className="preview-login-card-title">Sign in</h2>
+          <p className="preview-login-card-subtitle">Welcome back to {brand.appName || 'Nexus ERP'}</p>
+>>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
           
           <div className="preview-login-form">
             <div className="input-group">
@@ -57,6 +91,10 @@ export function PreviewLogin() {
         </div>
       </div>
     </div>
+<<<<<<< HEAD
   </div>
 );
+=======
+  );
+>>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }

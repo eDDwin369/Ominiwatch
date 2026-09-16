@@ -53,9 +53,12 @@
 
 .orders-card-header {
   padding: var(--spacing-5) var(--spacing-5) var(--spacing-4);
+<<<<<<< HEAD
   background: var(--card-hdr, var(--bg-card));
   border-bottom: var(--card-hdr-border, 1px solid var(--border-light));
   box-shadow: var(--card-hdr-accent, none);
+=======
+>>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 .orders-card-header h2 {
