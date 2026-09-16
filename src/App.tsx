@@ -329,18 +329,19 @@ function App() {
       <div className="ambient-glow"></div>
 
       <div className={`login-container ${brand.loginLayout === 'centered' ? 'layout-centered' : ''}`}>
-        {/* Left Side - Visual Branding */}
-        <div className="visual-panel">
-        </div>
+        {/* Left Side - Visual Branding only image will be there no taglines */}
+        <div className="visual-panel"></div>
 
         {/* Right Side - Dynamic Forms */}
         <div className="form-panel">
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <img 
-              src={brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo} 
-              alt="Logo" 
-              style={{ maxWidth: '312px', height: 'auto', objectFit: 'contain' }} 
-            />
+            {brand.logoMode === 'image' && brand.logoUrl ? (
+              // Uploaded logo is cropped to a 3.5:1 box in Theme Studio (LoginPanel) —
+              // match that aspect here instead of forcing it into a 220x220 square.
+              <img src={brand.logoUrl} alt="Logo" style={{ maxWidth: '220px', maxHeight: '63px', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+            ) : (
+              <img src={logo} alt="Logo" style={{ width: '220px', height: '220px', objectFit: 'contain' }} />
+            )}
           </div>
           <div className="outer-auth-card">
 
@@ -384,12 +385,12 @@ function App() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
-                    <label 
+                    <label
                       className="checkbox-wrapper"
                       style={{
                         fontSize: 'var(--font-size-caption)',
                         fontWeight: 400,
-                        color: 'rgba(255, 255, 255, 0.6)'
+                        color: 'rgba(148,163,184,0.7)',
                       }}
                     >
                       <input 
@@ -399,7 +400,7 @@ function App() {
                         style={{
                           width: '13px',
                           height: '13px',
-                          accentColor: 'var(--text-secondary)',
+                          color: 'rgba(148,163,184,0.7)',
                           opacity: 0.6,
                           cursor: 'pointer',
                           margin: 0
@@ -413,18 +414,16 @@ function App() {
                         onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
                         style={{
                           fontSize: 'var(--font-size-caption)',
-                          color: 'var(--text-secondary)',
+                          color: 'rgba(148,163,184,0.7)',
                           textDecoration: 'none',
                           transition: 'color 0.05s'
                         }}
-                        onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                        onMouseOut={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.6)'}
                       >
                         Forgot password?
                       </a>
-                      <div 
-                        title="Please contact admin@oomnieye.com" 
-                        style={{ display: 'flex', alignItems: 'center', cursor: 'help', color: 'rgba(255, 255, 255, 0.6)' }}
+                      <div
+                        title="Please contact admin@oomnieye.com"
+                        style={{ display: 'flex', alignItems: 'center', cursor: 'help', color: 'rgba(148,163,184,0.7)' }}
                       >
                         <Headset size={14} />
                       </div>
