@@ -1,0 +1,661 @@
+.gs-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 12, 18, 0.72);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: gsFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+[data-theme-mode="light"] .gs-overlay {
+  background: rgba(241, 245, 249, 0.4);
+}
+
+@keyframes gsFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Layout Wrapper containing Floating Left Dock + Main Window Card */
+.gs-workspace-layout {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 95vw;
+}
+
+/* Floating Left Sidebar Dock (Frame 20 in User Mockup) */
+.gs-left-dock {
+  position: relative;
+  z-index: 100;
+  width: 64px;
+  background: color-mix(in srgb, var(--bg-card) 75%, transparent) !important;
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--border-light) !important;
+  border-radius: 36px;
+  padding: 18px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  animation: gsDockIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes gsDockIn {
+  from {
+    transform: translateX(-16px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.gs-dock-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-dock-btn:hover {
+  background: var(--border-light);
+  color: var(--text-main);
+  transform: scale(1.08);
+}
+
+.gs-dock-btn.active {
+  background: var(--highlight, var(--primary));
+  color: var(--btn-text, #ffffff);
+  box-shadow: 0 8px 22px var(--highlight-hover, var(--accent-glow)), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  transform: scale(1.06);
+}
+
+/* Floating Right Hover Label Tooltip (Pops Out On Top of Main Modal) */
+.gs-dock-tooltip {
+  position: absolute;
+  left: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(15, 20, 30, 0.95);
+  color: #ffffff;
+  font-size: var(--font-size-12);
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 10px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  z-index: 99999;
+}
+
+.gs-dock-btn:hover .gs-dock-tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(2px);
+}
+
+/* VisionOS 2 Royal Blue Window Card (Matching User Screenshot 1:1) */
+.gs-modal {
+  width: 880px !important;
+  height: 520px !important;
+  max-width: 95vw !important;
+  max-height: 95vh !important;
+  background: var(--gs-modal-bg-dark, radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%)) !important;
+  backdrop-filter: blur(50px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
+  border-radius: 36px !important;
+  border: 1px solid var(--border-light) !important;
+  box-shadow: var(--card-shadow) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transform: scale(0.97) translateY(12px);
+  animation: gsModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  font-family: var(--app-font-family);
+  color: var(--text-main) !important;
+}
+
+[data-theme-mode="light"] .gs-modal {
+  background: var(--bg-dashboard) !important;
+}
+
+@keyframes gsModalIn {
+  from {
+    transform: scale(0.97) translateY(12px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Modal Header Bar */
+.gs-header {
+  height: 56px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-light) !important;
+  flex-shrink: 0;
+}
+
+[data-theme-mode="light"] .gs-header {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%) !important;
+}
+
+.gs-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gs-title-text {
+  font-size: var(--font-size-24);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+/* Segmented Control Tabs (Matching VisionOS Pill) */
+.gs-segmented-tabs {
+  display: flex;
+  background: var(--border-light) !important;
+  border-radius: 20px;
+  padding: 3px;
+  border: 1px solid var(--border-hover) !important;
+  gap: 2px;
+}
+
+.gs-tab-btn {
+  padding: 6px 18px;
+  border-radius: 16px;
+  font-size: var(--font-size-13);
+  font-weight: 600;
+  color: var(--text-secondary);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gs-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.gs-tab-btn.active {
+  background: var(--primary) !important;
+  color: var(--btn-text, #ffffff) !important;
+  box-shadow: 0 2px 8px var(--highlight-hover, var(--accent-glow)) !important;
+}
+
+/* Action Buttons (Top Right) */
+.gs-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gs-icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all 0.15s ease;
+}
+
+.gs-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* Modal Content area - FIXED SIZE, NO SCROLL */
+.gs-content-body {
+  flex: 1 !important;
+  overflow: hidden !important;
+  padding: 12px 32px 24px 32px !important;
+  background: transparent;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
+
+.gs-tab-content-container {
+  height: 100% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+/* VisionOS 2 Inner Cards Container (Matching User Mockup 1:1) */
+.gs-cards-2x2 {
+  display: grid !important;
+  grid-template-columns: 380px 380px !important;
+  gap: 24px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  height: 350px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.gs-config-card {
+  width: 380px !important;
+  height: 350px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  overflow: visible !important;
+  background: var(--bg-card) !important;
+  border: var(--card-border) !important;
+  border-radius: var(--radius-xl) !important;
+  padding: 22px 26px !important;
+  box-shadow: var(--card-shadow) !important;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Figma-exact neutral panel fill (differs from MUI's --bg-card paper in both modes). */
+[data-theme-mode="dark"] .gs-config-card {
+  background: var(--gs-card-bg-dark, var(--bg-card)) !important;
+}
+[data-theme-mode="light"] .gs-config-card {
+  background: var(--gs-card-bg-light, var(--bg-card)) !important;
+}
+
+.gs-config-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: var(--secondary) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+/* Eye Icon Button Next to Headings */
+.gs-eye-preview-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--border-light);
+  border: 1px solid var(--border-hover);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-eye-preview-btn:hover {
+  background: var(--border-hover);
+  color: var(--text-main);
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+}
+
+.gs-eye-preview-btn.active {
+  background: var(--primary) !important;
+  border-color: var(--primary-light) !important;
+  color: var(--btn-text, #ffffff) !important;
+  box-shadow: 0 0 16px var(--accent-glow) !important;
+}
+
+[data-theme-mode="dark"] .gs-eye-preview-btn.active {
+  background: var(--secondary) !important;
+  border-color: var(--gs-eye-active-border, var(--secondary-light)) !important;
+  box-shadow: 0 0 16px var(--gs-eye-active-shadow, var(--accent-glow)) !important;
+}
+
+/* Animated Glowing Spotlight Focus Box Overlay on Page Header */
+.gs-header-spotlight-box {
+  position: fixed !important;
+  z-index: 100010 !important;
+  border-radius: 12px;
+  border: 2.5px solid var(--secondary);
+  box-shadow: 0 0 30px var(--accent-glow), 0 0 0 5px rgba(59, 130, 246, 0.4), inset 0 0 20px var(--accent-glow);
+  pointer-events: none;
+  animation: gsSpotlightPulse 1.4s infinite ease-in-out;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes gsSpotlightPulse {
+  0%, 100% {
+    box-shadow: 0 0 25px var(--accent-glow), 0 0 0 3px rgba(59, 130, 246, 0.3), inset 0 0 15px rgba(59, 130, 246, 0.2);
+    border-color: var(--secondary);
+  }
+  50% {
+    box-shadow: 0 0 45px var(--accent-glow), 0 0 0 8px rgba(59, 130, 246, 0.5), inset 0 0 25px rgba(59, 130, 246, 0.4);
+    border-color: var(--primary-light, #93c5fd);
+  }
+}
+
+/* Floating Target Callout Arrow Overlay */
+.gs-target-pointer-overlay {
+  position: fixed !important;
+  z-index: 100011 !important;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-pointing-arrow-beam {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--gs-arrow-gradient, linear-gradient(135deg, var(--primary-light) 0%, var(--primary-hover, var(--primary)) 100%)) !important;
+  border: 1px solid var(--border-light) !important;
+  padding: 8px 18px;
+  border-radius: 20px;
+  color: var(--btn-text, #ffffff) !important;
+  font-size: var(--font-size-13);
+  font-weight: 700;
+  box-shadow: 0 10px 30px var(--accent-glow) !important;
+}
+
+.gs-arrow-icon {
+  font-size: var(--font-size-20);
+  color: var(--primary-light, #ffffff) !important;
+  animation: arrowPointMotion 1.2s infinite ease-in-out;
+}
+
+@keyframes pointerArrowPulse {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes arrowPointMotion {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-3px, -3px);
+  }
+}
+
+.gs-card-blue,
+.gs-card-green,
+.gs-card-teal,
+.gs-card-orange,
+.gs-card-red,
+.gs-card-tint-1,
+.gs-card-tint-2,
+.gs-card-tint-3 {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+/* Sticky Footer */
+.gs-footer {
+  background: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.gs-btn-cancel {
+  background: rgba(38, 40, 48, 0.95);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 32px;
+  border-radius: 9999px;
+  font-size: var(--font-size-14-5);
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.gs-btn-save {
+  background: var(--gs-save-bg, var(--secondary));
+  color: #ffffff;
+  border: none;
+  padding: 12px 36px;
+  border-radius: 9999px;
+  font-size: var(--font-size-14-5);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 24px var(--gs-save-shadow, rgba(0, 240, 255, 0.35));
+}
+
+.gs-btn-save:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 32px var(--gs-save-shadow, rgba(0, 240, 255, 0.48));
+}
+
+/* VisionOS Glass Dropzone & Inputs */
+.gs-iphone-dropzone {
+  border: 1.5px dashed var(--border-hover) !important;
+  border-radius: 24px !important;
+  background: var(--bg-dashboard) !important;
+  padding: 24px 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05) !important;
+}
+
+.gs-iphone-dropzone:hover {
+  border-color: var(--secondary) !important;
+  background: color-mix(in srgb, var(--secondary) 8%, transparent) !important;
+  transform: translateY(-1px);
+}
+
+.gs-iphone-orb-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--gs-accent-gradient, var(--secondary));
+  box-shadow: 0 8px 20px var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gs-iphone-orb-btn svg {
+  color: #ffffff !important;
+}
+
+.gs-iphone-dropzone:hover .gs-iphone-orb-btn {
+  transform: scale(1.06);
+}
+
+/* Uploaded file preview card */
+.gs-iphone-file-card {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: var(--bg-dashboard) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: var(--radius-lg) !important;
+  padding: 8px 12px !important;
+  margin-top: 4px !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.gs-iphone-file-remove-btn {
+  background: var(--border-light) !important;
+  color: var(--text-main) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 22px !important;
+  height: 22px !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  transition: all 0.15s ease !important;
+}
+
+.gs-iphone-file-remove-btn:hover {
+  background: #fee2e2 !important;
+  color: #ef4444 !important;
+}
+
+/* Form Controls Theme */
+.gs-modal input[type="text"]:not(.gs-underline-input),
+.gs-modal select:not(.gs-pill-select) {
+  background: var(--bg-dashboard) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-main) !important;
+  border-radius: 12px;
+}
+
+/* Explicit Single Underline Input Line Style */
+.gs-modal input[type="text"].gs-underline-input {
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1.5px solid var(--gs-underline-border, var(--border-hover)) !important;
+  border-radius: 0 !important;
+  color: var(--text-main) !important;
+  font-size: var(--font-size-18) !important;
+  padding: 4px 0 10px 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  /* Verified against pixelPerfectGlobalSettings_greenDark: the editable value text uses
+     Inter, distinct from the Roboto labels/titles around it (--app-font-family). Already
+     loaded (index.css imports Inter 400/500/600). */
+  font-family: 'Inter', var(--app-font-family) !important;
+  transition: border-bottom-color 0.2s ease !important;
+}
+
+.gs-modal input[type="text"].gs-underline-input:focus {
+  border-bottom-color: var(--secondary) !important;
+}
+
+.gs-modal input[type="text"].gs-underline-input::placeholder {
+  color: var(--text-muted) !important;
+}
+
+.gs-modal span,
+.gs-modal label {
+  color: var(--text-main) !important;
+}
+
+/* Apple Toggle Switch styles */
+.gs-apple-toggle {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  border-radius: 14px;
+  background: var(--border-hover);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.gs-apple-toggle.checked {
+  background: var(--gs-accent-gradient, var(--secondary));
+  box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.gs-apple-toggle-thumb {
+  position: absolute;
+  left: 3px;
+  width: 21px;
+  height: 21px;
+  background-color: var(--bg-card);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: left 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-apple-toggle.checked .gs-apple-toggle-thumb {
+  left: 24px;
+}
+
+@keyframes gsToastSlideIn {
+  from {
+    transform: translate(-50%, -16px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+/* Header buttons cancel/save overrides — Figma uses the same dark neutral pill for Cancel in
+   both modes (not theme-derived), unlike Save which does switch (see below/dark override). */
+.gs-top-btn-cancel {
+  background: rgba(38, 40, 48, 0.95) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.gs-top-btn-save {
+  background: var(--primary) !important;
+  color: var(--btn-text, #ffffff) !important;
+  border: none !important;
+  box-shadow: 0 4px 14px var(--accent-glow) !important;
+}
+
+.gs-top-btn-cancel:hover,
+.gs-top-btn-save:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+[data-theme-mode="dark"] .gs-top-btn-save {
+  background: var(--secondary) !important;
+  box-shadow: 0px 4px 7px var(--gs-save-shadow, var(--accent-glow)) !important;
+}

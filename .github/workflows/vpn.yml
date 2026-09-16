@@ -1,0 +1,31 @@
+name: vpn
+
+env:
+  IMAGE_NAME: base-application
+  HELM_REPO: Digital-Twin-Operations/helm-charts
+  HELM_CHART: base-application
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - stage
+  workflow_dispatch:
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Tailscale
+        uses: tailscale/github-action@v4
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+          ping: 100.93.66.114
+
+      - name: Check remote service
+        run: curl -sf --max-time 10 http://100.93.66.114:5001

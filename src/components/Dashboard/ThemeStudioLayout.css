@@ -1,0 +1,133 @@
+.ts-layout-wrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: var(--bg-dashboard);
+}
+
+.ts-layout-preview-area {
+  flex-grow: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+}
+
+.ts-layout-mock-window {
+  width: 100%;
+  height: 100%;
+  background: var(--bg-dashboard);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ts-layout-mock-header {
+  height: 60px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+
+.ts-layout-mock-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ts-layout-mock-logo {
+  width: 32px;
+  height: 32px;
+  background: var(--primary);
+  color: var(--on-accent);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.ts-layout-mock-title {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 16px;
+}
+
+.ts-layout-mock-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ts-layout-mock-icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ts-layout-mock-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: var(--primary);
+  color: var(--on-accent);
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ts-layout-mock-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--border-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+}
+
+.ts-layout-mock-avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--border-light);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.ts-layout-mock-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 32px;
+  background: var(--bg-dashboard);
+  display: flex;
+  flex-direction: column;
+}

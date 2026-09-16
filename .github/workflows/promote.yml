@@ -1,0 +1,48 @@
+name: Promote to Production
+
+env:
+  IMAGE_NAME: base-application
+  HELM_REPO: Digital-Twin-Operations/helm-charts
+  HELM_CHART: base-application
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Image tag to promote to production
+        required: true
+        default: latest
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout helm repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.HELM_REPO }}
+          ssh-key: ${{ secrets.HELM_DEPLOY_KEY }}
+          ref: main
+
+      - name: Install yq
+        run: |
+          YQ_VERSION=v4.30.8
+          curl -sL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -o /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+          yq --version
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update production Helm values
+        env:
+          IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          yq eval ".image.tag = strenv(IMAGE_TAG)" -i ${{ env.HELM_CHART }}/values-prod.yaml
+          git add ${{ env.HELM_CHART }}/values-prod.yaml
+          git commit -m "chore(${{ env.IMAGE_NAME }}): promote image $IMAGE_TAG to production" || echo "no changes to commit"
+          git push origin HEAD:main
