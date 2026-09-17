@@ -410,8 +410,12 @@ function App() {
             to the bundled default when nothing's uploaded. */}
         <div className="visual-panel" style={{ backgroundImage: `url(${brand.loginImage || loginBg})` }}></div>
 
-        {/* Right Side - Dynamic Forms */}
-        <div className="form-panel">
+        {/* Right Side - Dynamic Forms.
+            background read straight from the store too (same reasoning as
+            visual-panel above) instead of the --login-panel-color CSS var, which
+            theme-bridge.tsx always overwrites with a flat color (even when unset),
+            permanently hiding this panel's intended default gradient. */}
+        <div className="form-panel" style={{ background: brand.loginPanelColor || 'radial-gradient(ellipse 70% 65% at 50% 77%, #101E39 0%, #0D1421 50%, #090909 100%)' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
             {brand.logoMode === 'image' && brand.logoUrl ? (
               // Uploaded logo is cropped to a 3.5:1 box in Theme Studio (LoginPanel) —
