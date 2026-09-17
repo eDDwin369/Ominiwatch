@@ -239,7 +239,7 @@
 
 [data-theme-mode="light"] .dash-sidebar {
   background: var(--gs-sidebar-color, #ffffff) !important;
-  border-right: 1px solid #e2e8f0;
+  border-right: 1px solid #dde2f0;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.02);
 }
 
@@ -382,13 +382,14 @@
 .nav-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-3);
-  padding: 8px 12px;
-  border-radius: var(--radius-md, 8px);
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  position: relative;
   text-decoration: none;
   font-family: var(--app-font-family);
   font-weight: var(--app-font-weight, 500);
-  font-size: var(--app-font-size, 14px);
+  font-size: var(--h6-size, 14px);
   line-height: var(--app-line-height, 1.4);
   letter-spacing: var(--app-letter-spacing, 0);
   border: 1px solid transparent;
@@ -404,13 +405,6 @@
   color: #0f172a;
 }
 
-[data-theme-mode="light"] .nav-item.active {
-  background: var(--dash-active-pill-bg, var(--highlight-soft, #f8fafc)) !important;
-  color: var(--dash-active-pill-color, var(--highlight, var(--primary))) !important;
-  border: 1px solid var(--dash-active-pill-border, var(--highlight-bd, #cbd5e1)) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-}
-
 [data-theme-mode="dark"] .nav-item {
   color: var(--dash-nav-inactive-color, #94a3b8);
 }
@@ -420,15 +414,33 @@
   color: #ffffff;
 }
 
-[data-theme-mode="dark"] .nav-item.active {
-  background: var(--dash-active-pill-bg, var(--highlight-soft, color-mix(in srgb, var(--primary) 12%, transparent))) !important;
-  color: var(--dash-active-pill-color, var(--highlight, var(--primary))) !important;
-  border: 1px solid var(--dash-active-pill-border, var(--highlight, var(--primary))) !important;
-  box-shadow: 0 0 16px var(--highlight-soft, color-mix(in srgb, var(--primary) 15%, transparent)) !important;
+.dash-sidebar .nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 24px;
+  border-radius: 0 4px 4px 0;
+  background: var(--highlight, var(--primary));
 }
 
-.nav-item.active .nav-label {
-  color: var(--dash-active-pill-color, var(--highlight, var(--primary))) !important;
+.dash-sidebar.collapsed .nav-item.active::before {
+  display: none;
+}
+
+[data-theme-mode="light"] .dash-sidebar .nav-item.active,
+[data-theme-mode="dark"] .dash-sidebar .nav-item.active {
+  background: var(--highlight-soft, color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent)) !important;
+  color: var(--highlight, var(--primary)) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+[data-theme-mode="light"] .dash-sidebar .nav-item.active .nav-label,
+[data-theme-mode="dark"] .dash-sidebar .nav-item.active .nav-label {
+  color: var(--highlight, var(--primary)) !important;
 }
 
 .dash-sidebar.collapsed .nav-item {
@@ -448,8 +460,8 @@
   font-size: var(--font-size-caption, 11px);
   font-weight: var(--app-font-weight, 600);
   text-transform: uppercase;
-  letter-spacing: var(--app-letter-spacing, 0.5px);
-  margin: var(--spacing-4) 0 var(--spacing-1) var(--spacing-3);
+  letter-spacing: var(--app-letter-spacing, 2px);
+  margin: 20px 0 4px 12px;
   opacity: 1;
   max-height: 20px;
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), margin 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -457,11 +469,11 @@
 }
 
 [data-theme-mode="light"] .nav-section-title {
-  color: #94a3b8 !important;
+  color: var(--h6-color, #94a3b8) !important;
 }
 
 [data-theme-mode="dark"] .nav-section-title {
-  color: #64748b !important;
+  color: var(--h6-color, #64748b) !important;
 }
 
 .dash-sidebar.collapsed .nav-section-title {
@@ -493,6 +505,7 @@
 /* Premium Sidebar Transition Utilities */
 .nav-label {
   font-family: var(--app-font-family);
+  font-weight: var(--h6-weight, 400);
   opacity: 1;
   max-width: 200px;
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1197,16 +1210,6 @@
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
-  .sidebar {
-    width: var(--sidebar-collapsed-width) !important;
-  }
-
-  .sidebar .nav-label,
-  .sidebar .section-title,
-  .sidebar .sidebar-footer {
-    display: none !important;
-  }
-
   .sidebar-header {
     justify-content: center !important;
     padding: var(--spacing-4) 0 !important;
@@ -6709,58 +6712,6 @@ html:has(.mode-v6),
 .dash-header .header-icon-btn:hover {
   background: rgba(255, 255, 255, 0.1) !important;
   color: #ffffff !important;
-}
-
-/* ---- Sidebar (white, blue accent) ------------------------------------- */
-[data-theme-mode="light"] .dash-sidebar {
-  background: var(--gs-sidebar-color, #ffffff) !important;
-  border-right: 1px solid #dde2f0;
-}
-.nav-item {
-  border-radius: 12px;
-  padding: 10px 12px;
-  gap: 12px;
-  position: relative;
-}
-.nav-label {
-  font-family: var(--app-font-family);
-  font-weight: var(--app-font-weight, 500);
-}
-.dash-sidebar .nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 24px;
-  border-radius: 0 4px 4px 0;
-  background: var(--highlight, var(--primary));
-}
-.dash-sidebar.collapsed .nav-item.active::before { display: none; }
-[data-theme-mode="light"] .dash-sidebar .nav-item.active,
-[data-theme-mode="dark"] .dash-sidebar .nav-item.active {
-  background: var(--highlight-soft, color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent)) !important;
-  color: var(--highlight, var(--primary)) !important;
-  border: 1px solid transparent !important;
-  box-shadow: none !important;
-}
-[data-theme-mode="light"] .dash-sidebar .nav-item.active .nav-label,
-[data-theme-mode="dark"] .dash-sidebar .nav-item.active .nav-label {
-  color: var(--highlight, var(--primary)) !important;
-}
-.nav-section-title {
-  font-family: var(--app-font-family);
-  font-weight: var(--app-font-weight, 600);
-  font-size: var(--font-size-caption, 10px);
-  letter-spacing: var(--app-letter-spacing, 2px);
-  margin: 20px 0 4px 12px;
-}
-[data-theme-mode="light"] .nav-section-title {
-  color: rgba(102, 112, 146, 0.7) !important;
-}
-[data-theme-mode="dark"] .nav-section-title {
-  color: var(--dash-nav-section-color, rgba(102, 112, 146, 0.7)) !important;
 }
 
 /* ---- Hero body ------------------------------------------------------- */

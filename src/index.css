@@ -361,11 +361,11 @@ input, button, select, textarea, span, p, div, label, a {
 .outer-auth-card {
   width: 100%;
   max-width: var(--login-card-w, 360px);
-  background: linear-gradient(180deg, #070E28 0%, #002061 50%, #111111 100%);
+  background: linear-gradient(180deg, #070E28 0%, #002061 25%, #111111 100%);
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  border: var(--card-border, 1px solid var(--border-subtle));
-  box-shadow: var(--card-shadow, 0 10px 30px rgba(0,0,0,0.3));
+  border: 1px solid #2f2f2f;
+  box-shadow: var(0 10px 30px rgba(0,0,0,0.3));
   margin: 0 auto;
   max-height: 100%;
   overflow-y: auto;
