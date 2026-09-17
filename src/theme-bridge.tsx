@@ -399,14 +399,11 @@ function syncCssVars(theme: any, settings: any) {
     // never pure black, unlike the unpinned fallback formula below.
     emerald:
       'radial-gradient(circle at 50% 30%, #2EE6A6 0%, #21AB7B 27.5%, #1A8D65 41.25%, #146F4F 55%, #0D4E37 77.5%, #072D20 100%)',
-    // Not a pixel-verified Global Settings export (no such file exists for Indigo yet) —
-    // but the unpinned fallback below fades all the way to literal black, which read as a
-    // harsh black band behind the modal header (reported against pprc_darkPink). Both
-    // verified presets above never end at true black — they fade to a *dark tint of their
-    // own hue* (#07153f still reads blue, #072D20 still reads green) — so this anchors the
-    // same shape on Indigo's own verified deep-plum header tone (rgb(51,34,88)/rgb(50,20,56)
-    // from pprc_darkPink) instead of black.
-    indigo: `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 75%, #1a0f24) 27.5%, color-mix(in srgb, ${primaryHex} 55%, #1a0f24) 41.25%, color-mix(in srgb, ${primaryHex} 38%, #1a0f24) 55%, color-mix(in srgb, ${primaryHex} 18%, #1a0f24) 77.5%, #1a0f24 100%)`,
+    // Verified against Figma's Indigo Violet dark-mode Global Settings gradient inspector
+    // export: 3-stop radial, #A97BFF -> #4E22A0 -> #16013E (even spacing; exact Figma stop
+    // offsets weren't available, matching corporate/emerald's precedent of pinning the real
+    // colour sequence over guessing one).
+    indigo: 'radial-gradient(circle at 50% 30%, #A97BFF 0%, #4E22A0 50%, #16013E 100%)',
   };
   // Same anchor idea as the Indigo entry above, generalised: mixing toward literal `black`
   // (even at a 10% primaryHex tint) still reads as a harsh black band on wide modals once a
