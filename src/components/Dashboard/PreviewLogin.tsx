@@ -48,7 +48,7 @@ export function PreviewLogin() {
               <label className="input-label">Password</label>
               <input type="password" className="form-input" defaultValue="password" disabled />
             </div>
-            <button className="preview-login-btn">SIGN IN</button>
+            <button className="preview-login-btn">Sign In</button>
           </div>
           
           <div className="preview-login-footer">

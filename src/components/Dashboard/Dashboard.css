@@ -725,43 +725,64 @@
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: var(--spacing-3);
 }
 
 .btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-4);
+  justify-content: center;
+  gap: var(--spacing-2, 8px);
+  padding: 8px 18px;
   border-radius: var(--radius-md);
-  font-weight: 500;
+  font-weight: 600;
   font-size: var(--text-sm);
+  line-height: 1.25;
   cursor: pointer;
-  transition: all 0.05s ease;
-  border: none;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid transparent;
+  text-transform: var(--btn-case, none);
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .btn-primary {
-  background: var(--primary);
-  color: var(--on-accent);
-  box-shadow: 0 2px 4px color-mix(in srgb, var(--primary) 20%, transparent);
+  background: var(--btn-color, var(--primary));
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  border-color: transparent;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .btn-primary:hover {
   background: var(--primary-hover);
+  color: var(--btn-text, var(--on-accent, #ffffff));
   transform: translateY(-1px);
-  box-shadow: 0 4px 6px color-mix(in srgb, var(--primary) 25%, transparent);
+  box-shadow: 0 4px 10px -1px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-secondary {
-  background: var(--bg-card);
+  background: var(--bg-card, #ffffff);
   color: var(--text-main);
   border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .btn-secondary:hover {
   background: var(--bg-dashboard);
   border-color: var(--border-hover);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
 }
 
 .kpi-grid {
@@ -1086,6 +1107,9 @@
   cursor: pointer;
   background: none;
   border: none;
+  font-family: inherit;
+  text-transform: var(--btn-case, none);
+  padding: 0;
 }
 
 .content-card-action:hover {
@@ -1889,14 +1913,17 @@
 /* Theme Toggle success Toast Alert */
 .theme-toggle-toast {
   position: fixed;
-  top: 70px;
-  right: 24px;
-  background-color: #1e293b;
-  color: #ffffff;
-  border: 1px solid #334155;
-  border-radius: var(--radius-md);
+  top: var(--notif-pos-top, 70px);
+  bottom: var(--notif-pos-bottom, auto);
+  left: var(--notif-pos-left, auto);
+  right: var(--notif-pos-right, 24px);
+  transform: var(--notif-pos-transform, none);
+  background-color: var(--notif-card, var(--bg-card, #1e293b));
+  color: var(--text-main, #ffffff);
+  border: var(--card-border, 1px solid #334155);
+  border-radius: var(--radius-md, 12px);
   padding: 12px 20px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--card-shadow, 0 10px 25px -5px rgba(0, 0, 0, 0.25));
   z-index: 1000000;
   font-family: var(--app-font-family);
   font-size: 13.5px;

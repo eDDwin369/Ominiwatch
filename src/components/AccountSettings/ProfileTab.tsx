@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { isValidPhone } from './phoneValidation';
+import { useThemeStore } from 'omnieye-theme-studio';
 import './ProfileStyles.css';
 
 interface ProfileTabProps {
@@ -44,6 +45,7 @@ export function ProfileTab({
   }, [editProfileOnLoad, setEditProfileOnLoad]);
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const toastTimeoutRef = useRef<any>(null);
   const [isAvatarHovered, setIsAvatarHovered] = useState(false);
 
   // Field locking state (simulation for lock icon)
@@ -126,7 +128,10 @@ export function ProfileTab({
       setIsSaving(false);
       setIsEditing(false);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+      const st = useThemeStore.getState().settings;
+      const durMs = (st.autoDismissSec > 0 ? st.autoDismissSec : 8) * 1000;
+      toastTimeoutRef.current = setTimeout(() => setShowToast(false), durMs);
     }, 800);
   };
 

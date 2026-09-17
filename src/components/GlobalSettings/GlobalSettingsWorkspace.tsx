@@ -507,9 +507,10 @@ export function GlobalSettingsWorkspace({
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     setToastMessage(msg);
     if (onShowToast) onShowToast(msg);
+    const durMs = ((studioSettings as any).autoDismissSec || 8) * 1000;
     toastTimeoutRef.current = setTimeout(() => {
       setToastMessage(null);
-    }, 3500);
+    }, durMs);
   };
 
   // Save changes

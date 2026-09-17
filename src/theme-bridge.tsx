@@ -144,6 +144,43 @@ function syncCssVars(theme: any, settings: any) {
   set('--login-panel-color', settings.loginPanelColor || defaultLoginPanel);
   set('--login-image', settings.loginImage ? `url(${settings.loginImage})` : undefined);
   set('--notif-badge-display', settings.notifBadge === false ? 'none' : 'block');
+  // Notification duration & positioning tokens
+  const notifAutoDismiss = settings.notifAutoDismiss ?? false;
+  const autoDismissSec = settings.autoDismissSec > 0 ? settings.autoDismissSec : 8;
+  const autoDismissMs = notifAutoDismiss ? autoDismissSec * 1000 : 0;
+  set('--notif-auto-dismiss', notifAutoDismiss ? '1' : '0');
+  set('--notif-duration-sec', `${autoDismissSec}s`);
+  set('--notif-duration', `${autoDismissMs}ms`);
+  set('--notif-toast-width', settings.toastW > 0 ? `${settings.toastW}px` : '252px');
+
+  const notifPos = settings.notifPosition || 'bottom-right';
+  set('--notif-position', notifPos);
+  if (notifPos === 'top-center') {
+    set('--notif-pos-top', '70px');
+    set('--notif-pos-bottom', 'auto');
+    set('--notif-pos-left', '50%');
+    set('--notif-pos-right', 'auto');
+    set('--notif-pos-transform', 'translateX(-50%)');
+  } else if (notifPos === 'top-right') {
+    set('--notif-pos-top', '70px');
+    set('--notif-pos-bottom', 'auto');
+    set('--notif-pos-left', 'auto');
+    set('--notif-pos-right', '24px');
+    set('--notif-pos-transform', 'none');
+  } else if (notifPos === 'bottom-left') {
+    set('--notif-pos-top', 'auto');
+    set('--notif-pos-bottom', '24px');
+    set('--notif-pos-left', '24px');
+    set('--notif-pos-right', 'auto');
+    set('--notif-pos-transform', 'none');
+  } else {
+    // bottom-right
+    set('--notif-pos-top', 'auto');
+    set('--notif-pos-bottom', '24px');
+    set('--notif-pos-left', 'auto');
+    set('--notif-pos-right', '24px');
+    set('--notif-pos-transform', 'none');
+  }
   // typography — family + the full body type scale so studio size/weight/
   // line-height/spacing changes actually reach the host (index.css reads these).
   const body = theme.typography.body1 || {};
@@ -265,28 +302,15 @@ function syncCssVars(theme: any, settings: any) {
   };
   const defaultCanvasDark = figmaCanvasDark[settings.presetId] || darkCanvas;
   const defaultCanvasLight = figmaCanvasLight[settings.presetId] || '#ffffff';
+  const defaultCanvas = isDark ? defaultCanvasDark : defaultCanvasLight;
   set(
     '--dash-canvas-bg',
-    settings.pageBgHex || (settings.mode === 'dark' ? defaultCanvasDark : defaultCanvasLight)
+    settings.pageBgHex || defaultCanvas
   );
-  // Account Settings card fill — Figma "tinted" card look, screenshot-verified per
-  // preset (light: exact swatch hexes; dark: eyeballed from the dark-mode screenshots,
-  // not swatch-exact). Other presets keep the flat --bg-card.
-  const figmaAccountCardLight: Record<string, string> = {
-    corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
-    emerald: 'linear-gradient(90deg, #97E1B2 0%, #E6E6E6 100%)',
-    indigo: 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)'
-  };
-  const figmaAccountCardDark: Record<string, string> = {
-    corporate: 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
-    emerald: 'linear-gradient(90deg, #06140e 0%, #0f3d2c 100%)',
-    indigo: 'linear-gradient(90deg, #150a24 0%, #4b2e86 100%)',
-  };
+  // Account Settings card fill — inherit Theme Studio paper/card background consistently with other tabs
   set(
     '--account-card-bg',
-    settings.mode === 'dark'
-      ? figmaAccountCardDark[settings.presetId] || p.background.paper
-      : figmaAccountCardLight[settings.presetId] || p.background.paper
+    p.background.paper
   );
   // Hero "Brand" gradient text — Emerald's and Indigo's Figma stops differ from raw
   // primary/secondary in light mode.

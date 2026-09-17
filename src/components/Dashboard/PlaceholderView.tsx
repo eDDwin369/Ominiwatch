@@ -14,16 +14,7 @@ export function PlaceholderView({ title }: PlaceholderViewProps) {
         You can build out this page later. For now, it serves as a live preview target for the Theme Studio.
       </p>
       <div style={{ marginTop: 'var(--spacing-6)' }}>
-        <button style={{
-          backgroundColor: 'var(--primary)',
-          color: 'white',
-          border: 'none',
-          borderRadius: 'var(--radius-md)',
-          padding: 'var(--spacing-3) var(--spacing-5)',
-          fontSize: 'var(--text-sm)',
-          fontWeight: 600,
-          cursor: 'pointer'
-        }}>
+        <button className="btn btn-primary">
           Primary Action
         </button>
       </div>

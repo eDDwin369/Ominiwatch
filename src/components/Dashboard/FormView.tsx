@@ -39,7 +39,7 @@ export function FormView() {
           <div className="form-section">
             <div className="form-section-header">
               <h3 className="form-section-title">LINE ITEMS</h3>
-              <button className="btn-text">+ ADD ITEM</button>
+              <button className="btn btn-sm btn-text">+ Add Item</button>
             </div>
             
             <div className="line-items-list">
@@ -65,8 +65,8 @@ export function FormView() {
           Total: $4,800.00
         </div>
         <div className="form-actions">
-          <button className="btn-outline">CANCEL</button>
-          <button className="btn-primary">CREATE ORDER</button>
+          <button className="btn btn-secondary btn-outline">Cancel</button>
+          <button className="btn btn-primary">Create Order</button>
         </div>
       </div>
     </div>

@@ -599,20 +599,11 @@ export function SecurityTab() {
 
             <button 
               type="submit"
+              className="btn btn-primary"
               style={{ 
-                background: 'var(--btn-color)', color: 'var(--btn-text)', 
-                border: 'none',
-                padding: '8px 16px', 
-                borderRadius: 'var(--radius-md)', 
-                fontSize: 'var(--font-size-body-sm)', 
-                fontWeight: 600,
-                cursor: 'pointer',
                 width: 'fit-content',
-                marginTop: '6px',
-                transition: 'background-color 0.05s ease'
+                marginTop: '6px'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-hover)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary)'}
             >
               Update Password
             </button>

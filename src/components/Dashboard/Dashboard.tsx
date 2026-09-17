@@ -14,6 +14,8 @@ import { ReportsPage } from './ReportsPage';
 import { mockNotifications } from '../Notifications/mockData';
 import type { NotificationItem } from '../Notifications/types';
 import { GlobalSettingsWorkspace } from '../GlobalSettings/GlobalSettingsWorkspace';
+import { useThemeStore } from 'omnieye-theme-studio';
+import { parseRouteFromUrl, pushAppRoute } from '../../utils/navigation';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -51,8 +53,14 @@ export function Dashboard({
   sidebarShowIcons,
   setSidebarShowIcons
 }: DashboardProps) {
-  const [currentView, setCurrentView] = useState('overview');
-  const [isThemeStudioOpen, setIsThemeStudioOpen] = useState(false);
+  const [currentView, setCurrentView] = useState(() => {
+    const route = parseRouteFromUrl();
+    return (route.screen === 'dashboard' && route.view) ? route.view : 'overview';
+  });
+  const [isThemeStudioOpen, setIsThemeStudioOpen] = useState(() => {
+    const route = parseRouteFromUrl();
+    return Boolean(route.themeStudioOpen);
+  });
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>(mockNotifications);
   const [selectedFullNotification, setSelectedFullNotification] = useState<NotificationItem | null>(null);
@@ -76,7 +84,10 @@ export function Dashboard({
     };
   }, []);
 
-  const [editProfileOnLoad, setEditProfileOnLoad] = useState(false);
+  const [editProfileOnLoad, setEditProfileOnLoad] = useState(() => {
+    const route = parseRouteFromUrl();
+    return Boolean(route.editMode);
+  });
   const [footerVisible, setFooterVisible] = useState(() => {
     const saved = localStorage.getItem('gs_footerVisible');
     return saved !== null ? JSON.parse(saved) : false;
@@ -158,15 +169,38 @@ export function Dashboard({
   // Global settings modal state
   const [isGlobalSettingsOpen, setIsGlobalSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState<string>('');
-  const [globalToast, setGlobalToast] = useState<{ visible: boolean; message: string }>({ visible: false, message: '' });
+  const [globalToast, setGlobalToast] = useState<{ visible: boolean; message: string; remainingSec?: number }>({ visible: false, message: '' });
   const globalToastTimeoutRef = useRef<any>(null);
+  const globalToastIntervalRef = useRef<any>(null);
 
   const showGlobalToast = (message: string) => {
     if (globalToastTimeoutRef.current) clearTimeout(globalToastTimeoutRef.current);
-    setGlobalToast({ visible: true, message });
-    globalToastTimeoutRef.current = setTimeout(() => {
-      setGlobalToast({ visible: false, message: '' });
-    }, 3500);
+    if (globalToastIntervalRef.current) clearInterval(globalToastIntervalRef.current);
+
+    const st = useThemeStore.getState().settings;
+    const isAutoDismiss = st.notifAutoDismiss !== false;
+    const durSec = st.autoDismissSec > 0 ? st.autoDismissSec : 8;
+    const durMs = isAutoDismiss ? durSec * 1000 : 30000;
+
+    setGlobalToast({ visible: true, message, remainingSec: isAutoDismiss ? durSec : undefined });
+
+    if (isAutoDismiss) {
+      let rem = durSec;
+      globalToastIntervalRef.current = setInterval(() => {
+        rem -= 1;
+        if (rem <= 0) {
+          clearInterval(globalToastIntervalRef.current);
+          setGlobalToast({ visible: false, message: '' });
+        } else {
+          setGlobalToast((prev) => prev.visible ? { ...prev, remainingSec: rem } : prev);
+        }
+      }, 1000);
+
+      globalToastTimeoutRef.current = setTimeout(() => {
+        clearInterval(globalToastIntervalRef.current);
+        setGlobalToast({ visible: false, message: '' });
+      }, durMs);
+    }
   };
   const [headerConfig, setHeaderConfig] = useState(() => {
     const saved = localStorage.getItem('headerConfig');
@@ -211,11 +245,41 @@ export function Dashboard({
     }
   };
 
-  const [accountSettingsInitialTab, setAccountSettingsInitialTab] = useState<string | undefined>(undefined);
+  const [accountSettingsInitialTab, setAccountSettingsInitialTab] = useState<string | undefined>(() => {
+    const route = parseRouteFromUrl();
+    return route.tab;
+  });
+
+  // Listen to browser Back and Forward navigation inside Dashboard
+  useEffect(() => {
+    const handlePopState = () => {
+      const route = parseRouteFromUrl();
+      if (route.screen === 'dashboard' && route.view) {
+        setCurrentView(route.view);
+        setAccountSettingsInitialTab(route.tab);
+        setEditProfileOnLoad(Boolean(route.editMode));
+        setIsThemeStudioOpen(Boolean(route.themeStudioOpen));
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
+  }, []);
 
   const handleSetCurrentView = (view: string, options?: any) => {
     if (view === 'theme-studio') {
       setIsThemeStudioOpen(true);
+      pushAppRoute({
+        screen: 'dashboard',
+        view: currentView,
+        tab: accountSettingsInitialTab,
+        editMode: editProfileOnLoad,
+        themeStudioOpen: true
+      });
       return;
     }
 
@@ -246,6 +310,13 @@ export function Dashboard({
     }
 
     setCurrentView(view);
+    pushAppRoute({
+      screen: 'dashboard',
+      view,
+      tab: options?.tab,
+      editMode: options?.editMode,
+      themeStudioOpen: false
+    });
   };
 
   const handleLogout = () => {
@@ -375,7 +446,8 @@ export function Dashboard({
                     <p style={{ marginTop: '16px' }}>This page is under construction. Navigated from notification.</p>
                     <button 
                       onClick={() => handleSetCurrentView('overview')}
-                      style={{ marginTop: '24px', padding: '8px 16px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                      className="btn btn-primary"
+                      style={{ marginTop: '24px' }}
                     >
                       Return to Dashboard
                     </button>
@@ -613,7 +685,24 @@ export function Dashboard({
                     {selectedFullNotification.attachment.size}
                   </div>
                 </div>
-                <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}>
+                <button 
+                  aria-label="Download attachment"
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    color: 'var(--text-muted)', 
+                    cursor: 'pointer', 
+                    padding: '4px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    alignSelf: 'center',
+                    minWidth: '28px',
+                    minHeight: '28px',
+                    borderRadius: 'var(--radius-sm, 4px)'
+                  }}
+                >
                   <Download size={16} />
                 </button>
               </div>
@@ -623,16 +712,7 @@ export function Dashboard({
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
               <button 
                 onClick={() => setSelectedFullNotification(null)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-light)',
-                  backgroundColor: 'var(--bg-card)',
-                  color: 'var(--text-main)',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  cursor: 'pointer'
-                }}
+                className="btn btn-secondary"
               >
                 Dismiss
               </button>
@@ -645,21 +725,61 @@ export function Dashboard({
         <div 
           className="theme-toggle-toast"
           style={{
-            background: 'var(--bg-card)',
-            border: '1px solid color-mix(in srgb, var(--primary) 40%, transparent)',
+            background: 'var(--notif-card, var(--bg-card))',
+            border: 'var(--card-border, 1px solid color-mix(in srgb, var(--primary) 40%, transparent))',
             color: 'var(--text-main)',
-            boxShadow: '0 12px 32px rgba(0, 0, 0, 0.35), 0 0 20px color-mix(in srgb, var(--primary) 30%, transparent)',
-            borderRadius: '12px',
-            padding: '12px 22px',
+            boxShadow: 'var(--card-shadow, 0 12px 32px rgba(0, 0, 0, 0.35))',
+            borderRadius: 'var(--radius-md, 12px)',
+            padding: '12px 20px',
             fontSize: '14px',
             fontWeight: 500,
             display: 'flex',
             alignItems: 'center',
-            gap: '10px'
+            gap: '12px',
+            width: 'var(--notif-toast-width, auto)',
+            maxWidth: '90vw',
+            boxSizing: 'border-box'
           }}
         >
           <CheckCircle2 size={18} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-          <span>{globalToast.message}</span>
+          <span style={{ flex: 1 }}>{globalToast.message}</span>
+          {globalToast.remainingSec !== undefined && (
+            <span 
+              title="Auto-dismiss countdown"
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                padding: '2px 8px',
+                borderRadius: '999px',
+                background: 'color-mix(in srgb, var(--primary) 14%, transparent)',
+                color: 'var(--primary)',
+                fontVariantNumeric: 'tabular-nums',
+                flexShrink: 0
+              }}
+            >
+              {globalToast.remainingSec}s
+            </span>
+          )}
+          <button
+            title="Dismiss notification"
+            onClick={() => {
+              if (globalToastTimeoutRef.current) clearTimeout(globalToastTimeoutRef.current);
+              if (globalToastIntervalRef.current) clearInterval(globalToastIntervalRef.current);
+              setGlobalToast({ visible: false, message: '' });
+            }}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              display: 'grid',
+              placeItems: 'center',
+              color: 'var(--text-muted, #94a3b8)',
+              flexShrink: 0
+            }}
+          >
+            <X size={15} />
+          </button>
         </div>
       )}
     </div>

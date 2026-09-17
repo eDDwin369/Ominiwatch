@@ -24,7 +24,7 @@ export function OrdersView() {
           <h1 className="orders-title">Orders</h1>
           <p className="orders-subtitle">1,284 orders · June 2026</p>
         </div>
-        <button className="btn-primary">+ NEW ORDER</button>
+        <button className="btn btn-primary">+ New Order</button>
       </div>
 
       <div className="orders-card">
@@ -57,7 +57,7 @@ export function OrdersView() {
                   <td className="order-amount">{order.amount}</td>
                   <td className="order-date">{order.date}</td>
                   <td className="order-action">
-                    <button className="btn-view">VIEW</button>
+                    <button className="btn btn-sm btn-secondary btn-view">View</button>
                   </td>
                 </tr>
               ))}

@@ -4,13 +4,82 @@ import './index.css';
 import logo from './assets/logo.png';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { useThemeStore } from 'omnieye-theme-studio';
-
-type Screen = 'login' | 'forgot-password' | 'otp' | 'new-password' | 'success' | 'dashboard' | 'forgot-username';
+import { 
+  type Screen, 
+  type AppRouteState, 
+  isAuthenticated, 
+  setSession, 
+  getSessionEmail, 
+  parseRouteFromUrl, 
+  pushAppRoute, 
+  replaceAppRoute 
+} from './utils/navigation';
 
 function App() {
   // Studio login tokens: tagline text + whether to show it, on the login panel.
   const brand = useThemeStore((s) => s.settings);
-  const [currentScreen, setCurrentScreen] = useState<Screen>('login');
+  const [currentScreen, setCurrentScreen] = useState<Screen>(() => {
+    const route = parseRouteFromUrl();
+    if (isAuthenticated()) {
+      return route.screen === 'dashboard' ? 'dashboard' : route.screen;
+    }
+    return route.screen === 'dashboard' ? 'login' : route.screen;
+  });
+
+  const navigateScreen = (screen: Screen) => {
+    setCurrentScreen(screen);
+    pushAppRoute({ screen });
+  };
+
+  // Synchronize history popstate and initial route
+  useEffect(() => {
+    const initialRoute = parseRouteFromUrl();
+    if (isAuthenticated()) {
+      if (initialRoute.screen === 'dashboard' || !window.location.hash || window.location.hash === '#/' || window.location.hash === '#') {
+        const target: AppRouteState = {
+          screen: 'dashboard',
+          view: initialRoute.view || 'overview',
+          tab: initialRoute.tab,
+          editMode: initialRoute.editMode,
+          themeStudioOpen: initialRoute.themeStudioOpen
+        };
+        replaceAppRoute(target);
+        setCurrentScreen('dashboard');
+      } else {
+        replaceAppRoute(initialRoute);
+        setCurrentScreen(initialRoute.screen);
+      }
+    } else {
+      if (initialRoute.screen === 'dashboard') {
+        replaceAppRoute({ screen: 'login' });
+        setCurrentScreen('login');
+      } else {
+        replaceAppRoute(initialRoute);
+        setCurrentScreen(initialRoute.screen);
+      }
+    }
+
+    const handlePopState = () => {
+      const popped = parseRouteFromUrl();
+      if (popped.screen === 'dashboard') {
+        if (isAuthenticated()) {
+          setCurrentScreen('dashboard');
+        } else {
+          replaceAppRoute({ screen: 'login' });
+          setCurrentScreen('login');
+        }
+      } else {
+        setCurrentScreen(popped.screen);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
+  }, []);
 
   // Shared state
   const [email, setEmail] = useState('');
@@ -161,6 +230,9 @@ function App() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      setSession(true, email);
+      const targetRoute: AppRouteState = { screen: 'dashboard', view: 'overview' };
+      replaceAppRoute(targetRoute);
       setCurrentScreen('dashboard');
     }, 1000);
   };
@@ -173,10 +245,10 @@ function App() {
 
     setTimeout(() => {
       setIsLoading(false);
-      setCurrentScreen('otp');
       setTimeLeft(60);
       setOtp(['', '', '', '', '', '']);
       setOtpError('');
+      navigateScreen('otp');
     }, 1200);
   };
 
@@ -250,7 +322,7 @@ function App() {
     setTimeout(() => {
       setIsLoading(false);
       if (code === '123456') { // Mock correct OTP
-        setCurrentScreen('new-password');
+        navigateScreen('new-password');
       } else {
         setOtpAttempts(prev => prev + 1);
         setOtpError('Invalid verification code.');
@@ -289,16 +361,18 @@ function App() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setCurrentScreen('success');
+      navigateScreen('success');
     }, 1500);
   };
 
   const handleLogout = () => {
+    setSession(false);
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
     if (!savedRememberMe) {
       setEmail('');
       setPassword('');
     }
+    replaceAppRoute({ screen: 'login' });
     setCurrentScreen('login');
   };
 
@@ -346,6 +420,34 @@ function App() {
 
             {currentScreen === 'login' && (
               <div className="fade-in">
+                {isAuthenticated() && (
+                  <div style={{
+                    background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+                    border: '1px solid var(--primary)',
+                    borderRadius: 'var(--radius-md, 8px)',
+                    padding: '10px 14px',
+                    marginBottom: '1.25rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '10px'
+                  }}>
+                    <span style={{ fontSize: '12.5px', color: 'var(--text-main)' }}>
+                      Active session as <strong>{getSessionEmail() || 'Edwin Antony'}</strong>
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      style={{ padding: '6px 12px', fontSize: '12px', whiteSpace: 'nowrap' }}
+                      onClick={() => {
+                        replaceAppRoute({ screen: 'dashboard', view: 'overview' });
+                        setCurrentScreen('dashboard');
+                      }}
+                    >
+                      Return to Dashboard
+                    </button>
+                  </div>
+                )}
                 <form onSubmit={handleLoginSubmit}>
                   <div className="form-group">
                     <div className="input-wrapper">
@@ -409,8 +511,8 @@ function App() {
                     </label>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <a
-                        href="#"
-                        onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
+                        href="#/forgot-password"
+                        onClick={(e) => { e.preventDefault(); navigateScreen('forgot-password'); }}
                         style={{
                           fontSize: 'var(--font-size-caption)',
                           color: 'var(--text-secondary)',
@@ -459,8 +561,8 @@ function App() {
                   </button>
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
                     <a
-                      href="#"
-                      onClick={(e) => { e.preventDefault(); setCurrentScreen('login'); }}
+                      href="#/login"
+                      onClick={(e) => { e.preventDefault(); navigateScreen('login'); }}
                       style={{
                         fontSize: 'var(--font-size-caption)',
                         color: 'var(--text-secondary)',
@@ -535,8 +637,8 @@ function App() {
                 </button>
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
                   <a
-                    href="#"
-                    onClick={(e) => { e.preventDefault(); setCurrentScreen('forgot-password'); }}
+                    href="#/forgot-password"
+                    onClick={(e) => { e.preventDefault(); navigateScreen('forgot-password'); }}
                     style={{
                       fontSize: 'var(--font-size-caption)',
                       color: 'var(--text-secondary)',
@@ -656,8 +758,8 @@ function App() {
                   </button>
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
                     <a
-                      href="#"
-                      onClick={(e) => { e.preventDefault(); setCurrentScreen('login'); }}
+                      href="#/login"
+                      onClick={(e) => { e.preventDefault(); navigateScreen('login'); }}
                       style={{
                         fontSize: 'var(--font-size-caption)',
                         color: 'var(--text-secondary)',
@@ -686,7 +788,7 @@ function App() {
                   type="button"
                   className="submit-btn"
                   onClick={() => {
-                    setCurrentScreen('login');
+                    navigateScreen('login');
                     setPassword('');
                     setNewPassword('');
                     setConfirmPassword('');

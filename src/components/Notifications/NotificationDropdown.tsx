@@ -548,7 +548,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               style={{
                 padding: '6px 12px',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-sm, 6px)',
                 border: '1px solid var(--border-light, var(--border-light))',
                 backgroundColor: 'var(--bg-card)',
                 color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-secondary)',
@@ -571,7 +571,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               style={{
                 padding: '6px 12px',
-                borderRadius: '6px',
+                borderRadius: 'var(--radius-sm, 6px)',
                 border: '1px solid var(--border-light, var(--border-light))',
                 backgroundColor: 'var(--bg-card)',
                 color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-secondary)',

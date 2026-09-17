@@ -134,10 +134,19 @@
   background: transparent;
   border: none;
   color: var(--primary);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
   cursor: pointer;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm, 4px);
+  transition: all 0.15s ease-in-out;
+  text-transform: var(--btn-case, none);
+}
+
+.btn-text:hover {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary-hover);
 }
 
 .line-items-list {
@@ -205,30 +214,56 @@
 }
 
 .btn-outline {
-  background: white;
-  border: 1px solid var(--text-main);
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-light);
   color: var(--text-main);
-  padding: var(--spacing-3) var(--spacing-5);
+  padding: 8px 18px;
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
+  line-height: 1.25;
   cursor: pointer;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  text-transform: var(--btn-case, none);
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.btn-outline:hover {
+  background: var(--bg-dashboard);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.btn-outline:active {
+  transform: translateY(0);
 }
 
 .form-footer-card .btn-primary {
-  background: var(--primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-3) var(--spacing-5);
+  background: var(--btn-color, var(--primary));
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  border: 1px solid transparent;
+  padding: 8px 18px;
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 600;
+  line-height: 1.25;
   cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: all 0.05s ease;
+  letter-spacing: 0.01em;
+  text-transform: var(--btn-case, none);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.15s ease-in-out;
 }
 
 .form-footer-card .btn-primary:hover {
   background: var(--primary-hover);
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -1px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.form-footer-card .btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
