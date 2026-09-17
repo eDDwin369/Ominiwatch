@@ -335,19 +335,11 @@ function App() {
 
         {/* Right Side - Dynamic Forms */}
         <div className="form-panel">
-<<<<<<< HEAD
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: '2rem' }}>
             <img 
               src={brand.logoUrl || logo} 
               alt="Logo" 
               style={{ maxWidth: '260px', width: '100%', height: 'auto', display: 'block', margin: '0 auto', objectFit: 'contain' }} 
-=======
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-            <img 
-              src={brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo} 
-              alt="Logo" 
-              style={{ maxWidth: '312px', height: 'auto', objectFit: 'contain' }} 
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
             />
           </div>
           <div className="outer-auth-card">

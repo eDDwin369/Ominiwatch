@@ -13,15 +13,11 @@ function syncCssVars(theme: any, settings: any) {
   const root = document.documentElement;
   const p = theme.palette;
   const set = (k: string, v?: string) => {
-<<<<<<< HEAD
     if (v !== undefined && v !== null && v !== '') {
       root.style.setProperty(k, v);
     } else {
       root.style.removeProperty(k);
     }
-=======
-    if (v) root.style.setProperty(k, v);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   };
   // brand
   set('--primary', p.primary.main);
@@ -29,21 +25,12 @@ function syncCssVars(theme: any, settings: any) {
   set('--primary-light', p.primary.light);
   set('--accent', p.primary.main);
   set('--accent-hover', p.primary.dark);
-<<<<<<< HEAD
   set('--on-accent', p.primary.contrastText);
   const pageBg = settings.pageBgHex || p.background.default;
   set('--bg-dashboard', pageBg);
   set('--bg-card', p.background.paper);
   set('--page-bg', pageBg);
   set('--bg-base', pageBg);
-=======
-  // always-light foreground for text/icons sitting on an accent fill (primary/
-  // success/warning/danger buttons) — stays readable in dark mode, unlike --bg-card.
-  set('--on-accent', p.primary.contrastText);
-  // surfaces + text + border
-  set('--bg-dashboard', p.background.default);
-  set('--bg-card', p.background.paper);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   set('--text-main', p.text.primary);
   set('--text-primary', p.text.primary);
   set('--text-secondary', p.text.secondary);
@@ -74,15 +61,11 @@ function syncCssVars(theme: any, settings: any) {
   set('--highlight-soft', hlSoft);
   set('--highlight-bd', hlBd);
   set('--highlight-hover', alpha(highlight, 0.25));
-<<<<<<< HEAD
   const rawCardHdrBg = settings.cardHdrHex || tk.cardHdrBg;
   const cardHdrBg = (rawCardHdrBg && rawCardHdrBg !== 'transparent')
     ? (rawCardHdrBg.startsWith('rgba') ? `linear-gradient(${rawCardHdrBg}, ${rawCardHdrBg}), var(--bg-card)` : rawCardHdrBg)
     : 'var(--bg-card)';
   set('--card-hdr', cardHdrBg);
-=======
-  set('--card-hdr', tk.cardHdrBg);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   set('--notif-card', tk.toastBg);
   const btnBase = settings.btnColorHex || p.primary.main;
   set('--btn-color', settings.accentGradient ? `linear-gradient(135deg, ${btnBase}, ${p.primary.dark})` : btnBase);
@@ -90,19 +73,13 @@ function syncCssVars(theme: any, settings: any) {
   // shape / surface / density / misc tokens
   set('--card-border', tk.cardBodyBorder);
   set('--card-shadow', tk.cardBodyShadow);
-<<<<<<< HEAD
   set('--card-hdr-accent', tk.cardHdrAccent || 'none');
   set('--card-hdr-border', tk.cardHdrBorder === 'none' ? 'none' : (tk.cardHdrBorder || '1px solid var(--border-light)'));
-=======
-  set('--card-hdr-accent', tk.cardHdrAccent);
-  set('--card-hdr-border', tk.cardHdrBorder);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   set('--container-pad', tk.containerPad != null ? `${tk.containerPad}px` : undefined);
   set('--edge-pad', tk.edgePad != null ? `${tk.edgePad}px` : undefined);
   set('--card-gap', tk.cardGap != null ? `${tk.cardGap}px` : undefined);
   set('--btn-case', theme.typography.button?.textTransform);
   set('--status-weight', tk.statusBold ? '700' : '500');
-<<<<<<< HEAD
 
   // Card Alignment
   const cardAlign = (settings as any).cardAlign || 'left';
@@ -159,18 +136,12 @@ function syncCssVars(theme: any, settings: any) {
   }
   set('--nested-shadow', nestedDepth > 0 ? `inset 0 ${Math.min(nestedDepth, 4)}px ${nestedDepth}px rgba(0,0,0,${isDark ? 0.2 : 0.06})` : 'none');
 
-=======
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   // chrome + login layout tokens
   set('--appbar-h', settings.appBarH > 0 ? `${settings.appBarH}px` : undefined);
   set('--login-card-w', settings.loginCardW > 0 ? `${settings.loginCardW}px` : undefined);
   set('--login-img-opacity', settings.loginImgOpacity > 0 ? String(settings.loginImgOpacity / 100) : undefined);
-<<<<<<< HEAD
   const defaultLoginPanel = isDark ? '#0f172a' : '#ffffff';
   set('--login-panel-color', settings.loginPanelColor || defaultLoginPanel);
-=======
-  set('--login-panel-color', settings.loginPanelColor || undefined);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   set('--login-image', settings.loginImage ? `url(${settings.loginImage})` : undefined);
   set('--notif-badge-display', settings.notifBadge === false ? 'none' : 'block');
   // typography — family + the full body type scale so studio size/weight/
@@ -292,19 +263,11 @@ function syncCssVars(theme: any, settings: any) {
     // Verified against pprc_lightPink: plain white, not a pale-lavender tint.
     indigo: '#ffffff',
   };
-<<<<<<< HEAD
   const defaultCanvasDark = figmaCanvasDark[settings.presetId] || darkCanvas;
   const defaultCanvasLight = figmaCanvasLight[settings.presetId] || '#ffffff';
   set(
     '--dash-canvas-bg',
     settings.pageBgHex || (settings.mode === 'dark' ? defaultCanvasDark : defaultCanvasLight)
-=======
-  set(
-    '--dash-canvas-bg',
-    settings.mode === 'dark'
-      ? figmaCanvasDark[settings.presetId] || darkCanvas
-      : figmaCanvasLight[settings.presetId] || '#ffffff'
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   );
   // Account Settings card fill — Figma "tinted" card look, screenshot-verified per
   // preset (light: exact swatch hexes; dark: eyeballed from the dark-mode screenshots,
@@ -541,7 +504,6 @@ function hslToHexStr(h: number, s: number, l: number): string {
  */
 export function StudioTheme({ children }: { children: ReactNode }) {
   const settings = useThemeStore((s) => s.settings);
-<<<<<<< HEAD
   const theme = useMemo(() => {
     const t = buildMuiTheme(settings);
     if (settings.pageBgHex && t.palette?.background) {
@@ -555,9 +517,6 @@ export function StudioTheme({ children }: { children: ReactNode }) {
     }
     return t;
   }, [settings]);
-=======
-  const theme = useMemo(() => buildMuiTheme(settings), [settings]);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   useEffect(() => {
     syncCssVars(theme, settings);
   }, [theme, settings]);

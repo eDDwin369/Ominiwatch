@@ -210,10 +210,7 @@
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   background-color: var(--bg-dashboard);
-=======
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 .dashboard-container {
@@ -224,10 +221,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
-<<<<<<< HEAD
   background-color: var(--bg-dashboard);
-=======
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 /* Sidebar — always a position: absolute overlay (never a flex item that
@@ -1009,13 +1003,8 @@
   grid-template-columns: 7fr 3fr;
   gap: var(--card-gap);
   flex: 1;
-<<<<<<< HEAD
   min-height: fit-content;
   overflow: visible;
-=======
-  height: 100%;
-  overflow: hidden;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 @media (max-width: 1024px) {
@@ -1028,22 +1017,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--card-gap);
-<<<<<<< HEAD
   min-height: fit-content;
   overflow: visible;
-=======
-  height: 100%;
-  overflow: hidden;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 /* Standard Content Card */
 .content-card {
-<<<<<<< HEAD
   background: var(--card-tint-bg, var(--bg-card));
-=======
-  background: var(--bg-card);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   border: var(--card-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-5);
@@ -1051,13 +1031,9 @@
   display: flex;
   flex-direction: column;
   flex: 1;
-<<<<<<< HEAD
   min-height: fit-content;
   overflow: visible;
   text-align: var(--card-align, left);
-=======
-  overflow: hidden;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 .content-card>div:not(.content-card-header) {
@@ -1065,15 +1041,11 @@
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-<<<<<<< HEAD
   text-align: var(--card-align, left);
-=======
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 .content-card-header {
   display: flex;
-<<<<<<< HEAD
   justify-content: var(--card-header-justify, space-between);
   align-items: center;
   margin-bottom: var(--spacing-4);
@@ -1082,15 +1054,6 @@
   background: var(--card-hdr);
   box-shadow: var(--card-hdr-accent);
   text-align: var(--card-header-align, left);
-=======
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-4);
-  border-bottom: 1px solid var(--border-light);
-  padding-bottom: var(--spacing-3);
-  background: var(--card-hdr);
-  box-shadow: var(--card-hdr-accent);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 .content-card-title {
@@ -1101,7 +1064,6 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
-<<<<<<< HEAD
   justify-content: var(--card-header-justify, flex-start);
   text-align: var(--card-header-align, left);
 }
@@ -1115,8 +1077,6 @@
   padding: var(--nested-pad, var(--spacing-4));
   border-radius: var(--radius-md);
   text-align: var(--card-align, left);
-=======
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 .content-card-action {
@@ -5629,10 +5589,6 @@ html:has(.mode-v6),
 [data-theme-mode="dark"] .dashboard-container:has(.mode-v2) {
   background: var(--dash-canvas-bg, #051510) !important;
   transition: background 0.4s ease !important;
-<<<<<<< HEAD
-=======
-  overflow: hidden !important;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 [data-theme-mode="light"] body:has(.mode-v2),
@@ -5644,7 +5600,6 @@ html:has(.mode-v6),
 [data-theme-mode="light"] .dashboard-container:has(.mode-v2) {
   background: #ffffff !important;
   transition: background 0.4s ease !important;
-<<<<<<< HEAD
 }
 
 /* mode-v2 fills the scroll area exactly — drop the container's 32px bottom
@@ -5659,24 +5614,6 @@ html:has(.mode-v6),
   .dashboard-content-scrollable:has(.mode-v2) {
     overflow-y: auto !important;
     overflow-x: hidden !important;
-=======
-  overflow: hidden !important;
-}
-
-/* mode-v2 fills the scroll area exactly — drop the container's 32px bottom
-   padding and let it stretch. overflow left alone — the <1024px tablet rule
-   relies on the page scrolling. */
-.dashboard-container:has(.mode-v2) {
-  padding: 0 !important;
-  min-height: 0 !important;
-}
-
-/* Desktop: hero fills the scroll area exactly, no phantom scroll / dead band
-   below. Tablet (<1024px) keeps normal page scrolling. */
-@media (min-width: 1024px) {
-  .dashboard-content-scrollable:has(.mode-v2) {
-    overflow: hidden !important;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   }
 }
 
@@ -5693,11 +5630,7 @@ html:has(.mode-v6),
     the video above the visible centre. flex:1 tracks the real parent height. */
   flex: 1 !important;
   height: 100% !important;
-<<<<<<< HEAD
   min-height: fit-content !important;
-=======
-  min-height: 0 !important;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   max-height: none !important;
   padding: 0 60px !important;
   box-sizing: border-box !important;
@@ -5706,11 +5639,7 @@ html:has(.mode-v6),
   align-items: center !important;
   justify-content: center !important;
   position: relative !important;
-<<<<<<< HEAD
   overflow: visible !important;
-=======
-  overflow: hidden !important;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
 }
 
 .mode-v2 .dash-top-header-row {

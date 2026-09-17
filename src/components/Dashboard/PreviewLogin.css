@@ -69,11 +69,7 @@
 
 .preview-login-right {
   flex: 1;
-<<<<<<< HEAD
   background-color: var(--login-panel-color, var(--bg-card, #ffffff));
-=======
-  background-color: var(--login-panel-color, var(--bg-dashboard));
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   display: flex;
   align-items: center;
   justify-content: center;
@@ -139,7 +135,6 @@
   font-weight: 700;
   color: var(--text-secondary);
 }
-<<<<<<< HEAD
 
 .preview-login-container.layout-centered {
   justify-content: center;
@@ -156,5 +151,3 @@
   max-width: 440px;
   background: transparent;
 }
-=======
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a

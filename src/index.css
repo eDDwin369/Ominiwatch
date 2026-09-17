@@ -111,11 +111,7 @@
   --info: #0288d1;
   --highlight: var(--primary);
   --highlight-hover: color-mix(in srgb, var(--highlight) 12%, transparent);
-<<<<<<< HEAD
   --card-hdr: var(--bg-card);
-=======
-  --card-hdr: transparent;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   --notif-card: var(--bg-card);
   --btn-color: var(--primary);
   --btn-text: var(--on-accent);
@@ -133,11 +129,7 @@
   --appbar-h: 64px;
   --login-card-w: 360px;
   --login-img-opacity: 1;
-<<<<<<< HEAD
   --login-panel-color: var(--bg-card, #ffffff);
-=======
-  --login-panel-color: transparent;
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   --notif-badge-display: block;
   --app-font-size: 1rem;
   --app-line-height: 1.5;
@@ -167,11 +159,7 @@ body {
   line-height: var(--app-line-height);
   font-weight: var(--app-font-weight);
   letter-spacing: var(--app-letter-spacing);
-<<<<<<< HEAD
   background-color: var(--bg-dashboard, var(--bg-base));
-=======
-  background-color: var(--bg-base);
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
@@ -965,11 +953,7 @@ input, button, select, textarea, span, p, div, label, a {
 .login-container.layout-centered {
   justify-content: center;
   align-items: center;
-<<<<<<< HEAD
   background-color: var(--login-panel-color, var(--bg-card, #ffffff));
-=======
-  background-color: var(--login-panel-color, var(--bg-base));
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
   background-image: var(--login-image, url('./assets/login-bg.jpg'));
   background-position: center;
   background-size: cover;
@@ -1004,7 +988,6 @@ input, button, select, textarea, span, p, div, label, a {
   background: linear-gradient(180deg, #070E28 0%, #002061 50%, #111111 100%);
 }
 
-<<<<<<< HEAD
 /* Theme Studio Preview - prevent card cut-off under Surface settings */
 .theme-studio-embed {
   overflow: hidden;
@@ -1026,8 +1009,3 @@ input, button, select, textarea, span, p, div, label, a {
   overflow-y: auto !important;
   overscroll-behavior: contain;
 }
-
-
-=======
->>>>>>> a5bb05902d1612e8ef4b3a8b6ffaff413a28dd7a
-
