@@ -1449,7 +1449,7 @@ export function GlobalSettingsWorkspace({
                             id="gs-color-picker-customer-name"
                             type="color"
                             value={customerNameColor || '#ffffff'}
-                            onChange={(e) => setCustomerNameColor(e.target.value)}
+                            onChange={(e) => { setCustomerNameColor(e.target.value); setCustomerColorFollow(false); }}
                             style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
                           />
                         </div>
@@ -1492,7 +1492,7 @@ export function GlobalSettingsWorkspace({
                             id="gs-color-picker-customer-caption"
                             type="color"
                             value={customerCaptionColor.startsWith('rgba') ? '#a0aec0' : customerCaptionColor}
-                            onChange={(e) => setCustomerCaptionColor(e.target.value)}
+                            onChange={(e) => { setCustomerCaptionColor(e.target.value); setCustomerColorFollow(false); }}
                             style={{ position: 'absolute', opacity: 0, width: 0, height: 0, top: 0, left: 0 }}
                           />
                         </div>

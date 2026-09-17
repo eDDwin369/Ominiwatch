@@ -128,8 +128,8 @@
   /* chrome + login layout (defaults = current look until studio drives them) */
   --appbar-h: 64px;
   --login-card-w: 360px;
+  --login-image: url('./assets/login-bg.jpg');
   --login-img-opacity: 1;
-  --login-panel-color: var(--bg-card, #ffffff);
   --notif-badge-display: block;
   --app-font-size: 1rem;
   --app-line-height: 1.5;
@@ -361,7 +361,7 @@ input, button, select, textarea, span, p, div, label, a {
   display: flex;
   width: 100vw;
   height: 100vh;
-  background: radial-gradient(ellipse at 50% 0%, #101E39 0%, #090909 70%);
+  background: #090909;
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -394,9 +394,19 @@ input, button, select, textarea, span, p, div, label, a {
   .visual-panel {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     padding: 3.5rem;
   }
+}
+
+.visual-panel-tagline {
+  font-family: var(--app-font-family);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 38.4px;
+  color: #ffffff;
+  white-space: nowrap;
+  z-index: 10;
 }
 
 .brand {
@@ -457,6 +467,7 @@ input, button, select, textarea, span, p, div, label, a {
 
 .form-panel {
   flex: 3.3;
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -464,7 +475,7 @@ input, button, select, textarea, span, p, div, label, a {
   padding: var(--spacing-6) var(--spacing-5);
   padding-top: 8vh;
   width: 100%;
-  background-color: var(--login-panel-color, transparent);
+  background: var(--login-panel-color, radial-gradient(ellipse 70% 65% at 50% 77%, #101E39 0%, #0D1421 50%, #090909 100%));
 }
 
 @media (min-width: 768px) {
@@ -484,11 +495,11 @@ input, button, select, textarea, span, p, div, label, a {
 .outer-auth-card {
   width: 100%;
   max-width: var(--login-card-w, 360px);
-  background: linear-gradient(180deg, #070E28 0%, #002061 50%, #111111 100%);
+  background: linear-gradient(180deg, #070E28 0%, #002061 25%, #111111 100%);
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
-  border: var(--card-border, 1px solid var(--border-subtle));
-  box-shadow: var(--card-shadow, 0 10px 30px rgba(0,0,0,0.3));
+  border: 1px solid #2f2f2f;
+  box-shadow: var(0 10px 30px rgba(0,0,0,0.3));
   margin: 0 auto;
   max-height: 100%;
   overflow-y: auto;
@@ -539,15 +550,15 @@ input, button, select, textarea, span, p, div, label, a {
 .input-icon {
   position: absolute;
   left: 1rem;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(148, 163, 184, 0.7);
   pointer-events: none;
 }
 
 .form-input {
   width: 100%;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 30px;
+  background: #121212;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 13.5px;
   padding: 0.85rem var(--spacing-4) 0.85rem 2.75rem;
   color: #ffffff;
   font-family: var(--app-font-family);
@@ -576,7 +587,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .form-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(148, 163, 184, 0.7);
 }
 
 .password-toggle {
@@ -584,7 +595,7 @@ input, button, select, textarea, span, p, div, label, a {
   right: 1rem;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(148, 163, 184, 0.7);
   cursor: pointer;
   padding: var(--spacing-1);
   display: flex;
@@ -594,7 +605,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .password-toggle:hover {
-  color: #ffffff;
+  color: rgba(148, 163, 184, 1);
 }
 
 .form-options {
@@ -632,15 +643,15 @@ input, button, select, textarea, span, p, div, label, a {
 
 .submit-btn {
   width: 100%;
-  background: var(--btn-color, rgba(255, 255, 255, 0.08));
-  color: var(--btn-text, #ffffff);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md, 8px);
-  padding: 10px 16px;
-  font-size: var(--text-sm, 0.9rem);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: var(--btn-case, none);
+  background: #21232a;
+  color: #ffffff;
+  border: none;
+  border-radius: 13.5px;
+  padding: var(--spacing-3);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.05s ease;
   display: flex;
@@ -651,8 +662,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .submit-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  filter: brightness(1.08);
+  background: #2e3140;
   transform: translateY(-1px);
 }
 
