@@ -1,0 +1,89 @@
+.tf-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.tf-wrapper {
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  padding: 14px 32px 10px 14px;
+  transition: border-color 0.15s ease;
+}
+
+.tf-wrapper.tf-focused {
+  border-color: var(--primary);
+}
+
+.tf-wrapper.tf-error {
+  border-color: var(--danger, #dc2626);
+}
+
+.tf-wrapper.tf-disabled {
+  border-color: var(--border-light);
+  opacity: 0.6;
+}
+
+.tf-wrapper.tf-disabled .tf-input,
+.tf-wrapper.tf-disabled .tf-select {
+  cursor: default;
+}
+
+.tf-label {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  transform: translateY(-50%);
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1;
+  user-select: none;
+}
+
+.tf-wrapper.tf-error .tf-label {
+  color: var(--danger, #dc2626);
+}
+
+.tf-input,
+.tf-select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.tf-input::placeholder {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.tf-select {
+  appearance: none;
+  cursor: pointer;
+  padding-right: 20px;
+}
+
+.tf-chevron {
+  pointer-events: none;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+}
+
+.tf-error-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--danger, #dc2626);
+}
