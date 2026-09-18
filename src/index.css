@@ -34,10 +34,22 @@
   --primary-light: #EFF6FF;
 }
 
-[data-theme="corporate-blue"] {
+[data-theme="corporate-blue"],
+[data-theme="corporate"] {
   --primary: #2563EB;
   --primary-hover: #1E40AF;
   --primary-light: #DBEAFE;
+}
+
+[data-theme-mode="dark"][data-theme="corporate-blue"],
+[data-theme-mode="dark"][data-theme="corporate"] {
+  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #03205F 100%);
+  --account-card-bg: linear-gradient(90deg, #010D27 0%, #03205F 100%);
+}
+
+[data-theme-mode="light"][data-theme="corporate-blue"],
+[data-theme-mode="light"][data-theme="corporate"] {
+  --dash-canvas-bg: #ffffff;
 }
 
 [data-theme="emerald"] {
@@ -46,10 +58,31 @@
   --primary-light: #D1FAE5;
 }
 
-[data-theme="indigo-violet"] {
+[data-theme-mode="dark"][data-theme="emerald"] {
+  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #0B4A2F 100%);
+  --account-card-bg: linear-gradient(90deg, #001909 0%, #0A4821 100%);
+}
+
+[data-theme-mode="light"][data-theme="emerald"] {
+  --dash-canvas-bg: #ffffff;
+}
+
+[data-theme="indigo-violet"],
+[data-theme="indigo"] {
   --primary: #6366F1;
   --primary-hover: #4F46E5;
   --primary-light: #E0E7FF;
+}
+
+[data-theme-mode="dark"][data-theme="indigo-violet"],
+[data-theme-mode="dark"][data-theme="indigo"] {
+  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #31175F 100%);
+  --account-card-bg: linear-gradient(90deg, #010D27 0%, #37107A 100%);
+}
+
+[data-theme-mode="light"][data-theme="indigo-violet"],
+[data-theme-mode="light"][data-theme="indigo"] {
+  --dash-canvas-bg: #ffffff;
 }
 
 [data-theme="graphite"] {

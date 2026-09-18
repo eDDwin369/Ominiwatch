@@ -238,11 +238,16 @@ function syncCssVars(theme: any, settings: any) {
   // #041610 dark). Any other preset falls back to the primary-hue-derived dark bar.
   const figmaHeaderBg: Record<string, { light: string; dark: string }> = {
     corporate: { light: '#141b3c', dark: '#141b3c' },
+   'corporate-blue': { light: '#141b3c', dark: '#141b3c' },
     emerald: { light: '#0d2a20', dark: '#041610' },
     // Verified against pprc_darkPink / pprc_lightPink — the header bar is the same
     // solid diagonal wash in both modes (not the dual-transparent overlay this
     // previously assumed).
     indigo: {
+      light: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
+      dark: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
+    },
+    'indigo-violet': {
       light: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
       dark: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
     },
@@ -253,6 +258,7 @@ function syncCssVars(theme: any, settings: any) {
   // pixelPerfectNewReactCode for Emerald); other presets keep the primary-hue-derived bar.
   const figmaSidebarDark: Record<string, { bg: string; border: string }> = {
     corporate: { bg: '#090e24', border: '#1b2350' },
+    'corporate-blue': { bg: '#090e24', border: '#1b2350' },
     emerald: { bg: '#061a12', border: '#163d2b' },
   };
   const sidebarPreset = isDark ? figmaSidebarDark[settings.presetId] : undefined;
@@ -261,9 +267,11 @@ function syncCssVars(theme: any, settings: any) {
   // Hero video-card fill — differs per colour template in Figma (not theme-neutral #080a09).
   const figmaVideoBg: Record<string, string> = {
     corporate: '#0b1024',
+    'corporate-blue': '#0b1024',
     emerald: '#050505',
     // Verified against pprc_darkPink / pprc_lightPink (same in both modes).
     indigo: '#0b1024',
+    'indigo-violet': '#0b1024',
   };
   set('--dash-video-bg', figmaVideoBg[settings.presetId] || '#080a09');
   // Sidebar nav text — Figma tints inactive-item text and section labels per colour template in
@@ -271,6 +279,7 @@ function syncCssVars(theme: any, settings: any) {
   // default for any preset not yet verified against a Figma export.
   const figmaNavText: Record<string, { inactive: string; sectionTitle: string }> = {
     corporate: { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
+    'corporate-blue': { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
   };
   const navTextPreset = isDark ? figmaNavText[settings.presetId] : undefined;
   set('--dash-nav-inactive-color', navTextPreset?.inactive || (isDark ? '#94a3b8' : '#475569'));
@@ -290,15 +299,19 @@ function syncCssVars(theme: any, settings: any) {
   // dark mode; Emerald's light canvas is also a confirmed non-white tint (#ecf6f0), not plain
   // white. Any other preset/mode combo falls back to the primary-hue-derived flat dark / white.
   const figmaCanvasDark: Record<string, string> = {
-    corporate: 'linear-gradient(180deg, #070A1B 0%, #111734 50%, #090D22 100%)',
-    emerald: 'linear-gradient(180deg, #06140E 0%, #082318 50%, #061910 100%)',
-    indigo: 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
+    corporate: 'linear-gradient(90deg, #000000 0%, #03205F 100%)',
+    'corporate-blue': 'linear-gradient(90deg, #000000 0%, #03205F 100%)',
+    emerald: 'linear-gradient(90deg, #000000 0%, #0B4A2F 100%)',
+    indigo: 'linear-gradient(90deg, #000000 0%, #31175F 100%)',
+    'indigo-violet': 'linear-gradient(90deg, #000000 0%, #31175F 100%)',
   };
   const figmaCanvasLight: Record<string, string> = {
-    corporate: '#e1e6fb',
-    emerald: '#ecf6f0',
+    corporate: '#ffffff',
+    'corporate-blue': '#ffffff',
+    emerald: '#ffffff',
     // Verified against pprc_lightPink: plain white, not a pale-lavender tint.
     indigo: '#ffffff',
+    'indigo-violet': '#ffffff',
   };
   const defaultCanvasDark = figmaCanvasDark[settings.presetId] || darkCanvas;
   const defaultCanvasLight = figmaCanvasLight[settings.presetId] || '#ffffff';
@@ -308,17 +321,20 @@ function syncCssVars(theme: any, settings: any) {
     settings.pageBgHex || defaultCanvas
   );
   // Account Settings card fill — Figma "tinted" card look, screenshot-verified per
-  // preset (light: exact swatch hexes; dark: eyeballed from the dark-mode screenshots,
-  // not swatch-exact). Other presets keep the flat --bg-card.
+  // preset (light: exact swatch hexes; dark: verified Figma swatches: #010D27 to #03205F for Corporate, #001909 to #0A4821 for Emerald, #010D27 to #37107A for Indigo). Other presets keep the flat --bg-card.
   const figmaAccountCardLight: Record<string, string> = {
     corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
+    'corporate-blue': 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
     emerald: 'linear-gradient(90deg, #97E1B2 0%, #E6E6E6 100%)',
     indigo: 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)',
+    'indigo-violet': 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)',
   };
   const figmaAccountCardDark: Record<string, string> = {
     corporate: 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
-    emerald: 'linear-gradient(90deg, #06140e 0%, #0f3d2c 100%)',
-    indigo: 'linear-gradient(90deg, #150a24 0%, #4b2e86 100%)',
+    'corporate-blue': 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
+    emerald: 'linear-gradient(90deg, #001909 0%, #0A4821 100%)',
+    indigo: 'linear-gradient(90deg, #010D27 0%, #37107A 100%)',
+    'indigo-violet': 'linear-gradient(90deg, #010D27 0%, #37107A 100%)',
   };
   set(
     '--account-card-bg',
@@ -335,6 +351,10 @@ function syncCssVars(theme: any, settings: any) {
       light: 'linear-gradient(90deg, #0029ff 0%, #00144b 100%)',
       dark: 'linear-gradient(90deg, #4f6bff 0%, #22d3ee 100%)',
     },
+    'corporate-blue': {
+      light: 'linear-gradient(90deg, #0029ff 0%, #00144b 100%)',
+      dark: 'linear-gradient(90deg, #4f6bff 0%, #22d3ee 100%)',
+    },
     emerald: {
       light: 'linear-gradient(90deg, #01b979 0%, #d88b00 100%)',
       dark: 'linear-gradient(90deg, #2ee6a6 0%, #ffc255 100%)',
@@ -343,6 +363,10 @@ function syncCssVars(theme: any, settings: any) {
     // the SAME literal stops in both modes (previously assumed dark mode just used
     // raw primaryHex/secondaryHex — #a97bff/#ff5fa2 — which these exports disprove).
     indigo: {
+      light: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
+      dark: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
+    },
+    'indigo-violet': {
       light: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
       dark: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
     },

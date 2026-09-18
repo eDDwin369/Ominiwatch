@@ -5626,6 +5626,14 @@ html:has(.mode-v6),
   transition: background 0.4s ease !important;
 }
 
+[data-theme-mode="dark"] .dashboard-wrapper,
+[data-theme-mode="dark"] .dashboard-body,
+[data-theme-mode="dark"] .dashboard-main,
+[data-theme-mode="dark"] .dashboard-content-scrollable,
+[data-theme-mode="dark"] .dashboard-container {
+  background: var(--dash-canvas-bg, var(--bg-dashboard));
+}
+
 [data-theme-mode="light"] body:has(.mode-v2),
 [data-theme-mode="light"] html:has(.mode-v2),
 [data-theme-mode="light"] .dashboard-wrapper:has(.mode-v2),

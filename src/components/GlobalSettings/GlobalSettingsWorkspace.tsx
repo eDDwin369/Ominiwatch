@@ -217,15 +217,9 @@ export function GlobalSettingsWorkspace({
   const [showLogo, setShowLogo] = useState(headerConfig.showLogo);
   // Seed from Theme Studio (source of truth), falling back to the legacy header config.
   const [companyName, setCompanyName] = useState(studioSettings.appName || headerConfig.companyName || '');
-  const [showCompanyName, setShowCompanyName] = useState(() => {
-    const saved = localStorage.getItem('gs_showCompanyName');
-    return saved !== null ? JSON.parse(saved) : (headerConfig.showCompanyName ?? false);
-  });
+  const [showCompanyName, setShowCompanyName] = useState(headerConfig.showCompanyName);
   const [companyCaption, setCompanyCaption] = useState(studioSettings.appTagline || headerConfig.companyCaption || '');
-  const [showCompanyCaption, setShowCompanyCaption] = useState(() => {
-    const saved = localStorage.getItem('gs_showCompanyCaption');
-    return saved !== null ? JSON.parse(saved) : (headerConfig.showCompanyCaption ?? false);
-  });
+  const [showCompanyCaption, setShowCompanyCaption] = useState(headerConfig.showCompanyCaption !== undefined ? headerConfig.showCompanyCaption : true);
   const [textColor] = useState(headerConfig.textColor || '#ffffff');
   const [textColorApply] = useState<any>(headerConfig.textColorApply || 'both');
   const [headerBgColor, setHeaderBgColor] = useState(headerConfig.headerBgColor || 'transparent');
@@ -558,8 +552,6 @@ export function GlobalSettingsWorkspace({
     localStorage.setItem('gs_sidebarColor', sidebarBg);
     localStorage.setItem('gs_companyNameWeight', companyNameWeight);
     localStorage.setItem('gs_companyCaptionWeight', companyCaptionWeight);
-    localStorage.setItem('gs_showCompanyName', JSON.stringify(showCompanyName));
-    localStorage.setItem('gs_showCompanyCaption', JSON.stringify(showCompanyCaption));
     localStorage.setItem('gs_customerNameWeight', customerNameWeight);
     localStorage.setItem('gs_customerCaptionWeight', customerCaptionWeight);
     if (setSidebarColor) setSidebarColor(sidebarBg);

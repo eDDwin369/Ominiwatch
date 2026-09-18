@@ -6,16 +6,16 @@
   flex: 1;
   padding: 24px 32px 60px 32px;
   box-sizing: border-box;
-  background: var(--bg-dashboard);
-  transition: background-color 0.3s ease;
+  background: var(--dash-canvas-bg, var(--bg-dashboard));
+  transition: background 0.3s ease;
 }
 
 [data-theme-mode="dark"] .figma-account-settings-page-wrapper {
-  background: var(--bg-dashboard) !important;
+  background: var(--dash-canvas-bg, var(--bg-dashboard)) !important;
 }
 
 [data-theme-mode="light"] .figma-account-settings-page-wrapper {
-  background: var(--bg-dashboard) !important;
+  background: var(--dash-canvas-bg, var(--bg-dashboard)) !important;
 }
 
 .figma-account-settings-container {

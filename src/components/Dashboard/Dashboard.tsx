@@ -204,14 +204,13 @@ export function Dashboard({
   };
   const [headerConfig, setHeaderConfig] = useState(() => {
     const saved = localStorage.getItem('headerConfig');
-    const parsed = saved ? JSON.parse(saved) : {};
-    const savedShowName = localStorage.getItem('gs_showCompanyName');
-    const savedShowCaption = localStorage.getItem('gs_showCompanyCaption');
-    return {
+    return saved ? JSON.parse(saved) : {
       logo: '',
       showLogo: true,
       companyName: 'OomniEye',
+      showCompanyName: true,
       companyCaption: 'Digital Twin Solutions',
+      showCompanyCaption: true,
       textColor: '#ffffff',
       textColorApply: 'both',
       companyNameColor: '#ffffff',
@@ -220,10 +219,7 @@ export function Dashboard({
       companyNameWeight: '400',
       companyCaptionStyle: 'h4',
       companyCaptionWeight: '300',
-      headerBgColor: 'transparent',
-      ...parsed,
-      showCompanyName: savedShowName !== null ? JSON.parse(savedShowName) : false,
-      showCompanyCaption: savedShowCaption !== null ? JSON.parse(savedShowCaption) : false,
+      headerBgColor: 'transparent'
     };
   });
 
@@ -236,12 +232,6 @@ export function Dashboard({
   const handleSaveHeaderConfig = (newConfig: any) => {
     setHeaderConfig(newConfig);
     localStorage.setItem('headerConfig', JSON.stringify(newConfig));
-    if (newConfig.showCompanyName !== undefined) {
-      localStorage.setItem('gs_showCompanyName', JSON.stringify(newConfig.showCompanyName));
-    }
-    if (newConfig.showCompanyCaption !== undefined) {
-      localStorage.setItem('gs_showCompanyCaption', JSON.stringify(newConfig.showCompanyCaption));
-    }
     if (newConfig.startExpanded !== undefined) {
       handleSetCollapsed(!newConfig.startExpanded);
     }

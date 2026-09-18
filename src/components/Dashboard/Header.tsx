@@ -171,7 +171,7 @@ export function Header({
           />
         )}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          {Boolean(headerConfig?.showCompanyName) && (
+          {(!headerConfig || headerConfig.showCompanyName) && (
             <div
               className="hdr-brand-name"
               style={{
@@ -183,7 +183,7 @@ export function Header({
               {brand.appName || headerConfig?.companyName || 'OomniEye'}
             </div>
           )}
-          {Boolean(headerConfig?.showCompanyCaption) && (
+          {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
             <div
               className="hdr-brand-caption"
               style={{
