@@ -1,6 +1,7 @@
 .gs-dd-root {
   position: relative;
   display: inline-flex;
+  vertical-align: middle;
 }
 
 .gs-dd-trigger {
@@ -8,10 +9,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 4px;
   cursor: pointer;
   outline: none;
   font-family: var(--app-font-family);
+  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
 .gs-dd-trigger-label {
@@ -22,39 +25,69 @@
 
 /* Pill variant — Global Settings H1 / weight controls */
 .gs-dd-trigger-pill {
-  width: 64px;
-  height: 30px;
-  border-radius: 15px;
-  border: 1px solid var(--gs-input-border, var(--border-light));
-  background: var(--gs-input-bg, var(--bg-card));
+  width: 100%;
+  height: 28px;
+  border-radius: 9999px;
+  border: 1px solid var(--gs-input-border, rgba(255, 255, 255, 0.15));
+  background: var(--gs-input-bg, rgba(255, 255, 255, 0.08));
   color: var(--gs-text-color, var(--text-main));
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 0 10px;
-  box-shadow: var(--gs-input-shadow, none);
+  letter-spacing: 0.3px;
+  padding: 0 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   justify-content: center;
+  text-align: center;
+}
+
+.gs-dd-trigger-pill:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.gs-dd-trigger-pill.gs-dd-trigger-open {
+  border-color: var(--highlight, var(--primary));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 /* Rect variant — form / preference selects */
 .gs-dd-trigger-rect {
-  border: 1px solid var(--border-light);
+  height: 32px;
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.12));
   border-radius: 8px;
   background: var(--bg-card);
   color: var(--text-main);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
-  padding: 8px 12px;
-  min-width: 160px;
+  padding: 0 10px;
+  min-width: 130px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.gs-dd-trigger-rect:hover {
+  border-color: var(--border-hover, #94a3b8);
+}
+
+.gs-dd-trigger-rect.gs-dd-trigger-open {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .gs-dd-chevron {
   color: var(--text-muted);
   flex-shrink: 0;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gs-dd-chevron.open {
+  transform: rotate(180deg);
 }
 
 .gs-dd-trigger-input {
   text-align: center;
   cursor: text;
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
 .gs-dd-trigger-input:focus {
@@ -62,49 +95,198 @@
   border-color: var(--primary, var(--gs-input-border));
 }
 
+/* Base Portaled Menu */
 .gs-dd-menu {
-  /* Portaled to document.body, so it inherits font from <body>, not from wherever
-     the trigger sits in the React tree — set explicitly rather than rely on that
-     coincidence matching --app-font-family. */
   font-family: var(--app-font-family);
-  /* Same reasoning: this now competes directly with the Global Settings modal's own
-     stacking context (up to z-index: 100011 there) instead of inheriting it — must
-     out-rank that, not just sit above sibling content. */
   z-index: 100020;
-  /* width comes from the trigger's own measured rect, set inline by Dropdown.tsx —
-     `min-width: 100%` would resolve against the viewport here, not the trigger,
-     since the portaled menu's containing block is <body>. */
-  max-height: 260px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 5px;
-  border-radius: 16px;
-  background: var(--bg-card, #12151f);
-  border: 1px solid var(--border-light);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+  box-sizing: border-box;
+  animation: gsDropdownMenuIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@keyframes gsDropdownMenuIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(var(--dd-anim-y, -3px));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.gs-dd-menu-down {
+  --dd-anim-y: -3px;
+  transform-origin: top center;
+}
+
+.gs-dd-menu-up {
+  --dd-anim-y: 3px;
+  transform-origin: bottom center;
+}
+
+/* Pill Variant Menu — small, elegant, capsule geometry with zero scrollbar width eating */
+.gs-dd-menu-pill {
+  max-height: 148px;
+  padding: 3px 2px;
+  gap: 2px;
+  border-radius: 14px;
+  background: rgba(16, 20, 34, 0.92);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  align-items: center;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.gs-dd-menu-pill::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+[data-theme-mode="light"] .gs-dd-menu-pill {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow: 0 10px 26px -4px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* Rect Variant Menu — clean modern SaaS select menu */
+.gs-dd-menu-rect {
+  max-height: 200px;
+  padding: 4px;
+  gap: 1px;
+  border-radius: 8px;
+  background: var(--bg-card, #12151f);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.gs-dd-menu-rect::-webkit-scrollbar {
+  width: 3px;
+}
+
+.gs-dd-menu-rect::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+
+.gs-dd-menu-rect::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+}
+
+[data-theme-mode="light"] .gs-dd-menu-rect::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+[data-theme-mode="dark"] .gs-dd-menu-rect {
+  background: rgba(18, 22, 36, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Options */
 .gs-dd-option {
+  width: 100%;
   border: none;
   background: transparent;
-  color: var(--text-main);
-  font-size: 15px;
-  text-align: center;
-  padding: 8px 10px;
-  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: all 0.12s ease;
+  font-family: inherit;
+  user-select: none;
+  box-sizing: border-box;
 }
 
-.gs-dd-option:hover {
-  background: var(--bg-dashboard);
+/* Pill Options — centered, full width, minimal side gap */
+.gs-dd-menu-pill .gs-dd-option {
+  width: 100% !important;
+  box-sizing: border-box;
+  height: 24px;
+  min-height: 24px;
+  padding: 0 4px;
+  margin: 0;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.75);
 }
 
-.gs-dd-option-selected,
-.gs-dd-option-selected:hover {
-  background: var(--gs-accent-gradient, var(--primary));
+.gs-dd-menu-pill .gs-dd-option-label {
+  width: 100%;
+  text-align: center;
+  display: block;
+}
+
+[data-theme-mode="light"] .gs-dd-menu-pill .gs-dd-option {
+  color: #475569;
+}
+
+.gs-dd-menu-pill .gs-dd-option:hover {
+  background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
-  font-weight: 700;
+}
+
+[data-theme-mode="light"] .gs-dd-menu-pill .gs-dd-option:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #0f172a;
+}
+
+.gs-dd-menu-pill .gs-dd-option-selected,
+.gs-dd-menu-pill .gs-dd-option-selected:hover {
+  background: var(--gs-accent-gradient, var(--primary));
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  width: 100% !important;
+}
+
+/* Rect Options */
+.gs-dd-menu-rect .gs-dd-option {
+  width: 100%;
+  height: 28px;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 450;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-main);
+}
+
+.gs-dd-menu-rect .gs-dd-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme-mode="light"] .gs-dd-menu-rect .gs-dd-option:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.gs-dd-menu-rect .gs-dd-option-selected,
+.gs-dd-menu-rect .gs-dd-option-selected:hover {
+  background: var(--highlight-soft, rgba(59, 130, 246, 0.12));
+  color: var(--highlight, var(--primary));
+  font-weight: 600;
+}
+
+.gs-dd-option-check {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--highlight, var(--primary));
+  margin-left: 8px;
 }
