@@ -288,10 +288,17 @@ export function Sidebar({
                   }}
                   className="sidebar-toggle"
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: isLocked ? 1 : 0.6 }}>
-                    <path d="M6.84 14a2 2 0 0 0 2.3 0" />
-                    <path d="M2.17 10.21A1 1 0 0 0 2.67 11.33h10.66a1 1 0 0 0 .5-1.12c-.89-.91-1.84-1.88-1.84-4.88a4 4 0 0 0-8 0c0 3-.95 3.97-1.82 4.88Z" />
-                  </svg>
+                  {isLocked ? (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="12" y1="17" x2="12" y2="22" />
+                      <path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.78-3.5A2 2 0 0 1 15 9.26V5a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4.26a2 2 0 0 1-.78 1.24l-2.78 3.5a2 2 0 0 0-.44 1.24Z" />
+                    </svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(-45deg)' }}>
+                      <line x1="12" y1="17" x2="12" y2="22" />
+                      <path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.78-3.5A2 2 0 0 1 15 9.26V5a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4.26a2 2 0 0 1-.78 1.24l-2.78 3.5a2 2 0 0 0-.44 1.24Z" />
+                    </svg>
+                  )}
                 </button>
                 <button
                   className="sidebar-toggle"
@@ -306,16 +313,11 @@ export function Sidebar({
                     justifyContent: 'center',
                     padding: '2px',
                     borderRadius: '4px',
-                    color: 'var(--highlight, var(--primary))',
-                    opacity: 0.7,
+                    color: 'var(--text-muted)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="2" width="12" height="12" rx="1.5" />
-                    <line x1="6" y1="2" x2="6" y2="14" />
-                    <path d="M10.5 10L8.5 8L10.5 6" />
-                  </svg>
+                  <ChevronLeft size={14} />
                 </button>
               </div>
             )}
@@ -412,11 +414,7 @@ export function Sidebar({
             title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <div className="shrink-0" style={{ width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.33" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isSidebarCollapsed ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }}>
-                <rect x="2" y="2" width="12" height="12" rx="1.5" />
-                <line x1="6" y1="2" x2="6" y2="14" />
-                <path d="M10.5 10L8.5 8L10.5 6" />
-              </svg>
+              <ChevronLeft size={16} style={{ transform: isSidebarCollapsed ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
             </div>
             {!isSidebarCollapsed && <span>Collapse</span>}
           </button>
