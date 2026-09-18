@@ -196,9 +196,8 @@ function syncCssVars(theme: any, settings: any) {
   const ty = theme.typography;
   for (let n = 1; n <= 6; n++) {
     const h = ty[`h${n}`] || {};
-    const size = (settings as any)[`h${n}Size`] || h.fontSize;
-    set(`--h${n}-size`, size ? `${size}px` : undefined);
-    set(`--font-size-h${n}`, size ? `${size}px` : undefined);
+    set(`--h${n}-size`, h.fontSize ? `${h.fontSize}px` : undefined);
+    set(`--font-size-h${n}`, h.fontSize ? `${h.fontSize}px` : undefined);
     const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
     set(`--h${n}-weight`, w ? String(w) : undefined);
     set(`--h${n}-color`, settings[`h${n}Color`] || 'var(--text-main)');
@@ -208,32 +207,8 @@ function syncCssVars(theme: any, settings: any) {
   set('--font-size-body', ty.body1?.fontSize ? `${ty.body1.fontSize}px` : undefined);
   set('--font-size-body-sm', ty.body2?.fontSize ? `${ty.body2.fontSize}px` : undefined);
   set('--font-size-caption', ty.caption?.fontSize ? `${ty.caption.fontSize}px` : undefined);
-  // mapped pixel sizes for component-specific tokens (e.g. --font-size-24, --font-size-14)
-  const headingFontSizes = [
-    ty.h1?.fontSize || 20,
-    ty.h2?.fontSize || 24,
-    ty.h3?.fontSize || 16,
-    ty.h4?.fontSize || 19,
-    ty.h5?.fontSize || 16,
-    ty.h6?.fontSize || 14
-  ];
-  const pixelSizes: Record<string, number | undefined> = {
-    '24': headingFontSizes[1] || 24, // h2
-    '20': headingFontSizes[0] || 20, // h1
-    '19': headingFontSizes[3] || 19, // h4
-    '18': 18,
-    '17': headingFontSizes[2] || 16, // h3
-    '16': headingFontSizes[4] || 16, // h5
-    '14-5': 14.5,
-    '14': headingFontSizes[5] || 14, // h6
-    '13': 13,
-    '12': 12,
-    '11-5': 11.5,
-    '11': 11,
-  };
-  Object.entries(pixelSizes).forEach(([key, val]) => {
-    if (val) set(`--font-size-${key}`, `${val}px`);
-  });
+
+
   // Dedicated Dashboard Ambient & Preset Tokens
   const primaryHex = settings.primaryHex || p.primary.main || '#2563EB';
   const secondaryHex = settings.secondaryHex || p.secondary?.main || '#00D2FF';

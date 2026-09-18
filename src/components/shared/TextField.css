@@ -6,23 +6,11 @@
 
 .tf-wrapper {
   position: relative;
-  border-radius: 12px;
-  border: 1px solid var(--border-light);
   background: transparent;
   padding: 14px 32px 10px 14px;
-  transition: border-color 0.15s ease;
-}
-
-.tf-wrapper.tf-focused {
-  border-color: var(--primary);
-}
-
-.tf-wrapper.tf-error {
-  border-color: var(--danger, #dc2626);
 }
 
 .tf-wrapper.tf-disabled {
-  border-color: var(--border-light);
   opacity: 0.6;
 }
 
@@ -31,21 +19,55 @@
   cursor: default;
 }
 
-.tf-label {
+.tf-wrapper.tf-no-chevron {
+  padding-right: 14px;
+}
+
+/* The visual border — a real <fieldset>, so its <legend> notches a genuine gap
+   in the border instead of a label just overlapping a continuous line. */
+.tf-outline {
   position: absolute;
-  left: 12px;
-  top: 0;
-  transform: translateY(-50%);
+  inset: 0;
+  margin: 0;
+  padding: 0 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  pointer-events: none;
+  transition: border-color 0.15s ease;
+}
+
+.tf-wrapper.tf-focused .tf-outline {
+  border-color: var(--primary);
+}
+
+.tf-wrapper.tf-error .tf-outline {
+  border-color: var(--danger, #dc2626);
+}
+
+.tf-legend {
   padding: 0 4px;
   font-size: 11px;
   font-weight: 500;
   color: var(--text-secondary);
   line-height: 1;
-  user-select: none;
 }
 
-.tf-wrapper.tf-error .tf-label {
+.tf-wrapper.tf-error .tf-legend {
   color: var(--danger, #dc2626);
+}
+
+/* Real <label> kept only for htmlFor/screen-reader association — the legend
+   above is what actually renders on screen. */
+.tf-sr-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .tf-input,
@@ -86,4 +108,12 @@
   font-size: 11px;
   line-height: 1.4;
   color: var(--danger, #dc2626);
+}
+
+.tf-counter {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
 }
