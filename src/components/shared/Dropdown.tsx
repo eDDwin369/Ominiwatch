@@ -95,9 +95,7 @@ export function Dropdown({
         prev &&
         prev.left === nextRect.left &&
         prev.width === nextRect.width &&
-        prev.openUpward === nextRect.openUpward &&
-        prev.top === nextRect.top &&
-        prev.bottom === nextRect.bottom
+        prev.openUpward === nextRect.openUpward
       ) {
         return prev;
       }

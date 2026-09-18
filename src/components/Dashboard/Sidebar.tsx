@@ -6,7 +6,6 @@ import {
   Store,
   BarChart2,
   Palette,
-  UserCircle,
   ChevronRight,
   ChevronLeft
 } from 'lucide-react';
