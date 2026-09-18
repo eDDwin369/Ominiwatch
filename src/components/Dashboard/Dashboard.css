@@ -391,7 +391,7 @@
   text-decoration: none;
   font-family: 'Inter', var(--app-heading-family, var(--app-font-family));
   font-weight: 500;
-  font-size: 14px;
+  font-size: var(--h6-size, 14px);
   line-height: 20px;
   letter-spacing: 0;
   border: 1px solid transparent;
@@ -464,7 +464,7 @@
   padding: 20px 12px 4px 12px;
   margin: 0;
   font-family: 'JetBrains Mono', monospace, var(--app-heading-family);
-  font-size: 10px;
+  font-size: var(--font-size-caption, 11px);
   line-height: 15px;
   font-weight: 700;
   text-transform: uppercase;

@@ -190,21 +190,13 @@ function syncCssVars(theme: any, settings: any) {
   set('--app-line-height', body.lineHeight != null ? String(body.lineHeight) : undefined);
   set('--app-font-weight', body.fontWeight != null ? String(body.fontWeight) : undefined);
   set('--app-letter-spacing', settings.letterSpace ? `${settings.letterSpace}px` : '0');
-  // per-heading tokens: size comes from the resolved theme (already folds in
-  // scaleRatio/textSize/baseFontPx/h{n}Size); weight/color from raw settings
+  // per-heading tokens: size comes from raw settings.h{n}Size when set (presets pin
+  // this explicitly), else the resolved theme (h1Size-derived fixed ratio); weight/color from raw settings
   // (0/'' = auto → fall back to headingWeight / --text-main default in index.css).
   const ty = theme.typography;
-  const defaultHeadingSizes: Record<number, number> = {
-    1: 20,
-    2: 24,
-    3: 16,
-    4: 19,
-    5: 16,
-    6: 14,
-  };
   for (let n = 1; n <= 6; n++) {
     const h = ty[`h${n}`] || {};
-    const size = (settings as any)[`h${n}Size`] || h.fontSize || defaultHeadingSizes[n];
+    const size = (settings as any)[`h${n}Size`] || h.fontSize;
     set(`--h${n}-size`, size ? `${size}px` : undefined);
     set(`--font-size-h${n}`, size ? `${size}px` : undefined);
     const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
@@ -423,12 +415,6 @@ export function StudioTheme({ children }: { children: ReactNode }) {
       if (root.borderBottom === 'none') {
         root.borderBottom = '0px none';
       }
-    }
-    if (t.typography) {
-      if (t.typography.h2 && !(settings as any).h2Size) t.typography.h2.fontSize = 24;
-      if (t.typography.h4 && !(settings as any).h4Size) t.typography.h4.fontSize = 19;
-      if (t.typography.h5 && !(settings as any).h5Size) t.typography.h5.fontSize = 16;
-      if (t.typography.h6 && !(settings as any).h6Size) t.typography.h6.fontSize = 14;
     }
     return t;
   }, [settings]);
