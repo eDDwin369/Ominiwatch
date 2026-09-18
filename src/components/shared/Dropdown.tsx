@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown } from 'lucide-react';
 import './Dropdown.css';
@@ -45,12 +45,24 @@ export function Dropdown({
   const menuRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const opts: DropdownOption[] = options.map((o) =>
-    typeof o === 'string' ? { value: o, label: o } : o
+  const opts: DropdownOption[] = useMemo(
+    () => options.map((o) => (typeof o === 'string' ? { value: o, label: o } : o)),
+    [options]
   );
   const selected = opts.find((o) => o.value === value);
 
-  const measure = () => {
+  const optsRef = useRef(opts);
+  optsRef.current = opts;
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  useEffect(() => {
+    setDraft(value);
+  }, [value]);
+
+  const measure = useCallback(() => {
     // Measure the visible trigger element directly for exact pixel geometry
     const triggerEl = triggerRef.current || rootRef.current;
     if (!triggerEl) return;
@@ -69,15 +81,29 @@ export function Dropdown({
       menuWidth = Math.max(rect.width, 130);
     }
 
-    setMenuRect({
+    const nextRect = {
       left: Math.round(menuLeft),
       width: Math.round(menuWidth),
       openUpward,
       ...(openUpward
         ? { bottom: Math.round(window.innerHeight - rect.top + 4) }
         : { top: Math.round(rect.bottom + 4) }),
+    };
+
+    setMenuRect((prev) => {
+      if (
+        prev &&
+        prev.left === nextRect.left &&
+        prev.width === nextRect.width &&
+        prev.openUpward === nextRect.openUpward &&
+        prev.top === nextRect.top &&
+        prev.bottom === nextRect.bottom
+      ) {
+        return prev;
+      }
+      return nextRect;
     });
-  };
+  }, [variant]);
 
   useEffect(() => {
     if (!open) return;
@@ -103,15 +129,19 @@ export function Dropdown({
         setOpen(false);
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        const currentIndex = opts.findIndex((o) => o.value === value);
-        if (currentIndex < opts.length - 1) {
-          onChange(opts[currentIndex + 1].value);
+        const currentOpts = optsRef.current;
+        const currentValue = valueRef.current;
+        const currentIndex = currentOpts.findIndex((o) => o.value === currentValue);
+        if (currentIndex < currentOpts.length - 1) {
+          onChangeRef.current(currentOpts[currentIndex + 1].value);
         }
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        const currentIndex = opts.findIndex((o) => o.value === value);
+        const currentOpts = optsRef.current;
+        const currentValue = valueRef.current;
+        const currentIndex = currentOpts.findIndex((o) => o.value === currentValue);
         if (currentIndex > 0) {
-          onChange(opts[currentIndex - 1].value);
+          onChangeRef.current(currentOpts[currentIndex - 1].value);
         }
       } else if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
@@ -131,7 +161,7 @@ export function Dropdown({
       window.removeEventListener('resize', onReposition);
       window.removeEventListener('scroll', onReposition, true);
     };
-  }, [open, value, opts]);
+  }, [open, measure]);
 
   const commitDraft = () => {
     const trimmed = draft.trim();

@@ -194,10 +194,19 @@ function syncCssVars(theme: any, settings: any) {
   // scaleRatio/textSize/baseFontPx/h{n}Size); weight/color from raw settings
   // (0/'' = auto → fall back to headingWeight / --text-main default in index.css).
   const ty = theme.typography;
+  const defaultHeadingSizes: Record<number, number> = {
+    1: 20,
+    2: 24,
+    3: 16,
+    4: 19,
+    5: 16,
+    6: 14,
+  };
   for (let n = 1; n <= 6; n++) {
     const h = ty[`h${n}`] || {};
-    set(`--h${n}-size`, h.fontSize ? `${h.fontSize}px` : undefined);
-    set(`--font-size-h${n}`, h.fontSize ? `${h.fontSize}px` : undefined);
+    const size = (settings as any)[`h${n}Size`] || h.fontSize || defaultHeadingSizes[n];
+    set(`--h${n}-size`, size ? `${size}px` : undefined);
+    set(`--font-size-h${n}`, size ? `${size}px` : undefined);
     const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
     set(`--h${n}-weight`, w ? String(w) : undefined);
     set(`--h${n}-color`, settings[`h${n}Color`] || 'var(--text-main)');
@@ -208,14 +217,23 @@ function syncCssVars(theme: any, settings: any) {
   set('--font-size-body-sm', ty.body2?.fontSize ? `${ty.body2.fontSize}px` : undefined);
   set('--font-size-caption', ty.caption?.fontSize ? `${ty.caption.fontSize}px` : undefined);
   // mapped pixel sizes for component-specific tokens (e.g. --font-size-24, --font-size-14)
-  const headingFontSizes = [ty.h1?.fontSize, ty.h2?.fontSize, ty.h3?.fontSize, ty.h4?.fontSize, ty.h5?.fontSize, ty.h6?.fontSize];
+  const headingFontSizes = [
+    ty.h1?.fontSize || 20,
+    ty.h2?.fontSize || 24,
+    ty.h3?.fontSize || 16,
+    ty.h4?.fontSize || 19,
+    ty.h5?.fontSize || 16,
+    ty.h6?.fontSize || 14
+  ];
   const pixelSizes: Record<string, number | undefined> = {
-    '24': headingFontSizes[0], // h1
-    '20': headingFontSizes[1], // h2
+    '24': headingFontSizes[1] || 24, // h2
+    '20': headingFontSizes[0] || 20, // h1
+    '19': headingFontSizes[3] || 19, // h4
     '18': 18,
-    '17': headingFontSizes[2], // h3
+    '17': headingFontSizes[2] || 16, // h3
+    '16': headingFontSizes[4] || 16, // h5
     '14-5': 14.5,
-    '14': headingFontSizes[3], // h4
+    '14': headingFontSizes[5] || 14, // h6
     '13': 13,
     '12': 12,
     '11-5': 11.5,
@@ -405,6 +423,12 @@ export function StudioTheme({ children }: { children: ReactNode }) {
       if (root.borderBottom === 'none') {
         root.borderBottom = '0px none';
       }
+    }
+    if (t.typography) {
+      if (t.typography.h2 && !(settings as any).h2Size) t.typography.h2.fontSize = 24;
+      if (t.typography.h4 && !(settings as any).h4Size) t.typography.h4.fontSize = 19;
+      if (t.typography.h5 && !(settings as any).h5Size) t.typography.h5.fontSize = 16;
+      if (t.typography.h6 && !(settings as any).h6Size) t.typography.h6.fontSize = 14;
     }
     return t;
   }, [settings]);
