@@ -400,7 +400,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                               alignItems: 'center', 
                               justifyContent: 'center', 
                               fontSize: '14px', 
-                              fontWeight: 600,
+                              fontWeight: 400,
                               textTransform: 'uppercase'
                             }}
                           >
@@ -450,7 +450,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                         alignItems: 'center', 
                         justifyContent: 'center', 
                         fontSize: '14px', 
-                        fontWeight: 600,
+                        fontWeight: 400,
                         textTransform: 'uppercase'
                       }}
                     >
@@ -473,7 +473,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                       <span>{item.actionText || 'alerted'}</span>
                       <span style={{ color: 'var(--border-hover)' }}>•</span>
                       <span style={{ fontSize: '12px' }}>{getTargetEmoji(item.targetName, item.category)}</span>
-                      <span style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{item.targetName || item.title}</span>
+                      <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{item.targetName || item.title}</span>
                       <span style={{ color: 'var(--border-hover)' }}>•</span>
                       <span>{item.category}</span>
                     </div>
@@ -553,7 +553,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 backgroundColor: 'var(--bg-card)',
                 color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-secondary)',
                 fontSize: '12px',
-                fontWeight: 600,
+                fontWeight: 400,
                 cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
                 transition: 'all 0.05s ease'
               }}
@@ -576,7 +576,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 backgroundColor: 'var(--bg-card)',
                 color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-secondary)',
                 fontSize: '12px',
-                fontWeight: 600,
+                fontWeight: 400,
                 cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
                 transition: 'all 0.05s ease'
               }}

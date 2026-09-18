@@ -29,7 +29,7 @@
   background: var(--gs-input-bg, var(--bg-card));
   color: var(--gs-text-color, var(--text-main));
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 400;
   padding: 0 10px;
   box-shadow: var(--gs-input-shadow, none);
   justify-content: center;

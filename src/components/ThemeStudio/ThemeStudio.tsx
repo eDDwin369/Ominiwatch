@@ -648,7 +648,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                 transform: `scale(${zoomLevel / 50})`,
                 transition: 'transform 0.05s ease-out'
               }}>
-                <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600 }}>IMAGE</span>
+                <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 400 }}>IMAGE</span>
               </div>
               
               {/* Dimmed Area overlay (bright frame cutout) */}
@@ -667,7 +667,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
 
             {/* Zoom Slider */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Zoom</span>
+              <span style={{ fontSize: '13px', fontWeight: 400, color: '#475569' }}>Zoom</span>
               <input 
                 type="range" 
                 min="10" 

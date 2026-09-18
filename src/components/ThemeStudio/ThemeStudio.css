@@ -113,7 +113,7 @@
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   font-size: var(--text-xs);
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.05s ease;
   border: 1.5px solid;
@@ -231,7 +231,7 @@
   background: var(--primary);
   border-color: var(--primary-hover);
   color: #fff;
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .ts-theme-grid {
@@ -264,7 +264,7 @@
   border-color: var(--primary);
   background: var(--primary-light, #EFF6FF); /* Use light version of primary */
   color: var(--text-main);
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .ts-theme-swatch {
@@ -337,7 +337,7 @@
   background: #FFFFFF;
   border-color: var(--border-light);
   color: var(--text-main);
-  font-weight: 600;
+  font-weight: 400;
   box-shadow: var(--shadow-sm);
 }
 .ts-mode-btn:not(.active):hover {
@@ -364,7 +364,7 @@
   padding: var(--spacing-2) var(--spacing-3);
   border-radius: var(--radius-md);
   font-size: var(--text-xs);
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   transition: all 0.05s ease;
   border: 1.5px solid;
@@ -443,7 +443,7 @@
   background: var(--text-main);
   color: #FFFFFF;
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: 400;
   border: none;
   cursor: pointer;
   transition: all 0.05s ease;

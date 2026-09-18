@@ -261,7 +261,7 @@ export function NotificationsPage({
                           backgroundColor: currentPage === pageNum ? 'var(--primary-light)' : 'var(--bg-card)',
                           color: currentPage === pageNum ? 'var(--primary)' : 'var(--text-secondary)',
                           fontSize: '13px',
-                          fontWeight: 600,
+                          fontWeight: 400,
                           cursor: 'pointer',
                           transition: 'all 0.05s ease'
                         }}
