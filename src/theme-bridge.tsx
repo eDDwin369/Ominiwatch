@@ -299,11 +299,11 @@ function syncCssVars(theme: any, settings: any) {
   // dark mode; Emerald's light canvas is also a confirmed non-white tint (#ecf6f0), not plain
   // white. Any other preset/mode combo falls back to the primary-hue-derived flat dark / white.
   const figmaCanvasDark: Record<string, string> = {
-    corporate: 'linear-gradient(90deg, #000000 0%, #03205F 100%)',
-    'corporate-blue': 'linear-gradient(90deg, #000000 0%, #03205F 100%)',
-    emerald: 'linear-gradient(90deg, #000000 0%, #0B4A2F 100%)',
-    indigo: 'linear-gradient(90deg, #000000 0%, #31175F 100%)',
-    'indigo-violet': 'linear-gradient(90deg, #000000 0%, #31175F 100%)',
+    corporate: 'linear-gradient(180deg, #070A1B 0%, #111734 50%, #090D22 100%)',
+    'corporate-blue': 'linear-gradient(180deg, #070A1B 0%, #111734 50%, #090D22 100%)',
+    emerald: 'linear-gradient(180deg, #06140E 0%, #082318 50%, #061910 100%)',
+    indigo: 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
+    'indigo-violet': 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
   };
   const figmaCanvasLight: Record<string, string> = {
     corporate: '#ffffff',
@@ -319,6 +319,18 @@ function syncCssVars(theme: any, settings: any) {
   set(
     '--dash-canvas-bg',
     settings.pageBgHex || defaultCanvas
+  );
+  // Account Settings page canvas — a distinct, Figma-verified gradient from the
+  // Dashboard's own --dash-canvas-bg above (previously the two shared one var and
+  // ended up showing whichever gradient last won the cascade). Other presets fall
+  // back to the flat --bg-dashboard, same as Dashboard's own unverified fallback.
+  const figmaAccountPageDark: Record<string, string> = {
+    corporate: 'linear-gradient(180deg, #000000 0%, #03205F 100%)',
+    'corporate-blue': 'linear-gradient(180deg, #000000 0%, #03205F 100%)',
+  };
+  set(
+    '--account-page-bg',
+    settings.pageBgHex || figmaAccountPageDark[settings.presetId] || (isDark ? defaultCanvasDark : pageBg)
   );
   // Account Settings card fill — Figma "tinted" card look, screenshot-verified per
   // preset (light: exact swatch hexes; dark: verified Figma swatches: #010D27 to #03205F for Corporate, #001909 to #0A4821 for Emerald, #010D27 to #37107A for Indigo). Other presets keep the flat --bg-card.
