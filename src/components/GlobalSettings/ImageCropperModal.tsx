@@ -237,14 +237,16 @@ export function ImageCropperModal({
           <button 
             type="button"
             onClick={onClose}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid var(--border-light)', backgroundColor: 'var(--bg-dashboard)', color: 'var(--text-main)', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer' }}
+            className="btn btn-secondary"
+            style={{ flex: 1, padding: '10px 18px' }}
           >
             Cancel
           </button>
           <button 
             type="button"
             onClick={handleConfirm}
-            style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: 'var(--primary)', color: '#ffffff', fontWeight: 700, fontSize: 'var(--font-size-14)', cursor: 'pointer', boxShadow: '0 4px 12px var(--accent-glow)' }}
+            className="btn btn-primary"
+            style={{ flex: 1, padding: '10px 18px' }}
           >
             Confirm
           </button>

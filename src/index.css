@@ -34,10 +34,22 @@
   --primary-light: #EFF6FF;
 }
 
-[data-theme="corporate-blue"] {
+[data-theme="corporate-blue"],
+[data-theme="corporate"] {
   --primary: #2563EB;
   --primary-hover: #1E40AF;
   --primary-light: #DBEAFE;
+}
+
+[data-theme-mode="dark"][data-theme="corporate-blue"],
+[data-theme-mode="dark"][data-theme="corporate"] {
+  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #03205F 100%);
+  --account-card-bg: linear-gradient(90deg, #010D27 0%, #03205F 100%);
+}
+
+[data-theme-mode="light"][data-theme="corporate-blue"],
+[data-theme-mode="light"][data-theme="corporate"] {
+  --dash-canvas-bg: #ffffff;
 }
 
 [data-theme="emerald"] {
@@ -46,10 +58,31 @@
   --primary-light: #D1FAE5;
 }
 
-[data-theme="indigo-violet"] {
+[data-theme-mode="dark"][data-theme="emerald"] {
+  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #0B4A2F 100%);
+  --account-card-bg: linear-gradient(90deg, #001909 0%, #0A4821 100%);
+}
+
+[data-theme-mode="light"][data-theme="emerald"] {
+  --dash-canvas-bg: #ffffff;
+}
+
+[data-theme="indigo-violet"],
+[data-theme="indigo"] {
   --primary: #6366F1;
   --primary-hover: #4F46E5;
   --primary-light: #E0E7FF;
+}
+
+[data-theme-mode="dark"][data-theme="indigo-violet"],
+[data-theme-mode="dark"][data-theme="indigo"] {
+  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #31175F 100%);
+  --account-card-bg: linear-gradient(90deg, #010D27 0%, #37107A 100%);
+}
+
+[data-theme-mode="light"][data-theme="indigo-violet"],
+[data-theme-mode="light"][data-theme="indigo"] {
+  --dash-canvas-bg: #ffffff;
 }
 
 [data-theme="graphite"] {
@@ -111,7 +144,7 @@
   --info: #0288d1;
   --highlight: var(--primary);
   --highlight-hover: color-mix(in srgb, var(--highlight) 12%, transparent);
-  --card-hdr: transparent;
+  --card-hdr: var(--bg-card);
   --notif-card: var(--bg-card);
   --btn-color: var(--primary);
   --btn-text: var(--on-accent);
@@ -140,11 +173,11 @@
      These are the fallback when Theme Studio isn't present. */
   --heading-lh: 1.2;
   --h1-size: 20px; --h1-weight: 600;  --h1-color: var(--text-main);
-  --h2-size: 18px; --h2-weight: 600;  --h2-color: var(--text-main);
+  --h2-size: 24px; --h2-weight: 600;  --h2-color: var(--text-main);
   --h3-size: 16px; --h3-weight: 600;  --h3-color: var(--text-main);
-  --h4-size: 14px; --h4-weight: 600;  --h4-color: var(--text-main);
-  --h5-size: 0.85rem; --h5-weight: 600;  --h5-color: var(--text-main);
-  --h6-size: 0.75rem; --h6-weight: 600;  --h6-color: var(--text-main);
+  --h4-size: 19px; --h4-weight: 600;  --h4-color: var(--text-main);
+  --h5-size: 16px; --h5-weight: 600;  --h5-color: var(--text-main);
+  --h6-size: 14px; --h6-weight: 600;  --h6-color: var(--text-main);
 }
 
 * {
@@ -159,7 +192,7 @@ body {
   line-height: var(--app-line-height);
   font-weight: var(--app-font-weight);
   letter-spacing: var(--app-letter-spacing);
-  background-color: var(--bg-base);
+  background-color: var(--bg-dashboard, var(--bg-base));
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
@@ -184,6 +217,140 @@ h6 { font-size: var(--h6-size); font-weight: var(--h6-weight); color: var(--h6-c
 
 input, button, select, textarea, span, p, div, label, a {
   font-family: var(--app-font-family);
+}
+
+/* ==========================================================================
+   Unified Button Design System
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2, 8px);
+  padding: 8px 18px;
+  font-family: var(--app-font-family);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  line-height: 1.25;
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: var(--btn-case, none);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  user-select: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--highlight, var(--primary));
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Primary Button */
+.btn-primary {
+  background: var(--btn-color, var(--primary));
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  border-color: transparent;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -1px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Secondary / Outline Button */
+.btn-secondary,
+.btn-outline {
+  background: var(--bg-card, #ffffff);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.btn-secondary:hover,
+.btn-outline:hover {
+  background: var(--bg-dashboard);
+  border-color: var(--border-hover);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active,
+.btn-outline:active {
+  transform: translateY(0);
+}
+
+/* Ghost / Text Button */
+.btn-text,
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border-color: transparent;
+  padding: 6px 12px;
+}
+
+.btn-text:hover,
+.btn-ghost:hover {
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary-hover);
+}
+
+/* Danger Button */
+.btn-danger {
+  background: var(--danger, #ef4444);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.btn-danger:hover {
+  background: var(--danger-hover, #dc2626);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -1px rgba(239, 68, 68, 0.35);
+}
+
+.btn-danger:active {
+  transform: translateY(0);
+}
+
+/* Sizes */
+.btn-sm {
+  padding: 5px 12px;
+  font-size: var(--text-xs, 12px);
+  border-radius: var(--radius-sm, 4px);
+  gap: 6px;
+}
+
+.btn-md {
+  padding: 8px 18px;
+  font-size: var(--text-sm, 14px);
+  border-radius: var(--radius-md, 8px);
+}
+
+.btn-lg {
+  padding: 12px 24px;
+  font-size: var(--text-base, 16px);
+  border-radius: var(--radius-md, 8px);
 }
 
 /* Background elements */
@@ -524,6 +691,7 @@ input, button, select, textarea, span, p, div, label, a {
   justify-content: center;
   align-items: center;
   gap: var(--spacing-2);
+  font-family: inherit;
 }
 
 .submit-btn:hover {
@@ -964,7 +1132,7 @@ input, button, select, textarea, span, p, div, label, a {
 .login-container.layout-centered {
   justify-content: center;
   align-items: center;
-  background-color: var(--login-panel-color, var(--bg-base));
+  background-color: var(--login-panel-color, var(--bg-card, #ffffff));
   background-image: var(--login-image, url('./assets/login-bg.jpg'));
   background-position: center;
   background-size: cover;
@@ -999,4 +1167,74 @@ input, button, select, textarea, span, p, div, label, a {
   background: linear-gradient(180deg, #070E28 0%, #002061 50%, #111111 100%);
 }
 
+/* Theme Studio Preview - prevent card cut-off under Surface settings */
+.theme-studio-embed {
+  overflow: hidden;
+}
 
+.theme-studio-embed [style*="grid-template-columns: 1fr 300px"],
+.theme-studio-embed [style*="gridTemplateColumns: 1fr 300px"] {
+  min-height: fit-content !important;
+  flex: 1 1 auto !important;
+}
+
+.theme-studio-embed [style*="min-height: 0"],
+.theme-studio-embed [style*="minHeight: 0"] {
+  min-height: fit-content !important;
+}
+
+.theme-studio-embed div[style*="overflow: auto"],
+.theme-studio-embed div[style*="overflow:auto"] {
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+}
+
+/* ==========================================================================
+   Universal Report Module (URM) & Export Download Button Responsiveness
+   ========================================================================== */
+
+.urm-export-footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+  min-height: auto !important;
+}
+
+.urm-export-download-btn,
+.MuiButton-root.urm-export-download-btn {
+  white-space: nowrap !important;
+  min-width: fit-content !important;
+  height: auto !important;
+  min-height: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.25 !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.urm-export-download-btn .MuiButton-startIcon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 8px !important;
+  margin-left: -2px !important;
+  flex-shrink: 0 !important;
+}
+
+.urm-export-cancel-btn,
+.MuiButton-root.urm-export-cancel-btn {
+  white-space: nowrap !important;
+  min-width: fit-content !important;
+  height: auto !important;
+  min-height: 40px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.25 !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}

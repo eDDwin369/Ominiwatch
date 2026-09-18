@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { ImageCropperModal } from '../GlobalSettings/ImageCropperModal';
+import { TextField } from '../shared/TextField';
 import { isValidPhone } from './phoneValidation';
 import { isValidName } from './nameValidation';
 import { isValidEmail } from './emailValidation';
@@ -327,85 +328,44 @@ export function AccountSettings({
                 </div>
               </div>
 
-              {/* Right Input Fields Grid */}
+              {/* Right Input Fields Grid — fields stay mounted (disabled) outside edit
+                  mode too, matching Figma's always-boxed look; only the disabled
+                  attribute toggles when the pencil icon is used. */}
               <div className="figma-inputs-grid">
-                <div className="figma-input-field">
-                  <label className="figma-input-label">Email</label>
-                  {isEditingProfile ? (
-                    <>
-                      <input
-                        type="email"
-                        className="figma-underline-input"
-                        value={tempProfile.email}
-                        onChange={e => handleProfileChange('email', e.target.value)}
-                        aria-invalid={emailError}
-                        style={emailError ? { borderColor: 'var(--danger)' } : undefined}
-                      />
-                      {emailError && (
-                        <span className="figma-field-error">
-                          {tempProfile.email.trim()
-                            ? 'Enter a valid email address'
-                            : 'Email is required'}
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <div className="figma-underline-value">{profile.email}</div>
-                  )}
-                </div>
+                <TextField
+                  label="Email"
+                  type="email"
+                  disabled={!isEditingProfile}
+                  value={isEditingProfile ? tempProfile.email : profile.email}
+                  onChange={e => handleProfileChange('email', e.target.value)}
+                  error={isEditingProfile && emailError ? (tempProfile.email.trim() ? 'Enter a valid email address' : 'Email is required') : undefined}
+                />
 
-                <div className="figma-input-field">
-                  <label className="figma-input-label">Phone</label>
-                  {isEditingProfile ? (
-                    <>
-                      <input
-                        type="tel"
-                        className="figma-underline-input"
-                        value={tempProfile.phone}
-                        onChange={e => handleProfileChange('phone', e.target.value)}
-                        aria-invalid={phoneError}
-                        style={phoneError ? { borderColor: 'var(--danger)' } : undefined}
-                      />
-                      {phoneError && (
-                        <span className="figma-field-error">
-                          {tempProfile.phone.trim()
-                            ? 'Enter a valid phone number (7–15 digits, optional leading +)'
-                            : 'Phone number is required'}
-                        </span>
-                      )}
-                    </>
-                  ) : (
-                    <div className="figma-underline-value">{profile.phone}</div>
-                  )}
-                </div>
+                <TextField
+                  label="Phone"
+                  type="tel"
+                  disabled={!isEditingProfile}
+                  value={isEditingProfile ? tempProfile.phone : profile.phone}
+                  onChange={e => handleProfileChange('phone', e.target.value)}
+                  error={isEditingProfile && phoneError ? (tempProfile.phone.trim() ? 'Enter a valid phone number (7–15 digits, optional leading +)' : 'Phone number is required') : undefined}
+                />
 
-                <div className="figma-input-field">
-                  <label className="figma-input-label">Department</label>
-                  {isEditingProfile ? (
-                    <input 
-                      type="text" 
-                      className="figma-underline-input"
-                      value={tempProfile.department}
-                      onChange={e => handleProfileChange('department', e.target.value)}
-                    />
-                  ) : (
-                    <div className="figma-underline-value">{profile.department}</div>
-                  )}
-                </div>
+                <TextField
+                  label="Department"
+                  type="text"
+                  disabled={!isEditingProfile}
+                  value={isEditingProfile ? tempProfile.department : profile.department}
+                  onChange={e => handleProfileChange('department', e.target.value)}
+                />
 
-                <div className="figma-input-field figma-input-org">
-                  <label className="figma-input-label">Organization</label>
-                  {isEditingProfile ? (
-                    <input 
-                      type="text" 
-                      className="figma-underline-input"
-                      value={tempProfile.organization}
-                      onChange={e => handleProfileChange('organization', e.target.value)}
-                    />
-                  ) : (
-                    <div className="figma-underline-value">{profile.organization}</div>
-                  )}
-                </div>
+                <TextField
+                  label="Organization"
+                  type="text"
+                  className="figma-input-org"
+                  disabled={!isEditingProfile}
+                  value={isEditingProfile ? tempProfile.organization : profile.organization}
+                  onChange={e => handleProfileChange('organization', e.target.value)}
+                />
               </div>
             </div>
 
@@ -515,7 +475,7 @@ export function AccountSettings({
               {/* Item 3: Timezone */}
               <div className="figma-select-inline-item">
                 <span className="figma-select-label">Timezone</span>
-                <CustomSmoothDropdown 
+                <CustomSmoothDropdown
                   value={timezone}
                   onChange={setTimezone}
                   options={[
@@ -527,17 +487,17 @@ export function AccountSettings({
                   ]}
                 />
               </div>
+            </div>
 
-              {/* Item 4: Delete Account Button */}
-              <div className="figma-delete-btn-wrap">
-                <button 
-                  type="button" 
-                  className="figma-btn-delete-red"
-                  onClick={() => setIsDeleteModalOpen(true)}
-                >
-                  Delete your account
-                </button>
-              </div>
+            {/* Delete Account Button — own row below the Cookie/Language/Timezone row */}
+            <div className="figma-delete-btn-row">
+              <button
+                type="button"
+                className="figma-btn-delete-red"
+                onClick={() => setIsDeleteModalOpen(true)}
+              >
+                Delete your account
+              </button>
             </div>
           </div>
 

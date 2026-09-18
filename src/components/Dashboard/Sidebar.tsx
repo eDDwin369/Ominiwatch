@@ -251,8 +251,9 @@ export function Sidebar({
 
         <div
           className="sidebar-nav"
-          style={{ paddingTop: isSidebarCollapsed ? '0' : '16px' }}
+          style={{ paddingTop: isSidebarCollapsed ? '0' : '12px' }}
         >
+          {/* Dashboard - active */}
           <a
             href="#"
             className={`nav-item ${activeItemId === 'overview' ? 'active' : ''}`}
@@ -261,11 +262,13 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Dashboard", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <LayoutGrid size={20} className="nav-icon" color="var(--primary)" />
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <LayoutGrid size={20} className="nav-icon" color="var(--highlight, var(--primary))" />
+            </div>
             <span className="nav-label" style={{ flex: 1 }}>Dashboard</span>
             {!isSidebarCollapsed && (
               <div
-                style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingRight: '8px' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingRight: '2px' }}
                 onClick={(e) => e.stopPropagation()}
               >
                 <button
@@ -278,10 +281,10 @@ export function Sidebar({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: isLocked ? 'var(--primary)' : 'var(--text-muted)',
-                    padding: '4px',
+                    padding: '2px',
                     borderRadius: '4px',
-                    transition: 'all 0.05s ease'
+                    color: isLocked ? 'var(--highlight, var(--primary))' : 'var(--text-muted)',
+                    transition: 'all 0.15s ease'
                   }}
                   className="sidebar-toggle"
                 >
@@ -308,10 +311,10 @@ export function Sidebar({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'var(--text-muted)',
-                    padding: '4px',
+                    padding: '2px',
                     borderRadius: '4px',
-                    transition: 'all 0.05s ease'
+                    color: 'var(--text-muted)',
+                    transition: 'all 0.15s ease'
                   }}
                 >
                   <ChevronLeft size={14} />
@@ -319,6 +322,8 @@ export function Sidebar({
               </div>
             )}
           </a>
+
+          {/* Menu Item 1 */}
           <a
             href="#"
             className="nav-item"
@@ -326,9 +331,13 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Menu Item 1", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <Grid size={20} className="nav-icon" color="var(--success)" />
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Grid size={20} className="nav-icon" color="#22C55E" />
+            </div>
             <span className="nav-label">Menu Item 1</span>
           </a>
+
+          {/* Menu Item 2 */}
           <a
             href="#"
             className="nav-item"
@@ -336,24 +345,34 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Menu Item 2", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <Store size={20} className="nav-icon" color="var(--warning)" />
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Store size={20} className="nav-icon" color="#F97316" />
+            </div>
             <span className="nav-label">Menu Item 2</span>
           </a>
 
-          <div className="nav-section-title">REPORTS</div>
+          {/* Reports section */}
+          <div className="nav-section-title">
+            <span>Reports</span>
+          </div>
 
           <a
             href="#reports"
             className={`nav-item ${activeItemId === 'report-builder' ? 'active' : ''}`}
             onClick={(e) => handleNavItemClick('reports', e, 'report-builder')}
-            onMouseEnter={(e) => handleItemMouseEnter("User", e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Report Builder", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <BarChart2 size={20} className="nav-icon" color="#a855f7" />
-            <span className="nav-label">User</span>
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <BarChart2 size={20} className="nav-icon" color="#A855F7" />
+            </div>
+            <span className="nav-label">Report Builder</span>
           </a>
 
-          <div className="nav-section-title">SYSTEM</div>
+          {/* System section */}
+          <div className="nav-section-title">
+            <span>System</span>
+          </div>
 
           <a
             href="#"
@@ -362,9 +381,12 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <Palette size={20} className="nav-icon" color="#ec4899" />
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Palette size={20} className="nav-icon" color="#EC4899" />
+            </div>
             <span className="nav-label">Theme Studio</span>
           </a>
+
           <a
             href="#"
             className={`nav-item ${activeItemId === 'account' ? 'active' : ''}`}
@@ -372,9 +394,30 @@ export function Sidebar({
             onMouseEnter={(e) => handleItemMouseEnter("Account Settings", e)}
             onMouseLeave={handleItemMouseLeave}
           >
-            <UserCircle size={20} className="nav-icon" color="#06b6d4" />
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="nav-icon">
+                <path d="M11.66 14.16H4.16" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15.82 5.83H8.33" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="14.16" cy="14.16" r="2.5" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="5.83" cy="5.83" r="2.5" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <span className="nav-label">Account Settings</span>
           </a>
+        </div>
+
+        {/* Collapse button */}
+        <div className="sidebar-bottom-action">
+          <button
+            className="sidebar-collapse-btn"
+            onClick={() => setCollapsed(!isSidebarCollapsed)}
+            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <div className="shrink-0" style={{ width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ChevronLeft size={16} style={{ transform: isSidebarCollapsed ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+            </div>
+            {!isSidebarCollapsed && <span>Collapse</span>}
+          </button>
         </div>
 
       </aside>

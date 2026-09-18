@@ -13,7 +13,11 @@ function syncCssVars(theme: any, settings: any) {
   const root = document.documentElement;
   const p = theme.palette;
   const set = (k: string, v?: string) => {
-    if (v) root.style.setProperty(k, v);
+    if (v !== undefined && v !== null && v !== '') {
+      root.style.setProperty(k, v);
+    } else {
+      root.style.removeProperty(k);
+    }
   };
   // brand
   set('--primary', p.primary.main);
@@ -21,12 +25,12 @@ function syncCssVars(theme: any, settings: any) {
   set('--primary-light', p.primary.light);
   set('--accent', p.primary.main);
   set('--accent-hover', p.primary.dark);
-  // always-light foreground for text/icons sitting on an accent fill (primary/
-  // success/warning/danger buttons) — stays readable in dark mode, unlike --bg-card.
   set('--on-accent', p.primary.contrastText);
-  // surfaces + text + border
-  set('--bg-dashboard', p.background.default);
+  const pageBg = settings.pageBgHex || p.background.default;
+  set('--bg-dashboard', pageBg);
   set('--bg-card', p.background.paper);
+  set('--page-bg', pageBg);
+  set('--bg-base', pageBg);
   set('--text-main', p.text.primary);
   set('--text-primary', p.text.primary);
   set('--text-secondary', p.text.secondary);
@@ -57,7 +61,11 @@ function syncCssVars(theme: any, settings: any) {
   set('--highlight-soft', hlSoft);
   set('--highlight-bd', hlBd);
   set('--highlight-hover', alpha(highlight, 0.25));
-  set('--card-hdr', tk.cardHdrBg);
+  const rawCardHdrBg = settings.cardHdrHex || tk.cardHdrBg;
+  const cardHdrBg = (rawCardHdrBg && rawCardHdrBg !== 'transparent')
+    ? (rawCardHdrBg.startsWith('rgba') ? `linear-gradient(${rawCardHdrBg}, ${rawCardHdrBg}), var(--bg-card)` : rawCardHdrBg)
+    : 'var(--bg-card)';
+  set('--card-hdr', cardHdrBg);
   set('--notif-card', tk.toastBg);
   const btnBase = settings.btnColorHex || p.primary.main;
   set('--btn-color', settings.accentGradient ? `linear-gradient(135deg, ${btnBase}, ${p.primary.dark})` : btnBase);
@@ -65,20 +73,114 @@ function syncCssVars(theme: any, settings: any) {
   // shape / surface / density / misc tokens
   set('--card-border', tk.cardBodyBorder);
   set('--card-shadow', tk.cardBodyShadow);
-  set('--card-hdr-accent', tk.cardHdrAccent);
-  set('--card-hdr-border', tk.cardHdrBorder);
+  set('--card-hdr-accent', tk.cardHdrAccent || 'none');
+  set('--card-hdr-border', tk.cardHdrBorder === 'none' ? 'none' : (tk.cardHdrBorder || '1px solid var(--border-light)'));
   set('--container-pad', tk.containerPad != null ? `${tk.containerPad}px` : undefined);
   set('--edge-pad', tk.edgePad != null ? `${tk.edgePad}px` : undefined);
   set('--card-gap', tk.cardGap != null ? `${tk.cardGap}px` : undefined);
   set('--btn-case', theme.typography.button?.textTransform);
   set('--status-weight', tk.statusBold ? '700' : '500');
+
+  // Card Alignment
+  const cardAlign = (settings as any).cardAlign || 'left';
+  set('--card-align', cardAlign);
+  set('--card-header-align', cardAlign);
+  set('--card-header-justify', cardAlign === 'center' ? 'center' : cardAlign === 'right' ? 'flex-end' : 'space-between');
+
+  // Card Tint
+  const tintHex = (settings as any).cardTintHex || '';
+  const surfaceTint = (settings as any).surfaceTint || 'snow';
+  let effectiveTintHex = tintHex;
+  if (!effectiveTintHex && surfaceTint !== 'snow') {
+    if (surfaceTint === 'brand') {
+      effectiveTintHex = settings.primaryHex || '#4F6BFF';
+    } else if (surfaceTint === 'neutral') {
+      effectiveTintHex = isDark ? '#475569' : '#64748b';
+    }
+  }
+  const rawIntensity = (settings as any).tintIntensity;
+  const rawOpacity = (settings as any).tintOpacity;
+  const effectiveOpacity = tintHex
+    ? (rawOpacity != null && rawOpacity >= 0 ? rawOpacity : 15)
+    : (rawIntensity != null && rawIntensity >= 0 ? rawIntensity : (rawOpacity != null && rawOpacity >= 0 ? rawOpacity : 20));
+
+  set('--card-tint-color', effectiveTintHex || undefined);
+  set('--card-tint-intensity', String(effectiveOpacity));
+  set('--card-tint-opacity', `${effectiveOpacity}%`);
+  if (effectiveTintHex && (surfaceTint !== 'snow' || tintHex) && effectiveOpacity > 0) {
+    const baseBg = isDark ? '#1e293b' : '#ffffff';
+    const tintBg = `color-mix(in srgb, ${effectiveTintHex} ${Math.round(effectiveOpacity)}%, ${baseBg})`;
+    set('--card-tint-bg', tintBg);
+    set('--bg-card', tintBg);
+  } else {
+    set('--card-tint-bg', undefined);
+    set('--bg-card', p.background.paper);
+  }
+
+  // Nested Cards
+  const nestedDepth = (settings as any).nestedDepth != null && (settings as any).nestedDepth >= 0 ? (settings as any).nestedDepth : 6;
+  const nestedPad = (settings as any).nestedPad != null && (settings as any).nestedPad >= 0 ? (settings as any).nestedPad : 12;
+  const nestedStyle = (settings as any).nestedStyle || 'recessed';
+  set('--nested-pad', `${nestedPad}px`);
+  set('--nested-depth', `${nestedDepth}px`);
+  if (nestedStyle === 'bordered') {
+    set('--nested-bg', isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.01)');
+    set('--nested-border', isDark ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid rgba(0, 0, 0, 0.12)');
+  } else if (nestedStyle === 'lighter') {
+    set('--nested-bg', isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.7)');
+    set('--nested-border', isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.06)');
+  } else {
+    // recessed
+    set('--nested-bg', isDark ? 'rgba(0, 0, 0, 0.25)' : 'rgba(0, 0, 0, 0.04)');
+    set('--nested-border', isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.06)');
+  }
+  set('--nested-shadow', nestedDepth > 0 ? `inset 0 ${Math.min(nestedDepth, 4)}px ${nestedDepth}px rgba(0,0,0,${isDark ? 0.2 : 0.06})` : 'none');
+
   // chrome + login layout tokens
   set('--appbar-h', settings.appBarH > 0 ? `${settings.appBarH}px` : undefined);
   set('--login-card-w', settings.loginCardW > 0 ? `${settings.loginCardW}px` : undefined);
   set('--login-img-opacity', settings.loginImgOpacity > 0 ? String(settings.loginImgOpacity / 100) : undefined);
-  set('--login-panel-color', settings.loginPanelColor || undefined);
+  const defaultLoginPanel = isDark ? '#0f172a' : '#ffffff';
+  set('--login-panel-color', settings.loginPanelColor || defaultLoginPanel);
   set('--login-image', settings.loginImage ? `url(${settings.loginImage})` : undefined);
   set('--notif-badge-display', settings.notifBadge === false ? 'none' : 'block');
+  // Notification duration & positioning tokens
+  const notifAutoDismiss = settings.notifAutoDismiss ?? false;
+  const autoDismissSec = settings.autoDismissSec > 0 ? settings.autoDismissSec : 8;
+  const autoDismissMs = notifAutoDismiss ? autoDismissSec * 1000 : 0;
+  set('--notif-auto-dismiss', notifAutoDismiss ? '1' : '0');
+  set('--notif-duration-sec', `${autoDismissSec}s`);
+  set('--notif-duration', `${autoDismissMs}ms`);
+  set('--notif-toast-width', settings.toastW > 0 ? `${settings.toastW}px` : '252px');
+
+  const notifPos = settings.notifPosition || 'bottom-right';
+  set('--notif-position', notifPos);
+  if (notifPos === 'top-center') {
+    set('--notif-pos-top', '70px');
+    set('--notif-pos-bottom', 'auto');
+    set('--notif-pos-left', '50%');
+    set('--notif-pos-right', 'auto');
+    set('--notif-pos-transform', 'translateX(-50%)');
+  } else if (notifPos === 'top-right') {
+    set('--notif-pos-top', '70px');
+    set('--notif-pos-bottom', 'auto');
+    set('--notif-pos-left', 'auto');
+    set('--notif-pos-right', '24px');
+    set('--notif-pos-transform', 'none');
+  } else if (notifPos === 'bottom-left') {
+    set('--notif-pos-top', 'auto');
+    set('--notif-pos-bottom', '24px');
+    set('--notif-pos-left', '24px');
+    set('--notif-pos-right', 'auto');
+    set('--notif-pos-transform', 'none');
+  } else {
+    // bottom-right
+    set('--notif-pos-top', 'auto');
+    set('--notif-pos-bottom', '24px');
+    set('--notif-pos-left', 'auto');
+    set('--notif-pos-right', '24px');
+    set('--notif-pos-transform', 'none');
+  }
   // typography — family + the full body type scale so studio size/weight/
   // line-height/spacing changes actually reach the host (index.css reads these).
   const body = theme.typography.body1 || {};
@@ -88,8 +190,8 @@ function syncCssVars(theme: any, settings: any) {
   set('--app-line-height', body.lineHeight != null ? String(body.lineHeight) : undefined);
   set('--app-font-weight', body.fontWeight != null ? String(body.fontWeight) : undefined);
   set('--app-letter-spacing', settings.letterSpace ? `${settings.letterSpace}px` : '0');
-  // per-heading tokens: size comes from the resolved theme (already folds in
-  // scaleRatio/textSize/baseFontPx/h{n}Size); weight/color from raw settings
+  // per-heading tokens: size comes from raw settings.h{n}Size when set (presets pin
+  // this explicitly), else the resolved theme (h1Size-derived fixed ratio); weight/color from raw settings
   // (0/'' = auto → fall back to headingWeight / --text-main default in index.css).
   const ty = theme.typography;
   for (let n = 1; n <= 6; n++) {
@@ -105,53 +207,23 @@ function syncCssVars(theme: any, settings: any) {
   set('--font-size-body', ty.body1?.fontSize ? `${ty.body1.fontSize}px` : undefined);
   set('--font-size-body-sm', ty.body2?.fontSize ? `${ty.body2.fontSize}px` : undefined);
   set('--font-size-caption', ty.caption?.fontSize ? `${ty.caption.fontSize}px` : undefined);
-  // mapped pixel sizes for component-specific tokens (e.g. --font-size-24, --font-size-14)
-  const headingFontSizes = [ty.h1?.fontSize, ty.h2?.fontSize, ty.h3?.fontSize, ty.h4?.fontSize, ty.h5?.fontSize, ty.h6?.fontSize];
-  const pixelSizes: Record<string, number | undefined> = {
-    '24': headingFontSizes[0], // h1
-    '20': headingFontSizes[1], // h2
-    '18': 18,
-    '17': headingFontSizes[2], // h3
-    '14-5': 14.5,
-    '14': headingFontSizes[3], // h4
-    '13': 13,
-    '12': 12,
-    '11-5': 11.5,
-    '11': 11,
-  };
-  Object.entries(pixelSizes).forEach(([key, val]) => {
-    if (val) set(`--font-size-${key}`, `${val}px`);
-  });
+
+
   // Dedicated Dashboard Ambient & Preset Tokens
   const primaryHex = settings.primaryHex || p.primary.main || '#2563EB';
   const secondaryHex = settings.secondaryHex || p.secondary?.main || '#00D2FF';
   const [pHue] = hexToHsl(primaryHex);
-  const darkHeader = hslToHexStr(pHue, 38, 6.5);
   const darkSidebar = hslToHexStr(pHue, 35, 7.2);
-  const darkCanvas = hslToHexStr(pHue, 32, 5.5);
-
-  // Exact Figma header chrome per colour template (Corporate Blue / Emerald / Indigo Violet),
-  // per mode — verified against the Figma exports: Corporate + Indigo are the same flat/washed
-  // bar in both modes, but Emerald's header is genuinely darker in dark mode (#0d2a20 light vs
-  // #041610 dark). Any other preset falls back to the primary-hue-derived dark bar.
-  const figmaHeaderBg: Record<string, { light: string; dark: string }> = {
-    corporate: { light: '#141b3c', dark: '#141b3c' },
-    emerald: { light: '#0d2a20', dark: '#041610' },
-    // Verified against pprc_darkPink / pprc_lightPink — the header bar is the same
-    // solid diagonal wash in both modes (not the dual-transparent overlay this
-    // previously assumed).
-    indigo: {
-      light: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
-      dark: 'linear-gradient(176.18088833734933deg, rgb(51, 34, 88) 16.741%, rgb(50, 20, 56) 83.447%)',
-    },
-  };
-  const headerPreset = figmaHeaderBg[settings.presetId];
-  set('--dash-header-bg', headerPreset ? headerPreset[isDark ? 'dark' : 'light'] : darkHeader);
+  set('--login-panel-color', tk.loginPanelGradient);
+  set('--dash-header-bg', tk.headerBg);
   // Sidebar bg/border — pinned per preset in dark mode (verified against
   // pixelPerfectNewReactCode for Emerald); other presets keep the primary-hue-derived bar.
   const figmaSidebarDark: Record<string, { bg: string; border: string }> = {
     corporate: { bg: '#090e24', border: '#1b2350' },
+    'corporate-blue': { bg: '#090e24', border: '#1b2350' },
     emerald: { bg: '#061a12', border: '#163d2b' },
+    indigo: { bg: '#120a2b', border: '#2c1e57' },
+    'indigo-violet': { bg: '#120a2b', border: '#2c1e57' },
   };
   const sidebarPreset = isDark ? figmaSidebarDark[settings.presetId] : undefined;
   set('--dash-sidebar-bg', settings.mode === 'dark' ? sidebarPreset?.bg || darkSidebar : '#ffffff');
@@ -159,9 +231,11 @@ function syncCssVars(theme: any, settings: any) {
   // Hero video-card fill — differs per colour template in Figma (not theme-neutral #080a09).
   const figmaVideoBg: Record<string, string> = {
     corporate: '#0b1024',
+    'corporate-blue': '#0b1024',
     emerald: '#050505',
     // Verified against pprc_darkPink / pprc_lightPink (same in both modes).
     indigo: '#0b1024',
+    'indigo-violet': '#0b1024',
   };
   set('--dash-video-bg', figmaVideoBg[settings.presetId] || '#080a09');
   // Sidebar nav text — Figma tints inactive-item text and section labels per colour template in
@@ -169,6 +243,9 @@ function syncCssVars(theme: any, settings: any) {
   // default for any preset not yet verified against a Figma export.
   const figmaNavText: Record<string, { inactive: string; sectionTitle: string }> = {
     corporate: { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
+    'corporate-blue': { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
+    indigo: { inactive: 'rgba(214, 199, 245, 0.8)', sectionTitle: 'rgba(156, 142, 196, 0.7)' },
+    'indigo-violet': { inactive: 'rgba(214, 199, 245, 0.8)', sectionTitle: 'rgba(156, 142, 196, 0.7)' },
   };
   const navTextPreset = isDark ? figmaNavText[settings.presetId] : undefined;
   set('--dash-nav-inactive-color', navTextPreset?.inactive || (isDark ? '#94a3b8' : '#475569'));
@@ -184,106 +261,12 @@ function syncCssVars(theme: any, settings: any) {
     emerald: highlight,
   };
   set('--dash-progress-fill', figmaProgressFill[settings.presetId] || primaryHex);
-  // Dashboard canvas (Container fill) — exact Figma vertical gradient per colour template in
-  // dark mode; Emerald's light canvas is also a confirmed non-white tint (#ecf6f0), not plain
-  // white. Any other preset/mode combo falls back to the primary-hue-derived flat dark / white.
-  const figmaCanvasDark: Record<string, string> = {
-    corporate: 'linear-gradient(180deg, #070A1B 0%, #111734 50%, #090D22 100%)',
-    emerald: 'linear-gradient(180deg, #06140E 0%, #082318 50%, #061910 100%)',
-    indigo: 'linear-gradient(180deg, #0D0620 0%, #221236 50%, #2E1F4F 100%)',
-  };
-  const figmaCanvasLight: Record<string, string> = {
-    corporate: '#e1e6fb',
-    emerald: '#ecf6f0',
-    // Verified against pprc_lightPink: plain white, not a pale-lavender tint.
-    indigo: '#ffffff',
-  };
-  set(
-    '--dash-canvas-bg',
-    settings.mode === 'dark'
-      ? figmaCanvasDark[settings.presetId] || darkCanvas
-      : figmaCanvasLight[settings.presetId] || '#ffffff'
-  );
-  // Account Settings card fill — Figma "tinted" card look, screenshot-verified per
-  // preset (light: exact swatch hexes; dark: eyeballed from the dark-mode screenshots,
-  // not swatch-exact). Other presets keep the flat --bg-card.
-  const figmaAccountCardLight: Record<string, string> = {
-    corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
-    emerald: 'linear-gradient(90deg, #97E1B2 0%, #E6E6E6 100%)',
-    indigo: 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)'
-  };
-  const figmaAccountCardDark: Record<string, string> = {
-    corporate: 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
-    emerald: 'linear-gradient(90deg, #06140e 0%, #0f3d2c 100%)',
-    indigo: 'linear-gradient(90deg, #150a24 0%, #4b2e86 100%)',
-  };
-  set(
-    '--account-card-bg',
-    settings.mode === 'dark'
-      ? figmaAccountCardDark[settings.presetId] || p.background.paper
-      : figmaAccountCardLight[settings.presetId] || p.background.paper
-  );
-  // Hero "Brand" gradient text — Emerald's and Indigo's Figma stops differ from raw
-  // primary/secondary in light mode.
-  const figmaBrandGradient: Record<string, { light: string; dark: string }> = {
-    corporate: {
-      // Light mode's "Brand" gradient is a deep pinned navy, not derived from primary/secondary
-      // (dark mode's stops happen to equal primaryHex/secondaryHex exactly).
-      light: 'linear-gradient(90deg, #0029ff 0%, #00144b 100%)',
-      dark: 'linear-gradient(90deg, #4f6bff 0%, #22d3ee 100%)',
-    },
-    emerald: {
-      light: 'linear-gradient(90deg, #01b979 0%, #d88b00 100%)',
-      dark: 'linear-gradient(90deg, #2ee6a6 0%, #ffc255 100%)',
-    },
-    // Verified against pprc_darkPink / pprc_lightPink: the "Brand" gradient text is
-    // the SAME literal stops in both modes (previously assumed dark mode just used
-    // raw primaryHex/secondaryHex — #a97bff/#ff5fa2 — which these exports disprove).
-    indigo: {
-      light: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
-      dark: 'linear-gradient(90deg, #4300c1 0%, #ff388c 100%)',
-    },
-  };
-  const brandPreset = figmaBrandGradient[settings.presetId];
-  set(
-    '--dash-brand-gradient',
-    brandPreset ? brandPreset[isDark ? 'dark' : 'light'] : `linear-gradient(90deg, ${primaryHex} 0%, ${secondaryHex} 100%)`
-  );
+  set('--dash-canvas-bg', tk.canvasBg);
+  set('--account-page-bg', tk.accountPageBg);
+  set('--account-card-bg', tk.accountCardBg);
+  set('--dash-brand-gradient', tk.brandGradient);
   set('--dash-aura-color', primaryHex);
-  // Global Settings panel chrome — verified against pixelPerfectGlobalSettings_blue (Corporate
-  // dark). Other presets fall back to a primary/secondary-derived approximation until verified.
-  const figmaGsHeaderDark: Record<string, string> = {
-    corporate: 'linear-gradient(178deg, #0f172a 0%, #1e3a8a 100%)',
-  };
-  set(
-    '--gs-header-bg-dark',
-    figmaGsHeaderDark[settings.presetId] ||
-      `linear-gradient(178deg, #0f172a 0%, color-mix(in srgb, ${primaryHex} 55%, #0f172a) 100%)`
-  );
-  // Toggle "on" state / upload-orb button — verified as genuinely different gradients per mode
-  // (light: cyan-to-blue-violet; dark: cyan-to-dark-teal), not just a mode-neutral accent.
-  const figmaGsAccentGradient: Record<string, { light: string; dark: string }> = {
-    corporate: {
-      light: 'linear-gradient(135deg, #00ddff 0%, #0c26b1 100%)',
-      dark: 'linear-gradient(162deg, #22d3ee 11.886%, #126673 91.492%)',
-    },
-    // Dark verified against pixelPerfectGlobalSettings_greenDark (a flat 20% black wash
-    // stacked over the amber gradient, not a plain 2-stop). Light not yet verified — kept
-    // as the same secondary->primary formula the unpinned fallback below produces.
-    emerald: {
-      light: 'linear-gradient(135deg, #F5A524 0%, #10B981 100%)',
-      dark: 'linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%), linear-gradient(180deg, #FFC255 0%, #997433 100%)',
-    },
-  };
-  const gsAccentPreset = figmaGsAccentGradient[settings.presetId];
-  set(
-    '--gs-accent-gradient',
-    gsAccentPreset
-      ? gsAccentPreset[isDark ? 'dark' : 'light']
-      : isDark
-      ? `linear-gradient(162deg, ${secondaryHex} 11.886%, color-mix(in srgb, ${secondaryHex} 48%, black) 91.492%)`
-      : `linear-gradient(135deg, ${secondaryHex} 0%, ${primaryHex} 100%)`
-  );
+  set('--gs-accent-gradient', tk.gsAccentGradient);
   set('--gs-save-bg', secondaryHex);
   const figmaGsSaveShadow: Record<string, string> = {
     corporate: 'rgba(29, 78, 216, 0.6)',
@@ -300,38 +283,7 @@ function syncCssVars(theme: any, settings: any) {
   set('--gs-card-bg-light', '#f1f1f1');
   // Underline text-input border — pinned neutral per mode, not the generic MUI divider.
   set('--gs-underline-border', isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(80, 80, 80, 0.6)');
-  // Modal-wide radial glow (dark only) — Figma's real 6-stop falloff from primary to near-black,
-  // replacing a flat 2-stop approximation. Light mode has no modal-wide gradient (verified).
-  const figmaGsModalGradientDark: Record<string, string> = {
-    corporate:
-      'radial-gradient(circle at 50% 30%, #4f6bff 0%, #3f5adb 13.75%, #2e49b7 27.5%, #1e3892 41.25%, #0d276e 55%, #07153f 100%)',
-    // Verified against pixelPerfectGlobalSettings_greenDark — centre stop is emerald's
-    // highlightHex (#2EE6A6), not primaryHex, and it fades to a dark green (#072D20),
-    // never pure black, unlike the unpinned fallback formula below.
-    emerald:
-      'radial-gradient(circle at 50% 30%, #2EE6A6 0%, #21AB7B 27.5%, #1A8D65 41.25%, #146F4F 55%, #0D4E37 77.5%, #072D20 100%)',
-    // Not a pixel-verified Global Settings export (no such file exists for Indigo yet) —
-    // but the unpinned fallback below fades all the way to literal black, which read as a
-    // harsh black band behind the modal header (reported against pprc_darkPink). Both
-    // verified presets above never end at true black — they fade to a *dark tint of their
-    // own hue* (#07153f still reads blue, #072D20 still reads green) — so this anchors the
-    // same shape on Indigo's own verified deep-plum header tone (rgb(51,34,88)/rgb(50,20,56)
-    // from pprc_darkPink) instead of black.
-    indigo: `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 75%, #1a0f24) 27.5%, color-mix(in srgb, ${primaryHex} 55%, #1a0f24) 41.25%, color-mix(in srgb, ${primaryHex} 38%, #1a0f24) 55%, color-mix(in srgb, ${primaryHex} 18%, #1a0f24) 77.5%, #1a0f24 100%)`,
-  };
-  // Same anchor idea as the Indigo entry above, generalised: mixing toward literal `black`
-  // (even at a 10% primaryHex tint) still reads as a harsh black band on wide modals once a
-  // preset has no verified export (graphite/teal/amber, or any custom colour edited in Theme
-  // Studio — editing a colour snaps presetId to 'custom', see ColourPanel's setBrand, so this
-  // fallback is actually the common path, not an edge case). Mix toward the app's own dark
-  // chrome slate (#0f172a, matches --dash-canvas-bg's dark fallback) instead of black so the
-  // edge blends with the surrounding UI rather than clipping to a visible black band.
-  const gsModalDarkAnchor = '#0f172a';
-  set(
-    '--gs-modal-bg-dark',
-    figmaGsModalGradientDark[settings.presetId] ||
-      `radial-gradient(circle at 50% 30%, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 78%, ${gsModalDarkAnchor}) 13.75%, color-mix(in srgb, ${primaryHex} 57%, ${gsModalDarkAnchor}) 27.5%, color-mix(in srgb, ${primaryHex} 36%, ${gsModalDarkAnchor}) 41.25%, color-mix(in srgb, ${primaryHex} 16%, ${gsModalDarkAnchor}) 55%, color-mix(in srgb, ${primaryHex} 20%, ${gsModalDarkAnchor}) 100%)`
-  );
+  set('--gs-modal-bg-dark', tk.gsModalBgDark);
   // Active eye-preview button — pinned border/shadow per preset; other presets fall back to
   // the existing --secondary-light / --accent-glow derived values.
   const figmaGsEyeActive: Record<string, { border: string; shadow: string }> = {
@@ -345,18 +297,7 @@ function syncCssVars(theme: any, settings: any) {
     root.style.removeProperty('--gs-eye-active-border');
     root.style.removeProperty('--gs-eye-active-shadow');
   }
-  // Target-callout pointer pill (the "Editing X" beam shown while highlighting a
-  // section) — was plain CSS (primary-light -> primary-hover, unpinned) with no
-  // verified value at all. Dark verified against pixelPerfectGlobalSettings_greenDark;
-  // other presets fall back to the same primary.light -> primary.dark shape the old
-  // CSS produced, so this is a no-op for them until verified.
-  const figmaGsArrowGradient: Record<string, string> = {
-    emerald: 'linear-gradient(169deg, #28C78F 0%, #18855F 100%)',
-  };
-  set(
-    '--gs-arrow-gradient',
-    figmaGsArrowGradient[settings.presetId] || `linear-gradient(135deg, ${p.primary.light} 0%, ${p.primary.dark} 100%)`
-  );
+  set('--gs-arrow-gradient', tk.gsArrowGradient);
   // Hero video-card ambient shadow — full CSS box-shadow value, explicit per-mode
   // preset value if set (Figma "Drop shadow" stack), else a primaryHex-derived glow.
   const videoShadow = isDark ? settings.videoShadowDark : settings.videoShadowLight;
@@ -439,7 +380,19 @@ function hslToHexStr(h: number, s: number, l: number): string {
  */
 export function StudioTheme({ children }: { children: ReactNode }) {
   const settings = useThemeStore((s) => s.settings);
-  const theme = useMemo(() => buildMuiTheme(settings), [settings]);
+  const theme = useMemo(() => {
+    const t = buildMuiTheme(settings);
+    if (settings.pageBgHex && t.palette?.background) {
+      t.palette.background.default = settings.pageBgHex;
+    }
+    if (t.components?.MuiCardHeader?.styleOverrides?.root) {
+      const root = t.components.MuiCardHeader.styleOverrides.root as any;
+      if (root.borderBottom === 'none') {
+        root.borderBottom = '0px none';
+      }
+    }
+    return t;
+  }, [settings]);
   useEffect(() => {
     syncCssVars(theme, settings);
   }, [theme, settings]);

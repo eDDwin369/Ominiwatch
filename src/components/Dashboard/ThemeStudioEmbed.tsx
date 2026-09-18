@@ -14,3 +14,5 @@ export function ThemeStudioEmbed() {
     </div>
   );
 }
+// Trigger HMR update for patched ThemeStudio
+

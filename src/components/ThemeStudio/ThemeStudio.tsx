@@ -648,7 +648,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
                 transform: `scale(${zoomLevel / 50})`,
                 transition: 'transform 0.05s ease-out'
               }}>
-                <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600 }}>IMAGE</span>
+                <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 400 }}>IMAGE</span>
               </div>
               
               {/* Dimmed Area overlay (bright frame cutout) */}
@@ -667,7 +667,7 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
 
             {/* Zoom Slider */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>Zoom</span>
+              <span style={{ fontSize: '13px', fontWeight: 400, color: '#475569' }}>Zoom</span>
               <input 
                 type="range" 
                 min="10" 
@@ -681,14 +681,18 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
             {/* Buttons */}
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
               <button 
+                type="button"
                 onClick={() => setIsCropperOpen(false)}
-                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: '1px solid var(--border-light)', backgroundColor: '#ffffff', color: '#475569', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+                className="btn btn-secondary"
+                style={{ flex: 1, padding: '10px 18px' }}
               >
                 Cancel
               </button>
               <button 
+                type="button"
                 onClick={() => setIsCropperOpen(false)}
-                style={{ flex: 1, padding: '12px', borderRadius: '10px', border: 'none', backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+                className="btn btn-primary"
+                style={{ flex: 1, padding: '10px 18px' }}
               >
                 Confirm
               </button>

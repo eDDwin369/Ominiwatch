@@ -118,7 +118,7 @@ export function NotificationsPage({
                   color: 'var(--primary)',
                   cursor: 'pointer',
                   padding: '6px',
-                  borderRadius: '6px',
+                  borderRadius: 'var(--radius-sm, 6px)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -137,7 +137,7 @@ export function NotificationsPage({
                   color: 'var(--text-muted)',
                   cursor: 'pointer',
                   padding: '6px',
-                  borderRadius: '6px',
+                  borderRadius: 'var(--radius-sm, 6px)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -230,7 +230,7 @@ export function NotificationsPage({
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       style={{
                         padding: '6px 12px',
-                        borderRadius: '6px',
+                        borderRadius: 'var(--radius-sm, 6px)',
                         border: '1px solid var(--border-light, var(--border-light))',
                         backgroundColor: 'var(--bg-card)',
                         color: currentPage === 1 ? 'var(--text-muted, var(--text-muted))' : 'var(--text-main, var(--text-main))',
@@ -256,12 +256,12 @@ export function NotificationsPage({
                         style={{
                           width: '32px',
                           height: '32px',
-                          borderRadius: '6px',
+                          borderRadius: 'var(--radius-sm, 6px)',
                           border: '1px solid ' + (currentPage === pageNum ? 'var(--primary)' : 'var(--border-light)'),
                           backgroundColor: currentPage === pageNum ? 'var(--primary-light)' : 'var(--bg-card)',
                           color: currentPage === pageNum ? 'var(--primary)' : 'var(--text-secondary)',
                           fontSize: '13px',
-                          fontWeight: 600,
+                          fontWeight: 400,
                           cursor: 'pointer',
                           transition: 'all 0.05s ease'
                         }}
@@ -275,7 +275,7 @@ export function NotificationsPage({
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       style={{
                         padding: '6px 12px',
-                        borderRadius: '6px',
+                        borderRadius: 'var(--radius-sm, 6px)',
                         border: '1px solid var(--border-light, var(--border-light))',
                         backgroundColor: 'var(--bg-card)',
                         color: currentPage === totalPages ? 'var(--text-muted, var(--text-muted))' : 'var(--text-main, var(--text-main))',

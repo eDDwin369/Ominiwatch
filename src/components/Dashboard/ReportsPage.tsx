@@ -139,33 +139,54 @@ export function ReportsPage() {
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div 
+      className="user-tab-page"
+      style={{ 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        position: 'relative',
+        background: 'var(--bg-dashboard, var(--dash-canvas-bg))',
+        padding: 'var(--container-pad, 20px)',
+        gap: 'var(--card-gap, 16px)',
+        boxSizing: 'border-box'
+      }}
+    >
       
       {/* Custom Button for Adding Users */}
-      <div style={{ padding: '12px 24px', borderBottom: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-card)' }}>
+      <div 
+        className="content-card-header user-tab-header"
+        style={{ 
+          padding: '12px 24px', 
+          border: 'var(--card-border, 1px solid var(--border-light))', 
+          borderRadius: 'var(--radius-lg, 12px)',
+          display: 'flex', 
+          justifyContent: 'var(--card-header-justify, space-between)', 
+          alignItems: 'center', 
+          background: 'var(--card-hdr, var(--bg-card))',
+          boxShadow: 'var(--card-shadow, var(--shadow-sm))',
+          marginBottom: 0,
+          flexShrink: 0
+        }}
+      >
         <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)' }}>Users</h2>
         <button 
           onClick={() => setIsAddModalOpen(true)}
-          style={{
-            background: 'var(--primary)',
-            color: 'var(--on-accent, #fff)',
-            border: 'none',
-            padding: '8px 18px',
-            borderRadius: '20px',
-            fontWeight: 600,
-            fontSize: '0.875rem',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            boxShadow: 'var(--shadow-sm)'
-          }}
+          className="btn btn-primary"
         >
           <span>+ Add User Details</span>
         </button>
       </div>
 
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      <div 
+        className="user-tab-grid-container"
+        style={{ 
+          flex: 1, 
+          minHeight: 0,
+          overflow: 'hidden',
+          borderRadius: 'var(--radius-lg, 12px)'
+        }}
+      >
         <URMProvider
           key={users.length}
           data={users}
@@ -360,31 +381,14 @@ export function ReportsPage() {
               <button 
                 type="button" 
                 onClick={() => setIsAddModalOpen(false)}
-                style={{
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-light)',
-                  background: 'transparent',
-                  color: 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  fontWeight: 600
-                }}
+                className="btn btn-secondary"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={formHasErrors}
-                style={{
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  background: 'var(--primary)',
-                  color: 'var(--on-accent, #fff)',
-                  cursor: formHasErrors ? 'not-allowed' : 'pointer',
-                  opacity: formHasErrors ? 0.6 : 1,
-                  fontWeight: 600
-                }}
+                className="btn btn-primary"
               >
                 Save
               </button>

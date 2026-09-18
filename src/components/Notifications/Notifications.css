@@ -79,7 +79,7 @@
   border: none;
   color: var(--primary);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   padding: var(--spacing-1);
 }
@@ -189,7 +189,7 @@
 }
 
 .notification-card.unread .notification-title {
-  font-weight: 600;
+  font-weight: 400;
 }
 
 .notification-desc {
@@ -199,6 +199,7 @@
   white-space: normal;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-align: left;
@@ -237,7 +238,7 @@
   border: none;
   color: var(--primary);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   padding: 0;
   width: 100%;
@@ -267,7 +268,7 @@
 .notification-empty h4 {
   font-size: var(--text-base);
   color: var(--text-main);
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: var(--spacing-1);
 }
 .notification-empty p {
@@ -352,7 +353,7 @@
 .notification-tab-btn.active {
   background-color: var(--highlight-hover, var(--primary-light));
   color: var(--text-main, var(--primary));
-  font-weight: 600;
+  font-weight: 400;
   border-bottom: 3px solid var(--highlight, var(--primary));
 }
 
@@ -382,7 +383,7 @@
 
 .notifications-group-title {
   font-size: var(--text-sm);
-  font-weight: 600;
+  font-weight: 400;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -570,7 +571,7 @@
 .new-tab-pill-btn.active {
   background-color: transparent;
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 400;
   border-bottom: 3px solid var(--primary);
 }
 
@@ -580,7 +581,7 @@
   color: var(--primary);
   cursor: pointer;
   padding: 6px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm, 6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -646,7 +647,7 @@
   border-radius: 50%;
   background-color: #dbeafe; /* light blue/violet */
   color: var(--primary);
-  font-weight: 600;
+  font-weight: 400;
   font-size: 13px;
   display: flex;
   align-items: center;
@@ -706,34 +707,41 @@
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--text-sm, 13px);
+  font-weight: 400;
   padding: 6px 18px;
-  border-radius: 6px;
+  border-radius: var(--radius-md, 8px);
   cursor: pointer;
-  transition: all 0.05s ease;
+  transition: all 0.15s ease-in-out;
+  text-transform: var(--btn-case, none);
 }
 
 .notification-action-decline-btn:hover {
   background: var(--bg-dashboard);
   border-color: var(--border-hover);
+  color: var(--text-main);
+  transform: translateY(-1px);
 }
 
 .notification-action-accept-btn {
-  background: var(--btn-color);
-  border: none;
-  color: var(--btn-text);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: var(--btn-case);
+  background: var(--btn-color, var(--primary));
+  border: 1px solid transparent;
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  font-size: var(--text-sm, 13px);
+  font-weight: 400;
+  text-transform: var(--btn-case, none);
   padding: 6px 18px;
-  border-radius: 6px;
+  border-radius: var(--radius-md, 8px);
   cursor: pointer;
-  transition: all 0.05s ease;
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .notification-action-accept-btn:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -1px color-mix(in srgb, var(--primary) 30%, transparent);
 }
 
 /* PDF attachment card under adam share */
@@ -746,6 +754,7 @@
   padding: 10px 14px;
   margin-top: 10px;
   gap: 12px;
+  min-height: 48px;
   transition: border-color 0.05s ease;
 }
 
@@ -758,7 +767,7 @@
   height: 36px;
   background-color: var(--danger);
   color: var(--on-accent);
-  border-radius: 6px;
+  border-radius: var(--radius-sm, 6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -773,8 +782,8 @@
 }
 
 .attachment-file-name {
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--text-xs, 12.5px);
+  font-weight: 400;
   color: var(--text-main);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -793,10 +802,14 @@
   color: var(--text-muted);
   cursor: pointer;
   padding: 6px;
-  border-radius: 6px;
-  display: flex;
+  border-radius: var(--radius-sm, 6px);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  min-width: 32px;
+  min-height: 32px;
   transition: all 0.05s ease;
 }
 

@@ -69,7 +69,7 @@
 
 .preview-login-right {
   flex: 1;
-  background-color: var(--login-panel-color, var(--bg-dashboard));
+  background-color: var(--login-panel-color, var(--bg-card, #ffffff));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -107,21 +107,35 @@
 
 .preview-login-btn {
   width: 100%;
-  background: var(--primary);
-  color: white;
-  border: none;
+  background: var(--btn-color, var(--primary));
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
-  padding: 14px;
-  font-size: 15px;
+  padding: 12px 20px;
+  font-family: var(--app-font-family);
+  font-size: var(--text-sm, 14px);
   font-weight: 600;
+  line-height: 1.25;
   cursor: pointer;
-  letter-spacing: 0.02em;
-  transition: background-color 0.05s ease;
+  letter-spacing: 0.01em;
+  text-transform: var(--btn-case, none);
+  transition: all 0.15s ease-in-out;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .preview-login-btn:hover {
   background: var(--primary-hover);
+  color: var(--btn-text, var(--on-accent, #ffffff));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px -1px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.preview-login-btn:active {
+  transform: translateY(0);
 }
 
 .preview-login-footer {
@@ -134,4 +148,20 @@
 .preview-login-footer strong {
   font-weight: 700;
   color: var(--text-secondary);
+}
+
+.preview-login-container.layout-centered {
+  justify-content: center;
+  align-items: center;
+}
+
+.preview-login-container.layout-centered .preview-login-left {
+  display: none !important;
+}
+
+.preview-login-container.layout-centered .preview-login-right {
+  flex: none;
+  width: 100%;
+  max-width: 440px;
+  background: transparent;
 }
