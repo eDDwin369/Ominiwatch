@@ -237,6 +237,8 @@ function syncCssVars(theme: any, settings: any) {
     corporate: { bg: '#090e24', border: '#1b2350' },
     'corporate-blue': { bg: '#090e24', border: '#1b2350' },
     emerald: { bg: '#061a12', border: '#163d2b' },
+    indigo: { bg: '#120a2b', border: '#2c1e57' },
+    'indigo-violet': { bg: '#120a2b', border: '#2c1e57' },
   };
   const sidebarPreset = isDark ? figmaSidebarDark[settings.presetId] : undefined;
   set('--dash-sidebar-bg', settings.mode === 'dark' ? sidebarPreset?.bg || darkSidebar : '#ffffff');
@@ -257,6 +259,8 @@ function syncCssVars(theme: any, settings: any) {
   const figmaNavText: Record<string, { inactive: string; sectionTitle: string }> = {
     corporate: { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
     'corporate-blue': { inactive: 'rgba(201, 208, 238, 0.8)', sectionTitle: 'rgba(138, 147, 189, 0.7)' },
+    indigo: { inactive: 'rgba(214, 199, 245, 0.8)', sectionTitle: 'rgba(156, 142, 196, 0.7)' },
+    'indigo-violet': { inactive: 'rgba(214, 199, 245, 0.8)', sectionTitle: 'rgba(156, 142, 196, 0.7)' },
   };
   const navTextPreset = isDark ? figmaNavText[settings.presetId] : undefined;
   set('--dash-nav-inactive-color', navTextPreset?.inactive || (isDark ? '#94a3b8' : '#475569'));
