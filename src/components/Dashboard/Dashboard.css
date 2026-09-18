@@ -353,7 +353,7 @@
   padding: 6px var(--spacing-3);
   border-radius: var(--radius-md);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 400;
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;

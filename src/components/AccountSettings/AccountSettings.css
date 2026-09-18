@@ -386,14 +386,20 @@
   height: 32px;
   border-radius: 6px;
   background: var(--primary, #2563eb);
-  color: #ffffff;
+  color: var(--btn-text, #ffffff);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: filter 0.2s ease, transform 0.15s ease;
-  box-shadow: 0 3px 10px color-mix(in srgb, var(--primary) 35%, transparent);
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+/* Matches Global Settings' .gs-top-btn-save dark-mode swap */
+[data-theme-mode="dark"] .figma-btn-edit-square {
+  background: var(--secondary);
+  box-shadow: 0px 4px 7px var(--gs-save-shadow, var(--accent-glow));
 }
 
 .figma-btn-edit-square:hover {
@@ -419,20 +425,29 @@
   transition: all 0.2s;
 }
 
+/* Matches Global Settings' .gs-top-btn-save / .gs-top-btn-cancel colors */
 .figma-btn-save {
-  background: #10b981;
+  background: var(--primary) !important;
+  color: var(--btn-text, #ffffff) !important;
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+[data-theme-mode="dark"] .figma-btn-save {
+  background: var(--secondary) !important;
+  box-shadow: 0px 4px 7px var(--gs-save-shadow, var(--accent-glow));
 }
 
 .figma-btn-save:hover {
-  background: #059669;
+  filter: brightness(1.1);
 }
 
 .figma-btn-cancel {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(38, 40, 48, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .figma-btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.25);
+  filter: brightness(1.1);
 }
 
 /* Preferences & Privacy Card Links */
@@ -569,7 +584,8 @@
 }
 
 .figma-mini-toggle.active {
-  background: var(--primary, #3b82f6) !important;
+  background: var(--gs-accent-gradient, var(--secondary)) !important;
+  box-shadow: 0 2px 12px var(--accent-glow);
 }
 
 .figma-toggle-thumb {
@@ -830,7 +846,8 @@
   width: 100%;
   background: transparent;
   border: none;
-  font-size: 15px;
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size, 15px);
   padding: 12px 0;
   cursor: pointer;
   text-align: left;
@@ -1004,8 +1021,8 @@
   border-radius: var(--radius-md, 8px);
   padding: 8px 18px;
   font-family: var(--app-font-family);
-  font-size: var(--text-sm, 14px);
-  font-weight: 600;
+  font-size: var(--app-font-size, 14px);
+  font-weight: 400;
   line-height: 1.25;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
@@ -1073,7 +1090,8 @@
 }
 
 .figma-main-toggle.on {
-  background: var(--primary);
+  background: var(--gs-accent-gradient, var(--secondary));
+  box-shadow: 0 2px 12px var(--accent-glow);
 }
 
 .figma-main-toggle.off {
@@ -1107,7 +1125,8 @@
 }
 
 .figma-notif-label {
-  font-size: 14px;
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size, 14px);
   color: var(--text-main);
 }
 
