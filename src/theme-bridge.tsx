@@ -325,12 +325,12 @@ function syncCssVars(theme: any, settings: any) {
   // ended up showing whichever gradient last won the cascade). Other presets fall
   // back to the flat --bg-dashboard, same as Dashboard's own unverified fallback.
   const figmaAccountPageDark: Record<string, string> = {
-    corporate: 'linear-gradient(180deg, #000000 0%, #03205F 100%)',
-    'corporate-blue': 'linear-gradient(180deg, #000000 0%, #03205F 100%)',
+    corporate: 'linear-gradient(90deg, #000000 0%, #03205F 100%)',
+    'corporate-blue': 'linear-gradient(90deg, #000000 0%, #03205F 100%)',
   };
   set(
     '--account-page-bg',
-    settings.pageBgHex || figmaAccountPageDark[settings.presetId] || (isDark ? defaultCanvasDark : pageBg)
+    settings.pageBgHex || (isDark ? figmaAccountPageDark[settings.presetId] : undefined) || (isDark ? defaultCanvasDark : pageBg)
   );
   // Account Settings card fill — Figma "tinted" card look, screenshot-verified per
   // preset (light: exact swatch hexes; dark: verified Figma swatches: #010D27 to #03205F for Corporate, #001909 to #0A4821 for Emerald, #010D27 to #37107A for Indigo). Other presets keep the flat --bg-card.
