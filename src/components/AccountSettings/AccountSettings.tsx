@@ -335,7 +335,6 @@ export function AccountSettings({
                 <TextField
                   label="Email"
                   type="email"
-                  showChevron
                   disabled={!isEditingProfile}
                   value={isEditingProfile ? tempProfile.email : profile.email}
                   onChange={e => handleProfileChange('email', e.target.value)}
@@ -345,7 +344,6 @@ export function AccountSettings({
                 <TextField
                   label="Phone"
                   type="tel"
-                  showChevron
                   disabled={!isEditingProfile}
                   value={isEditingProfile ? tempProfile.phone : profile.phone}
                   onChange={e => handleProfileChange('phone', e.target.value)}
@@ -355,7 +353,6 @@ export function AccountSettings({
                 <TextField
                   label="Department"
                   type="text"
-                  showChevron
                   disabled={!isEditingProfile}
                   value={isEditingProfile ? tempProfile.department : profile.department}
                   onChange={e => handleProfileChange('department', e.target.value)}
@@ -364,7 +361,6 @@ export function AccountSettings({
                 <TextField
                   label="Organization"
                   type="text"
-                  showChevron
                   className="figma-input-org"
                   disabled={!isEditingProfile}
                   value={isEditingProfile ? tempProfile.organization : profile.organization}
