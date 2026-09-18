@@ -440,7 +440,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: var(--font-size-caption, 11px);
   color: var(--text-muted);
 }
 
@@ -480,7 +480,9 @@
   gap: 8px;
   background: transparent;
   border: none;
-  font-size: 14px;
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size, 14px);
+  font-weight: var(--app-font-weight, 400);
   cursor: pointer;
   padding: 6px 0;
   transition: color 0.2s;
@@ -594,7 +596,9 @@
 }
 
 .figma-select-label {
-  font-size: 14px;
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size, 14px);
+  font-weight: var(--app-font-weight, 400);
   white-space: nowrap;
   color: var(--text-main);
 }
@@ -621,7 +625,7 @@
 
 .figma-smooth-dropdown-trigger {
   border-radius: var(--radius-md, 8px);
-  font-size: 13px;
+  font-size: var(--app-font-size, 13px);
   padding: 6px 12px;
   display: flex;
   align-items: center;
