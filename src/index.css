@@ -526,6 +526,11 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .outer-auth-card {
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-main: #ffffff;
+  color: #ffffff;
   width: 100%;
   max-width: var(--login-card-w, 360px);
   background: linear-gradient(180deg, #070E28 0%, #002061 25%, #111111 100%);
@@ -723,6 +728,22 @@ input, button, select, textarea, span, p, div, label, a {
   }
 }
 
+.auth-nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.auth-nav-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .back-btn {
   background: none;
   border: none;
@@ -739,7 +760,7 @@ input, button, select, textarea, span, p, div, label, a {
 }
 
 .back-btn:hover {
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .text-btn {
@@ -804,6 +825,7 @@ input, button, select, textarea, span, p, div, label, a {
   font-weight: 600;
   text-align: center;
   transition: all 0.05s ease;
+  caret-color: #ffffff;
 }
 
 @media (min-width: 480px) {
@@ -820,6 +842,23 @@ input, button, select, textarea, span, p, div, label, a {
   border-color: var(--accent);
   box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
   background: rgba(15, 23, 42, 0.8);
+  color: #ffffff;
+}
+
+/* Light mode support for OTP inputs */
+[data-theme-mode="light"] .otp-input {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: #0f172a;
+  caret-color: #0f172a;
+}
+
+[data-theme-mode="light"] .otp-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.25);
+  background: #ffffff;
+  color: #0f172a;
 }
 
 .otp-input.error {
