@@ -723,6 +723,22 @@ input, button, select, textarea, span, p, div, label, a {
   }
 }
 
+.auth-nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.auth-nav-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .back-btn {
   background: none;
   border: none;
