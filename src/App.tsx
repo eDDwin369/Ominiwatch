@@ -212,6 +212,7 @@ function App() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -522,12 +523,7 @@ function App() {
                       <a
                         href="#/forgot-password"
                         onClick={(e) => { e.preventDefault(); navigateScreen('forgot-password'); }}
-                        style={{
-                          fontSize: 'var(--font-size-caption)',
-                          color: 'rgba(148,163,184,0.7)',
-                          textDecoration: 'none',
-                          transition: 'color 0.05s'
-                        }}
+                        className="auth-nav-link"
                       >
                         Forgot password?
                       </a>
@@ -570,14 +566,7 @@ function App() {
                     <a
                       href="#/login"
                       onClick={(e) => { e.preventDefault(); navigateScreen('login'); }}
-                      style={{
-                        fontSize: 'var(--font-size-caption)',
-                        color: 'var(--text-secondary)',
-                        textDecoration: 'none',
-                        transition: 'color 0.05s'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                      onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                      className="auth-nav-link"
                     >
                       Back to login
                     </a>
@@ -616,7 +605,7 @@ function App() {
                 
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
                   {timeLeft > 0 ? (
-                    <span style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-secondary)' }}>Resend code in {timeLeft}s</span>
+                    <span style={{ fontSize: 'var(--font-size-caption)', color: 'rgba(255,255,255,0.75)' }}>Resend code in {timeLeft}s</span>
                   ) : (
                     <a
                       href="#"
@@ -645,15 +634,8 @@ function App() {
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
                   <a
                     href="#/forgot-password"
+                    className="auth-nav-link"
                     onClick={(e) => { e.preventDefault(); navigateScreen('forgot-password'); }}
-                    style={{
-                      fontSize: 'var(--font-size-caption)',
-                      color: 'var(--text-secondary)',
-                      textDecoration: 'none',
-                      transition: 'color 0.05s'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                    onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
                   >
                     Back
                   </a>
@@ -723,7 +705,7 @@ function App() {
                     <div className="input-wrapper">
                       <KeyRound className="input-icon" size={18} />
                       <input
-                        type={showNewPassword ? 'text' : 'password'}
+                        type={showConfirmPassword ? 'text' : 'password'}
                         id="confirm-password"
                         className="form-input"
                         placeholder="Confirm your new password"
@@ -731,6 +713,13 @@ function App() {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         required
                       />
+                      <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      </button>
                     </div>
                     {confirmPassword && (
                       <div style={{ 
@@ -766,15 +755,8 @@ function App() {
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
                     <a
                       href="#/login"
+                      className="auth-nav-link"
                       onClick={(e) => { e.preventDefault(); navigateScreen('login'); }}
-                      style={{
-                        fontSize: 'var(--font-size-caption)',
-                        color: 'var(--text-secondary)',
-                        textDecoration: 'none',
-                        transition: 'color 0.05s'
-                      }}
-                      onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                      onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
                     >
                       Back to login
                     </a>
@@ -788,7 +770,7 @@ function App() {
                 <div className="success-icon-wrapper" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
                   <CheckCircle2 className="success-icon" size={64} color="var(--success)" />
                 </div>
-                <div style={{ fontSize: 'var(--font-size-body)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2rem' }}>
+                <div style={{ fontSize: 'var(--font-size-body)', fontWeight: 600, color: '#ffffff', marginBottom: '2rem' }}>
                   Password Updated Successfully
                 </div>
                 <button
@@ -799,6 +781,8 @@ function App() {
                     setPassword('');
                     setNewPassword('');
                     setConfirmPassword('');
+                    setShowNewPassword(false);
+                    setShowConfirmPassword(false);
                   }}
                   style={{ width: '100%' }}
                 >
