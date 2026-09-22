@@ -148,7 +148,7 @@ const InfoTooltip = ({
 
 // Apple-style toggle switch (Matching User Screenshot 1:1)
 const GS_WEIGHT_OPTIONS = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
-const GS_STYLE_OPTIONS = ['h1', 'h2', 'h3', 'h4'].map((v) => ({ value: v, label: v.toUpperCase() }));
+const GS_STYLE_OPTIONS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map((v) => ({ value: v, label: v.toUpperCase() }));
 
 const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: boolean) => void }) => {
   return (
