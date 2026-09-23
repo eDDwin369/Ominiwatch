@@ -217,7 +217,7 @@ export function ReportsPage() {
           flexShrink: 0
         }}
       >
-        <h2 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)' }}>Users</h2>
+        <h1 style={{ margin: 0, fontSize: 'var(--h1-size)', fontWeight: 'var(--h1-weight, 600)', color: 'var(--h1-color, var(--text-main))' }}>Users</h1>
         <button 
           onClick={() => setIsAddModalOpen(true)}
           className="btn btn-primary"

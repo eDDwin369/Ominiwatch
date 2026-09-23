@@ -196,8 +196,10 @@ function syncCssVars(theme: any, settings: any) {
   const ty = theme.typography;
   for (let n = 1; n <= 6; n++) {
     const h = ty[`h${n}`] || {};
-    set(`--h${n}-size`, h.fontSize ? `${h.fontSize}px` : undefined);
-    set(`--font-size-h${n}`, h.fontSize ? `${h.fontSize}px` : undefined);
+    const rawSize = settings[`h${n}Size`] || h.fontSize;
+    const formattedSize = rawSize ? (typeof rawSize === 'number' ? `${rawSize}px` : String(rawSize).endsWith('px') ? String(rawSize) : `${rawSize}px`) : undefined;
+    set(`--h${n}-size`, formattedSize);
+    set(`--font-size-h${n}`, formattedSize);
     const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
     set(`--h${n}-weight`, w ? String(w) : undefined);
     set(`--h${n}-color`, settings[`h${n}Color`] || 'var(--text-main)');

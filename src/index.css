@@ -1293,3 +1293,30 @@ input, button, select, textarea, span, p, div, label, a {
   max-width: 100% !important;
   vertical-align: middle !important;
 }
+
+/* Fix Manage Columns tab indicator alignment under CSS zoom */
+.user-tab-page .MuiTabs-indicator,
+.dashboard-wrapper .MuiTabs-indicator,
+.MuiTabs-indicator {
+  display: none !important;
+}
+
+.user-tab-page .MuiTabs-root .MuiTab-root,
+.dashboard-wrapper .MuiTabs-root .MuiTab-root,
+.MuiTabs-root .MuiTab-root {
+  position: relative !important;
+}
+
+.user-tab-page .MuiTabs-root .MuiTab-root.Mui-selected::after,
+.dashboard-wrapper .MuiTabs-root .MuiTab-root.Mui-selected::after,
+.MuiTabs-root .MuiTab-root.Mui-selected::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 2px !important;
+  background-color: var(--primary, #1976d2) !important;
+  border-radius: 2px !important;
+  z-index: 1 !important;
+}
