@@ -1277,3 +1277,19 @@ input, button, select, textarea, span, p, div, label, a {
   flex-shrink: 0 !important;
   box-sizing: border-box !important;
 }
+
+/* Ensure Users grid cells and inner spans truncate with ellipsis and nowrap */
+.user-tab-grid-container td,
+.user-tab-grid-container th,
+.user-tab-grid-container .MuiTableCell-root,
+.user-tab-grid-container .urm-item-title {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.user-tab-grid-container .urm-item-title {
+  display: inline-block !important;
+  max-width: 100% !important;
+  vertical-align: middle !important;
+}

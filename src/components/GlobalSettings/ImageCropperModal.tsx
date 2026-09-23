@@ -212,7 +212,7 @@ export function ImageCropperModal({
             transform: 'translate(-50%, -50%)',
             width: `${cropWidth}px`,
             height: `${cropHeight}px`,
-            borderRadius: cropShape === 'round' ? '50%' : '12px',
+            borderRadius: cropShape === 'round' ? '50%' : '6px',
             border: '2px solid rgba(255, 255, 255, 0.95)',
             boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.45)',
             pointerEvents: 'none'

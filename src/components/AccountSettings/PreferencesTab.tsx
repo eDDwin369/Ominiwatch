@@ -517,7 +517,7 @@ export function PreferencesTab() {
                 width: '36px',
                 height: '36px',
                 borderRadius: '8px',
-                backgroundColor: '#fee2e2',
+                backgroundColor: 'var(--danger-light)',
                 color: 'var(--danger)',
                 display: 'flex',
                 alignItems: 'center',
@@ -541,7 +541,7 @@ export function PreferencesTab() {
               e.stopPropagation();
               handleDeleteAccount();
             }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--danger-hover)'}
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--danger)'}
             style={{ 
               background: 'var(--danger)', 

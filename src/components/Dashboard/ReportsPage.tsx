@@ -97,6 +97,54 @@ export function ReportsPage() {
   const phoneError = phoneNumber.trim() !== '' && !phoneValid;
   const formHasErrors = !nameValid || !phoneValid;
 
+  const gridContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = gridContainerRef.current;
+    if (!container) return;
+
+    const assignTitles = () => {
+      const elements = container.querySelectorAll<HTMLElement>('td, th, .urm-item-title');
+      elements.forEach((el) => {
+        if (!el.getAttribute('title')) {
+          const text = el.textContent?.trim();
+          if (text) {
+            el.setAttribute('title', text);
+          }
+        }
+      });
+    };
+
+    assignTitles();
+
+    const observer = new MutationObserver(() => {
+      assignTitles();
+    });
+
+    observer.observe(container, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    const handleMouseOver = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest<HTMLElement>('td, th, .urm-item-title');
+      if (target && !target.getAttribute('title')) {
+        const text = target.textContent?.trim();
+        if (text) {
+          target.setAttribute('title', text);
+        }
+      }
+    };
+
+    container.addEventListener('mouseover', handleMouseOver);
+
+    return () => {
+      observer.disconnect();
+      container.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, [users]);
+
   const handleAddUser = (e: React.FormEvent) => {
     e.preventDefault();
     if (formHasErrors) return;
@@ -179,6 +227,7 @@ export function ReportsPage() {
       </div>
 
       <div 
+        ref={gridContainerRef}
         className="user-tab-grid-container"
         style={{ 
           flex: 1, 
