@@ -262,7 +262,7 @@ export function Sidebar({
             onMouseLeave={handleItemMouseLeave}
           >
             <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <LayoutGrid size={20} className="nav-icon" color="var(--highlight, var(--primary))" />
+              <LayoutGrid size={20} className="nav-icon" color="var(--primary, #2563EB)" />
             </div>
             <span className="nav-label" style={{ flex: 1 }}>Dashboard</span>
             {!isSidebarCollapsed && (
@@ -282,7 +282,7 @@ export function Sidebar({
                     justifyContent: 'center',
                     padding: '2px',
                     borderRadius: '4px',
-                    color: isLocked ? 'var(--highlight, var(--primary))' : 'var(--text-muted)',
+                    color: isLocked ? 'var(--primary, #2563EB)' : 'var(--text-muted)',
                     transition: 'all 0.15s ease'
                   }}
                   className="sidebar-toggle"

@@ -444,6 +444,11 @@
   color: var(--highlight, var(--primary)) !important;
 }
 
+/* Ensure sidebar navigation icons retain their dedicated theme colors and avoid status color bleed */
+.dash-sidebar .nav-item .nav-icon {
+  flex-shrink: 0;
+}
+
 .dash-sidebar.collapsed .nav-item {
   width: 44px;
   height: 44px;
