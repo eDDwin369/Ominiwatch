@@ -265,7 +265,24 @@ function syncCssVars(theme: any, settings: any) {
   set('--dash-progress-fill', figmaProgressFill[settings.presetId] || primaryHex);
   set('--dash-canvas-bg', tk.canvasBg);
   set('--account-page-bg', tk.accountPageBg);
-  set('--account-card-bg', tk.accountCardBg);
+  const figmaAccountCardLight: Record<string, string> = {
+    corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
+    'corporate-blue': 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
+    emerald: 'linear-gradient(90deg, #97E1B2 0%, #E6E6E6 100%)',
+    indigo: 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)',
+    'indigo-violet': 'linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%)',
+  };
+  const figmaAccountCardDark: Record<string, string> = {
+    corporate: 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
+    'corporate-blue': 'linear-gradient(90deg, #010D27 0%, #03205F 100%)',
+    emerald: 'linear-gradient(90deg, #001909 0%, #0A4821 100%)',
+    indigo: 'linear-gradient(90deg, #010D27 0%, #37107A 100%)',
+    'indigo-violet': 'linear-gradient(90deg, #010D27 0%, #37107A 100%)',
+  };
+  const resolvedAccountCardBg = isDark
+    ? figmaAccountCardDark[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #010D27 0%, #03205F 100%)'
+    : figmaAccountCardLight[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)';
+  set('--account-card-bg', resolvedAccountCardBg);
   set('--dash-brand-gradient', tk.brandGradient);
   set('--dash-aura-color', primaryHex);
   set('--gs-accent-gradient', tk.gsAccentGradient);

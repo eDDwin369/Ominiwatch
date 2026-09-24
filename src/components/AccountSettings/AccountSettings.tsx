@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
-  ChevronDown, ChevronUp, Pencil, Check, X, Shield, 
+  ChevronDown, ChevronUp, SquarePen, Check, X, Shield, 
   Laptop, Monitor, Smartphone, 
   AlertTriangle, CheckCircle2, Camera
 } from 'lucide-react';
@@ -86,10 +86,10 @@ export function AccountSettings({
   const [profile, setProfile] = useState({
     fullName: 'Edwin Antony',
     jobTitle: 'UX/UI Designer',
-    email: 'edwin.antony@omnieye.com',
-    phone: '+91 98765 43210',
-    department: 'UI/UX Design',
-    organization: 'OomniEye',
+    email: 'edwinantnony562@gmail.com',
+    phone: '8606769614',
+    department: 'Design',
+    organization: 'Oominieye',
     location: 'India',
     avatarUrl: johnDoeAvatar
   });
@@ -333,12 +333,12 @@ export function AccountSettings({
                   attribute toggles when the pencil icon is used. */}
               <div className="figma-inputs-grid">
                 <TextField
-                  label="Email"
+                  label="Email Address"
                   type="email"
                   disabled={!isEditingProfile}
                   value={isEditingProfile ? tempProfile.email : profile.email}
                   onChange={e => handleProfileChange('email', e.target.value)}
-                  error={isEditingProfile && emailError ? (tempProfile.email.trim() ? 'Enter a valid email address' : 'Email is required') : undefined}
+                  error={isEditingProfile && emailError ? (tempProfile.email.trim() ? 'Enter a valid email address' : 'Email Address is required') : undefined}
                 />
 
                 <TextField
@@ -398,7 +398,7 @@ export function AccountSettings({
                   onClick={handleStartEdit}
                   title="Edit Information"
                 >
-                  <Pencil size={15} />
+                  <SquarePen size={18} />
                 </button>
               )}
             </div>

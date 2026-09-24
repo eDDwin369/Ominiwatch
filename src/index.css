@@ -32,6 +32,7 @@
   --primary: #2563EB;
   --primary-hover: #1D4ED8;
   --primary-light: #EFF6FF;
+  --account-card-bg: linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%);
 }
 
 [data-theme="corporate-blue"],
@@ -50,6 +51,7 @@
 [data-theme-mode="light"][data-theme="corporate-blue"],
 [data-theme-mode="light"][data-theme="corporate"] {
   --dash-canvas-bg: #ffffff;
+  --account-card-bg: linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%);
 }
 
 [data-theme="emerald"] {
@@ -65,6 +67,7 @@
 
 [data-theme-mode="light"][data-theme="emerald"] {
   --dash-canvas-bg: #ffffff;
+  --account-card-bg: linear-gradient(90deg, #97E1B2 0%, #E6E6E6 100%);
 }
 
 [data-theme="indigo-violet"],
@@ -83,6 +86,7 @@
 [data-theme-mode="light"][data-theme="indigo-violet"],
 [data-theme-mode="light"][data-theme="indigo"] {
   --dash-canvas-bg: #ffffff;
+  --account-card-bg: linear-gradient(90deg, #FCB3D8 0%, #E6E6E6 100%);
 }
 
 [data-theme="graphite"] {
