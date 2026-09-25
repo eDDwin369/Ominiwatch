@@ -196,7 +196,7 @@ function syncCssVars(theme: any, settings: any) {
   const ty = theme.typography;
   for (let n = 1; n <= 6; n++) {
     const h = ty[`h${n}`] || {};
-    const rawSize = settings[`h${n}Size`] || h.fontSize;
+    const rawSize = h.fontSize || settings[`h${n}Size`];
     const formattedSize = rawSize ? (typeof rawSize === 'number' ? `${rawSize}px` : String(rawSize).endsWith('px') ? String(rawSize) : `${rawSize}px`) : undefined;
     set(`--h${n}-size`, formattedSize);
     set(`--font-size-h${n}`, formattedSize);

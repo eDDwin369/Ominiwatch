@@ -389,10 +389,10 @@
   border-radius: 12px;
   position: relative;
   text-decoration: none;
-  font-family: 'Inter', var(--app-heading-family, var(--app-font-family));
-  font-weight: 500;
+  font-family: var(--app-font-family, 'Inter', sans-serif);
+  font-weight: var(--app-font-weight, 500);
   font-size: var(--h6-size, 14px);
-  line-height: 20px;
+  line-height: var(--app-line-height, 20px);
   letter-spacing: 0;
   border: 1px solid transparent;
   transition: all 0.15s ease;
@@ -510,8 +510,8 @@
   color: var(--dash-nav-section-color, #9c8ec4);
   font-size: 12px;
   line-height: 16px;
-  font-weight: 500;
-  font-family: 'Inter', var(--app-heading-family, var(--app-font-family));
+  font-weight: var(--app-font-weight, 500);
+  font-family: var(--app-font-family, 'Inter', sans-serif);
   white-space: nowrap;
   transition: all 0.2s ease;
 }
@@ -558,7 +558,8 @@
 /* Premium Sidebar Transition Utilities */
 .nav-label {
   font-family: var(--app-heading-family, var(--app-font-family));
-  font-weight: var(--h6-weight, 400);
+  font-weight: var(--h6-weight, var(--app-font-weight, 400));
+  font-size: var(--h6-size, 14px);
   opacity: 1;
   max-width: 200px;
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);

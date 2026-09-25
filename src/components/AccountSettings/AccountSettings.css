@@ -548,6 +548,11 @@
   min-width: 0;
 }
 
+.figma-inputs-grid .tf-input,
+.figma-inputs-grid .tf-select {
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .figma-inputs-grid {
     grid-template-columns: 1fr;
