@@ -268,7 +268,7 @@ export function AccountSettings({
         <div className="figma-column-left">
 
           {/* CARD 1: Personal Information */}
-          <div className="figma-card figma-card-personal">
+          <div className={`figma-card figma-card-personal ${isEditingProfile ? 'is-editing' : ''}`}>
             <div className="figma-card-top-bar">
               <h2 className="figma-card-heading">Personal Information</h2>
               <div className="figma-location-text">
