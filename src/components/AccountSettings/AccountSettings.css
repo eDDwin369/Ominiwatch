@@ -30,6 +30,10 @@
   color: var(--text-main);
 }
 
+.figma-account-settings-container h3 {
+  color: var(--h3-color, var(--text-main));
+}
+
 @keyframes figmaFadeIn {
   from {
     opacity: 0;
@@ -107,6 +111,275 @@
 
 .figma-card-personal {
   min-height: 230px;
+  background: var(--account-card-bg, linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.08) !important;
+  padding: 28px 32px !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.figma-card-personal .figma-card-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.figma-card-personal .figma-card-heading {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h3-size, 18px) !important;
+  font-weight: var(--h3-weight, 500) !important;
+  letter-spacing: -0.4px !important;
+  margin: 0;
+  color: var(--h3-color, var(--text-main)) !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-card-heading {
+  color: var(--h3-color, #ffffff) !important;
+}
+
+.figma-card-personal .figma-location-text {
+  font-size: 13px !important;
+  color: #5e77a3 !important;
+  font-weight: 500 !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-location-text {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.figma-card-personal .figma-personal-content {
+  display: grid;
+  grid-template-columns: 200px 1fr !important;
+  gap: 32px !important;
+  align-items: center !important;
+  flex: 1;
+  padding-bottom: 8px !important;
+}
+
+@media (max-width: 768px) {
+  .figma-card-personal .figma-personal-content {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+}
+
+.figma-card-personal .figma-profile-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.figma-card-personal .figma-avatar-wrapper {
+  position: relative;
+  width: 96px !important;
+  height: 96px !important;
+  border-radius: 50% !important;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.figma-card-personal .figma-avatar-wrapper:hover {
+  transform: scale(1.04);
+  border-color: #60a5fa !important;
+}
+
+.figma-card-personal .figma-profile-labels {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+}
+
+.figma-card-personal .figma-user-name {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  color: var(--h3-color, #0f2252) !important;
+  margin: 0 0 4px 0 !important;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  height: auto !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-user-name {
+  color: var(--h3-color, #ffffff) !important;
+}
+
+.figma-card-personal .figma-user-role {
+  font-size: 14px !important;
+  color: #334155 !important;
+  margin: 0 !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.2px;
+  height: auto !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-user-role {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.figma-card-personal .figma-edit-name {
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  color: #0f2252 !important;
+  height: auto !important;
+  margin: 0 0 4px 0 !important;
+  border-bottom: 1px dashed rgba(15, 34, 82, 0.4) !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-edit-name {
+  color: #ffffff !important;
+  border-bottom-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.figma-card-personal .figma-edit-role {
+  font-size: 14px !important;
+  color: #334155 !important;
+  font-weight: 400 !important;
+  height: auto !important;
+  margin: 0 !important;
+  border-bottom: 1px dashed rgba(51, 65, 85, 0.4) !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-edit-role {
+  color: rgba(255, 255, 255, 0.7) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.figma-card-personal .figma-inputs-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) !important;
+  gap: 20px 24px !important;
+  padding-right: 48px !important;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .figma-card-personal .figma-inputs-grid {
+    grid-template-columns: 1fr !important;
+    padding-right: 0 !important;
+  }
+}
+
+/* Transparent boxed style for TextField inside Personal Information card — matches Figma design */
+.figma-card-personal .tf-wrapper {
+  background: transparent !important;
+  border-radius: 12px !important;
+  padding: 13px 14px 11px 14px !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transition: all 0.2s ease;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .tf-wrapper {
+  background: transparent !important;
+}
+
+.figma-card-personal .tf-wrapper.tf-disabled {
+  opacity: 1 !important;
+}
+
+/* Box outline in Personal Information */
+/* Default / View Mode (non-edit) -> Grey Border */
+.figma-card-personal .tf-outline,
+.figma-card-personal .tf-wrapper.tf-disabled .tf-outline {
+  border: 1px solid #94a3b8 !important;
+  border-radius: 12px !important;
+  padding: 0 10px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .tf-outline,
+[data-theme-mode="dark"] .figma-card-personal .tf-wrapper.tf-disabled .tf-outline {
+  border: 1px solid rgba(148, 163, 184, 0.35) !important;
+}
+
+/* Edit Mode -> Light White Border */
+.figma-card-personal.is-editing .tf-outline,
+.figma-card-personal .tf-wrapper:not(.tf-disabled) .tf-outline {
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal.is-editing .tf-outline,
+[data-theme-mode="dark"] .figma-card-personal .tf-wrapper:not(.tf-disabled) .tf-outline {
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+
+.figma-card-personal.is-editing .tf-wrapper:not(.tf-focused):hover .tf-outline,
+.figma-card-personal .tf-wrapper:not(.tf-disabled):not(.tf-focused):hover .tf-outline {
+  border-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.figma-card-personal .tf-wrapper.tf-focused .tf-outline {
+  border-color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.figma-card-personal .tf-legend {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #50668a !important;
+  padding: 0 6px !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .tf-legend {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.figma-card-personal .tf-input {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #0f172a !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .tf-input {
+  color: #ffffff !important;
+}
+
+.figma-card-personal .figma-card-action-bottom-right {
+  bottom: 24px !important;
+  right: 28px !important;
+}
+
+.figma-card-personal .figma-btn-edit-square {
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 8px !important;
+  background: var(--primary, #4f46e5) !important;
+  color: #ffffff !important;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35) !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-btn-edit-square {
+  background: var(--primary, #4f46e5) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5) !important;
+}
+
+.figma-card-personal .figma-btn-edit-square:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45) !important;
 }
 
 .figma-card-preferences {
@@ -125,7 +398,7 @@
   font-size: var(--h3-size, 18px);
   font-weight: var(--h3-weight, 600);
   margin: 0;
-  color: var(--text-main);
+  color: var(--h3-color, var(--text-main));
 }
 
 /* Location Text in Top Right */
@@ -237,7 +510,7 @@
   font-family: var(--app-heading-family, var(--app-font-family));
   font-size: 20px;
   font-weight: 600;
-  color: var(--text-main);
+  color: var(--h3-color, var(--text-main));
   margin: 0 0 4px 0;
   line-height: 1.25;
   letter-spacing: -0.3px;
@@ -246,7 +519,7 @@
 }
 
 [data-theme-mode="dark"] .figma-user-name {
-  color: var(--text-main);
+  color: var(--h3-color, var(--text-main));
 }
 
 .figma-user-role {
@@ -298,6 +571,11 @@
   gap: 20px 24px;
   padding-right: 48px;
   min-width: 0;
+}
+
+.figma-inputs-grid .tf-input,
+.figma-inputs-grid .tf-select {
+  font-weight: 600;
 }
 
 @media (max-width: 900px) {
@@ -1182,10 +1460,10 @@
 }
 
 .figma-modal-header h3 {
-  font-size: 18px;
+  font-size: var(--h3-size, 18px);
   margin: 0;
-  font-weight: 500;
-  color: var(--text-main);
+  font-weight: var(--h3-weight, 500);
+  color: var(--h3-color, var(--text-main));
 }
 
 .figma-modal-close {
