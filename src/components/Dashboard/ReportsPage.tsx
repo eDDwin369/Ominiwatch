@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { URMProvider, URMViewerRaw, useURMContext } from 'dts-universal-report-module';
+import { URMProvider, URMBuilderRaw, useURMContext } from 'dts-universal-report-module';
 import { isValidName } from '../AccountSettings/nameValidation';
 import { isValidPhone } from '../AccountSettings/phoneValidation';
 import { Dropdown } from '../shared/Dropdown';
+import './ReportsPage.css';
 
-const REPORT_ID = 'users-report';
+const REPORT_ID = 'test-report';
 
 // URM 1.3.13 persists saved views to localStorage["urm_report_<reportId>"], but its
 // restore-on-mount only re-applies the active view's filters + sortStack — not grouping
@@ -139,9 +140,20 @@ export function ReportsPage() {
 
     container.addEventListener('mouseover', handleMouseOver);
 
+    const handleNewClick = (e: MouseEvent) => {
+      const btn = (e.target as HTMLElement).closest('[aria-label="New Report"]');
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsAddModalOpen(true);
+      }
+    };
+    container.addEventListener('click', handleNewClick, true);
+
     return () => {
       observer.disconnect();
       container.removeEventListener('mouseover', handleMouseOver);
+      container.removeEventListener('click', handleNewClick, true);
     };
   }, [users]);
 
@@ -188,6 +200,7 @@ export function ReportsPage() {
 
   return (
     <div 
+      ref={gridContainerRef}
       className="user-tab-page"
       style={{ 
         height: '100%', 
@@ -195,58 +208,25 @@ export function ReportsPage() {
         flexDirection: 'column', 
         position: 'relative',
         background: 'var(--bg-dashboard, var(--dash-canvas-bg))',
-        padding: 'var(--container-pad, 20px)',
-        gap: 'var(--card-gap, 16px)',
+        padding: 0,
+        overflow: 'hidden',
         boxSizing: 'border-box'
       }}
     >
-      
-      {/* Custom Button for Adding Users */}
-      <div 
-        className="content-card-header user-tab-header"
-        style={{ 
-          padding: '12px 24px', 
-          border: 'var(--card-border, 1px solid var(--border-light))', 
-          borderRadius: 'var(--radius-lg, 12px)',
-          display: 'flex', 
-          justifyContent: 'var(--card-header-justify, space-between)', 
-          alignItems: 'center', 
-          background: 'var(--card-hdr, var(--bg-card))',
-          boxShadow: 'var(--card-shadow, var(--shadow-sm))',
-          marginBottom: 0,
-          flexShrink: 0
+      <URMProvider
+        key={users.length}
+        data={users}
+        reportId={REPORT_ID}
+        reportName="Test"
+        mode="builder"
+        config={{
+          defaultViewMode: 'list',
+          viewOptions: ['list', 'grid']
         }}
       >
-        <h1 style={{ margin: 0, fontSize: 'var(--h1-size)', fontWeight: 'var(--h1-weight, 600)', color: 'var(--h1-color, var(--text-main))' }}>Users</h1>
-        <button 
-          onClick={() => setIsAddModalOpen(true)}
-          className="btn btn-primary"
-        >
-          <span>+ Add User Details</span>
-        </button>
-      </div>
-
-      <div 
-        ref={gridContainerRef}
-        className="user-tab-grid-container"
-        style={{ 
-          flex: 1, 
-          minHeight: 0,
-          overflow: 'hidden',
-          borderRadius: 'var(--radius-lg, 12px)'
-        }}
-      >
-        <URMProvider
-          key={users.length}
-          data={users}
-          reportId={REPORT_ID}
-          reportName="User"
-          mode="viewer"
-        >
-          <RestoreActiveView />
-          <URMViewerRaw />
-        </URMProvider>
-      </div>
+        <RestoreActiveView />
+        <URMBuilderRaw hasExternalData={true} />
+      </URMProvider>
 
       {/* Modal for adding user */}
       {isAddModalOpen && (
