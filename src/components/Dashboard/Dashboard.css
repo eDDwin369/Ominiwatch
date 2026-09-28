@@ -6790,10 +6790,12 @@ html:has(.mode-v6),
 /* ---- Header (flat navy #141b3c, white text) ---------------------------- */
 .hdr-logo-img {
   height: 100%;
-  max-height: var(--appbar-h, 64px);
+  max-height: calc(var(--appbar-h, 64px) - 20px);
+  max-width: 160px;
   width: auto;
   object-fit: contain;
   flex-shrink: 0;
+  margin: auto 0;
 }
 .hdr-brand-name {
   font-family: var(--app-font-family);

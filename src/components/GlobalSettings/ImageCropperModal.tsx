@@ -70,39 +70,39 @@ export function ImageCropperModal({
     const cWidth = cropWidth;
     const cHeight = cropHeight;
 
+    // Support crisp rendering on high-DPI displays
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
     const canvas = document.createElement('canvas');
-    canvas.width = cWidth;
-    canvas.height = cHeight;
+    canvas.width = Math.round(cWidth * dpr);
+    canvas.height = Math.round(cHeight * dpr);
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    ctx.scale(dpr, dpr);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
 
     // Scale factor based on zoom slider (-100 to 100) -> 0.25x to 4x
     const scale = Math.pow(2, zoomLevel / 50);
     
     // Original image intrinsic dimensions
-    const imgWidth = imageRef.current.naturalWidth;
-    const imgHeight = imageRef.current.naturalHeight;
+    const imgWidth = imageRef.current.naturalWidth || 1;
+    const imgHeight = imageRef.current.naturalHeight || 1;
     
-    // Calculate aspect-ratio fit base dimensions matching CSS object-fit: contain
-    const containerWidth = containerRef.current.clientWidth;
-    const containerHeight = containerRef.current.clientHeight;
+    // In CSS, <img style="max-width: 100%; max-height: 100%; object-fit: contain;"> never upscales
+    // an image smaller than its container. Thus baseScale must not exceed 1.
+    const containerWidth = containerRef.current.clientWidth || cWidth;
+    const containerHeight = containerRef.current.clientHeight || cHeight;
     
     const scaleX = containerWidth / imgWidth;
     const scaleY = containerHeight / imgHeight;
-    const baseScale = Math.min(scaleX, scaleY);
+    const baseScale = Math.min(1, scaleX, scaleY);
     
-    const renderedWidth = imgWidth * baseScale;
-    const renderedHeight = imgHeight * baseScale;
+    // imageRef.current.clientWidth/clientHeight give the browser's exact rendered layout box
+    const renderedWidth = imageRef.current.clientWidth || (imgWidth * baseScale);
+    const renderedHeight = imageRef.current.clientHeight || (imgHeight * baseScale);
     
-    // Center offset within container
-    const offsetX = (containerWidth - renderedWidth) / 2;
-    const offsetY = (containerHeight - renderedHeight) / 2;
-
-    // Crop box coordinates in container space
-    const cropBoxX = (containerWidth - cWidth) / 2;
-    const cropBoxY = (containerHeight - cHeight) / 2;
-
-    // Transform logic matching CSS
+    // Center of crop box
     ctx.translate(cWidth / 2, cHeight / 2);
 
     if (cropShape === 'round') {
@@ -111,14 +111,14 @@ export function ImageCropperModal({
       ctx.clip();
     }
 
+    // Apply zoom and user pan matching CSS transformOrigin 'center center'
     ctx.scale(scale, scale);
     ctx.translate(position.x / scale, position.y / scale);
     
-    // Draw the image relative to the center of the crop box
-    const drawX = offsetX - cropBoxX - cWidth / 2;
-    const drawY = offsetY - cropBoxY - cHeight / 2;
+    // Draw the image centered relative to the crop box center
+    const drawX = -renderedWidth / 2;
+    const drawY = -renderedHeight / 2;
     
-    ctx.clearRect(-cWidth, -cHeight, cWidth * 2, cHeight * 2);
     ctx.drawImage(
       imageRef.current,
       drawX,
