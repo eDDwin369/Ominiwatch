@@ -429,9 +429,30 @@ export function GlobalSettingsWorkspace({
 
   const customerLogoInputRef = useRef<HTMLInputElement>(null);
 
+  const validateImageFile = (file: File): string | null => {
+    const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
+    const ALLOWED_EXTS = ['.png', '.jpg', '.jpeg'];
+    const isExtAllowed = ALLOWED_EXTS.some(ext => file.name.toLowerCase().endsWith(ext));
+    const isTypeAllowed = ALLOWED_TYPES.includes(file.type.toLowerCase()) || isExtAllowed;
+    if (!isTypeAllowed) {
+      return 'Unsupported format. Please select a PNG or JPG image.';
+    }
+    const MAX_SIZE_MB = 5;
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      return `Image size exceeds ${MAX_SIZE_MB}MB. Please select a smaller image.`;
+    }
+    return null;
+  };
+
   const handleCustomerLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const err = validateImageFile(file);
+      if (err) {
+        triggerToast(err);
+        e.target.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
@@ -442,6 +463,7 @@ export function GlobalSettingsWorkspace({
       };
       reader.readAsDataURL(file);
     }
+    e.target.value = '';
   };
 
   // Equal height is now enforced via CSS (.gs-config-card height: 286px) to maintain a perfectly static layout.
@@ -466,10 +488,6 @@ export function GlobalSettingsWorkspace({
     }
   }, [activeTab]);
 
-
-
-
-
   // Removed unused containerRef
   const fileInputRef = useRef<HTMLInputElement>(null);
   const footerFileInputRef = useRef<HTMLInputElement>(null);
@@ -485,6 +503,12 @@ export function GlobalSettingsWorkspace({
   const handleFooterImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const err = validateImageFile(file);
+      if (err) {
+        triggerToast(err);
+        e.target.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
@@ -495,11 +519,18 @@ export function GlobalSettingsWorkspace({
       };
       reader.readAsDataURL(file);
     }
+    e.target.value = '';
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const err = validateImageFile(file);
+      if (err) {
+        triggerToast(err);
+        e.target.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         if (typeof reader.result === 'string') {
@@ -510,6 +541,7 @@ export function GlobalSettingsWorkspace({
       };
       reader.readAsDataURL(file);
     }
+    e.target.value = '';
   };
 
 
@@ -872,7 +904,7 @@ export function GlobalSettingsWorkspace({
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept="image/*"
+                      accept="image/png, image/jpeg, image/jpg, .png, .jpg, .jpeg"
                       onChange={handleLogoUpload}
                       style={{ display: 'none' }}
                     />
@@ -1106,7 +1138,7 @@ export function GlobalSettingsWorkspace({
                       <input
                         ref={footerFileInputRef}
                         type="file"
-                        accept="image/*"
+                        accept="image/png, image/jpeg, image/jpg, .png, .jpg, .jpeg"
                         onChange={handleFooterImageUpload}
                         style={{ display: 'none' }}
                       />
@@ -1408,7 +1440,7 @@ export function GlobalSettingsWorkspace({
                     <input
                       ref={customerLogoInputRef}
                       type="file"
-                      accept="image/*"
+                      accept="image/png, image/jpeg, image/jpg, .png, .jpg, .jpeg"
                       onChange={handleCustomerLogoUpload}
                       style={{ display: 'none' }}
                     />

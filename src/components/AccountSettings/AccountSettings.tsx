@@ -77,25 +77,46 @@ function CustomSmoothDropdown({ value, options, onChange, className = '' }: Cust
   );
 }
 
+interface UserProfile {
+  fullName: string;
+  jobTitle: string;
+  email: string;
+  phone: string;
+  department: string;
+  organization: string;
+  location: string;
+  avatarUrl: string;
+}
+
 export function AccountSettings({
   setHasUnsavedChanges,
 }: AccountSettingsProps) {
   // ----------------------------------------------------
   // State: Personal Information
   // ----------------------------------------------------
-  const [profile, setProfile] = useState({
-    fullName: 'Edwin Antony',
-    jobTitle: 'UX/UI Designer',
-    email: 'edwinantnony562@gmail.com',
-    phone: '8606769614',
-    department: 'Design',
-    organization: 'Oominieye',
-    location: 'India',
-    avatarUrl: johnDoeAvatar
+  const [profile, setProfile] = useState<UserProfile>(() => {
+    const saved = localStorage.getItem('as_profile');
+    if (saved) {
+      try {
+        return JSON.parse(saved) as UserProfile;
+      } catch (e) {
+        console.error('Failed to parse saved profile', e);
+      }
+    }
+    return {
+      fullName: 'Edwin Antony',
+      jobTitle: 'UX/UI Designer',
+      email: 'edwinantnony562@gmail.com',
+      phone: '8606769614',
+      department: 'Design',
+      organization: 'Oominieye',
+      location: 'India',
+      avatarUrl: johnDoeAvatar
+    };
   });
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [tempProfile, setTempProfile] = useState({ ...profile });
+  const [tempProfile, setTempProfile] = useState<UserProfile>({ ...profile });
 
   const handleStartEdit = () => {
     setTempProfile({ ...profile });
@@ -110,6 +131,7 @@ export function AccountSettings({
   const handleSaveProfile = () => {
     if (profileHasErrors) return;
     setProfile({ ...tempProfile });
+    localStorage.setItem('as_profile', JSON.stringify(tempProfile));
     setIsEditingProfile(false);
     if (setHasUnsavedChanges) setHasUnsavedChanges(false);
   };
@@ -119,7 +141,7 @@ export function AccountSettings({
     setIsEditingProfile(false);
   };
 
-  const handleProfileChange = (field: keyof typeof tempProfile, value: string) => {
+  const handleProfileChange = (field: keyof UserProfile, value: string) => {
     setTempProfile(prev => ({ ...prev, [field]: value }));
     if (setHasUnsavedChanges) setHasUnsavedChanges(true);
   };
@@ -130,8 +152,17 @@ export function AccountSettings({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImageForCrop, setSelectedImageForCrop] = useState<string | null>(null);
   const [isCropperOpen, setIsCropperOpen] = useState<boolean>(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (avatarError) {
+      const timer = setTimeout(() => setAvatarError(null), 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [avatarError]);
 
   const handleTriggerAvatarUpload = () => {
+    setAvatarError(null);
     if (fileInputRef.current) {
       fileInputRef.current.click();
     }
@@ -139,21 +170,73 @@ export function AccountSettings({
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          setSelectedImageForCrop(reader.result);
-          setIsCropperOpen(true);
-        }
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // 1. Format validation: Only PNG and JPG/JPEG allowed
+    const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/jpg'];
+    const ALLOWED_EXTS = ['.png', '.jpg', '.jpeg'];
+    const isExtAllowed = ALLOWED_EXTS.some(ext => file.name.toLowerCase().endsWith(ext));
+    const isTypeAllowed = ALLOWED_TYPES.includes(file.type.toLowerCase()) || isExtAllowed;
+
+    if (!isTypeAllowed) {
+      setAvatarError('Unsupported format. Please select a PNG or JPG image.');
+      e.target.value = '';
+      return;
     }
+
+    // 2. File size validation: Maximum 5MB limit to prevent oversized image selection
+    const MAX_SIZE_MB = 5;
+    const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
+    if (file.size > MAX_SIZE_BYTES) {
+      setAvatarError(`Image size exceeds ${MAX_SIZE_MB}MB. Please select a smaller image.`);
+      e.target.value = '';
+      return;
+    }
+
+    // 3. Dimension & Aspect ratio validation
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        const dataUrl = reader.result;
+        const img = new Image();
+        img.onload = () => {
+          // Minimum resolution guideline
+          if (img.naturalWidth < 100 || img.naturalHeight < 100) {
+            setAvatarError('Image is too small. Minimum resolution is 100x100 pixels.');
+            return;
+          }
+          // Maximum resolution guideline (prevent oversized image canvas crashes)
+          if (img.naturalWidth > 4096 || img.naturalHeight > 4096) {
+            setAvatarError('Image resolution is oversized. Maximum allowed is 4096x4096 pixels.');
+            return;
+          }
+          // Aspect ratio guideline (for profile avatar, prevent extreme aspect ratios like > 3:1 or < 1:3)
+          const ratio = img.naturalWidth / img.naturalHeight;
+          if (ratio > 3 || ratio < 0.33) {
+            setAvatarError('Image aspect ratio exceeds guidelines. Please select an image closer to 1:1 square.');
+            return;
+          }
+
+          setAvatarError(null);
+          setSelectedImageForCrop(dataUrl);
+          setIsCropperOpen(true);
+        };
+        img.onerror = () => {
+          setAvatarError('Failed to load image. Please select a valid PNG or JPG file.');
+        };
+        img.src = dataUrl;
+      }
+    };
+    reader.readAsDataURL(file);
     e.target.value = '';
   };
 
   const handleConfirmCroppedAvatar = (croppedDataUrl: string) => {
-    setProfile(prev => ({ ...prev, avatarUrl: croppedDataUrl }));
+    setProfile(prev => {
+      const updated = { ...prev, avatarUrl: croppedDataUrl };
+      localStorage.setItem('as_profile', JSON.stringify(updated));
+      return updated;
+    });
     setTempProfile(prev => ({ ...prev, avatarUrl: croppedDataUrl }));
     setIsCropperOpen(false);
     if (setHasUnsavedChanges) {
@@ -164,20 +247,57 @@ export function AccountSettings({
   // ----------------------------------------------------
   // State: Preferences & Privacy
   // ----------------------------------------------------
-  const [language, setLanguage] = useState('English');
-  const [timezone, setTimezone] = useState('(GMT + 05:30) Asia/Kolkata');
+  const [language, setLanguage] = useState(() => localStorage.getItem('as_language') || 'English');
+  const [timezone, setTimezone] = useState(() => localStorage.getItem('as_timezone') || '(GMT + 05:30) Asia/Kolkata');
   const [isCookieExpanded, setIsCookieExpanded] = useState(false);
-  const [analyticsCookies, setAnalyticsCookies] = useState(true);
-  const [marketingCookies, setMarketingCookies] = useState(false);
+  const [analyticsCookies, setAnalyticsCookies] = useState(() => {
+    const saved = localStorage.getItem('as_analyticsCookies');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [marketingCookies, setMarketingCookies] = useState(() => {
+    const saved = localStorage.getItem('as_marketingCookies');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
+
+  const handleLanguageChange = (val: string) => {
+    setLanguage(val);
+    localStorage.setItem('as_language', val);
+  };
+
+  const handleTimezoneChange = (val: string) => {
+    setTimezone(val);
+    localStorage.setItem('as_timezone', val);
+  };
+
+  const handleToggleAnalyticsCookies = () => {
+    const next = !analyticsCookies;
+    setAnalyticsCookies(next);
+    localStorage.setItem('as_analyticsCookies', JSON.stringify(next));
+  };
+
+  const handleToggleMarketingCookies = () => {
+    const next = !marketingCookies;
+    setMarketingCookies(next);
+    localStorage.setItem('as_marketingCookies', JSON.stringify(next));
+  };
 
   // ----------------------------------------------------
   // State: Security & Sessions
   // ----------------------------------------------------
   const [expandedSecurity, setExpandedSecurity] = useState<'sessions' | 'history' | null>(null);
-  const [is2faEnabled, setIs2faEnabled] = useState(false);
+  const [is2faEnabled, setIs2faEnabled] = useState(() => {
+    const saved = localStorage.getItem('as_2faEnabled');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
   const [is2faModalOpen, setIs2faModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const handleToggle2fa = (enabled?: boolean) => {
+    const nextVal = enabled !== undefined ? enabled : !is2faEnabled;
+    setIs2faEnabled(nextVal);
+    localStorage.setItem('as_2faEnabled', JSON.stringify(nextVal));
+  };
 
   // Form states for password modal
   const [passForm, setPassForm] = useState({ current: '', next: '', confirm: '' });
@@ -220,18 +340,54 @@ export function AccountSettings({
   // ----------------------------------------------------
   // State: Notifications
   // ----------------------------------------------------
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [notificationCount, setNotificationCount] = useState('5');
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    const saved = localStorage.getItem('as_notificationsEnabled');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  const [notificationCount, setNotificationCount] = useState(() => {
+    return localStorage.getItem('as_notificationCount') || localStorage.getItem('gs_notificationsToShow') || '5';
+  });
+
+  const handleToggleNotifications = () => {
+    const next = !notificationsEnabled;
+    setNotificationsEnabled(next);
+    localStorage.setItem('as_notificationsEnabled', JSON.stringify(next));
+  };
+
+  const handleNotificationCountChange = (val: string) => {
+    setNotificationCount(val);
+    localStorage.setItem('as_notificationCount', val);
+    localStorage.setItem('gs_notificationsToShow', val);
+  };
 
   // Sessions mockup
-  const [sessions, setSessions] = useState([
+  const initialSessions = [
     { id: 1, device: 'MacBook Pro 16"', location: 'Bangalore, India', active: 'Active now', current: true, icon: Laptop },
     { id: 2, device: 'Windows Desktop', location: 'Delhi, India', active: '2 hours ago', current: false, icon: Monitor },
     { id: 3, device: 'iPhone 15 Pro', location: 'Mumbai, India', active: 'Yesterday', current: false, icon: Smartphone }
-  ]);
+  ];
+
+  const [sessions, setSessions] = useState(() => {
+    const saved = localStorage.getItem('as_revoked_sessions');
+    if (saved) {
+      try {
+        const revoked = JSON.parse(saved) as number[];
+        return initialSessions.filter(s => !revoked.includes(s.id));
+      } catch (e) {
+        console.error('Failed to parse revoked sessions', e);
+      }
+    }
+    return initialSessions;
+  });
 
   const handleRevokeSession = (id: number) => {
-    setSessions(prev => prev.filter(s => s.id !== id));
+    setSessions(prev => {
+      const updated = prev.filter(s => s.id !== id);
+      const saved = localStorage.getItem('as_revoked_sessions');
+      const revoked = saved ? JSON.parse(saved) : [];
+      localStorage.setItem('as_revoked_sessions', JSON.stringify([...revoked, id]));
+      return updated;
+    });
   };
 
   const toggleAccordion = (key: 'sessions' | 'history') => {
@@ -292,10 +448,25 @@ export function AccountSettings({
                 <input 
                   type="file" 
                   ref={fileInputRef} 
-                  accept="image/*" 
+                  accept="image/png, image/jpeg, image/jpg, .png, .jpg, .jpeg" 
                   style={{ display: 'none' }} 
                   onChange={handleFileSelect} 
                 />
+                {avatarError && (
+                  <span 
+                    className="figma-field-error"
+                    style={{ 
+                      textAlign: 'center', 
+                      maxWidth: '220px', 
+                      margin: '0 auto',
+                      fontSize: '11px',
+                      lineHeight: '1.3',
+                      color: 'var(--danger, #ef4444)'
+                    }}
+                  >
+                    {avatarError}
+                  </span>
+                )}
                 <div className="figma-profile-labels">
                   {isEditingProfile ? (
                     <>
@@ -437,7 +608,7 @@ export function AccountSettings({
                       <button 
                         type="button"
                         className={`figma-mini-toggle ${analyticsCookies ? 'active' : ''}`}
-                        onClick={() => setAnalyticsCookies(!analyticsCookies)}
+                        onClick={handleToggleAnalyticsCookies}
                       >
                         <span className="figma-toggle-thumb" />
                       </button>
@@ -447,7 +618,7 @@ export function AccountSettings({
                       <button 
                         type="button"
                         className={`figma-mini-toggle ${marketingCookies ? 'active' : ''}`}
-                        onClick={() => setMarketingCookies(!marketingCookies)}
+                        onClick={handleToggleMarketingCookies}
                       >
                         <span className="figma-toggle-thumb" />
                       </button>
@@ -461,7 +632,7 @@ export function AccountSettings({
                 <span className="figma-select-label">Language</span>
                 <CustomSmoothDropdown 
                   value={language}
-                  onChange={setLanguage}
+                  onChange={handleLanguageChange}
                   options={[
                     { label: 'English', value: 'English' },
                     { label: 'Spanish', value: 'Spanish' },
@@ -477,7 +648,7 @@ export function AccountSettings({
                 <span className="figma-select-label">Timezone</span>
                 <CustomSmoothDropdown
                   value={timezone}
-                  onChange={setTimezone}
+                  onChange={handleTimezoneChange}
                   options={[
                     { label: '(GMT + 05:30) Asia', value: '(GMT + 05:30) Asia/Kolkata' },
                     { label: '(UTC) London / GMT', value: '(UTC) GMT Standard Time' },
@@ -591,7 +762,13 @@ export function AccountSettings({
                 <button 
                   type="button" 
                   className={`figma-btn-outline ${is2faEnabled ? 'active-2fa' : ''}`}
-                  onClick={() => setIs2faModalOpen(true)}
+                  onClick={() => {
+                    if (is2faEnabled) {
+                      handleToggle2fa(false);
+                    } else {
+                      setIs2faModalOpen(true);
+                    }
+                  }}
                 >
                   {is2faEnabled ? '2FA Enabled' : 'Enable 2FA'}
                 </button>
@@ -621,7 +798,7 @@ export function AccountSettings({
                 <button 
                   type="button"
                   className={`figma-main-toggle ${notificationsEnabled ? 'on' : 'off'}`}
-                  onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                  onClick={handleToggleNotifications}
                 >
                   <span className="figma-main-toggle-thumb" />
                 </button>
@@ -632,7 +809,7 @@ export function AccountSettings({
                 <span className="figma-notif-label">Notification Dropdown</span>
                 <CustomSmoothDropdown 
                   value={notificationCount}
-                  onChange={setNotificationCount}
+                  onChange={handleNotificationCountChange}
                   className="figma-dropdown-compact"
                   options={[
                     { label: '5', value: '5' },
@@ -688,7 +865,7 @@ export function AccountSettings({
               <button 
                 className="figma-btn-modal-confirm"
                 onClick={() => {
-                  setIs2faEnabled(!is2faEnabled);
+                  handleToggle2fa(!is2faEnabled);
                   setIs2faModalOpen(false);
                 }}
               >
