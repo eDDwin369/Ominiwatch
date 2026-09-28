@@ -458,7 +458,7 @@ export function Dashboard({
           </div>
         </div>
       </div>
-      {(footerVisible || (isGlobalSettingsOpen && activeSettingsTab === 'footer')) && (
+      {footerVisible && (
         <footer 
           style={{
             height: '32px',
@@ -486,24 +486,53 @@ export function Dashboard({
             {footerLinks.map((linkStr, idx) => {
               const match = linkStr.match(/^(.*?)\s*\((.*?)\)$/);
               const label = match ? match[1] : linkStr;
-              const url = match ? match[2] : '#';
+              const rawUrl = match ? match[2].trim() : '';
+
+              let validHref: string | null = null;
+              if (rawUrl) {
+                try {
+                  const candidate = rawUrl.startsWith('http://') || rawUrl.startsWith('https://') 
+                    ? rawUrl 
+                    : `https://${rawUrl}`;
+                  const parsed = new URL(candidate);
+                  if (parsed.hostname && parsed.hostname.includes('.') && parsed.hostname.length >= 4) {
+                    validHref = candidate;
+                  }
+                } catch {
+                  validHref = null;
+                }
+              }
+
               return (
                 <span key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span style={{ color: 'var(--text-secondary, var(--text-muted))' }}>·</span>
-                  <a 
-                    href={url.startsWith('http') ? url : `https://${url}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    style={{ 
-                      color: 'var(--color-primary, var(--primary))', 
-                      textDecoration: 'none',
-                      fontWeight: 500
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
-                    onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
-                  >
-                    {label}
-                  </a>
+                  {validHref ? (
+                    <a 
+                      href={validHref} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ 
+                        color: 'var(--color-primary, var(--primary))', 
+                        textDecoration: 'none',
+                        fontWeight: 500
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                      onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                    >
+                      {label}
+                    </a>
+                  ) : (
+                    <span 
+                      style={{ 
+                        color: 'var(--text-secondary, var(--text-muted))', 
+                        cursor: 'not-allowed',
+                        opacity: 0.6
+                      }} 
+                      title="Invalid or broken link URL"
+                    >
+                      {label}
+                    </span>
+                  )}
                 </span>
               );
             })}

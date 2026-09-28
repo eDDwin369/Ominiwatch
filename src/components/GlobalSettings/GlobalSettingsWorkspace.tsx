@@ -150,6 +150,20 @@ const InfoTooltip = ({
 const GS_WEIGHT_OPTIONS = ['100', '200', '300', '400', '500', '600', '700', '800', '900'];
 const GS_STYLE_OPTIONS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map((v) => ({ value: v, label: v.toUpperCase() }));
 
+export const isValidUrl = (urlStr: string): boolean => {
+  if (!urlStr || urlStr.trim() === '') return false;
+  try {
+    const formatted = urlStr.startsWith('http://') || urlStr.startsWith('https://') 
+      ? urlStr 
+      : `https://${urlStr}`;
+    const parsed = new URL(formatted);
+    return Boolean(parsed.hostname && parsed.hostname.includes('.') && parsed.hostname.length >= 4);
+  } catch {
+    return false;
+  }
+};
+
+
 const AppleToggle = ({ checked, onChange }: { checked: boolean; onChange: (val: boolean) => void }) => {
   return (
     <button
@@ -1148,7 +1162,7 @@ export function GlobalSettingsWorkspace({
                     <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
                     <button
                       type="button"
-                      onClick={() => setFooterLinks([...footerLinks, 'New Link (https://)'])}
+                      onClick={() => setFooterLinks([...footerLinks, 'New Link (https://example.com)'])}
                       style={{
                         padding: '6px 16px',
                         background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
@@ -1165,40 +1179,56 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   {footerLinks.length > 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       {footerLinks.map((entry, i) => {
                         const m = entry.match(/^(.*?)\s*\((.*?)\)$/);
                         const label = m ? m[1] : entry;
                         const url = m ? m[2] : '';
+                        const isUrlInvalid = url.trim() !== '' && !isValidUrl(url);
                         const write = (l: string, u: string) => {
                           const next = [...footerLinks];
                           next[i] = `${l} (${u})`;
                           setFooterLinks(next);
                         };
                         return (
-                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <input
-                              className="gs-underline-input"
-                              style={{ flex: '1 1 40%' }}
-                              value={label}
-                              placeholder="Label"
-                              onChange={(e) => write(e.target.value, url)}
-                            />
-                            <input
-                              className="gs-underline-input"
-                              style={{ flex: '1 1 60%' }}
-                              value={url}
-                              placeholder="https://example.com"
-                              onChange={(e) => write(label, e.target.value)}
-                            />
-                            <button
-                              type="button"
-                              title="Remove link"
-                              onClick={() => setFooterLinks(footerLinks.filter((_, x) => x !== i))}
-                              style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '4px' }}
-                            >
-                              <X size={15} />
-                            </button>
+                          <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <input
+                                className="gs-underline-input"
+                                style={{ flex: '1 1 40%' }}
+                                value={label}
+                                maxLength={30}
+                                placeholder="Label (max 30)"
+                                title="Link label (up to 30 characters)"
+                                onChange={(e) => write(e.target.value, url)}
+                              />
+                              <input
+                                className="gs-underline-input"
+                                style={{ 
+                                  flex: '1 1 60%',
+                                  borderColor: isUrlInvalid ? '#ef4444' : undefined,
+                                  color: isUrlInvalid ? '#fca5a5' : undefined
+                                }}
+                                value={url}
+                                maxLength={255}
+                                placeholder="https://example.com (max 255)"
+                                title="Link URL (up to 255 characters)"
+                                onChange={(e) => write(label, e.target.value)}
+                              />
+                              <button
+                                type="button"
+                                title="Remove link"
+                                onClick={() => setFooterLinks(footerLinks.filter((_, x) => x !== i))}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '4px' }}
+                              >
+                                <X size={15} />
+                              </button>
+                            </div>
+                            {isUrlInvalid && (
+                              <span style={{ fontSize: '11px', color: '#ef4444', paddingLeft: '42%' }}>
+                                Please enter a valid URL (e.g. https://example.com)
+                              </span>
+                            )}
                           </div>
                         );
                       })}
