@@ -699,8 +699,8 @@ export function GlobalSettingsWorkspace({
           isOpen={isCropperOpen}
           imageUrl={pendingCropImage}
           cropShape="rect"
-          cropWidth={220}
-          cropHeight={150}
+          cropWidth={cropperTarget === 'footer' ? 220 : 320}
+          cropHeight={cropperTarget === 'footer' ? 150 : 88}
           title="Adjust logo"
           subtitle="Drag and zoom to fit your logo inside the bright frame. Anything in the dimmed area is cropped out."
           onClose={() => setIsCropperOpen(false)}
