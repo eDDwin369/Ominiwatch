@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Upload,
   LayoutPanelTop, Layout, LayoutPanelLeft, Users,
-  Type, Image, Ban, Save, Eye, CheckCircle2, Info, X, RotateCcw
+  Type, Image, Ban, Save, Eye, CheckCircle2, Info, X, RotateCcw, AlertCircle
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 
@@ -527,6 +527,40 @@ export function GlobalSettingsWorkspace({
     }, durMs);
   };
 
+  // Link limit popup state (Max 1 link allowed)
+  const [linkLimitPopup, setLinkLimitPopup] = useState(false);
+  const linkLimitTimeoutRef = useRef<any>(null);
+
+  const handleAddFooterLink = () => {
+    if (footerLinks.length >= 1) {
+      if (linkLimitTimeoutRef.current) clearTimeout(linkLimitTimeoutRef.current);
+      setLinkLimitPopup(true);
+      linkLimitTimeoutRef.current = setTimeout(() => {
+        setLinkLimitPopup(false);
+      }, 3000);
+      return;
+    }
+    setLinkLimitPopup(false);
+    setFooterLinks([...footerLinks, 'New Link (https://example.com)']);
+  };
+
+  // Word count and limit helper (Max 40 words)
+  const countWords = (text: string) => {
+    const trimmed = text.trim();
+    return trimmed ? trimmed.split(/\s+/).length : 0;
+  };
+
+  const limitWords = (text: string, maxWords: number = 40) => {
+    const sanitized = text.replace(/[\r\n]+/g, ' ');
+    const trimmed = sanitized.trim();
+    if (!trimmed) return sanitized;
+    const words = trimmed.split(/\s+/);
+    if (words.length > maxWords) {
+      return words.slice(0, maxWords).join(' ');
+    }
+    return sanitized;
+  };
+
   // Save changes
   const handleSave = () => {
     isSavedRef.current = true;
@@ -699,8 +733,8 @@ export function GlobalSettingsWorkspace({
           isOpen={isCropperOpen}
           imageUrl={pendingCropImage}
           cropShape="rect"
-          cropWidth={cropperTarget === 'footer' ? 220 : 320}
-          cropHeight={cropperTarget === 'footer' ? 150 : 88}
+          cropWidth={220}
+          cropHeight={150}
           title="Adjust logo"
           subtitle="Drag and zoom to fit your logo inside the bright frame. Anything in the dimmed area is cropped out."
           onClose={() => setIsCropperOpen(false)}
@@ -880,7 +914,7 @@ export function GlobalSettingsWorkspace({
                     {logo && (
                       <div className="gs-iphone-file-card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <img src={logo} alt="Uploaded Preview" style={{ height: '30px', width: '30px', objectFit: 'contain', borderRadius: '6px' }} />
+                          <img src={logo} alt="Uploaded Preview" style={{ maxHeight: '32px', maxWidth: '64px', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: '4px' }} />
                           <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
                         </div>
                         <button type="button" onClick={() => {
@@ -1082,14 +1116,20 @@ export function GlobalSettingsWorkspace({
 
                   {/* Dynamic Inputs */}
                   {footerPoweredByType === 'text' ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, paddingTop: '10px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, paddingTop: '10px', gap: '4px' }}>
                       <input 
                         type="text" 
                         className="gs-underline-input"
                         value={footerPoweredByText}
-                        onChange={(e) => setFooterPoweredByText(e.target.value)}
+                        maxLength={50}
+                        onChange={(e) => setFooterPoweredByText(e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 50))}
                         placeholder={`Powered by ${companyName || 'OomniEye'} Digital Solutions`}
                       />
+                      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '4px', marginTop: '2px' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--text-secondary, #94a3b8)', opacity: 0.85, fontVariantNumeric: 'tabular-nums' }}>
+                          {footerPoweredByText.length}/50
+                        </span>
+                      </div>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, justifyContent: 'center' }}>
@@ -1145,14 +1185,20 @@ export function GlobalSettingsWorkspace({
                   <div style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }} />
 
                   {/* Row 2: Copyright Text */}
-                  <div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <input 
                       type="text" 
                       className="gs-underline-input"
                       value={copyrightText} 
-                      onChange={(e) => setCopyrightText(e.target.value)}
+                      maxLength={50}
+                      onChange={(e) => setCopyrightText(e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 50))}
                       placeholder="Copyright Text"
                     />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '4px', marginTop: '2px' }}>
+                      <span style={{ fontSize: '11px', color: 'var(--text-secondary, #94a3b8)', opacity: 0.85, fontVariantNumeric: 'tabular-nums' }}>
+                        {copyrightText.length}/50
+                      </span>
+                    </div>
                   </div>
 
                   <div style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }} />
@@ -1160,22 +1206,66 @@ export function GlobalSettingsWorkspace({
                   {/* Row 3: Add Footer Link */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
-                    <button
-                      type="button"
-                      onClick={() => setFooterLinks([...footerLinks, 'New Link (https://example.com)'])}
-                      style={{
-                        padding: '6px 16px',
-                        background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-                        color: 'var(--text-main)',
-                        border: 'none',
-                        borderRadius: '14px',
-                        fontSize: '12px',
-                        fontWeight: 700,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      + ADD LINK
-                    </button>
+                    <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+                      {linkLimitPopup && (
+                        <div
+                          role="alert"
+                          style={{
+                            position: 'absolute',
+                            bottom: 'calc(100% + 9px)',
+                            right: 0,
+                            background: '#ffffff',
+                            color: '#0f172a',
+                            border: '1px solid rgba(0, 0, 0, 0.12)',
+                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08)',
+                            borderRadius: '10px',
+                            padding: '6px 12px',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            whiteSpace: 'nowrap',
+                            zIndex: 1000,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            animation: 'gsFadeIn 0.2s ease-out'
+                          }}
+                        >
+                          <AlertCircle size={14} style={{ color: '#ef4444' }} />
+                          <span style={{ color: '#0f172a' }}>You can only add one link</span>
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '100%',
+                              right: '24px',
+                              width: 0,
+                              height: 0,
+                              borderLeft: '5px solid transparent',
+                              borderRight: '5px solid transparent',
+                              borderTop: '5px solid #ffffff'
+                            }}
+                          />
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={handleAddFooterLink}
+                        title={footerLinks.length >= 1 ? 'You can only add one link' : 'Add custom footer link'}
+                        style={{
+                          padding: '6px 16px',
+                          background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
+                          color: 'var(--text-main)',
+                          border: 'none',
+                          borderRadius: '14px',
+                          fontSize: '12px',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          opacity: footerLinks.length >= 1 ? 0.8 : 1,
+                          transition: 'opacity 0.2s ease'
+                        }}
+                      >
+                        + ADD LINK
+                      </button>
+                    </div>
                   </div>
 
                   {footerLinks.length > 0 && (
@@ -1218,7 +1308,10 @@ export function GlobalSettingsWorkspace({
                               <button
                                 type="button"
                                 title="Remove link"
-                                onClick={() => setFooterLinks(footerLinks.filter((_, x) => x !== i))}
+                                onClick={() => {
+                                  setFooterLinks(footerLinks.filter((_, x) => x !== i));
+                                  setLinkLimitPopup(false);
+                                }}
                                 style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex', padding: '4px' }}
                               >
                                 <X size={15} />
@@ -1416,7 +1509,7 @@ export function GlobalSettingsWorkspace({
                     {customerLogo && (
                       <div className="gs-iphone-file-card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <img src={customerLogo} alt="Uploaded Preview" style={{ height: '30px', width: '30px', objectFit: 'contain', borderRadius: '6px' }} />
+                          <img src={customerLogo} alt="Uploaded Preview" style={{ maxHeight: '32px', maxWidth: '64px', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: '4px' }} />
                           <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
                         </div>
                         <button type="button" onClick={() => {
