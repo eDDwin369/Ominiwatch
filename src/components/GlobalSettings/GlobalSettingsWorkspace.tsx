@@ -544,23 +544,6 @@ export function GlobalSettingsWorkspace({
     setFooterLinks([...footerLinks, 'New Link (https://example.com)']);
   };
 
-  // Word count and limit helper (Max 40 words)
-  const countWords = (text: string) => {
-    const trimmed = text.trim();
-    return trimmed ? trimmed.split(/\s+/).length : 0;
-  };
-
-  const limitWords = (text: string, maxWords: number = 40) => {
-    const sanitized = text.replace(/[\r\n]+/g, ' ');
-    const trimmed = sanitized.trim();
-    if (!trimmed) return sanitized;
-    const words = trimmed.split(/\s+/);
-    if (words.length > maxWords) {
-      return words.slice(0, maxWords).join(' ');
-    }
-    return sanitized;
-  };
-
   // Save changes
   const handleSave = () => {
     isSavedRef.current = true;
