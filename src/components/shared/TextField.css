@@ -47,7 +47,8 @@
 .tf-legend {
   padding: 0 4px;
   font-size: var(--font-size-caption, 11px);
-  font-weight: 500;
+  /* Theme Studio's caption style has no weight of its own — it uses the body weight */
+  font-weight: var(--app-font-weight, 400);
   color: var(--text-secondary);
   line-height: 1;
 }
@@ -78,7 +79,7 @@
   outline: none;
   font-family: inherit;
   font-size: var(--app-font-size, 14px);
-  font-weight: 600;
+  font-weight: var(--app-font-weight, 400);
   color: var(--text-main);
 }
 

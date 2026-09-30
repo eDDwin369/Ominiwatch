@@ -1976,3 +1976,102 @@
   flex-wrap: wrap;
   gap: 10px;
 }
+
+/* ── Typography on Theme Studio tokens for every Account Settings text ──
+   Scoped under the page container so these win over the older fixed-value rules
+   (including their dark-mode variants — the tokens are already mode-aware). */
+
+/* Personal Information fields — identical to the shared TextField used in Global Settings:
+   field name = caption text (caption size, secondary colour); value = body text (body size, main colour). */
+.figma-account-settings-container .figma-card-personal .tf-legend {
+  font-size: var(--font-size-caption, 11px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  color: var(--text-secondary) !important;
+}
+
+.figma-account-settings-container .figma-card-personal .tf-wrapper.tf-error .tf-legend {
+  color: var(--danger, #dc2626) !important;
+}
+
+.figma-account-settings-container .figma-card-personal .tf-input {
+  font-size: var(--app-font-size, 14px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  color: var(--text-main) !important;
+}
+
+/* Personal Information: name + role (view and edit mode) */
+.figma-account-settings-container .figma-card-personal .figma-user-name,
+.figma-account-settings-container .figma-card-personal .figma-edit-name {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h5-size, 17px) !important;
+  font-weight: var(--h5-weight, 500) !important;
+  color: var(--h5-color, var(--text-main)) !important;
+  letter-spacing: normal !important;
+}
+
+.figma-account-settings-container .figma-card-personal .figma-user-role,
+.figma-account-settings-container .figma-card-personal .figma-edit-role {
+  font-size: var(--font-size-body-sm, 14px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  color: var(--text-secondary) !important;
+  letter-spacing: normal !important;
+}
+
+/* Active Sessions panel */
+.figma-account-settings-container .figma-session-device {
+  font-size: var(--font-size-body-sm, 14px);
+  color: var(--text-main);
+}
+
+.figma-account-settings-container .figma-session-sub {
+  font-size: var(--font-size-caption, 12px);
+  color: var(--text-secondary);
+}
+
+.figma-account-settings-container .figma-badge-current {
+  font-size: var(--font-size-caption, 12px);
+  color: var(--btn-text, #ffffff);
+}
+
+.figma-account-settings-container .figma-session-revoke {
+  font-size: var(--font-size-caption, 12px);
+  color: var(--danger);
+}
+
+/* Login History panel */
+.figma-account-settings-container .figma-history-log {
+  font-size: var(--font-size-caption, 12px);
+}
+
+.figma-account-settings-container .figma-log-time {
+  color: var(--text-muted);
+}
+
+.figma-account-settings-container .figma-status-ok {
+  color: var(--success);
+}
+
+.figma-account-settings-container .figma-status-warn {
+  color: var(--danger);
+}
+
+/* Cookie Preferences panel + Language / Timezone menus */
+.figma-account-settings-container .figma-toggle-subrow,
+.figma-account-settings-container .figma-smooth-option {
+  font-size: var(--font-size-body-sm, 14px);
+}
+
+/* Misc */
+.figma-account-settings-container .figma-location-text {
+  font-size: var(--font-size-caption, 12px);
+  letter-spacing: normal;
+}
+
+.figma-account-settings-container .figma-btn-delete-red {
+  color: var(--btn-text, #ffffff);
+}
+
+.figma-account-settings-container .figma-modal-error,
+.figma-account-settings-container .figma-qr-code-box {
+  font-size: var(--font-size-caption, 12px);
+}
