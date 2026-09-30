@@ -202,12 +202,13 @@ export function ReportsPage() {
     <div 
       ref={gridContainerRef}
       className="user-tab-page"
-      style={{ 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column', 
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         position: 'relative',
-        background: 'var(--bg-dashboard, var(--dash-canvas-bg))',
+        // Background is set in ReportsPage.css (.user-tab-page) via !important —
+        // the soft page gradient, same recipe as Account Settings.
         padding: 0,
         overflow: 'hidden',
         boxSizing: 'border-box'
