@@ -40,11 +40,6 @@
   box-shadow: none !important;
 }
 
-/* URM's toolbar (header.tsx) is a sticky, opaque `<header>` that otherwise tiles this
-   page's entire top edge and fully hides the gradient above — scoped to this page only,
-   not URM's shared component or the host's global MuiCardHeader override (which would
-   also affect unrelated CardHeaders elsewhere in the app). */
-.user-tab-page header {
-  background-color: transparent !important;
-}
+/* URM's toolbar (header.tsx) is transparent by default as of dts-universal-report-module
+   — no host-side override needed here anymore. */
 
