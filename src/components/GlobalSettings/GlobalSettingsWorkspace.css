@@ -34,88 +34,85 @@
   max-width: 95vw;
 }
 
-/* Floating Left Sidebar Dock (Frame 20 in User Mockup) */
-.gs-left-dock {
-  position: relative;
-  z-index: 100;
-  width: 64px;
-  background: color-mix(in srgb, var(--bg-card) 75%, transparent) !important;
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid var(--border-light) !important;
-  border-radius: 36px;
-  padding: 18px 8px;
+/* Horizontal tab strip under the title bar */
+.gs-tabs {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 18px;
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-  animation: gsDockIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  flex-shrink: 0;
 }
 
-@keyframes gsDockIn {
-  from {
-    transform: translateX(-16px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0) scale(1);
-    opacity: 1;
-  }
-}
-
-.gs-dock-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
+.gs-tab {
+  flex: 1;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
+  border: none;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  /* Unselected tabs fade ~60% (text + icon via currentColor; the band keeps full strength) */
+  color: color-mix(in srgb, var(--text-secondary) 40%, transparent);
+  /* Menu-item typography — same tokens as the shell sidebar's .nav-label */
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h4-size, 20px);
+  font-weight: var(--h4-weight, var(--app-font-weight, 400));
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.gs-tab:hover {
+  color: var(--text-main);
+}
+
+/* Active tab shows the modal surface through, so it merges into the body */
+.gs-tab.active {
   position: relative;
+  background: transparent;
+  /* Selected menu item colour — matches the sidebar's active nav item */
+  color: var(--highlight, var(--primary));
+  border-radius: 24px 24px 0 0;
+}
+
+/* Short primary-colour underline marking the selected tab */
+.gs-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary);
+}
+
+/* Neighbours curve their inner bottom corner into the active tab */
+.gs-tab.active + .gs-tab {
+  border-bottom-left-radius: 24px;
+}
+
+.gs-tab:has(+ .gs-tab.active) {
+  border-bottom-right-radius: 24px;
+}
+
+.gs-tab-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.gs-dock-btn:hover {
-  background: var(--border-light);
-  color: var(--text-main);
-  transform: scale(1.08);
+/* !important: beats the catch-all `.gs-modal span` colour rule */
+.gs-modal .gs-tab-icon {
+  color: inherit !important;
 }
 
-.gs-dock-btn.active {
+.gs-modal .gs-tab.active .gs-tab-icon {
   background: var(--highlight, var(--primary));
-  color: var(--btn-text, #ffffff);
+  color: var(--btn-text, #ffffff) !important;
   box-shadow: 0 8px 22px var(--highlight-hover, var(--accent-glow)), inset 0 1px 1px rgba(255, 255, 255, 0.5);
-  transform: scale(1.06);
-}
-
-/* Floating Right Hover Label Tooltip (Pops Out On Top of Main Modal) */
-.gs-dock-tooltip {
-  position: absolute;
-  left: calc(100% + 14px);
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(15, 20, 30, 0.95);
-  color: #ffffff;
-  font-size: var(--font-size-12);
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 10px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  z-index: 99999;
-}
-
-.gs-dock-btn:hover .gs-dock-tooltip {
-  opacity: 1;
-  transform: translateY(-50%) translateX(2px);
 }
 
 /* VisionOS 2 Royal Blue Window Card (Matching User Screenshot 1:1) */
@@ -284,9 +281,50 @@
   background: var(--bg-card) !important;
   border: var(--card-border) !important;
   border-radius: var(--radius-xl) !important;
-  padding: 22px 26px !important;
+  /* Per-card padding comes in as vars so .gs-card-header can bleed to the card edges */
+  padding: var(--gs-pad-y, 22px) var(--gs-pad-x, 26px) !important;
   box-shadow: var(--card-shadow) !important;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Faint primary→primary-light wash that separates side-by-side cards. Layered as an image
+   over each card's existing base colour (which stays untouched). */
+.gs-modal .gs-config-card.gs-card-tint-strong {
+  background-image: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 9%, transparent),
+    color-mix(in srgb, var(--primary-light) 4%, transparent)) !important;
+}
+
+.gs-modal .gs-config-card.gs-card-tint-soft {
+  background-image: linear-gradient(135deg,
+    color-mix(in srgb, var(--primary) 4%, transparent),
+    color-mix(in srgb, var(--primary-light) 1.5%, transparent)) !important;
+}
+
+/* Row-based cards (settings lists) flow from the top with one even rhythm instead of
+   being spread edge-to-edge by space-between. */
+.gs-config-card.gs-config-card--stack {
+  justify-content: flex-start !important;
+  gap: 16px !important;
+}
+
+/* Card title as a header band: full-bleed to the card edges, tinted with the studio's
+   card-header colour and fading into the card body so it blends rather than sits as a slab.
+   Border follows the studio's card-header border token ('none' by default). */
+.gs-card-header {
+  flex-shrink: 0;
+  margin: calc(-1 * var(--gs-pad-y, 22px)) calc(-1 * var(--gs-pad-x, 26px)) 0;
+  padding: 14px var(--gs-pad-x, 26px) 12px;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--card-hdr, var(--bg-card)) 75%, transparent) 60%, transparent);
+  border-bottom: var(--card-hdr-border, none);
+}
+
+/* Title span inherits the H3 tokens — otherwise `.gs-modal span` forces --text-main and the
+   global `span { font-family: var(--app-font-family) }` reset forces the body font */
+.gs-modal .gs-card-header > span {
+  color: inherit !important;
+  font-family: inherit;
 }
 
 /* Figma-exact neutral panel fill (differs from MUI's --bg-card paper in both modes). */
@@ -301,41 +339,6 @@
   transform: translateY(-2px) !important;
   border-color: var(--secondary) !important;
   box-shadow: var(--card-shadow) !important;
-}
-
-/* Eye Icon Button Next to Headings */
-.gs-eye-preview-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--border-light);
-  border: 1px solid var(--border-hover);
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.gs-eye-preview-btn:hover {
-  background: var(--border-hover);
-  color: var(--text-main);
-  transform: scale(1.1);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
-}
-
-.gs-eye-preview-btn.active {
-  background: var(--primary) !important;
-  border-color: var(--primary-light) !important;
-  color: var(--btn-text, #ffffff) !important;
-  box-shadow: 0 0 16px var(--accent-glow) !important;
-}
-
-[data-theme-mode="dark"] .gs-eye-preview-btn.active {
-  background: var(--secondary) !important;
-  border-color: var(--gs-eye-active-border, var(--secondary-light)) !important;
-  box-shadow: 0 0 16px var(--gs-eye-active-shadow, var(--accent-glow)) !important;
 }
 
 /* Animated Glowing Spotlight Focus Box Overlay on Page Header */
@@ -545,7 +548,7 @@
 }
 
 /* Form Controls Theme */
-.gs-modal input[type="text"]:not(.gs-underline-input),
+.gs-modal input[type="text"]:not(.tf-input),
 .gs-modal select:not(.gs-pill-select) {
   background: var(--bg-dashboard) !important;
   border: 1px solid var(--border-light) !important;
@@ -553,36 +556,28 @@
   border-radius: 12px;
 }
 
-/* Explicit Single Underline Input Line Style */
-.gs-modal input[type="text"].gs-underline-input {
-  width: 100% !important;
-  background: transparent !important;
-  border: none !important;
-  border-bottom: 1.5px solid var(--gs-underline-border, var(--border-hover)) !important;
-  border-radius: 0 !important;
-  color: var(--text-main) !important;
-  font-size: var(--font-size-18) !important;
-  padding: 4px 0 10px 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-  /* Verified against pixelPerfectGlobalSettings_greenDark: the editable value text uses
-     Inter, distinct from the Roboto labels/titles around it (--app-font-family). Already
-     loaded (index.css imports Inter 400/500/600). */
-  font-family: 'Inter', var(--app-font-family) !important;
-  transition: border-bottom-color 0.2s ease !important;
-}
-
-.gs-modal input[type="text"].gs-underline-input:focus {
-  border-bottom-color: var(--secondary) !important;
-}
-
-.gs-modal input[type="text"].gs-underline-input::placeholder {
-  color: var(--text-muted) !important;
-}
-
 .gs-modal span,
 .gs-modal label {
   color: var(--text-main) !important;
+}
+
+/* Shared TextField helper text keeps its own colours despite the rule above */
+.gs-modal .tf-error-text {
+  color: var(--danger, #dc2626) !important;
+}
+
+.gs-modal .tf-counter {
+  color: var(--text-muted) !important;
+  text-align: right;
+}
+
+/* Footer link row: label / URL split */
+.gs-link-label {
+  flex: 1 1 40%;
+}
+
+.gs-link-url {
+  flex: 1 1 60%;
 }
 
 /* Apple Toggle Switch styles */
@@ -633,13 +628,19 @@
   }
 }
 
-/* Header buttons cancel/save overrides — Figma uses the same dark neutral pill for Cancel in
-   both modes (not theme-derived), unlike Save which does switch (see below/dark override). */
+/* Header close button + unsaved-prompt Save button — Figma uses the same dark neutral pill for Close in
+   both modes (not theme-derived), unlike Save which does switch (see dark override below). */
+/* Close: soft red at rest, solid red on hover (theme --danger token) */
 .gs-top-btn-cancel {
-  background: rgba(38, 40, 48, 0.95) !important;
+  background: color-mix(in srgb, var(--danger, #dc2626) 14%, #ffffff) !important;
+  color: var(--danger, #dc2626) !important;
+  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent) !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 25%, transparent) !important;
+}
+
+.gs-top-btn-cancel:hover {
+  background: var(--danger, #dc2626) !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3) !important;
 }
 
 .gs-top-btn-save {
@@ -658,4 +659,111 @@
 [data-theme-mode="dark"] .gs-top-btn-save {
   background: var(--secondary) !important;
   box-shadow: 0px 4px 7px var(--gs-save-shadow, var(--accent-glow)) !important;
+}
+
+/* Dark mode legibility on the blue gradient — token-only, gradient/band untouched */
+[data-theme-mode="dark"] .gs-tab {
+  color: color-mix(in srgb, var(--text-secondary) 70%, transparent);
+}
+
+[data-theme-mode="dark"] .gs-tab:hover,
+[data-theme-mode="dark"] .gs-tab.active {
+  color: var(--text-main);
+}
+
+[data-theme-mode="dark"] .gs-tab.active::after {
+  background: color-mix(in srgb, var(--primary) 55%, var(--text-main));
+}
+
+[data-theme-mode="dark"] .gs-top-btn-cancel:not(:hover) {
+  background: color-mix(in srgb, var(--danger, #dc2626) 22%, var(--bg-card)) !important;
+  color: color-mix(in srgb, var(--danger, #dc2626) 55%, var(--text-main)) !important;
+  border-color: color-mix(in srgb, var(--danger, #dc2626) 55%, transparent) !important;
+}
+
+/* Colour picker trigger: a quiet ring button with a small swatch dot (colour via --swatch),
+   instead of a large solid colour circle. Same 30px footprint as before. */
+.gs-swatch-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.gs-swatch-btn::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+/* Dark colours (e.g. navy header bg) need a light outline to stay visible on dark cards */
+[data-theme-mode="dark"] .gs-swatch-btn::before {
+  box-shadow: inset 0 0 0 1px var(--border-light);
+}
+
+.gs-swatch-btn:hover,
+.gs-swatch-btn:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+  outline: none;
+}
+
+/* Unsaved-changes prompt, shown over the modal when closing with edits */
+.gs-confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 12, 18, 0.35);
+  border-radius: inherit;
+}
+
+.gs-confirm {
+  width: 360px;
+  max-width: calc(100% - 32px);
+  padding: 22px 24px;
+  background: var(--bg-card);
+  border: var(--card-border, 1px solid var(--border-light));
+  border-radius: var(--radius-xl, 18px);
+  box-shadow: var(--card-shadow);
+}
+
+.gs-confirm-text {
+  margin: 8px 0 20px;
+  font-size: var(--app-font-size, 14px);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.gs-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.gs-confirm-btn {
+  padding: 8px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: var(--app-font-size, 14px);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.gs-confirm-btn:hover {
+  background: var(--border-light);
 }

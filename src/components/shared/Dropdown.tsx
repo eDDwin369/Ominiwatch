@@ -17,6 +17,8 @@ interface DropdownProps {
   title?: string;
   className?: string;
   editable?: boolean;
+  /** Minimum menu width for the rect variant (default 130). 0 = match the trigger width. */
+  menuMinWidth?: number;
 }
 
 export function Dropdown({
@@ -28,6 +30,7 @@ export function Dropdown({
   title,
   className,
   editable,
+  menuMinWidth = 130,
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -78,7 +81,7 @@ export function Dropdown({
       menuWidth = Math.min(Math.max(rect.width - 14, 46), 50);
       menuLeft = rect.left + (rect.width - menuWidth) / 2;
     } else {
-      menuWidth = Math.max(rect.width, 130);
+      menuWidth = Math.max(rect.width, menuMinWidth);
     }
 
     const nextRect = {
@@ -101,7 +104,7 @@ export function Dropdown({
       }
       return nextRect;
     });
-  }, [variant]);
+  }, [variant, menuMinWidth]);
 
   useEffect(() => {
     if (!open) return;

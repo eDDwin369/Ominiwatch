@@ -102,7 +102,7 @@ function App() {
       if (startExpanded !== null && startExpanded !== 'undefined') {
         return !JSON.parse(startExpanded);
       }
-    } catch (e) {
+    } catch {
       // ignore
     }
     return false;

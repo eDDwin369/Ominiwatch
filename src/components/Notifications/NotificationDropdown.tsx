@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2, MailOpen } from 'lucide-react';
+import { Dropdown } from '../shared/Dropdown';
+import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2, MailOpen, AtSign, Inbox, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { NotificationItem } from './types';
 import avatarImg from '../../assets/john_doe_avatar.png';
 import './Notifications.css';
@@ -115,11 +116,10 @@ interface NotificationDropdownProps {
   onMarkAllRead: () => void;
   onNotificationClick: (notification: NotificationItem) => void;
   onViewAllClick: () => void;
-  onSettingsClick?: () => void;
 }
 
 export function NotificationDropdown(props: NotificationDropdownProps) {
-  const { notifications, onClose, onMarkAllRead, onNotificationClick: _onNotificationClick, onViewAllClick: _onViewAllClick, onSettingsClick } = props;
+  const { notifications, onClose, onMarkAllRead, onNotificationClick: _onNotificationClick, onViewAllClick: _onViewAllClick } = props;
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'mentions' | 'unread'>('mentions');
@@ -128,12 +128,43 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
   const [isModalMode, setIsModalMode] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [expandedNotificationId, setExpandedNotificationId] = useState<string | null>(null);
-  const itemsPerPage = Number(localStorage.getItem('gs_notificationsToShow') || '5');
+  // Notification settings live in this window (moved from Account Settings); same storage keys.
+  const [showSettings, setShowSettings] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem('as_notificationsEnabled');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+  const [notificationCount, setNotificationCount] = useState(() => localStorage.getItem('gs_notificationsToShow') || '5');
+  const basePerPage = Number(notificationCount);
+  const listRef = useRef<HTMLDivElement>(null);
+  // Full-screen mode: page size = rows that fit the available height. The measurement is
+  // tagged with what it was taken for, so it's only used while that still matches.
+  const [fitMeasure, setFitMeasure] = useState<{ key: string; size: number } | null>(null);
+  const [viewportTick, setViewportTick] = useState(0);
+
+  const handleToggleNotifications = () => {
+    const next = !notificationsEnabled;
+    setNotificationsEnabled(next);
+    localStorage.setItem('as_notificationsEnabled', JSON.stringify(next));
+  };
+
+  const handleNotificationCountChange = (val: string) => {
+    setNotificationCount(val);
+    setCurrentPage(1);
+    localStorage.setItem('gs_notificationsToShow', val);
+    window.dispatchEvent(new Event('gs_notificationsToShow_changed'));
+  };
 
   // Handle closing when clicking outside the modal dropdown (only if not in modal mode)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (!isModalMode && dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as HTMLElement;
+      if (target.closest?.('.gs-dd-menu')) return;
+      if (!isModalMode && dropdownRef.current && !dropdownRef.current.contains(target)) {
         onClose();
       }
     };
@@ -166,11 +197,52 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
     setCurrentPage(1);
   }, [activeTab, searchQuery]);
 
+  const fitKey = `${activeTab}|${searchQuery}|${filteredNotifications.length}|${viewportTick}`;
+  const modalPageSize = isModalMode && fitMeasure?.key === fitKey ? fitMeasure.size : null;
+  // While measuring (no valid size yet), render every row so their real heights can be read.
+  const itemsPerPage = isModalMode
+    ? (modalPageSize ?? Math.max(filteredNotifications.length, 1))
+    : basePerPage;
   const totalPages = Math.ceil(filteredNotifications.length / itemsPerPage);
   const paginatedNotifications = filteredNotifications.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Back to page 1 whenever the list being paged changes.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [isModalMode, fitKey]);
+
+  useEffect(() => {
+    if (!isModalMode) return;
+    const onResize = () => setViewportTick(t => t + 1);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [isModalMode]);
+
+  useLayoutEffect(() => {
+    if (!isModalMode || fitMeasure?.key === fitKey) return;
+    const list = listRef.current;
+    if (!list) return;
+    const rows = Array.from(list.querySelectorAll<HTMLElement>(':scope > .new-notification-item-row'));
+    const available = list.clientHeight;
+    const allHeight = rows.reduce((h, r) => h + r.offsetHeight, 0);
+    if (allHeight <= available) {
+      setFitMeasure({ key: fitKey, size: Math.max(rows.length, 1) }); // everything fits → single page, no pager
+      return;
+    }
+    // The list fills the fixed-height window, so the pager (shown once there are 2+ pages) takes its space.
+    const PAGER_HEIGHT = 56;
+    let used = 0;
+    let fit = 0;
+    for (const r of rows) {
+      if (used + r.offsetHeight > available - PAGER_HEIGHT) break;
+      used += r.offsetHeight;
+      fit++;
+    }
+    setFitMeasure({ key: fitKey, size: Math.max(fit, 1) });
+  });
 
   const renderInnerContent = () => (
     <>
@@ -235,7 +307,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </div>
         ) : (
           <>
-            <h2 className="new-notification-title">Notification</h2>
+            <h2 className="new-notification-title">Notifications</h2>
             <div className="new-notification-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <button 
                 className="new-header-action-btn" 
@@ -251,14 +323,18 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: 'var(--text-secondary)',
                   padding: '4px',
                   borderRadius: '4px'
                 }}
               >
                 <Search size={18} />
               </button>
-              <button className="new-header-action-btn" title="Notification Settings" onClick={onSettingsClick}>
+              <button
+                className={`new-header-action-btn ${showSettings ? 'active' : ''}`}
+                title="Notification Settings"
+                aria-pressed={showSettings}
+                onClick={() => setShowSettings(v => !v)}
+              >
                 <Settings size={18} />
               </button>
               <button 
@@ -272,7 +348,6 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: 'var(--text-secondary)',
                   padding: '4px',
                   borderRadius: '4px'
                 }}
@@ -287,6 +362,42 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
         )}
       </div>
 
+      {showSettings ? (
+        <div className="new-notification-settings">
+          <nav className="new-notif-breadcrumb" aria-label="Breadcrumb">
+            <button type="button" className="new-notif-settings-back" onClick={() => setShowSettings(false)} title="Back to notifications">
+              <ChevronLeft size={16} /> Notifications
+            </button>
+            <ChevronRight size={14} className="new-notif-breadcrumb-sep" aria-hidden="true" />
+            <span className="new-notif-breadcrumb-current" aria-current="page">Settings</span>
+          </nav>
+          <div className="new-notif-setting-row">
+            <span className="new-notif-setting-label">Notifications</span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={notificationsEnabled}
+              aria-label="Notifications"
+              className={`new-notif-switch ${notificationsEnabled ? 'on' : ''}`}
+              onClick={handleToggleNotifications}
+            >
+              <span className="new-notif-switch-thumb" />
+            </button>
+          </div>
+          <div className="new-notif-setting-row">
+            <span className="new-notif-setting-label">Notifications per page</span>
+            <Dropdown
+              value={notificationCount}
+              onChange={handleNotificationCountChange}
+              variant="rect"
+              width={72}
+              menuMinWidth={0}
+              options={['5', '10', '15', '20']}
+            />
+          </div>
+        </div>
+      ) : (
+      <>
       {/* 2. Tabs Row Section */}
       <div className="new-notification-tabs-row" style={{ flexShrink: 0 }}>
         <div className="new-tabs-pill-container">
@@ -294,18 +405,21 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
             className={`new-tab-pill-btn ${activeTab === 'mentions' ? 'active' : ''}`}
             onClick={() => setActiveTab('mentions')}
           >
+            <span className="new-tab-icon"><AtSign size={15} /></span>
             Mentions
           </button>
           <button 
             className={`new-tab-pill-btn ${activeTab === 'all' ? 'active' : ''}`}
             onClick={() => setActiveTab('all')}
           >
+            <span className="new-tab-icon"><Inbox size={15} /></span>
             View all
           </button>
           <button 
             className={`new-tab-pill-btn ${activeTab === 'unread' ? 'active' : ''}`}
             onClick={() => setActiveTab('unread')}
           >
+            <span className="new-tab-icon"><Mail size={15} /></span>
             Unread ({unreadCount})
           </button>
         </div>
@@ -322,7 +436,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
       </div>
 
       {/* 4. Notifications List feed */}
-      <div className="new-notification-list-scroll" style={isModalMode ? { maxHeight: 'calc(100vh - 270px)', flex: 1 } : { flex: 1 }}>
+      <div ref={listRef} className="new-notification-list-scroll" style={isModalMode ? { flex: 1, minHeight: 0 } : { flex: 1 }}>
         {paginatedNotifications.length === 0 ? (
           <div className="new-notification-empty">
             <Bell size={40} className="empty-bell-icon" />
@@ -592,6 +706,8 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </div>
         </div>
       )}
+      </>
+      )}
     </>
   );
 
@@ -653,7 +769,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           ref={dropdownRef}
           onClick={() => setExpandedNotificationId(null)}
           style={{
-            height: itemsPerPage === 10 ? 'calc(100vh - 120px)' : '520px',
+            height: basePerPage === 10 ? 'calc(100vh - 120px)' : '520px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between'

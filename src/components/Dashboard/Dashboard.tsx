@@ -115,7 +115,7 @@ export function Dashboard({
     return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerName, setCustomerName] = useState(() => {
-    return localStorage.getItem('gs_customerName') || 'Default Customer';
+    return localStorage.getItem('gs_customerName') || '';
   });
   const [customerNameStyle, setCustomerNameStyle] = useState(() => {
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
@@ -126,7 +126,7 @@ export function Dashboard({
   });
   const [customerColorFollow, setCustomerColorFollow] = useState(() => {
     const saved = localStorage.getItem('gs_customerColorFollow');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [showCustomerLogo, setShowCustomerLogo] = useState(() => {
     const saved = localStorage.getItem('gs_showCustomerLogo');
@@ -207,9 +207,9 @@ export function Dashboard({
     return saved ? JSON.parse(saved) : {
       logo: '',
       showLogo: true,
-      companyName: 'OomniEye',
+      companyName: '',
       showCompanyName: false,
-      companyCaption: 'Digital Twin Solutions',
+      companyCaption: '',
       showCompanyCaption: false,
       textColor: '#ffffff',
       textColorApply: 'both',

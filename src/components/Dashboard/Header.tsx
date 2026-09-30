@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Settings, X, Camera, User, Maximize2, Minimize2, Sun, Moon } from 'lucide-react';
+import { Bell, Settings, Camera, User, Maximize2, Minimize2, Sun, Moon, LogOut } from 'lucide-react';
 import { NotificationDropdown } from '../Notifications/NotificationDropdown';
 import type { NotificationItem } from '../Notifications/types';
 import logo from '../../assets/logo.png';
 import defaultCustomerLogo from '../../assets/logo-customer.png';
 import './Dashboard.css';
-import { useThemeStore } from 'omnieye-theme-studio';
+import { useThemeStore, DEFAULT_SETTINGS } from 'omnieye-theme-studio';
 
 interface HeaderProps {
   notifications: NotificationItem[];
@@ -51,17 +51,17 @@ export function Header({
   headerConfig,
   isEditing = false,
   showCustomerProfile = false,
-  customerName = 'Default Customer',
+  customerName = '',
   customerNameStyle = 'h1',
   customerNameColor = '',
   customerNameWeight = '400',
   customerCaptionWeight = '300',
-  customerColorFollow = true,
+  customerColorFollow = false,
   showCustomerLogo = false,
   customerLogo = '',
   customerLogoShape: _customerLogoShape = 'rounded',
   showCustomerCaption = false,
-  customerCaption = 'Digital Twin Solutions',
+  customerCaption = '',
   customerCaptionStyle = 'h4',
   customerCaptionColor = '',
   customerCaptionColorFollow: _customerCaptionColorFollow = true,
@@ -71,6 +71,9 @@ export function Header({
   const brand = useThemeStore((s) => s.settings);
   const set = useThemeStore((s) => s.set);
   const studioLogo = brand.logoMode === 'image' && brand.logoUrl ? brand.logoUrl : logo;
+  // The studio's built-in brand defaults aren't user-entered, so they don't render.
+  const appName = brand.appName !== DEFAULT_SETTINGS.appName ? brand.appName : '';
+  const appTagline = brand.appTagline !== DEFAULT_SETTINGS.appTagline ? brand.appTagline : '';
 
   // Maps the h1-h6 style picked in Global Settings to the matching --h{n}-size
   // CSS var, which theme-bridge.tsx keeps in sync with Theme Studio's h1Size..h6Size
@@ -180,7 +183,7 @@ export function Header({
                 color: (headerConfig?.companyNameColor && headerConfig.companyNameColor !== 'transparent') ? headerConfig.companyNameColor : undefined,
               }}
             >
-              {brand.appName || headerConfig?.companyName || 'OomniEye'}
+              {appName || headerConfig?.companyName}
             </div>
           )}
           {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
@@ -192,7 +195,7 @@ export function Header({
                 color: (headerConfig?.companyCaptionColor && headerConfig.companyCaptionColor !== 'transparent') ? headerConfig.companyCaptionColor : undefined,
               }}
             >
-              {brand.appTagline || headerConfig?.companyCaption || 'Digital Twin Solutions'}
+              {appTagline || headerConfig?.companyCaption}
             </div>
           )}
         </div>
@@ -215,7 +218,7 @@ export function Header({
                 color: (!customerColorFollow && customerNameColor && customerNameColor !== 'transparent') ? customerNameColor : undefined,
               }}
             >
-              {customerName || 'Default Customer'}
+              {customerName}
             </span>
             {showCustomerCaption && (
               <span
@@ -226,7 +229,7 @@ export function Header({
                   color: (!customerColorFollow && customerCaptionColor && customerCaptionColor !== 'transparent') ? customerCaptionColor : undefined,
                 }}
               >
-                {customerCaption || 'Digital Twin Solutions'}
+                {customerCaption}
               </span>
             )}
           </div>
@@ -291,12 +294,6 @@ export function Header({
                 onViewAllClick();
                 setShowNotifications(false);
               }}
-              onSettingsClick={() => {
-                if (onNavigate) {
-                  onNavigate('account', { tab: 'notifications' });
-                }
-                setShowNotifications(false);
-              }}
             />
           )}
         </div>
@@ -347,9 +344,9 @@ export function Header({
                 top: 'calc(100% + 16px)', // Positions it exactly below the header bottom border
                 right: '-12px', // Very little padding from the right edge of the screen
                 background: 'var(--bg-card)',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
-                borderRadius: '14px',
-                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.02)',
+                border: '1px solid var(--border-light)',
+                borderRadius: 'var(--radius-xl, 18px)',
+                boxShadow: 'var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.08))',
                 width: '230px',
                 zIndex: 200,
                 display: 'flex',
@@ -358,11 +355,9 @@ export function Header({
                 fontFamily: 'var(--app-font-family)'
               }}
             >
-              {/* Top User Card section */}
-              <div style={{
-                background: 'var(--bg-dashboard)',
+              {/* Top User Card section — gradient title band, same as Global Settings / Notifications */}
+              <div className="profile-menu-header" style={{
                 padding: '16px',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '12px'
@@ -388,7 +383,7 @@ export function Header({
                     fontSize: '18px',
                     userSelect: 'none',
                     flexShrink: 0,
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                    boxShadow: '0 0 0 2px color-mix(in srgb, var(--on-accent, #ffffff) 70%, transparent), 0 2px 6px rgba(0, 0, 0, 0.15)'
                   }}
                   title="Upload profile picture"
                 >
@@ -436,10 +431,10 @@ export function Header({
                   minWidth: 0
                 }}>
                   <div style={{
+                    fontFamily: 'var(--app-heading-family, var(--app-font-family))',
                     fontWeight: '600',
-                    fontSize: '14px',
-                    color: 'var(--text-main)',
-                    letterSpacing: '-0.1px',
+                    fontSize: 'var(--font-size-body, 14px)',
+                    color: 'var(--on-accent, #ffffff)',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -448,9 +443,9 @@ export function Header({
                     B Anand
                   </div>
                   <div style={{
-                    color: 'var(--text-muted)',
-                    fontSize: '11px',
-                    fontWeight: '450',
+                    color: 'color-mix(in srgb, var(--on-accent, #ffffff) 80%, transparent)',
+                    fontSize: 'var(--font-size-caption, 11px)',
+                    fontWeight: '400',
                     width: '100%',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -473,22 +468,21 @@ export function Header({
                   title="View and update your profile settings"
                 >
                   <div style={{
-                    width: '24px',
-                    height: '24px',
+                    width: '28px',
+                    height: '28px',
                     borderRadius: '50%',
-                    border: '1.5px solid var(--primary)',
-                    backgroundColor: 'transparent',
+                    backgroundColor: 'color-mix(in srgb, var(--primary) 14%, transparent)',
                     color: 'var(--primary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0
                   }}>
-                    <User size={15} strokeWidth={2.5} />
+                    <User size={15} strokeWidth={2.25} />
                   </div>
                   <span style={{
-                    fontSize: '13px',
-                    fontWeight: '500',
+                    fontSize: 'var(--font-size-body-sm, 13px)',
+                    fontWeight: 'var(--app-font-weight, 400)',
                     color: 'var(--text-main)'
                   }}>
                     Edit Profile
@@ -496,7 +490,7 @@ export function Header({
                 </div>
 
                 {/* Divider */}
-                <div style={{ height: '1px', backgroundColor: 'rgba(0, 0, 0, 0.06)', margin: '4px 0' }} />
+                <div style={{ height: '1px', backgroundColor: 'var(--border-light)', margin: '4px 0' }} />
 
                 {/* Sign Out Item */}
                 <div
@@ -508,22 +502,22 @@ export function Header({
                   title="Sign out from your account"
                 >
                   <div style={{
-                    width: '24px',
-                    height: '24px',
+                    width: '28px',
+                    height: '28px',
                     borderRadius: '50%',
-                    border: '1.5px solid var(--danger)',
-                    backgroundColor: 'transparent',
+                    border: '1px solid color-mix(in srgb, var(--danger) 35%, transparent)',
+                    backgroundColor: 'color-mix(in srgb, var(--danger) 12%, transparent)',
                     color: 'var(--danger)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0
                   }}>
-                    <X size={15} strokeWidth={2.5} />
+                    <LogOut size={14} strokeWidth={2.25} />
                   </div>
                   <span style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
+                    fontSize: 'var(--font-size-body-sm, 13px)',
+                    fontWeight: '500',
                     color: 'var(--danger)'
                   }}>
                     Sign Out

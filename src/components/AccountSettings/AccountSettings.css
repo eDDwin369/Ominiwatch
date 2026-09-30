@@ -1335,6 +1335,37 @@
   color: #34d399;
 }
 
+/* Quiet "clickable surface" look: soft translucent card fill + token border + light lift,
+   so they read as actions on the gradient card without pulling focus. */
+[data-theme-mode="light"] .figma-btn-outline,
+[data-theme-mode="dark"] .figma-btn-outline {
+  background: color-mix(in srgb, var(--bg-card) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 22%, var(--border-light));
+  color: var(--text-main);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(6px);
+}
+
+[data-theme-mode="light"] .figma-btn-outline:hover,
+[data-theme-mode="dark"] .figma-btn-outline:hover {
+  background: color-mix(in srgb, var(--bg-card) 85%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+  color: var(--highlight, var(--primary));
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 18%, transparent);
+  transform: translateY(-1px);
+}
+
+.figma-btn-outline:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary) 55%, transparent);
+  outline-offset: 2px;
+}
+
+[data-theme-mode="light"] .figma-btn-outline.active-2fa,
+[data-theme-mode="dark"] .figma-btn-outline.active-2fa {
+  border-color: color-mix(in srgb, var(--success, #10b981) 55%, transparent);
+  color: var(--success, #10b981);
+}
+
 /* Divider Line */
 .figma-card-divider {
   height: 1px;
@@ -1632,4 +1663,316 @@
   align-items: center;
   gap: 12px;
   padding: 20px 0;
+}
+
+/* Stronger card shadows, each keeping its original colour.
+   Personal card: same blue (light) / black (dark), darker and a bit wider.
+   Token cards: the theme's --card-shadow layered twice = same colours/shape, deeper. */
+.figma-card.figma-card-personal {
+  box-shadow: 0 12px 40px rgba(37, 99, 235, 0.18) !important;
+}
+
+[data-theme-mode="dark"] .figma-card.figma-card-personal {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+.figma-card.figma-card-preferences,
+.figma-card.figma-card-unified-right {
+  box-shadow: var(--card-shadow, var(--shadow-sm)), var(--card-shadow, var(--shadow-sm)) !important;
+}
+
+/* ── Visibility order (same as Global Settings / Notifications):
+      page title H1 → card titles H5 → content ── */
+
+/* Existing card paddings, exposed so the header band can bleed to the card edges */
+.figma-card { --ac-pad-y: 24px; --ac-pad-x: 28px; }
+.figma-card.figma-card-personal { --ac-pad-y: 28px; --ac-pad-x: 32px; }
+
+/* Card titles: Theme Studio H4 (below the H1 page title, above the content) */
+.figma-card .figma-card-heading,
+.figma-card-personal .figma-card-heading,
+[data-theme-mode="dark"] .figma-card-personal .figma-card-heading {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h4-size, 20px) !important;
+  font-weight: var(--h4-weight, 500) !important;
+  letter-spacing: normal !important;
+  color: var(--h4-color, var(--text-main)) !important;
+}
+
+/* Card header band — same treatment as Global Settings' card headers: full-bleed, the
+   studio's card-header colour fading into the card, card-header border token. */
+.figma-card .figma-card-top-bar,
+.figma-card .figma-security-section > .figma-card-heading {
+  margin: calc(-1 * var(--ac-pad-y)) calc(-1 * var(--ac-pad-x)) 18px;
+  padding: 14px var(--ac-pad-x) 12px;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  /* Only slightly visible: low-strength card-header tint fading out across the band */
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--card-hdr, var(--bg-card)) 30%, transparent), transparent);
+  border-bottom: var(--card-hdr-border, none);
+}
+
+/* The Security card's heading sits one level down, inside its section */
+.figma-card .figma-security-section {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.figma-card .figma-security-section > .figma-card-heading {
+  margin-bottom: 4px;
+}
+
+/* Security & Sessions bottom row: legal/data links left, location right */
+.figma-security-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Soft-contrast inputs: every field on the page uses the same card-header colour, at low
+   strength, so inputs read as fillable without heavy boxes. */
+.figma-card {
+  --ac-soft-fill: color-mix(in srgb, var(--card-hdr, var(--bg-card)) 35%, transparent);
+  --ac-soft-fill-hover: color-mix(in srgb, var(--card-hdr, var(--bg-card)) 55%, transparent);
+}
+
+/* Text fields: fill the outline <fieldset> (its fill starts at the border line under the
+   notched label); the input is lifted above it so the text stays on top. */
+.figma-card .tf-outline {
+  background: var(--ac-soft-fill);
+}
+
+.figma-card .tf-input {
+  position: relative;
+}
+
+/* Language / Timezone dropdowns */
+.figma-card .figma-smooth-dropdown-trigger,
+[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger {
+  background: var(--ac-soft-fill);
+}
+
+.figma-card .figma-smooth-dropdown-trigger:hover {
+  background: var(--ac-soft-fill-hover);
+}
+
+/* Cookie Preferences + Active Sessions / Login History: soft pills instead of bare rows */
+.figma-card .figma-cookie-trigger,
+.figma-card .figma-sec-trigger {
+  background: var(--ac-soft-fill);
+  border-radius: var(--radius-md, 8px);
+  padding: 8px 12px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.figma-card .figma-cookie-trigger:hover,
+.figma-card .figma-sec-trigger:hover {
+  background: var(--ac-soft-fill-hover);
+}
+
+.figma-card .figma-sec-accordion,
+[data-theme-mode="light"] .figma-card .figma-sec-accordion {
+  border-bottom: none;
+}
+
+.figma-card .figma-accordions-stack {
+  gap: 8px;
+}
+
+/* Personal Information edit / cancel / save: one icon-button language across the app —
+   36px circles; primary-filled for Edit + Save, the soft-red close treatment for Cancel. */
+/* Stacked in the right gutter so the pair never overlaps the field grid:
+   Cancel on top, Save below it in exactly the Edit button's spot. */
+.figma-card-personal .figma-edit-actions {
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.figma-card-personal .figma-btn-edit-square,
+.figma-card-personal .figma-btn-icon {
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+}
+
+.figma-card-personal .figma-btn-save {
+  background: var(--primary) !important;
+  color: var(--btn-text, #ffffff) !important;
+  border: none;
+  box-shadow: 0 4px 12px var(--accent-glow) !important;
+}
+
+.figma-card-personal .figma-btn-save:hover:not(:disabled) {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.figma-card-personal .figma-btn-save:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-btn-save {
+  background: var(--secondary) !important;
+}
+
+.figma-card-personal .figma-btn-cancel {
+  background: color-mix(in srgb, var(--danger, #dc2626) 14%, #ffffff) !important;
+  color: var(--danger, #dc2626) !important;
+  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent) !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 25%, transparent);
+}
+
+.figma-card-personal .figma-btn-cancel:hover {
+  background: var(--danger, #dc2626) !important;
+  color: #ffffff !important;
+  filter: none;
+}
+
+[data-theme-mode="dark"] .figma-card-personal .figma-btn-cancel:not(:hover) {
+  background: color-mix(in srgb, var(--danger, #dc2626) 22%, var(--bg-card)) !important;
+  color: color-mix(in srgb, var(--danger, #dc2626) 55%, var(--text-main)) !important;
+  border-color: color-mix(in srgb, var(--danger, #dc2626) 55%, transparent) !important;
+}
+
+.figma-card-personal .figma-btn-icon:focus-visible,
+.figma-card-personal .figma-btn-edit-square:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary) 55%, transparent);
+  outline-offset: 2px;
+}
+
+/* Edit mode: fields must read as "click and type". Near-solid field surface, primary-tinted
+   outline that strengthens on hover/focus, and a text cursor. View mode keeps the soft tint. */
+.figma-card-personal.is-editing .tf-wrapper:not(.tf-disabled) {
+  cursor: text;
+}
+
+.figma-card-personal.is-editing .tf-wrapper:not(.tf-disabled) .tf-outline {
+  background: color-mix(in srgb, var(--bg-card) 85%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 45%, transparent) !important;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.figma-card-personal.is-editing .tf-wrapper:not(.tf-disabled):not(.tf-focused):hover .tf-outline {
+  border-color: color-mix(in srgb, var(--primary) 75%, transparent) !important;
+}
+
+.figma-card-personal.is-editing .tf-wrapper.tf-focused .tf-outline {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent) !important;
+}
+
+.figma-card-personal.is-editing .tf-wrapper.tf-error .tf-outline {
+  border-color: var(--danger, #dc2626) !important;
+}
+
+[data-theme-mode="dark"] .figma-card-personal.is-editing .tf-wrapper:not(.tf-disabled) .tf-outline {
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent) !important;
+  border-color: color-mix(in srgb, var(--primary-light, var(--primary)) 55%, transparent) !important;
+}
+
+/* ── 2FA + Change Password dialogs: shared design standards (gradient title bar with
+      on-accent title, soft-red close circle, notched TextFields, token colours) ── */
+.figma-modal-std {
+  overflow: hidden;
+  border-radius: var(--radius-xl, 18px);
+}
+
+.figma-modal-std .figma-modal-header {
+  margin: -24px -24px 20px;
+  padding: 14px 16px 14px 24px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+[data-theme-mode="dark"] .figma-modal-std .figma-modal-header {
+  background: var(--gs-modal-bg-dark, radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%));
+  border-bottom: 1px solid var(--border-light);
+}
+
+.figma-modal-std .figma-modal-header h3 {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h4-size, 20px);
+  font-weight: var(--h4-weight, 500);
+  color: var(--on-accent, var(--btn-text, #ffffff));
+}
+
+/* Close ✕: same soft-red circle as Global Settings / Notifications */
+.figma-modal-std .figma-modal-close {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--danger, #dc2626) 14%, #ffffff);
+  color: var(--danger, #dc2626);
+  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 25%, transparent);
+  transition: all 0.2s ease;
+}
+
+.figma-modal-std .figma-modal-close:hover {
+  background: var(--danger, #dc2626);
+  color: #ffffff;
+}
+
+[data-theme-mode="dark"] .figma-modal-std .figma-modal-close:not(:hover) {
+  background: color-mix(in srgb, var(--danger, #dc2626) 22%, var(--bg-card));
+  color: color-mix(in srgb, var(--danger, #dc2626) 55%, var(--text-main));
+  border-color: color-mix(in srgb, var(--danger, #dc2626) 55%, transparent);
+}
+
+.figma-modal-std .figma-modal-desc {
+  font-size: var(--font-size-body, 14px);
+  color: var(--text-secondary);
+}
+
+/* QR placeholder: token colours (the old rule had an invalid border) */
+.figma-modal-std .figma-qr-code-box {
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--primary) 35%, transparent);
+  color: var(--text-muted);
+}
+
+.figma-modal-std .figma-modal-field {
+  margin-bottom: 16px;
+}
+
+.figma-modal-std .figma-btn-modal-confirm:focus-visible,
+.figma-modal-std .figma-btn-modal-cancel:focus-visible,
+.figma-modal-std .figma-modal-close:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.figma-security-footer .figma-location-text {
+  color: var(--text-secondary);
+}
+
+/* Very soft page gradient behind Account Settings only (primary → page → secondary, ~4%).
+   Applied to the scroll area that holds this page, so it fills the whole view. */
+.dashboard-content-scrollable:has(.figma-account-settings-container) {
+  background:
+    linear-gradient(160deg,
+      color-mix(in srgb, var(--primary) 4%, var(--bg-dashboard)) 0%,
+      var(--bg-dashboard) 50%,
+      color-mix(in srgb, var(--secondary) 4%, var(--bg-dashboard)) 100%);
+}
+
+/* Advanced Settings: opens inline (in flow) inside the Security & Sessions card, unlike the
+   floating Active Sessions / Login History panels. Holds 2FA, password and delete actions. */
+.figma-sec-inline-content {
+  padding: 12px 12px 4px;
+}
+
+.figma-sec-inline-content .figma-security-buttons-row {
+  margin-top: 0;
+  flex-wrap: wrap;
+  gap: 10px;
 }

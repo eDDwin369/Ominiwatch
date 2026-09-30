@@ -592,6 +592,279 @@
   background-color: var(--bg-dashboard, var(--bg-dashboard));
 }
 
+/* ── Visual consistency with Global Settings (colour/gradient/text tokens only — no layout) ── */
+
+/* Window frame: same border + card shadow tokens as the Global Settings modal */
+.new-notification-dropdown {
+  box-shadow: var(--card-shadow, 0 10px 25px -5px rgba(0, 0, 0, 0.1));
+}
+
+/* Title bar: Global Settings' primary→secondary gradient (light) / primary radial (dark) */
+.new-notification-header {
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  border-bottom-color: var(--border-light);
+}
+
+[data-theme-mode="dark"] .new-notification-header,
+[data-theme-mode="dark"] .new-notification-tabs-row {
+  background: var(--gs-modal-bg-dark, radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%));
+}
+
+/* Caret sits under the right end of the gradient, so it takes that end's colour */
+.new-notification-dropdown::before {
+  background: var(--secondary);
+  border-color: transparent;
+}
+
+[data-theme-mode="dark"] .new-notification-dropdown::before {
+  background: var(--bg-dashboard);
+  border-color: var(--border-light);
+}
+
+/* Level 1 — page title, same H1 tokens as the Global Settings title */
+.new-notification-title {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  color: var(--on-accent, var(--btn-text, #ffffff));
+}
+
+/* Header icons read on the gradient; hover is a soft light wash */
+.new-header-action-btn {
+  color: color-mix(in srgb, var(--on-accent, #ffffff) 85%, transparent);
+}
+
+.new-header-action-btn:hover {
+  background: color-mix(in srgb, var(--on-accent, #ffffff) 18%, transparent);
+  color: var(--on-accent, #ffffff);
+}
+
+/* Close: same red treatment as Global Settings' close button (ring via inset shadow, so no size change) */
+.new-header-action-btn.close {
+  background: color-mix(in srgb, var(--danger, #dc2626) 14%, #ffffff);
+  color: var(--danger, #dc2626);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger, #dc2626) 35%, transparent);
+}
+
+.new-header-action-btn.close:hover {
+  background: var(--danger, #dc2626);
+  color: #ffffff;
+}
+
+[data-theme-mode="dark"] .new-header-action-btn.close:not(:hover) {
+  background: color-mix(in srgb, var(--danger, #dc2626) 22%, var(--bg-card));
+  color: color-mix(in srgb, var(--danger, #dc2626) 55%, var(--text-main));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--danger, #dc2626) 55%, transparent);
+}
+
+/* Tabs row: Global Settings' tinted tab band + faded inactive / highlighted active tab */
+.new-notification-tabs-row {
+  background: color-mix(in srgb, var(--primary) 12%, var(--bg-card));
+  border-bottom-color: var(--border-light);
+}
+
+/* Level 2 — menu tabs: shell menu-item tokens (H6), one step above the 13px list text */
+.new-tab-pill-btn {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h6-size, 14px);
+  font-weight: var(--h6-weight, var(--app-font-weight, 400));
+  color: color-mix(in srgb, var(--text-secondary) 40%, transparent);
+}
+
+.new-tab-pill-btn:hover {
+  background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+  color: var(--text-main);
+}
+
+.new-tab-pill-btn.active,
+.new-tab-pill-btn.active:hover {
+  color: var(--highlight, var(--primary));
+  border-bottom-color: var(--primary);
+}
+
+[data-theme-mode="dark"] .new-tab-pill-btn {
+  color: color-mix(in srgb, var(--text-secondary) 70%, transparent);
+}
+
+[data-theme-mode="dark"] .new-tab-pill-btn:hover,
+[data-theme-mode="dark"] .new-tab-pill-btn.active,
+[data-theme-mode="dark"] .new-tab-pill-btn.active:hover {
+  color: var(--text-main);
+}
+
+/* Selected tab, Global Settings style: drops out of the tinted band onto the list surface
+   (so it reads as joined to the list below), with a short centred underline. The 3px
+   bottom border stays but goes transparent, so nothing shifts. */
+.new-notification-tabs-row {
+  border-bottom-color: transparent;
+}
+
+.new-tab-pill-btn.active,
+.new-tab-pill-btn.active:hover {
+  position: relative;
+  background-color: var(--bg-card);
+  border-bottom-color: transparent;
+  border-radius: 12px 12px 0 0;
+}
+
+.new-tab-pill-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary);
+}
+
+/* Tab icons — Global Settings' tab-icon treatment, sized for this shorter row */
+/* Icons need room: tighter side padding, and labels never wrap */
+.new-tab-pill-btn {
+  gap: 6px;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+
+.new-tabs-pill-container {
+  gap: 2px;
+}
+
+/* Tabs start flush at the window's left border */
+.new-notification-tabs-row {
+  padding-left: 0;
+}
+
+.new-tab-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: inherit;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.new-tab-pill-btn.active .new-tab-icon {
+  background: var(--highlight, var(--primary));
+  color: var(--btn-text, #ffffff);
+  box-shadow: 0 6px 16px var(--highlight-hover, var(--accent-glow)), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+[data-theme-mode="dark"] .new-tab-pill-btn.active::after {
+  background: color-mix(in srgb, var(--primary) 55%, var(--text-main));
+}
+
+/* Settings button shows as pressed while the settings view is open */
+.new-header-action-btn.active {
+  background: color-mix(in srgb, var(--on-accent, #ffffff) 22%, transparent);
+  color: var(--on-accent, #ffffff);
+}
+
+/* In-window notification settings (moved from Account Settings) */
+.new-notification-settings {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 20px 20px;
+  background: var(--bg-card);
+}
+
+/* Breadcrumb: ‹ Notifications › Settings — first crumb is the back button */
+.new-notif-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.new-notif-breadcrumb-sep {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.new-notif-breadcrumb-current {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h6-size, 14px);
+  color: var(--text-main);
+}
+
+.new-notif-settings-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px 4px 2px;
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  color: var(--highlight, var(--primary));
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h6-size, 14px);
+  cursor: pointer;
+}
+
+.new-notif-settings-back:hover {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.new-notif-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.new-notif-setting-label {
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body, 14px);
+  color: var(--text-main);
+}
+
+/* Shared Dropdown's rect trigger has a 130px min-width — too wide for this row */
+.new-notif-setting-row .gs-dd-trigger {
+  min-width: 0;
+  width: 100%;
+}
+
+.new-notif-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: var(--border-light);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.new-notif-switch.on {
+  background: var(--primary);
+}
+
+.new-notif-switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.new-notif-switch.on .new-notif-switch-thumb {
+  transform: translateX(20px);
+}
+
 /* Notification Feed Items list */
 .new-notification-list-scroll {
   flex: 1;

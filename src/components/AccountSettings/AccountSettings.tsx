@@ -284,7 +284,7 @@ export function AccountSettings({
   // ----------------------------------------------------
   // State: Security & Sessions
   // ----------------------------------------------------
-  const [expandedSecurity, setExpandedSecurity] = useState<'sessions' | 'history' | null>(null);
+  const [expandedSecurity, setExpandedSecurity] = useState<'sessions' | 'history' | 'advanced' | null>(null);
   const [is2faEnabled, setIs2faEnabled] = useState(() => {
     const saved = localStorage.getItem('as_2faEnabled');
     return saved !== null ? JSON.parse(saved) : false;
@@ -337,29 +337,6 @@ export function AccountSettings({
   // 2FA code input
   const [twoFactorCode, setTwoFactorCode] = useState('');
 
-  // ----------------------------------------------------
-  // State: Notifications
-  // ----------------------------------------------------
-  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
-    const saved = localStorage.getItem('as_notificationsEnabled');
-    return saved !== null ? JSON.parse(saved) : true;
-  });
-  const [notificationCount, setNotificationCount] = useState(() => {
-    return localStorage.getItem('as_notificationCount') || localStorage.getItem('gs_notificationsToShow') || '5';
-  });
-
-  const handleToggleNotifications = () => {
-    const next = !notificationsEnabled;
-    setNotificationsEnabled(next);
-    localStorage.setItem('as_notificationsEnabled', JSON.stringify(next));
-  };
-
-  const handleNotificationCountChange = (val: string) => {
-    setNotificationCount(val);
-    localStorage.setItem('as_notificationCount', val);
-    localStorage.setItem('gs_notificationsToShow', val);
-  };
-
   // Sessions mockup
   const initialSessions = [
     { id: 1, device: 'MacBook Pro 16"', location: 'Bangalore, India', active: 'Active now', current: true, icon: Laptop },
@@ -390,7 +367,7 @@ export function AccountSettings({
     });
   };
 
-  const toggleAccordion = (key: 'sessions' | 'history') => {
+  const toggleAccordion = (key: 'sessions' | 'history' | 'advanced') => {
     setExpandedSecurity(prev => prev === key ? null : key);
   };
 
@@ -398,6 +375,9 @@ export function AccountSettings({
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
+      // Clicks inside a dialog opened from these rows (2FA, password, delete) — including
+      // its backdrop — are not "outside"; the row stays open behind the dialog.
+      if (target.closest('.figma-modal-backdrop')) return;
       if (expandedSecurity && !target.closest('.figma-sec-accordion')) {
         setExpandedSecurity(null);
       }
@@ -427,9 +407,6 @@ export function AccountSettings({
           <div className={`figma-card figma-card-personal ${isEditingProfile ? 'is-editing' : ''}`}>
             <div className="figma-card-top-bar">
               <h2 className="figma-card-heading">Personal Information</h2>
-              <div className="figma-location-text">
-                <span>{profile.location} .</span>
-              </div>
             </div>
 
             <div className="figma-personal-content">
@@ -580,13 +557,6 @@ export function AccountSettings({
           <div className="figma-card figma-card-preferences">
             <div className="figma-card-top-bar">
               <h2 className="figma-card-heading">Preferences & Privacy</h2>
-              <div className="figma-privacy-links">
-                <a href="#privacy" className="figma-privacy-link" onClick={e => e.preventDefault()}>Privacy policy</a>
-                <span className="figma-dot">•</span>
-                <a href="#terms" className="figma-privacy-link" onClick={e => e.preventDefault()}>Terms of service</a>
-                <span className="figma-dot">•</span>
-                <a href="#export" className="figma-privacy-link" onClick={e => e.preventDefault()}>Export Personal Data</a>
-              </div>
             </div>
 
             <div className="figma-preferences-row-inline">
@@ -660,16 +630,6 @@ export function AccountSettings({
               </div>
             </div>
 
-            {/* Delete Account Button — own row below the Cookie/Language/Timezone row */}
-            <div className="figma-delete-btn-row">
-              <button
-                type="button"
-                className="figma-btn-delete-red"
-                onClick={() => setIsDeleteModalOpen(true)}
-              >
-                Delete your account
-              </button>
-            </div>
           </div>
 
         </div>
@@ -755,71 +715,74 @@ export function AccountSettings({
                     </div>
                   )}
                 </div>
-              </div>
 
-              {/* Action Outline Pill Buttons */}
-              <div className="figma-security-buttons-row">
-                <button 
-                  type="button" 
-                  className={`figma-btn-outline ${is2faEnabled ? 'active-2fa' : ''}`}
-                  onClick={() => {
-                    if (is2faEnabled) {
-                      handleToggle2fa(false);
-                    } else {
-                      setIs2faModalOpen(true);
-                    }
-                  }}
-                >
-                  {is2faEnabled ? '2FA Enabled' : 'Enable 2FA'}
-                </button>
+                {/* Advanced Settings — expands inline within this card */}
+                <div className="figma-sec-accordion">
+                  <button
+                    type="button"
+                    className="figma-sec-trigger"
+                    aria-expanded={expandedSecurity === 'advanced'}
+                    onClick={() => toggleAccordion('advanced')}
+                  >
+                    <span>Advanced Settings</span>
+                    {expandedSecurity === 'advanced' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </button>
+
+                  {expandedSecurity === 'advanced' && (
+                    <div className="figma-sec-inline-content">
+                      <div className="figma-security-buttons-row">
+                        <button 
+                          type="button" 
+                          className={`figma-btn-outline ${is2faEnabled ? 'active-2fa' : ''}`}
+                          onClick={() => {
+                            if (is2faEnabled) {
+                              handleToggle2fa(false);
+                            } else {
+                              setIs2faModalOpen(true);
+                            }
+                          }}
+                        >
+                          {is2faEnabled ? '2FA Enabled' : 'Enable 2FA'}
+                        </button>
                 
-                <button 
-                  type="button" 
-                  className="figma-btn-outline"
-                  onClick={() => {
-                    setPassForm({ current: '', next: '', confirm: '' });
-                    setPassSuccess(false);
-                    setIsPasswordModalOpen(true);
-                  }}
-                >
-                  Change Password
-                </button>
+                        <button 
+                          type="button" 
+                          className="figma-btn-outline"
+                          onClick={() => {
+                            setPassForm({ current: '', next: '', confirm: '' });
+                            setPassSuccess(false);
+                            setIsPasswordModalOpen(true);
+                          }}
+                        >
+                          Change Password
+                        </button>
+                        <button
+                          type="button"
+                          className="figma-btn-delete-red"
+                          onClick={() => setIsDeleteModalOpen(true)}
+                        >
+                          Delete your account
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
+
             </div>
 
-            {/* Horizontal Divider Line */}
-            <div className="figma-card-divider" />
-
-            {/* Bottom Section: Notifications */}
-            <div className="figma-notifications-section">
-              <div className="figma-notif-header">
-                <h2 className="figma-card-heading">Notifications</h2>
-                {/* Purple Toggle Switch */}
-                <button 
-                  type="button"
-                  className={`figma-main-toggle ${notificationsEnabled ? 'on' : 'off'}`}
-                  onClick={handleToggleNotifications}
-                >
-                  <span className="figma-main-toggle-thumb" />
-                </button>
+            {/* Bottom row, pinned to the card bottom: legal & data links left, location right */}
+            <div className="figma-security-footer">
+              <div className="figma-privacy-links">
+                <a href="#privacy" className="figma-privacy-link" onClick={e => e.preventDefault()}>Privacy policy</a>
+                <span className="figma-dot">•</span>
+                <a href="#terms" className="figma-privacy-link" onClick={e => e.preventDefault()}>Terms of service</a>
+                <span className="figma-dot">•</span>
+                <a href="#export" className="figma-privacy-link" onClick={e => e.preventDefault()}>Export Personal Data</a>
               </div>
-
-              {/* Notification Dropdown Row */}
-              <div className="figma-notif-row">
-                <span className="figma-notif-label">Notification Dropdown</span>
-                <CustomSmoothDropdown 
-                  value={notificationCount}
-                  onChange={handleNotificationCountChange}
-                  className="figma-dropdown-compact"
-                  options={[
-                    { label: '5', value: '5' },
-                    { label: '10', value: '10' },
-                    { label: '15', value: '15' },
-                    { label: '20', value: '20' }
-                  ]}
-                />
-              </div>
+              <span className="figma-location-text">{profile.location}</span>
             </div>
+
 
           </div>
 
@@ -833,28 +796,28 @@ export function AccountSettings({
       {/* 2FA Modal */}
       {is2faModalOpen && (
         <div className="figma-modal-backdrop" onClick={() => setIs2faModalOpen(false)}>
-          <div className="figma-modal-box" onClick={e => e.stopPropagation()}>
+          <div className="figma-modal-box figma-modal-std" role="dialog" aria-modal="true" aria-labelledby="twofa-title" onClick={e => e.stopPropagation()}>
             <div className="figma-modal-header">
-              <h3>Two-Factor Authentication (2FA)</h3>
-              <button className="figma-modal-close" onClick={() => setIs2faModalOpen(false)}><X size={18} /></button>
+              <h3 id="twofa-title">Two-Factor Authentication (2FA)</h3>
+              <button className="figma-modal-close" aria-label="Close" title="Close" onClick={() => setIs2faModalOpen(false)}><X size={16} /></button>
             </div>
             <div className="figma-modal-body">
               <p className="figma-modal-desc">Scan the QR code with your authenticator app (Google Authenticator, Authy, or 1Password) to enable 2FA protection.</p>
               
               <div className="figma-qr-placeholder">
                 <div className="figma-qr-code-box">
-                  <Shield size={48} color="#3b82f6" />
+                  <Shield size={48} color="var(--primary)" />
                   <span>[ QR Code ]</span>
                 </div>
               </div>
 
-              <div className="figma-input-field">
-                <label className="figma-input-label">Enter 6-Digit Code</label>
-                <input 
-                  type="text" 
+              <div className="figma-modal-field">
+                <TextField
+                  label="6-Digit Code"
                   maxLength={6}
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
                   placeholder="123456"
-                  className="figma-modal-input"
                   value={twoFactorCode}
                   onChange={e => setTwoFactorCode(e.target.value)}
                 />
@@ -879,44 +842,44 @@ export function AccountSettings({
       {/* Change Password Modal */}
       {isPasswordModalOpen && (
         <div className="figma-modal-backdrop" onClick={closePasswordModal}>
-          <div className="figma-modal-box" onClick={e => e.stopPropagation()}>
+          <div className="figma-modal-box figma-modal-std" role="dialog" aria-modal="true" aria-labelledby="password-title" onClick={e => e.stopPropagation()}>
             <div className="figma-modal-header">
-              <h3>Change Password</h3>
-              <button className="figma-modal-close" onClick={closePasswordModal}><X size={18} /></button>
+              <h3 id="password-title">Change Password</h3>
+              <button className="figma-modal-close" aria-label="Close" title="Close" onClick={closePasswordModal}><X size={16} /></button>
             </div>
             <div className="figma-modal-body">
               {passSuccess ? (
                 <div className="figma-success-state">
-                  <CheckCircle2 size={42} color="#10b981" />
+                  <CheckCircle2 size={42} color="var(--success, #10b981)" />
                   <p>Password updated successfully!</p>
                 </div>
               ) : (
                 <>
                   <div className="figma-modal-field">
-                    <label className="figma-input-label">Current Password</label>
-                    <input
+                    <TextField
+                      label="Current Password"
                       type="password"
-                      className="figma-modal-input"
+                      autoComplete="current-password"
                       placeholder="••••••••"
                       value={passForm.current}
                       onChange={e => { setPassForm({...passForm, current: e.target.value}); setPassError(''); }}
                     />
                   </div>
                   <div className="figma-modal-field">
-                    <label className="figma-input-label">New Password</label>
-                    <input
+                    <TextField
+                      label="New Password"
                       type="password"
-                      className="figma-modal-input"
+                      autoComplete="new-password"
                       placeholder="••••••••"
                       value={passForm.next}
                       onChange={e => { setPassForm({...passForm, next: e.target.value}); setPassError(''); }}
                     />
                   </div>
                   <div className="figma-modal-field">
-                    <label className="figma-input-label">Confirm New Password</label>
-                    <input
+                    <TextField
+                      label="Confirm New Password"
                       type="password"
-                      className="figma-modal-input"
+                      autoComplete="new-password"
                       placeholder="••••••••"
                       value={passForm.confirm}
                       onChange={e => { setPassForm({...passForm, confirm: e.target.value}); setPassError(''); }}

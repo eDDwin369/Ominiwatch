@@ -2,13 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Upload,
   LayoutPanelTop, Layout, LayoutPanelLeft, Users,
-  Type, Image, Ban, Save, Eye, CheckCircle2, Info, X, RotateCcw, AlertCircle
+  Type, Image, CheckCircle2, Info, X, RotateCcw, AlertCircle
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 
 import { ImageCropperModal } from './ImageCropperModal';
-import { useThemeStore } from 'omnieye-theme-studio';
+import { useThemeStore, DEFAULT_SETTINGS } from 'omnieye-theme-studio';
 import { Dropdown } from '../shared/Dropdown';
+import { TextField } from '../shared/TextField';
 
 interface GlobalSettingsWorkspaceProps {
   onClose: () => void;
@@ -220,6 +221,14 @@ export function GlobalSettingsWorkspace({
       || (fallback === 'secondary' ? 'var(--text-secondary)' : 'var(--text-main)'),
   });
 
+  // Row labels inside cards use Theme Studio's body text tokens, one step below the H5 card titles.
+  const bodyTextStyle: React.CSSProperties = {
+    fontSize: 'var(--font-size-body)',
+    fontWeight: 'var(--app-font-weight)' as React.CSSProperties['fontWeight'],
+    fontFamily: 'var(--app-font-family)',
+    color: 'var(--text-main)',
+  };
+
   // Local form states (Header Config)
 
   // Cropper State
@@ -230,9 +239,10 @@ export function GlobalSettingsWorkspace({
   const [logo, setLogo] = useState(headerConfig.logo);
   const [showLogo, setShowLogo] = useState(headerConfig.showLogo);
   // Seed from Theme Studio (source of truth), falling back to the legacy header config.
-  const [companyName, setCompanyName] = useState(studioSettings.appName || headerConfig.companyName || '');
+  // Fields start empty: the studio's built-in brand defaults don't count as user-entered values.
+  const [companyName, setCompanyName] = useState(studioSettings.appName !== DEFAULT_SETTINGS.appName ? studioSettings.appName || '' : '');
   const [showCompanyName, setShowCompanyName] = useState(headerConfig.showCompanyName);
-  const [companyCaption, setCompanyCaption] = useState(studioSettings.appTagline || headerConfig.companyCaption || '');
+  const [companyCaption, setCompanyCaption] = useState(studioSettings.appTagline !== DEFAULT_SETTINGS.appTagline ? studioSettings.appTagline || '' : '');
   const [showCompanyCaption, setShowCompanyCaption] = useState(headerConfig.showCompanyCaption !== undefined ? headerConfig.showCompanyCaption : true);
   const [textColor] = useState(headerConfig.textColor || '#ffffff');
   const [textColorApply] = useState<any>(headerConfig.textColorApply || 'both');
@@ -250,7 +260,7 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : false;
   });
   const [copyrightText, setCopyrightText] = useState(() => {
-    return localStorage.getItem('gs_copyrightText') || '© {year} OomniEye. All rights reserved.';
+    return localStorage.getItem('gs_copyrightText') || '';
   });
   const [footerPoweredByType, setFooterPoweredByType] = useState<'text' | 'image'>(() => {
     try {
@@ -340,7 +350,7 @@ export function GlobalSettingsWorkspace({
     return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerName, setCustomerName] = useState(() => {
-    return localStorage.getItem('gs_customerName') || 'Default Customer';
+    return localStorage.getItem('gs_customerName') || '';
   });
   const [customerNameStyle, setCustomerNameStyle] = useState(() => {
     return localStorage.getItem('gs_customerNameStyle') || 'h1';
@@ -364,7 +374,7 @@ export function GlobalSettingsWorkspace({
 
   const [customerColorFollow, setCustomerColorFollow] = useState(() => {
     const saved = localStorage.getItem('gs_customerColorFollow');
-    return saved !== null ? JSON.parse(saved) : true;
+    return saved !== null ? JSON.parse(saved) : false;
   });
   const [customerNameWeight, setCustomerNameWeight] = useState(() => localStorage.getItem('gs_customerNameWeight') || '400');
   const [customerCaptionWeight, setCustomerCaptionWeight] = useState(() => localStorage.getItem('gs_customerCaptionWeight') || '300');
@@ -388,6 +398,26 @@ export function GlobalSettingsWorkspace({
     },
     sidebar: { sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, startExpanded },
   });
+
+  // Every editable draft value — compared against its opening value to detect unsaved changes.
+  const draftValues = {
+    logo, showLogo, companyName, showCompanyName, companyCaption, showCompanyCaption,
+    companyNameColor, companyCaptionColor, companyNameStyle, companyCaptionStyle,
+    companyNameWeight, companyCaptionWeight, headerBgColor,
+    footerVisible, copyrightText, footerPoweredByType, footerPoweredByText, footerPoweredByImage, footerLinks,
+    showCustomerProfile, customerName, customerColorFollow, showCustomerLogo, customerLogo,
+    customerNameStyle, customerNameColor, customerNameWeight, customerCaptionWeight,
+    showCustomerCaption, customerCaption, customerCaptionStyle, customerCaptionColor,
+    sidebarBg, autoHideSidebar, expandedWidth, collapsedWidth, showIcons, startExpanded,
+  };
+  const [initialDraft] = useState(() => JSON.stringify(draftValues));
+  const [showUnsavedPrompt, setShowUnsavedPrompt] = useState(false);
+
+  // Close button / overlay / Escape all route here: ask first if anything changed.
+  const requestClose = () => {
+    if (JSON.stringify(draftValues) !== initialDraft) setShowUnsavedPrompt(true);
+    else handleCancelAndClose();
+  };
 
   // Live preview: push draft edits straight to the app as they change. Nothing here
   // touches localStorage — persistence only happens in handleSave. Cancel reverts
@@ -447,10 +477,6 @@ export function GlobalSettingsWorkspace({
   // Equal height is now enforced via CSS (.gs-config-card height: 286px) to maintain a perfectly static layout.
   // Notifications Config States
   const [previewTarget, setPreviewTarget] = useState<string | null>('name');
-
-  const togglePreviewTarget = (target: string) => {
-    setPreviewTarget(target);
-  };
 
   // Auto-sync previewTarget focus:
   // - header -> 'name'
@@ -651,11 +677,13 @@ export function GlobalSettingsWorkspace({
   // Close on Escape keypress
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleCancelAndClose();
+      if (e.key !== 'Escape') return;
+      if (showUnsavedPrompt) setShowUnsavedPrompt(false);
+      else requestClose();
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleCancelAndClose]);
+  });
 
   const navItems = [
     { id: 'header', label: 'Header', icon: <LayoutPanelTop size={20} /> },
@@ -665,7 +693,7 @@ export function GlobalSettingsWorkspace({
   ];
 
   return (
-    <div className="gs-overlay" onClick={handleCancelAndClose}>
+    <div className="gs-overlay" onClick={requestClose}>
       {previewTarget && (
         <>
           {/* Glowing Focus Spotlight Outline around active element */}
@@ -733,21 +761,6 @@ export function GlobalSettingsWorkspace({
           }}
         />
 
-        {/* Floating Left Sidebar Dock (Frame 20 in User Mockup) */}
-        <div className="gs-left-dock">
-          {navItems.map(item => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id as TabId)}
-              className={`gs-dock-btn ${activeTab === item.id ? 'active' : ''}`}
-              title={item.label}
-            >
-              {item.icon}
-              <span className="gs-dock-tooltip">{item.label}</span>
-            </button>
-          ))}
-        </div>
-
         {/* Main Blurred Grey Window Card (Frame 19 in User Mockup) */}
         <div className="gs-modal" style={{ position: 'relative' }}>
           {toastMessage && (
@@ -780,18 +793,19 @@ export function GlobalSettingsWorkspace({
           )}
           <div className="gs-header">
             <div className="gs-header-left">
-              <h2 style={{ ...headingStyle(2), letterSpacing: '-0.3px', color: '#ffffff' }}>Global Settings</h2>
+              <h2 style={{ ...headingStyle(1), color: 'var(--on-accent, var(--btn-text, #ffffff))' }}>Global Settings</h2>
             </div>
             <div className="gs-header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
                 type="button"
                 className="gs-top-action-btn gs-top-btn-cancel" 
-                title="Cancel" 
-                onClick={handleCancelAndClose}
+                title="Close"
+                aria-label="Close"
+                onClick={requestClose}
                 style={{
-                  width: '46px',
+                  width: '32px',
                   height: '32px',
-                  borderRadius: '16px',
+                  borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -799,65 +813,59 @@ export function GlobalSettingsWorkspace({
                   transition: 'all 0.2s ease'
                 }}
               >
-                <Ban size={16} />
-              </button>
-              <button 
-                type="button"
-                className="gs-top-action-btn gs-top-btn-save" 
-                title="Save Settings" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleSave();
-                }}
-                style={{
-                  width: '46px',
-                  height: '32px',
-                  borderRadius: '16px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <Save size={16} />
+                <X size={18} strokeWidth={2.25} />
               </button>
             </div>
           </div>
 
+          {showUnsavedPrompt && (
+            <div className="gs-confirm-backdrop" onClick={() => setShowUnsavedPrompt(false)}>
+              <div
+                className="gs-confirm"
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="gs-confirm-title"
+                onClick={e => e.stopPropagation()}
+              >
+                <h3 id="gs-confirm-title" style={headingStyle(4, 'primary')}>Unsaved changes</h3>
+                <p className="gs-confirm-text">You have unsaved changes. Save them before closing Global Settings?</p>
+                <div className="gs-confirm-actions">
+                  <button type="button" className="gs-confirm-btn" onClick={() => setShowUnsavedPrompt(false)}>Cancel</button>
+                  <button type="button" className="gs-confirm-btn" onClick={handleCancelAndClose}>Discard</button>
+                  <button type="button" className="gs-confirm-btn gs-top-btn-save" onClick={handleSave} autoFocus>Save</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab strip: inactive tabs form a tinted band; the active tab is transparent so it
+              reads as part of the body below, and its neighbours round their inner corner into it. */}
+          <div className="gs-tabs" role="tablist">
+            {navItems.map(item => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === item.id}
+                onClick={() => setActiveTab(item.id as TabId)}
+                className={`gs-tab ${activeTab === item.id ? 'active' : ''}`}
+              >
+                <span className="gs-tab-icon">{item.icon}</span>
+                {item.label}
+              </button>
+            ))}
+          </div>
+
           {/* CONTENT PANEL BODY (2 Inner Cards) */}
           <div className="gs-content-body">
-            <div style={{ padding: '0 8px 10px 8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={headingStyle(4, 'primary')}>{activeTab === 'header' ? 'Header' : activeTab === 'profile' ? 'Customer Profile' : activeTab === 'footer' ? 'Footer' : 'Sidebar'}</span>
-              {(activeTab === 'header' || activeTab === 'profile') && (
-                <button
-                  type="button"
-                  className={`gs-eye-preview-btn ${previewTarget === (activeTab === 'header' ? 'name' : 'customer-logo') ? 'active' : ''}`}
-                  title="Highlight section on page with pointing arrow"
-                  onClick={() => togglePreviewTarget(activeTab === 'header' ? 'name' : 'customer-logo')}
-                >
-                  <Eye size={15} />
-                </button>
-              )}
-            </div>
-
           {activeTab === 'header' && (
             <div className="gs-tab-content-container">
               <div className="gs-cards-2x2">
 
                 {/* Left Card: Company Logo (headerConfig.logo — the main logo, left of the header bar; distinct from the Customer Logo in the Profile tab) */}
-                <div className="gs-config-card">
-                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="gs-config-card gs-card-tint-strong">
+                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Company Logo <InfoTooltip text="Upload or crop the primary company logo displayed on the page header." /></span>
-                    <button
-                      type="button"
-                      className={`gs-eye-preview-btn ${previewTarget === 'logo' ? 'active' : ''}`}
-                      title="Show target area on page header with pointing arrow"
-                      onClick={() => togglePreviewTarget('logo')}
-                    >
-                      <Eye size={15} />
-                    </button>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, justifyContent: 'center' }}>
@@ -911,36 +919,22 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Company Logo <InfoTooltip text="Toggle visibility of the company logo on the header bar." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Show Company Logo <InfoTooltip text="Toggle visibility of the company logo on the header bar." /></span>
                     <AppleToggle checked={showLogo} onChange={setShowLogo} />
                   </div>
                 </div>
 
                 {/* Right Card: Header Branding Visibility */}
-                <div className="gs-config-card">
-                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="gs-config-card gs-card-tint-soft">
+                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Header Branding Visibility <InfoTooltip text="Configure font style, color, and visibility for company title and caption." position="below-right" /></span>
-                    <button
-                      type="button"
-                      className={`gs-eye-preview-btn ${previewTarget === 'name' ? 'active' : ''}`}
-                      title="Show target area on page header with pointing arrow"
-                      onClick={() => togglePreviewTarget('name')}
-                    >
-                      <Eye size={15} />
-                    </button>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
                     {/* Row 1: Company Name */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <div>
-                        <input 
-                          type="text" 
-                          className="gs-underline-input"
-                          value={companyName} 
-                          onChange={e => setCompanyName(e.target.value)} 
-                          placeholder="Company Name"
-                        />
+                        <TextField label="Company Name" value={companyName} style={{ fontWeight: Number(companyNameWeight) }} onChange={e => setCompanyName(e.target.value)} />
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
@@ -949,16 +943,12 @@ export function GlobalSettingsWorkspace({
                         <Dropdown variant="pill" width="64px" value={companyNameWeight} onChange={setCompanyNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
-                          <div
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              borderRadius: '50%',
-                              background: companyNameColor ? companyNameColor : '#ffffff',
-                              border: '1.5px solid rgba(255, 255, 255, 0.6)',
-                              cursor: 'pointer',
-                              boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)'
-                            }}
+                          <button
+                            type="button"
+                            className="gs-swatch-btn"
+                            title="Choose colour"
+                            aria-label="Choose colour"
+                            style={{ ['--swatch' as string]: companyNameColor ? companyNameColor : '#ffffff' }}
                             onClick={() => document.getElementById('gs-color-picker-company-name')?.click()}
                           />
                           <input
@@ -977,13 +967,7 @@ export function GlobalSettingsWorkspace({
                     {/* Row 2: Company Caption */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <div>
-                        <input 
-                          type="text" 
-                          className="gs-underline-input"
-                          value={companyCaption} 
-                          onChange={e => setCompanyCaption(e.target.value)} 
-                          placeholder="Company Caption"
-                        />
+                        <TextField label="Company Caption" value={companyCaption} style={{ fontWeight: Number(companyCaptionWeight) }} onChange={e => setCompanyCaption(e.target.value)} />
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
@@ -992,16 +976,12 @@ export function GlobalSettingsWorkspace({
                         <Dropdown variant="pill" width="64px" value={companyCaptionWeight} onChange={setCompanyCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
-                          <div
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              borderRadius: '50%',
-                              background: companyCaptionColor ? companyCaptionColor : 'rgba(255, 255, 255, 0.65)',
-                              border: '1.5px solid rgba(255, 255, 255, 0.6)',
-                              cursor: 'pointer',
-                              boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)'
-                            }}
+                          <button
+                            type="button"
+                            className="gs-swatch-btn"
+                            title="Choose colour"
+                            aria-label="Choose colour"
+                            style={{ ['--swatch' as string]: companyCaptionColor ? companyCaptionColor : 'rgba(255, 255, 255, 0.65)' }}
                             onClick={() => document.getElementById('gs-color-picker-company-caption')?.click()}
                           />
                           <input
@@ -1019,7 +999,7 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Header background <InfoTooltip position="above" text="Override the theme header colour. Reset to fall back to the active colour template." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Header background <InfoTooltip position="above" text="Override the theme header colour. Reset to fall back to the active colour template." /></span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {headerBgColor && headerBgColor !== 'transparent' && (
                         <button
@@ -1032,9 +1012,12 @@ export function GlobalSettingsWorkspace({
                         </button>
                       )}
                       <div style={{ position: 'relative' }}>
-                        <div
+                        <button
+                          type="button"
+                          className="gs-swatch-btn"
                           title="Choose header background color"
-                          style={{ width: '30px', height: '30px', borderRadius: '50%', background: (headerBgColor && headerBgColor !== 'transparent') ? headerBgColor : '#141b3c', border: '1.5px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)' }}
+                          aria-label="Choose header background color"
+                          style={{ ['--swatch' as string]: (headerBgColor && headerBgColor !== 'transparent') ? headerBgColor : '#141b3c' }}
                           onClick={() => document.getElementById('gs-color-picker-header-bg')?.click()}
                         />
                         <input
@@ -1058,9 +1041,9 @@ export function GlobalSettingsWorkspace({
             <div className="gs-tab-content-container" style={{ padding: '24px 32px' }}>
               <div className="gs-cards-2x2">
                             {/* Left Card: Powered By Settings */}
-                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'flex-start' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
+                <div className="gs-config-card gs-config-card--stack gs-card-tint-strong">
+                  <div style={{ display: 'contents' }}>
+                    <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
                       Powered By <InfoTooltip text="Configure footer 'Powered By' attribution as custom text or logo image." />
                     </div>
 
@@ -1099,20 +1082,15 @@ export function GlobalSettingsWorkspace({
 
                   {/* Dynamic Inputs */}
                   {footerPoweredByType === 'text' ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1, paddingTop: '10px', gap: '4px' }}>
-                      <input 
-                        type="text" 
-                        className="gs-underline-input"
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <TextField
+                        label="Footer Caption"
                         value={footerPoweredByText}
                         maxLength={50}
+                        counter
                         onChange={(e) => setFooterPoweredByText(e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 50))}
                         placeholder={`Powered by ${companyName || 'OomniEye'} Digital Solutions`}
                       />
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '4px', marginTop: '2px' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--text-secondary, #94a3b8)', opacity: 0.85, fontVariantNumeric: 'tabular-nums' }}>
-                          {footerPoweredByText.length}/50
-                        </span>
-                      </div>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, justifyContent: 'center' }}>
@@ -1154,14 +1132,14 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Right Card: Footer Settings */}
-                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
+                <div className="gs-config-card gs-config-card--stack gs-card-tint-soft">
+                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
                     Footer Settings <InfoTooltip text="Control overall footer bar visibility, copyright text, and navigation links." position="below-right" />
                   </div>
 
                   {/* Row 1: Footer Visibility */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
                     <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
                   </div>
 
@@ -1169,26 +1147,20 @@ export function GlobalSettingsWorkspace({
 
                   {/* Row 2: Copyright Text */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <input 
-                      type="text" 
-                      className="gs-underline-input"
-                      value={copyrightText} 
+                    <TextField
+                      label="Copyright Text"
+                      value={copyrightText}
                       maxLength={50}
+                      counter
                       onChange={(e) => setCopyrightText(e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 50))}
-                      placeholder="Copyright Text"
                     />
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', paddingRight: '4px', marginTop: '2px' }}>
-                      <span style={{ fontSize: '11px', color: 'var(--text-secondary, #94a3b8)', opacity: 0.85, fontVariantNumeric: 'tabular-nums' }}>
-                        {copyrightText.length}/50
-                      </span>
-                    </div>
                   </div>
 
                   <div style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }} />
 
                   {/* Row 3: Add Footer Link */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
                     <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
                       {linkLimitPopup && (
                         <div
@@ -1266,26 +1238,22 @@ export function GlobalSettingsWorkspace({
                         return (
                           <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <input
-                                className="gs-underline-input"
-                                style={{ flex: '1 1 40%' }}
+                              <TextField
+                                label="Link Label"
+                                className="gs-link-label"
                                 value={label}
                                 maxLength={30}
-                                placeholder="Label (max 30)"
                                 title="Link label (up to 30 characters)"
                                 onChange={(e) => write(e.target.value, url)}
                               />
-                              <input
-                                className="gs-underline-input"
-                                style={{ 
-                                  flex: '1 1 60%',
-                                  borderColor: isUrlInvalid ? '#ef4444' : undefined,
-                                  color: isUrlInvalid ? '#fca5a5' : undefined
-                                }}
+                              <TextField
+                                label="Link URL"
+                                className="gs-link-url"
                                 value={url}
                                 maxLength={255}
-                                placeholder="https://example.com (max 255)"
+                                placeholder="https://example.com"
                                 title="Link URL (up to 255 characters)"
+                                error={isUrlInvalid ? 'Please enter a valid URL (e.g. https://example.com)' : undefined}
                                 onChange={(e) => write(label, e.target.value)}
                               />
                               <button
@@ -1300,11 +1268,6 @@ export function GlobalSettingsWorkspace({
                                 <X size={15} />
                               </button>
                             </div>
-                            {isUrlInvalid && (
-                              <span style={{ fontSize: '11px', color: '#ef4444', paddingLeft: '42%' }}>
-                                Please enter a valid URL (e.g. https://example.com)
-                              </span>
-                            )}
                           </div>
                         );
                       })}
@@ -1325,12 +1288,12 @@ export function GlobalSettingsWorkspace({
                     in an inner flex div) so its `justify-content: space-between` spreads
                     slack evenly across every row instead of dumping it all into one gap
                     after the title (which is what a 2-child title+wrapper split does). */}
-                <div className="gs-config-card" style={{ padding: '22px 32px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
+                <div className="gs-config-card gs-config-card--stack gs-card-tint-strong">
+                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       {sidebarBg && (
                         <button
@@ -1343,9 +1306,12 @@ export function GlobalSettingsWorkspace({
                         </button>
                       )}
                       <div style={{ position: 'relative' }}>
-                        <div
+                        <button
+                          type="button"
+                          className="gs-swatch-btn"
                           title="Choose sidebar color"
-                          style={{ width: '30px', height: '30px', borderRadius: '50%', background: sidebarBg || '#ffffff', border: '1.5px solid rgba(255, 255, 255, 0.6)', cursor: 'pointer', boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)' }}
+                          aria-label="Choose sidebar color"
+                          style={{ ['--swatch' as string]: sidebarBg || '#ffffff' }}
                           onClick={() => document.getElementById('gs-color-picker-sidebar')?.click()}
                         />
                         <input
@@ -1360,24 +1326,24 @@ export function GlobalSettingsWorkspace({
                   </div>
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Start Expanded <InfoTooltip text="Choose whether sidebar initializes in expanded mode when app loads." /></span>
                     <AppleToggle checked={startExpanded} onChange={setStartExpanded} />
                   </div>
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Auto Hide Sidebar <InfoTooltip text="Automatically collapse sidebar when not in active use." /></span>
                     <AppleToggle checked={autoHideSidebar} onChange={setAutoHideSidebar} />
                   </div>
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Show Icons <InfoTooltip position="above" text="Display navigation item icons in sidebar." /></span>
                     <AppleToggle checked={showIcons} onChange={setShowIcons} />
                   </div>
                 </div>
 
                 {/* Width Configuration Card — same flattening as the Behavior card above. */}
-                <div className="gs-config-card" style={{ padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  <div style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>
+                <div className="gs-config-card gs-config-card--stack gs-card-tint-soft">
+                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
                     Sidebar Dimensions <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
                   </div>
 
@@ -1442,17 +1408,9 @@ export function GlobalSettingsWorkspace({
               <div className="gs-cards-2x2">
                 
                 {/* Left Card: Customer Logo */}
-                <div className="gs-config-card">
-                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="gs-config-card gs-card-tint-strong">
+                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop customer profile logo image." /></span>
-                    <button
-                      type="button"
-                      className={`gs-eye-preview-btn ${previewTarget === 'customer-logo' ? 'active' : ''}`}
-                      title="Show target area on page header with pointing arrow"
-                      onClick={() => togglePreviewTarget('customer-logo')}
-                    >
-                      <Eye size={15} />
-                    </button>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, justifyContent: 'center' }}>
@@ -1506,36 +1464,22 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle whether customer profile logo is displayed." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Show Customer Logo <InfoTooltip text="Toggle whether customer profile logo is displayed." /></span>
                     <AppleToggle checked={showCustomerLogo} onChange={setShowCustomerLogo} />
                   </div>
                 </div>
 
                 {/* Right Card: Customer Profile Visibility */}
-                <div className="gs-config-card" style={{ padding: '24px 28px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ ...headingStyle(5, 'primary'), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div className="gs-config-card gs-card-tint-soft">
+                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Profile Visibility <InfoTooltip text="Manage visibility, typography styles, and color follow settings for customer profile." position="below-right" /></span>
-                    <button
-                      type="button"
-                      className={`gs-eye-preview-btn ${previewTarget === 'profile' ? 'active' : ''}`}
-                      title="Show target area on page header with pointing arrow"
-                      onClick={() => togglePreviewTarget('profile')}
-                    >
-                      <Eye size={15} />
-                    </button>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
                     {/* Row 1: Customer Name */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <div>
-                        <input 
-                          type="text" 
-                          className="gs-underline-input"
-                          value={customerName} 
-                          onChange={e => setCustomerName(e.target.value)} 
-                          placeholder="Customer Name"
-                        />
+                        <TextField label="Customer Name" value={customerName} style={{ fontWeight: Number(customerNameWeight) }} onChange={e => setCustomerName(e.target.value)} />
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
@@ -1544,16 +1488,12 @@ export function GlobalSettingsWorkspace({
                         <Dropdown variant="pill" width="64px" value={customerNameWeight} onChange={setCustomerNameWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
-                          <div
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              borderRadius: '50%',
-                              background: customerNameColor ? customerNameColor : '#ffffff',
-                              border: '1.5px solid rgba(255, 255, 255, 0.6)',
-                              cursor: 'pointer',
-                              boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)'
-                            }}
+                          <button
+                            type="button"
+                            className="gs-swatch-btn"
+                            title="Choose colour"
+                            aria-label="Choose colour"
+                            style={{ ['--swatch' as string]: customerNameColor ? customerNameColor : '#ffffff' }}
                             onClick={() => document.getElementById('gs-color-picker-customer-name')?.click()}
                           />
                           <input
@@ -1572,13 +1512,7 @@ export function GlobalSettingsWorkspace({
                     {/* Row 2: Customer Caption (Matching User Screenshot 1:1) */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                       <div>
-                        <input 
-                          type="text" 
-                          className="gs-underline-input"
-                          value={customerCaption} 
-                          onChange={e => setCustomerCaption(e.target.value)} 
-                          placeholder="Digital Twin Solutions"
-                        />
+                        <TextField label="Customer Caption" value={customerCaption} style={{ fontWeight: Number(customerCaptionWeight) }} onChange={e => setCustomerCaption(e.target.value)} placeholder="Digital Twin Solutions" />
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '2px' }}>
@@ -1587,16 +1521,12 @@ export function GlobalSettingsWorkspace({
                         <Dropdown variant="pill" width="64px" value={customerCaptionWeight} onChange={setCustomerCaptionWeight} options={GS_WEIGHT_OPTIONS} title="Font weight" editable />
 
                         <div style={{ position: 'relative' }}>
-                          <div
-                            style={{
-                              width: '30px',
-                              height: '30px',
-                              borderRadius: '50%',
-                              background: customerCaptionColor ? customerCaptionColor : 'rgba(255, 255, 255, 0.65)',
-                              border: '1.5px solid rgba(255, 255, 255, 0.6)',
-                              cursor: 'pointer',
-                              boxShadow: '0 0 8px rgba(255, 255, 255, 0.15)'
-                            }}
+                          <button
+                            type="button"
+                            className="gs-swatch-btn"
+                            title="Choose colour"
+                            aria-label="Choose colour"
+                            style={{ ['--swatch' as string]: customerCaptionColor ? customerCaptionColor : 'rgba(255, 255, 255, 0.65)' }}
                             onClick={() => document.getElementById('gs-color-picker-customer-caption')?.click()}
                           />
                           <input
@@ -1614,7 +1544,7 @@ export function GlobalSettingsWorkspace({
                   </div>
 
                   <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...headingStyle(5, 'primary'), display: 'inline-flex', alignItems: 'center' }}>Text Color matches theme <InfoTooltip position="above" text="When on, customer name and caption follow the theme text colour and the colour swatches are ignored." /></span>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Text Color matches theme <InfoTooltip position="above" text="When on, customer name and caption follow the theme text colour and the colour swatches are ignored." /></span>
                     <AppleToggle checked={customerColorFollow} onChange={setCustomerColorFollow} />
                   </div>
                 </div>
