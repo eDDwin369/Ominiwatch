@@ -1298,32 +1298,117 @@ input, button, select, textarea, span, p, div, label, a {
   vertical-align: middle !important;
 }
 
-/* Fix Manage Columns tab indicator alignment under CSS zoom */
-.user-tab-page .MuiTabs-indicator,
-.dashboard-wrapper .MuiTabs-indicator,
-.MuiTabs-indicator {
+/* ── Menu tabs & MUI Tabs (Manage Columns, Global Settings, Notifications) ──
+   Unselected: transparent, secondary text. Hover: grey lift + shadow.
+   Selected: highlight tint (soft gradient), primary label at strong weight, full-width 2px primary underline. */
+:where(html, body) .MuiTabs-indicator,
+.MuiTabs-indicator,
+span.MuiTabs-indicator,
+.MuiTabs-root .MuiTabs-indicator {
   display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+  pointer-events: none !important;
 }
 
-.user-tab-page .MuiTabs-root .MuiTab-root,
-.dashboard-wrapper .MuiTabs-root .MuiTab-root,
-.MuiTabs-root .MuiTab-root {
+:where(html, body) .MuiTabs-root {
+  min-height: 40px !important;
+  border-bottom: 1px solid var(--border-light) !important;
+  overflow: visible !important;
+}
+
+:where(html, body) .MuiTabs-scroller {
+  overflow: visible !important;
+}
+
+:where(html, body) .MuiTabs-flexContainer {
+  gap: 4px !important;
+  align-items: flex-end !important;
+}
+
+:where(html, body) .MuiTabs-root .MuiTab-root,
+:where(html, body) .MuiTab-root {
   position: relative !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  font-family: var(--app-font-family, inherit) !important;
+  font-size: var(--font-size-body-sm, 14px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  text-transform: none !important;
+  min-height: 38px !important;
+  padding: 8px 18px !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: calc(var(--radius-unit, 1px) * 6) calc(var(--radius-unit, 1px) * 6) 0 0 !important;
+  transition: color 0.16s, background 0.16s, border-color 0.16s, box-shadow 0.16s, transform 0.16s, opacity 0.16s, filter 0.16s !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  transform: none;
 }
 
-.user-tab-page .MuiTabs-root .MuiTab-root.Mui-selected::after,
-.dashboard-wrapper .MuiTabs-root .MuiTab-root.Mui-selected::after,
-.MuiTabs-root .MuiTab-root.Mui-selected::after {
-  content: "" !important;
-  position: absolute !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: 2px !important;
-  background-color: var(--primary, #1976d2) !important;
-  border-radius: 2px !important;
-  z-index: 1 !important;
+/* Unselected tabs recede: faded + softly blurred, still readable; hover brings them back */
+:where(html, body) .MuiTabs-root .MuiTab-root:not(.Mui-selected),
+:where(html, body) .MuiTab-root:not(.Mui-selected) {
+  opacity: 0.5 !important;
+  filter: blur(0.5px) !important;
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  border-bottom-color: transparent !important;
 }
+
+:where(html, body) .MuiTabs-root .MuiTab-root:not(.Mui-selected):hover,
+:where(html, body) .MuiTab-root:not(.Mui-selected):hover {
+  opacity: 1 !important;
+  filter: none !important;
+  z-index: 5 !important;
+  color: var(--text-main) !important;
+  background: rgba(150, 160, 175, 0.35) !important;
+  border-radius: calc(var(--radius-unit, 1px) * 8) calc(var(--radius-unit, 1px) * 8) 0 0 !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Selected tab: soft gradient highlight, full-width 2px primary underline, primary color */
+:where(html, body) .MuiTabs-root .MuiTab-root.Mui-selected,
+:where(html, body) .MuiTab-root.Mui-selected,
+:where(html, body) .MuiTabs-root .MuiTab-root.Mui-selected:hover,
+:where(html, body) .MuiTab-root.Mui-selected:hover {
+  opacity: 1 !important;
+  filter: none !important;
+  color: var(--primary) !important;
+  font-weight: var(--font-weight-strong, 600) !important;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--highlight, var(--primary)) 26%, transparent) 0%,
+    color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent) 100%) !important;
+  border-bottom: 2px solid var(--primary) !important;
+  border-radius: calc(var(--radius-unit, 1px) * 6) calc(var(--radius-unit, 1px) * 6) 0 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+:where(html, body) .MuiTabs-root .MuiTab-root.Mui-selected::after,
+:where(html, body) .MuiTab-root.Mui-selected::after {
+  display: none !important;
+  content: none !important;
+}
+
+[data-theme-mode="dark"] :where(html, body) .MuiTabs-root .MuiTab-root:not(.Mui-selected),
+[data-theme-mode="dark"] :where(html, body) .MuiTab-root:not(.Mui-selected) {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme-mode="dark"] :where(html, body) .MuiTabs-root .MuiTab-root:not(.Mui-selected):hover,
+[data-theme-mode="dark"] :where(html, body) .MuiTab-root:not(.Mui-selected):hover {
+  color: var(--text-main) !important;
+}
+
+[data-theme-mode="dark"] :where(html, body) .MuiTabs-root .MuiTab-root.Mui-selected,
+[data-theme-mode="dark"] :where(html, body) .MuiTab-root.Mui-selected {
+  color: var(--primary) !important;
+}
+
 
 /* Brand gradient text (primary -> secondary) for page headers and card headers.
    Starts in the primary colour; lightened in dark mode to stay readable on dark surfaces. */
