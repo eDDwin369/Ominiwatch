@@ -719,19 +719,39 @@
 }
 
 .gs-confirm {
-  width: 360px;
+  width: 400px;
   max-width: calc(100% - 32px);
-  padding: 22px 24px;
-  background: var(--bg-card);
+  box-sizing: border-box;
+  padding: calc(var(--container-pad, 10px) * 2.4);
+  /* same dialog standard as the image cropper / Account Settings dialogs */
+  background: var(--brand-card-surface);
   border: var(--card-border, 1px solid var(--border-light));
   border-radius: var(--radius-xl, 18px);
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--card-shadow), var(--card-shadow);
+  color: var(--text-main);
+  font-family: var(--app-font-family);
+}
+
+.gs-confirm-header {
+  background: var(--card-hdr-solid-band, transparent);
+  border-bottom: var(--card-hdr-border, none);
+  box-shadow: var(--card-hdr-accent, none);
+}
+
+.gs-modal .gs-confirm .gs-confirm-title {
+  --h-custom: var(--h4-color-custom); /* dialog title = H4 level */
+  margin: 0;
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h4-size, 20px);
+  font-weight: var(--h4-weight, 400);
+  line-height: var(--heading-lh, 1.2);
 }
 
 .gs-confirm-text {
-  margin: 8px 0 20px;
-  font-size: var(--app-font-size, 14px);
-  line-height: 1.5;
+  margin: calc(var(--container-pad, 10px) * 1.2) 0 calc(var(--container-pad, 10px) * 2);
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: var(--app-font-weight, 400);
+  line-height: var(--app-line-height, 1.5);
   color: var(--text-secondary);
 }
 
