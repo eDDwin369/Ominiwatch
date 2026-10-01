@@ -434,14 +434,14 @@ export function ReportsPage() {
                   onClick={() => setIsAddModalOpen(false)}
                   className="urm-btn-cancel"
                 >
-                  Cancel
+                  CANCEL
                 </button>
                 <button
                   type="submit"
                   disabled={formHasErrors}
                   className="urm-btn-save"
                 >
-                  Save
+                  SAVE
                 </button>
               </div>
             </form>
