@@ -34,7 +34,8 @@ function syncCssVars(theme: any, settings: any) {
   set('--text-main', p.text.primary);
   set('--text-primary', p.text.primary);
   set('--text-secondary', p.text.secondary);
-  set('--text-muted', p.text.disabled);
+  // muted text follows a custom secondary text colour when one is set
+  set('--text-muted', settings.textSecondaryHex ? `color-mix(in srgb, ${settings.textSecondaryHex} 75%, transparent)` : p.text.disabled);
   set('--border-light', p.divider);
   set('--border-hover', p.divider);
   // status
@@ -66,6 +67,11 @@ function syncCssVars(theme: any, settings: any) {
     ? (rawCardHdrBg.startsWith('rgba') ? `linear-gradient(${rawCardHdrBg}, ${rawCardHdrBg}), var(--bg-card)` : rawCardHdrBg)
     : 'var(--bg-card)';
   set('--card-hdr', cardHdrBg);
+  // Colour-only parts of the card header for the shell's header band / field fill
+  // (--card-hdr itself can be a background layer list, which color-mix() can't take).
+  const hdrIsTint = !!rawCardHdrBg && rawCardHdrBg.startsWith('rgba');
+  set('--card-hdr-base', settings.cardHdrHex || (rawCardHdrBg && rawCardHdrBg !== 'transparent' && !hdrIsTint ? rawCardHdrBg : undefined));
+  set('--card-hdr-tint', hdrIsTint ? rawCardHdrBg : undefined);
   set('--notif-card', tk.toastBg);
   const btnBase = settings.btnColorHex || p.primary.main;
   set('--btn-color', settings.accentGradient ? `linear-gradient(135deg, ${btnBase}, ${p.primary.dark})` : btnBase);
@@ -73,6 +79,8 @@ function syncCssVars(theme: any, settings: any) {
   // shape / surface / density / misc tokens
   set('--card-border', tk.cardBodyBorder);
   set('--card-shadow', tk.cardBodyShadow);
+  // shell cards that layer their own (stronger) shadow scale it by the studio's card shadow (20 = as designed)
+  set('--card-shadow-scale', settings.cardShadowPx != null && settings.cardShadowPx >= 0 ? String(settings.cardShadowPx / 20) : undefined);
   set('--card-hdr-accent', tk.cardHdrAccent || 'none');
   set('--card-hdr-border', tk.cardHdrBorder === 'none' ? 'none' : (tk.cardHdrBorder || '1px solid var(--border-light)'));
   set('--container-pad', tk.containerPad != null ? `${tk.containerPad}px` : undefined);
@@ -189,7 +197,7 @@ function syncCssVars(theme: any, settings: any) {
   set('--app-font-size', body.fontSize ? `${body.fontSize}px` : undefined);
   set('--app-line-height', body.lineHeight != null ? String(body.lineHeight) : undefined);
   set('--app-font-weight', body.fontWeight != null ? String(body.fontWeight) : undefined);
-  set('--app-letter-spacing', settings.letterSpace ? `${settings.letterSpace}px` : '0');
+  set('--app-letter-spacing', settings.letterSpace ? `${settings.letterSpace}px` : '0px');
   // per-heading tokens: size comes from raw settings.h{n}Size when set (presets pin
   // this explicitly), else the resolved theme (h1Size-derived fixed ratio); weight/color from raw settings
   // (0/'' = auto → fall back to headingWeight / --text-main default in index.css).
@@ -203,6 +211,8 @@ function syncCssVars(theme: any, settings: any) {
     const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
     set(`--h${n}-weight`, w ? String(w) : undefined);
     set(`--h${n}-color`, settings[`h${n}Color`] || 'var(--text-main)');
+    // only when the user picked a heading colour — lets it replace the shell's gradient titles
+    set(`--h${n}-color-custom`, settings[`h${n}Color`] || undefined);
   }
   set('--heading-lh', ty.h1?.lineHeight != null ? String(ty.h1.lineHeight) : undefined);
   // body typography tokens for Dashboard.css
@@ -264,7 +274,7 @@ function syncCssVars(theme: any, settings: any) {
   };
   set('--dash-progress-fill', figmaProgressFill[settings.presetId] || primaryHex);
   set('--dash-canvas-bg', tk.canvasBg);
-  set('--account-page-bg', tk.accountPageBg);
+  set('--account-page-bg', settings.pageBgHex || tk.accountPageBg);
   const figmaAccountCardLight: Record<string, string> = {
     corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
     'corporate-blue': 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
@@ -282,7 +292,7 @@ function syncCssVars(theme: any, settings: any) {
   const resolvedAccountCardBg = isDark
     ? figmaAccountCardDark[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #010D27 0%, #03205F 100%)'
     : figmaAccountCardLight[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)';
-  set('--account-card-bg', resolvedAccountCardBg);
+  set('--account-card-bg', settings.cardBgHex || resolvedAccountCardBg);
   set('--dash-brand-gradient', tk.brandGradient);
   set('--dash-aura-color', primaryHex);
   set('--gs-accent-gradient', tk.gsAccentGradient);

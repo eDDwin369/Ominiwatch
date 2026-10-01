@@ -30,7 +30,7 @@
   inset: 0;
   margin: 0;
   padding: 0 8px;
-  border-radius: 12px;
+  border-radius: calc(var(--radius-unit, 1px) * 12);
   border: 1px solid var(--border-light);
   pointer-events: none;
   transition: border-color 0.15s ease;

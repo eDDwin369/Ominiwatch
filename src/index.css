@@ -1324,3 +1324,194 @@ input, button, select, textarea, span, p, div, label, a {
   border-radius: 2px !important;
   z-index: 1 !important;
 }
+
+/* Brand gradient text (primary -> secondary) for page headers and card headers.
+   Starts in the primary colour; lightened in dark mode to stay readable on dark surfaces. */
+.brand-gradient-text {
+  font-family: inherit; /* beats the global span/div font reset, keeps the heading font */
+  --grad-from: var(--primary);
+  color: var(--primary);
+  background-image: linear-gradient(90deg, var(--h-custom, var(--grad-from)) 0%, var(--h-custom, var(--secondary)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme-mode="dark"] .brand-gradient-text {
+  --grad-from: color-mix(in srgb, var(--primary) 55%, #ffffff);
+}
+
+/* Which studio heading level each gradient title is: page titles = H2, card/dialog titles = H4 */
+h2.brand-gradient-text,
+.figma-settings-title.brand-gradient-text {
+  --h-custom: var(--h2-color-custom);
+}
+
+.gs-card-header .brand-gradient-text,
+.figma-card-heading .brand-gradient-text,
+.figma-modal-header .brand-gradient-text {
+  --h-custom: var(--h4-color-custom);
+}
+
+/* Shared card surface for Account Settings, Global Settings and Notifications — the theme's
+   account card gradient with a soft top-left sheen for depth. Plus the matching header band
+   and soft input fill, so all three screens read as one app. */
+:root {
+  --brand-card-surface:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 45%),
+    var(--account-card-bg, var(--bg-card));
+  /* Header band = studio card-header tint (Tinted + strength) over the header colour.
+     Plain = no tint, so the release look is unchanged. */
+  --brand-card-band:
+    linear-gradient(var(--card-hdr-tint, transparent), var(--card-hdr-tint, transparent)),
+    color-mix(in srgb, var(--card-hdr-base, var(--bg-card)) 85%, transparent);
+  --brand-field-fill: color-mix(in srgb, var(--card-hdr-base, var(--bg-card)) 35%, transparent);
+}
+
+[data-theme-mode="dark"] {
+  --brand-card-surface:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 45%),
+    var(--account-card-bg, var(--bg-card));
+}
+
+/* Page header icon + title (Global Settings, Notifications, Account Settings) */
+.page-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.page-title-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+}
+
+[data-theme-mode="dark"] .page-title-icon {
+  background: color-mix(in srgb, var(--primary) 26%, transparent);
+  color: color-mix(in srgb, var(--primary) 55%, #ffffff);
+}
+
+/* ── Menu tabs — Theme Studio tab behaviour (Global Settings + Notifications) ──
+   Unselected: transparent, secondary text. Hover: grey lift + shadow. Selected: highlight
+   tint (soft gradient), main text at 600, full-width 2px primary underline. Hint on hover:
+   Theme Studio's tooltip (dark grey pill below the tab), text from data-tip. */
+.gs-modal .gs-tabs .gs-tab,
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn {
+  position: relative;
+  background: transparent;
+  color: var(--h5-color-custom, var(--text-secondary));
+  font-weight: var(--h5-weight, 400);
+  border-bottom: 2px solid transparent;
+  border-radius: calc(var(--radius-unit, 1px) * 6) calc(var(--radius-unit, 1px) * 6) 0 0;
+  transition: color 0.16s, background 0.16s, border-color 0.16s, box-shadow 0.16s, transform 0.16s, opacity 0.16s, filter 0.16s;
+}
+
+/* Unselected tabs recede: faded + softly blurred, still readable; hover brings them back */
+.gs-modal .gs-tabs .gs-tab:not(.active),
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn:not(.active) {
+  opacity: 0.5;
+  filter: blur(0.5px);
+}
+
+.gs-modal .gs-tabs .gs-tab:not(.active):hover,
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn:not(.active):hover {
+  opacity: 1;
+  filter: none;
+  z-index: 5;
+  color: var(--h5-color-custom, var(--text-main));
+  background: rgba(150, 160, 175, 0.35);
+  border-radius: calc(var(--radius-unit, 1px) * 8);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transform: translateY(-2px);
+}
+
+.gs-modal .gs-tabs .gs-tab.active,
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn.active,
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn.active:hover {
+  color: var(--h5-color-custom, var(--text-main));
+  font-weight: var(--font-weight-strong, 600);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--highlight, var(--primary)) 26%, transparent) 0%,
+    color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent) 100%);
+  border-bottom-color: var(--primary);
+  border-radius: calc(var(--radius-unit, 1px) * 6) calc(var(--radius-unit, 1px) * 6) 0 0;
+}
+
+[data-theme-mode="dark"] .gs-modal .gs-tabs .gs-tab,
+[data-theme-mode="dark"] .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn {
+  color: var(--h5-color-custom, var(--text-secondary));
+}
+
+[data-theme-mode="dark"] .gs-modal .gs-tabs .gs-tab.active,
+[data-theme-mode="dark"] .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn.active,
+[data-theme-mode="dark"] .gs-modal .gs-tabs .gs-tab:not(.active):hover,
+[data-theme-mode="dark"] .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn:not(.active):hover {
+  color: var(--h5-color-custom, var(--text-main));
+}
+
+/* Hover hint (replaces the old short underline pseudo-element) */
+.gs-modal .gs-tabs .gs-tab::after,
+.gs-modal .gs-tabs .gs-tab.active::after,
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn::after,
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn.active::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 14px);
+  bottom: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 300px;
+  height: auto;
+  padding: 4px 8px;
+  border-radius: calc(var(--radius-unit, 1px) * 9);
+  background: rgba(97, 97, 97, 0.92);
+  color: #ffffff;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1.5;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 50;
+  transition: opacity 0.16s;
+}
+
+.gs-modal .gs-tabs .gs-tab:hover::after,
+.new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn:hover::after {
+  opacity: 1;
+}
+
+/* Tab rows sit on a thin divider, as in Theme Studio */
+.gs-modal .gs-tabs,
+.new-notification-dropdown .new-notification-tabs-row {
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* ── Typography: every shell text follows Theme Studio's tokens ──
+   Emphasis weights are derived from the body weight, so bold/medium text keeps its
+   hierarchy and still moves with the studio's font-weight setting. */
+:root {
+  --font-weight-medium: min(900, calc(var(--app-font-weight, 400) + 100));
+  --font-weight-strong: min(900, calc(var(--app-font-weight, 400) + 200));
+  /* Corner radius unit: 1px at the studio's design radius (9), scales with its radius setting.
+     Shell radii are written as multiples of it, so every corner follows Theme Studio. */
+  --radius-unit: calc(var(--radius-md, 9px) / 9);
+}
+
+/* Form controls default to the browser's own weight; inherit the theme's instead
+   (zero specificity, so any explicit rule still wins). */
+:where(.gs-modal, .gs-dd-menu, .new-notification-dropdown, .figma-account-settings-container, .figma-modal-backdrop)
+  :where(button, input, select, textarea) {
+  font-weight: var(--app-font-weight, 400);
+  letter-spacing: var(--app-letter-spacing, normal);
+}

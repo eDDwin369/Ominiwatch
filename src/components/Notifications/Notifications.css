@@ -31,7 +31,7 @@
   border-top: 1px solid var(--border-light);
   border-left: 1px solid var(--border-light);
   transform: rotate(45deg);
-  border-top-left-radius: 2px;
+  border-top-left-radius: calc(var(--radius-unit, 1px) * 2);
   z-index: 1001; /* Need to sit above the container but behind header if we were scrolling, actually keep it positive so it overlays the top border */
 }
 
@@ -229,8 +229,8 @@
   border-top: 1px solid var(--border-light);
   text-align: center;
   background: var(--bg-card);
-  border-bottom-left-radius: 12px;
-  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: calc(var(--radius-unit, 1px) * 12);
+  border-bottom-right-radius: calc(var(--radius-unit, 1px) * 12);
 }
 
 .notification-view-all {
@@ -295,7 +295,7 @@
   font-size: var(--h2-size);
   font-weight: var(--h2-weight);
   color: var(--h2-color);
-  letter-spacing: -1px;
+  letter-spacing: calc(-1px + var(--app-letter-spacing, 0px));
 }
 
 .notifications-actions {
@@ -337,7 +337,7 @@
   align-items: center;
   height: 100%;
   border-bottom: 3px solid transparent;
-  border-radius: 8px 8px 0 0;
+  border-radius: calc(var(--radius-unit, 1px) * 8) calc(var(--radius-unit, 1px) * 8) 0 0;
 }
 
 .notification-tab-btn:hover {
@@ -386,7 +386,7 @@
   font-weight: 400;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: calc(0.5px + var(--app-letter-spacing, 0px));
   margin: var(--spacing-5) 0 var(--spacing-3);
   padding-bottom: var(--spacing-2);
   border-bottom: 1px solid var(--border-light);
@@ -467,7 +467,7 @@
   border-top: 1px solid var(--border-light);
   border-left: 1px solid var(--border-light);
   transform: rotate(45deg);
-  border-top-left-radius: 2px;
+  border-top-left-radius: calc(var(--radius-unit, 1px) * 2);
   z-index: 1001;
 }
 
@@ -594,49 +594,59 @@
 
 /* ── Visual consistency with Global Settings (colour/gradient/text tokens only — no layout) ── */
 
+/* Wide enough for the three H4 tabs + mark-all-read on one line (H4 matches every other
+   tab/card header in the app); capped so it never runs off a small screen. */
+.new-notification-dropdown {
+  width: 470px;
+  max-width: calc(100vw - 24px);
+}
+
 /* Window frame: same border + card shadow tokens as the Global Settings modal */
 .new-notification-dropdown {
   box-shadow: var(--card-shadow, 0 10px 25px -5px rgba(0, 0, 0, 0.1));
 }
 
-/* Title bar: Global Settings' primary→secondary gradient (light) / primary radial (dark) */
+/* Title bar: light surface with a faint primary tint (same as Global Settings); the
+   title itself carries the brand gradient. */
 .new-notification-header {
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg-card));
   border-bottom-color: var(--border-light);
 }
 
-[data-theme-mode="dark"] .new-notification-header,
+[data-theme-mode="dark"] .new-notification-header {
+  background: color-mix(in srgb, var(--primary) 12%, var(--bg-card));
+}
+
 [data-theme-mode="dark"] .new-notification-tabs-row {
-  background: var(--gs-modal-bg-dark, radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%));
+  background: color-mix(in srgb, var(--primary) 18%, var(--bg-card));
 }
 
-/* Caret sits under the right end of the gradient, so it takes that end's colour */
+/* Caret matches the title bar it points out of */
 .new-notification-dropdown::before {
-  background: var(--secondary);
-  border-color: transparent;
-}
-
-[data-theme-mode="dark"] .new-notification-dropdown::before {
-  background: var(--bg-dashboard);
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg-card));
   border-color: var(--border-light);
 }
 
-/* Level 1 — page title, same H1 tokens as the Global Settings title */
+[data-theme-mode="dark"] .new-notification-dropdown::before {
+  background: color-mix(in srgb, var(--primary) 12%, var(--bg-card));
+}
+
+/* Page header — H2, same as Global Settings / Account Settings */
 .new-notification-title {
   font-family: var(--app-heading-family, var(--app-font-family));
-  font-size: var(--h1-size);
-  font-weight: var(--h1-weight);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
   color: var(--on-accent, var(--btn-text, #ffffff));
 }
 
-/* Header icons read on the gradient; hover is a soft light wash */
+/* Header icons on the light title bar */
 .new-header-action-btn {
-  color: color-mix(in srgb, var(--on-accent, #ffffff) 85%, transparent);
+  color: var(--text-secondary);
 }
 
 .new-header-action-btn:hover {
-  background: color-mix(in srgb, var(--on-accent, #ffffff) 18%, transparent);
-  color: var(--on-accent, #ffffff);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
 }
 
 /* Close: same red treatment as Global Settings' close button (ring via inset shadow, so no size change) */
@@ -663,11 +673,11 @@
   border-bottom-color: var(--border-light);
 }
 
-/* Level 2 — menu tabs: shell menu-item tokens (H6), one step above the 13px list text */
+/* Menu tabs — H5, same as Global Settings tabs */
 .new-tab-pill-btn {
   font-family: var(--app-heading-family, var(--app-font-family));
-  font-size: var(--h6-size, 14px);
-  font-weight: var(--h6-weight, var(--app-font-weight, 400));
+  font-size: var(--h5-size, 17px);
+  font-weight: var(--h5-weight, var(--app-font-weight, 400));
   color: color-mix(in srgb, var(--text-secondary) 40%, transparent);
 }
 
@@ -704,7 +714,7 @@
   position: relative;
   background-color: var(--bg-card);
   border-bottom-color: transparent;
-  border-radius: 12px 12px 0 0;
+  border-radius: calc(var(--radius-unit, 1px) * 12) calc(var(--radius-unit, 1px) * 12) 0 0;
 }
 
 .new-tab-pill-btn.active::after {
@@ -715,7 +725,7 @@
   transform: translateX(-50%);
   width: 24px;
   height: 2px;
-  border-radius: 2px;
+  border-radius: calc(var(--radius-unit, 1px) * 2);
   background: var(--primary);
 }
 
@@ -760,8 +770,8 @@
 
 /* Settings button shows as pressed while the settings view is open */
 .new-header-action-btn.active {
-  background: color-mix(in srgb, var(--on-accent, #ffffff) 22%, transparent);
-  color: var(--on-accent, #ffffff);
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
 }
 
 /* In-window notification settings (moved from Account Settings) */
@@ -839,7 +849,7 @@
   height: 24px;
   padding: 0;
   border: none;
-  border-radius: 12px;
+  border-radius: calc(var(--radius-unit, 1px) * 12);
   background: var(--border-light);
   cursor: pointer;
   transition: background 0.2s ease;
@@ -877,7 +887,7 @@
 .new-notification-item-row {
   display: flex;
   align-items: flex-start;
-  padding: 16px 20px;
+  padding: calc(var(--container-pad, 10px) * 1.6) calc(var(--container-pad, 10px) * 2);
   border-bottom: 1px solid var(--bg-dashboard);
   cursor: pointer;
   transition: background 0.05s ease;
@@ -1107,3 +1117,121 @@
   margin-bottom: 12px;
 }
 
+/* Window surface = Global Settings window: soft primary tint fading into the card colour.
+   (The full brand-card surface became a heavy green slab at full-screen size.) */
+.new-notification-dropdown {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--primary) 14%, var(--bg-card)) 0%,
+    color-mix(in srgb, var(--primary) 8%, var(--bg-card)) 45%,
+    color-mix(in srgb, var(--secondary) 10%, var(--bg-card)) 100%);
+}
+
+[data-theme-mode="dark"] .new-notification-dropdown {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--primary) 16%, var(--bg-card)) 0%,
+    color-mix(in srgb, var(--primary) 7%, var(--bg-card)) 45%,
+    color-mix(in srgb, var(--secondary) 10%, var(--bg-card)) 100%);
+}
+
+.new-notification-dropdown .new-notification-list-scroll,
+.new-notification-dropdown .new-notification-settings {
+  background: transparent;
+}
+
+/* Rows sit on the window: one divider colour, unread = faint highlight tint (the red dot
+   still marks it), hover = a step stronger. No alternating light/dark stripes. */
+.new-notification-dropdown .new-notification-item-row,
+[data-theme-mode] .new-notification-dropdown .new-notification-item-row {
+  background: transparent !important;
+  border-bottom-color: var(--border-light) !important;
+}
+
+.new-notification-dropdown .new-notification-item-row.unread,
+[data-theme-mode] .new-notification-dropdown .new-notification-item-row.unread {
+  background: color-mix(in srgb, var(--highlight, var(--primary)) 6%, transparent) !important;
+}
+
+.new-notification-dropdown .new-notification-item-row:hover,
+[data-theme-mode] .new-notification-dropdown .new-notification-item-row:hover {
+  background: color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent) !important;
+}
+
+/* Thin themed scrollbar instead of the chunky native one */
+.new-notification-dropdown .new-notification-list-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--primary) 35%, transparent) transparent;
+}
+
+/* Settings: rows grouped on the shared brand card, like Global Settings' cards */
+.new-notif-settings-card {
+  background: var(--brand-card-surface);
+  border: var(--card-border, 1px solid var(--border-light));
+  border-radius: var(--radius-xl, 16px);
+  box-shadow: var(--card-shadow);
+  padding: 4px 20px;
+}
+
+.new-notif-settings-card .new-notif-setting-row:last-child {
+  border-bottom: none;
+}
+
+/* Accept / Decline: same shape and tokens as Global Settings' Cancel / Save buttons */
+.notification-action-decline-btn,
+.notification-action-accept-btn {
+  padding: 6px 16px;
+  border-radius: calc(var(--radius-unit, 1px) * 16);
+  font-family: inherit;
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.notification-action-decline-btn {
+  background: transparent;
+  border-color: var(--border-light);
+  color: var(--text-main);
+}
+
+.notification-action-decline-btn:hover {
+  background: var(--border-light);
+}
+
+/* Attachment: soft field fill + field outline, like the Global Settings inputs */
+.notification-attachment-box {
+  background: var(--brand-field-fill);
+  border-color: var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 12);
+}
+
+.attachment-file-name {
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: var(--app-font-weight, 400);
+}
+
+.attachment-file-size {
+  font-size: var(--font-size-caption, 12px);
+}
+
+.new-notification-empty p {
+  font-size: var(--font-size-body-sm, 14px);
+}
+
+/* Title bar + tab row: transparent, so the window wash runs through them (same as Global Settings) */
+.new-notification-dropdown .new-notification-header,
+.new-notification-dropdown .new-notification-tabs-row {
+  background: transparent;
+}
+
+[data-theme-mode="dark"] .new-notification-dropdown .new-notification-header {
+  background: color-mix(in srgb, var(--primary) 16%, var(--bg-card));
+}
+
+[data-theme-mode="dark"] .new-notification-dropdown .new-notification-tabs-row {
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--primary) 12%, var(--bg-card)) 0%,
+    color-mix(in srgb, var(--primary) 6%, var(--bg-card)) 100%);
+}
+
+/* Caret = the window's top-left wash colour */
+.new-notification-dropdown::before {
+  background: color-mix(in srgb, var(--primary) 14%, var(--bg-card));
+}

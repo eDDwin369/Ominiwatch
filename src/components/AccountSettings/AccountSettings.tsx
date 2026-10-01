@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   ChevronDown, ChevronUp, SquarePen, Check, X, Shield, 
   Laptop, Monitor, Smartphone, 
-  AlertTriangle, CheckCircle2, Camera
+  AlertTriangle, CheckCircle2, Camera, UserCog, ShieldCheck, KeyRound
 } from 'lucide-react';
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { ImageCropperModal } from '../GlobalSettings/ImageCropperModal';
@@ -393,8 +393,9 @@ export function AccountSettings({
     <div className="figma-account-settings-page-wrapper">
       <div className="figma-account-settings-container">
         {/* Top Header / Breadcrumb */}
-      <div className="figma-settings-header">
-        <h1 className="figma-settings-title">Account Settings</h1>
+      <div className="figma-settings-header page-title-group">
+        <span className="page-title-icon" aria-hidden="true"><UserCog size={20} /></span>
+        <h1 className="figma-settings-title brand-gradient-text">Account Settings</h1>
       </div>
 
       {/* Main Grid: Left Column (Personal Info & Preferences) + Right Column (Security & Notifications) */}
@@ -406,7 +407,7 @@ export function AccountSettings({
           {/* CARD 1: Personal Information */}
           <div className={`figma-card figma-card-personal ${isEditingProfile ? 'is-editing' : ''}`}>
             <div className="figma-card-top-bar">
-              <h2 className="figma-card-heading">Personal Information</h2>
+              <h2 className="figma-card-heading"><span className="brand-gradient-text">Personal Information</span></h2>
             </div>
 
             <div className="figma-personal-content">
@@ -556,7 +557,7 @@ export function AccountSettings({
           {/* CARD 2: Preferences & Privacy */}
           <div className="figma-card figma-card-preferences">
             <div className="figma-card-top-bar">
-              <h2 className="figma-card-heading">Preferences & Privacy</h2>
+              <h2 className="figma-card-heading"><span className="brand-gradient-text">Preferences & Privacy</span></h2>
             </div>
 
             <div className="figma-preferences-row-inline">
@@ -642,7 +643,7 @@ export function AccountSettings({
             
             {/* Top Section: Security & Sessions */}
             <div className="figma-security-section">
-              <h2 className="figma-card-heading">Security & Sessions</h2>
+              <h2 className="figma-card-heading"><span className="brand-gradient-text">Security & Sessions</span></h2>
 
               <div className="figma-accordions-stack">
                 {/* Active Sessions Item */}
@@ -798,7 +799,10 @@ export function AccountSettings({
         <div className="figma-modal-backdrop" onClick={() => setIs2faModalOpen(false)}>
           <div className="figma-modal-box figma-modal-std" role="dialog" aria-modal="true" aria-labelledby="twofa-title" onClick={e => e.stopPropagation()}>
             <div className="figma-modal-header">
-              <h3 id="twofa-title">Two-Factor Authentication (2FA)</h3>
+              <div className="page-title-group">
+                <span className="page-title-icon" aria-hidden="true"><ShieldCheck size={18} /></span>
+                <h3 id="twofa-title"><span className="brand-gradient-text">Two-Factor Authentication (2FA)</span></h3>
+              </div>
               <button className="figma-modal-close" aria-label="Close" title="Close" onClick={() => setIs2faModalOpen(false)}><X size={16} /></button>
             </div>
             <div className="figma-modal-body">
@@ -844,7 +848,10 @@ export function AccountSettings({
         <div className="figma-modal-backdrop" onClick={closePasswordModal}>
           <div className="figma-modal-box figma-modal-std" role="dialog" aria-modal="true" aria-labelledby="password-title" onClick={e => e.stopPropagation()}>
             <div className="figma-modal-header">
-              <h3 id="password-title">Change Password</h3>
+              <div className="page-title-group">
+                <span className="page-title-icon" aria-hidden="true"><KeyRound size={18} /></span>
+                <h3 id="password-title"><span className="brand-gradient-text">Change Password</span></h3>
+              </div>
               <button className="figma-modal-close" aria-label="Close" title="Close" onClick={closePasswordModal}><X size={16} /></button>
             </div>
             <div className="figma-modal-body">
@@ -910,13 +917,13 @@ export function AccountSettings({
       {/* Delete Account Modal */}
       {isDeleteModalOpen && (
         <div className="figma-modal-backdrop" onClick={() => setIsDeleteModalOpen(false)}>
-          <div className="figma-modal-box figma-modal-danger" onClick={e => e.stopPropagation()}>
+          <div className="figma-modal-box figma-modal-std figma-modal-danger" role="alertdialog" aria-modal="true" aria-labelledby="delete-title" onClick={e => e.stopPropagation()}>
             <div className="figma-modal-header">
-              <div className="figma-danger-title">
-                <AlertTriangle size={20} color="#ef4444" />
-                <h3>Delete Account</h3>
+              <div className="page-title-group">
+                <span className="page-title-icon page-title-icon--danger" aria-hidden="true"><AlertTriangle size={18} /></span>
+                <h3 id="delete-title" className="figma-danger-heading">Delete Account</h3>
               </div>
-              <button className="figma-modal-close" onClick={() => setIsDeleteModalOpen(false)}><X size={18} /></button>
+              <button className="figma-modal-close" aria-label="Close" title="Close" onClick={() => setIsDeleteModalOpen(false)}><X size={16} /></button>
             </div>
             <div className="figma-modal-body">
               <p className="figma-modal-desc">This action is permanent and cannot be undone. All your personal data, preferences, and session history will be completely erased.</p>

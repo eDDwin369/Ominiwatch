@@ -146,7 +146,7 @@ export function ImageCropperModal({
         width: '420px',
         backgroundColor: 'var(--bg-card)',
         border: '1px solid var(--border-light)',
-        borderRadius: '16px',
+        borderRadius: 'calc(var(--radius-unit, 1px) * 16)',
         padding: '24px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
         display: 'flex',
@@ -154,8 +154,8 @@ export function ImageCropperModal({
         gap: '16px'
       }}>
         <div>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: 'var(--font-size-18)', fontWeight: 700, color: 'var(--text-main)' }}>{title}</h2>
-          <p style={{ margin: 0, fontSize: 'var(--font-size-13)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+          <h2 style={{ margin: '0 0 8px 0', fontFamily: 'var(--app-heading-family, var(--app-font-family))', fontSize: 'var(--h4-size, 20px)', fontWeight: 'var(--h4-weight, 400)', color: 'var(--text-main)' }}>{title}</h2>
+          <p style={{ margin: 0, fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
             {subtitle}
           </p>
         </div>
@@ -175,7 +175,7 @@ export function ImageCropperModal({
             backgroundImage: 'linear-gradient(45deg, var(--border-light) 25%, transparent 25%), linear-gradient(-45deg, var(--border-light) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--border-light) 75%), linear-gradient(-45deg, transparent 75%, var(--border-light) 75%)',
             backgroundSize: '20px 20px',
             backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-            borderRadius: '12px',
+            borderRadius: 'calc(var(--radius-unit, 1px) * 12)',
             position: 'relative',
             overflow: 'hidden',
             display: 'flex',
@@ -221,7 +221,7 @@ export function ImageCropperModal({
 
         {/* Zoom Slider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-          <span style={{ fontSize: 'var(--font-size-14)', fontWeight: 700, color: 'var(--text-main)' }}>Zoom</span>
+          <span style={{ fontSize: 'var(--font-size-body-sm, 14px)', fontWeight: 'var(--font-weight-strong, 600)', color: 'var(--text-main)' }}>Zoom</span>
           <input 
             type="range" 
             min="-100" 

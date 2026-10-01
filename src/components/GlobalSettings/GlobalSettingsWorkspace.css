@@ -53,8 +53,8 @@
   color: color-mix(in srgb, var(--text-secondary) 40%, transparent);
   /* Menu-item typography — same tokens as the shell sidebar's .nav-label */
   font-family: var(--app-heading-family, var(--app-font-family));
-  font-size: var(--h4-size, 20px);
-  font-weight: var(--h4-weight, var(--app-font-weight, 400));
+  font-size: var(--h5-size, 17px);
+  font-weight: var(--h5-weight, var(--app-font-weight, 400));
   cursor: pointer;
   transition: color 0.2s ease;
 }
@@ -69,7 +69,7 @@
   background: transparent;
   /* Selected menu item colour — matches the sidebar's active nav item */
   color: var(--highlight, var(--primary));
-  border-radius: 24px 24px 0 0;
+  border-radius: calc(var(--radius-unit, 1px) * 24) calc(var(--radius-unit, 1px) * 24) 0 0;
 }
 
 /* Short primary-colour underline marking the selected tab */
@@ -81,18 +81,10 @@
   transform: translateX(-50%);
   width: 24px;
   height: 2px;
-  border-radius: 2px;
+  border-radius: calc(var(--radius-unit, 1px) * 2);
   background: var(--primary);
 }
 
-/* Neighbours curve their inner bottom corner into the active tab */
-.gs-tab.active + .gs-tab {
-  border-bottom-left-radius: 24px;
-}
-
-.gs-tab:has(+ .gs-tab.active) {
-  border-bottom-right-radius: 24px;
-}
 
 .gs-tab-icon {
   width: 40px;
@@ -124,7 +116,7 @@
   background: var(--gs-modal-bg-dark, radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%)) !important;
   backdrop-filter: blur(50px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
-  border-radius: 36px !important;
+  border-radius: calc(var(--radius-unit, 1px) * 36) !important;
   border: 1px solid var(--border-light) !important;
   box-shadow: var(--card-shadow) !important;
   display: flex !important;
@@ -162,8 +154,13 @@
   flex-shrink: 0;
 }
 
+/* Title bar: light surface with a faint primary tint; the title carries the brand gradient */
 [data-theme-mode="light"] .gs-header {
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%) !important;
+  background: color-mix(in srgb, var(--primary) 6%, var(--bg-card)) !important;
+}
+
+[data-theme-mode="dark"] .gs-header {
+  background: color-mix(in srgb, var(--bg-card) 55%, transparent) !important;
 }
 
 .gs-title-group {
@@ -176,14 +173,14 @@
   font-size: var(--font-size-24);
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: -0.01em;
+  letter-spacing: calc(-0.01em + var(--app-letter-spacing, 0px));
 }
 
 /* Segmented Control Tabs (Matching VisionOS Pill) */
 .gs-segmented-tabs {
   display: flex;
   background: var(--border-light) !important;
-  border-radius: 20px;
+  border-radius: calc(var(--radius-unit, 1px) * 20);
   padding: 3px;
   border: 1px solid var(--border-hover) !important;
   gap: 2px;
@@ -191,7 +188,7 @@
 
 .gs-tab-btn {
   padding: 6px 18px;
-  border-radius: 16px;
+  border-radius: calc(var(--radius-unit, 1px) * 16);
   font-size: var(--font-size-13);
   font-weight: 600;
   color: var(--text-secondary);
@@ -261,7 +258,7 @@
 .gs-cards-2x2 {
   display: grid !important;
   grid-template-columns: 380px 380px !important;
-  gap: 24px !important;
+  gap: calc(var(--card-gap, 16px) * 1.5) !important;
   justify-content: center !important;
   align-items: center !important;
   height: 350px !important;
@@ -276,7 +273,7 @@
   display: flex !important;
   flex-direction: column !important;
   justify-content: space-between !important;
-  gap: 12px !important;
+  gap: calc(var(--container-pad, 10px) * 1.2) !important;
   overflow: visible !important;
   background: var(--bg-card) !important;
   border: var(--card-border) !important;
@@ -289,23 +286,12 @@
 
 /* Faint primary→primary-light wash that separates side-by-side cards. Layered as an image
    over each card's existing base colour (which stays untouched). */
-.gs-modal .gs-config-card.gs-card-tint-strong {
-  background-image: linear-gradient(135deg,
-    color-mix(in srgb, var(--primary) 9%, transparent),
-    color-mix(in srgb, var(--primary-light) 4%, transparent)) !important;
-}
-
-.gs-modal .gs-config-card.gs-card-tint-soft {
-  background-image: linear-gradient(135deg,
-    color-mix(in srgb, var(--primary) 4%, transparent),
-    color-mix(in srgb, var(--primary-light) 1.5%, transparent)) !important;
-}
 
 /* Row-based cards (settings lists) flow from the top with one even rhythm instead of
    being spread edge-to-edge by space-between. */
 .gs-config-card.gs-config-card--stack {
   justify-content: flex-start !important;
-  gap: 16px !important;
+  gap: calc(var(--container-pad, 10px) * 1.6) !important;
 }
 
 /* Card title as a header band: full-bleed to the card edges, tinted with the studio's
@@ -316,8 +302,9 @@
   margin: calc(-1 * var(--gs-pad-y, 22px)) calc(-1 * var(--gs-pad-x, 26px)) 0;
   padding: 14px var(--gs-pad-x, 26px) 12px;
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--card-hdr, var(--bg-card)) 75%, transparent) 60%, transparent);
+  background: var(--brand-card-band);
   border-bottom: var(--card-hdr-border, none);
+  box-shadow: var(--card-hdr-accent, none); /* studio 'Accent' header: inset side bar */
 }
 
 /* Title span inherits the H3 tokens — otherwise `.gs-modal span` forces --text-main and the
@@ -345,7 +332,7 @@
 .gs-header-spotlight-box {
   position: fixed !important;
   z-index: 100010 !important;
-  border-radius: 12px;
+  border-radius: calc(var(--radius-unit, 1px) * 12);
   border: 2.5px solid var(--secondary);
   box-shadow: 0 0 30px var(--accent-glow), 0 0 0 5px rgba(59, 130, 246, 0.4), inset 0 0 20px var(--accent-glow);
   pointer-events: none;
@@ -379,10 +366,10 @@
   background: var(--gs-arrow-gradient, linear-gradient(135deg, var(--primary-light) 0%, var(--primary-hover, var(--primary)) 100%)) !important;
   border: 1px solid var(--border-light) !important;
   padding: 8px 18px;
-  border-radius: 20px;
+  border-radius: calc(var(--radius-unit, 1px) * 20);
   color: var(--btn-text, #ffffff) !important;
-  font-size: var(--font-size-13);
-  font-weight: 700;
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: var(--font-weight-strong, 600);
   box-shadow: 0 10px 30px var(--accent-glow) !important;
 }
 
@@ -473,9 +460,10 @@
 
 /* VisionOS Glass Dropzone & Inputs */
 .gs-iphone-dropzone {
-  border: 1.5px dashed var(--border-hover) !important;
-  border-radius: 24px !important;
-  background: var(--bg-dashboard) !important;
+  /* Rest: soft translucent wash with the secondary dashed border (blends into the card) */
+  border: 1.5px dashed var(--secondary) !important;
+  border-radius: calc(var(--radius-unit, 1px) * 24) !important;
+  background: color-mix(in srgb, var(--secondary) 8%, transparent) !important;
   padding: 24px 16px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -487,8 +475,9 @@
 }
 
 .gs-iphone-dropzone:hover {
-  border-color: var(--secondary) !important;
-  background: color-mix(in srgb, var(--secondary) 8%, transparent) !important;
+  /* Hover: lifts to the solid page surface (white in light mode) */
+  border-color: var(--border-hover) !important;
+  background: var(--bg-dashboard) !important;
   transform: translateY(-1px);
 }
 
@@ -553,7 +542,7 @@
   background: var(--bg-dashboard) !important;
   border: 1px solid var(--border-light) !important;
   color: var(--text-main) !important;
-  border-radius: 12px;
+  border-radius: calc(var(--radius-unit, 1px) * 12);
 }
 
 .gs-modal span,
@@ -585,7 +574,7 @@
   position: relative;
   width: 50px;
   height: 28px;
-  border-radius: 14px;
+  border-radius: calc(var(--radius-unit, 1px) * 14);
   background: var(--border-hover);
   border: 1px solid var(--border-light);
   cursor: pointer;
@@ -754,16 +743,96 @@
 
 .gs-confirm-btn {
   padding: 8px 16px;
-  border-radius: 16px;
+  border-radius: calc(var(--radius-unit, 1px) * 16);
   border: 1px solid var(--border-light);
   background: transparent;
   color: var(--text-main);
   font-family: inherit;
   font-size: var(--app-font-size, 14px);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium, 500);
   cursor: pointer;
 }
 
 .gs-confirm-btn:hover {
   background: var(--border-light);
+}
+
+/* Shared brand card surface + soft field fill (same as Account Settings) */
+.gs-modal .gs-config-card {
+  background: var(--brand-card-surface) !important;
+}
+
+.gs-modal .gs-config-card .tf-outline {
+  background: var(--brand-field-fill);
+}
+
+.gs-modal .gs-config-card .tf-input {
+  position: relative;
+}
+
+/* Page title icon: exempt from the catch-all `.gs-modal span` colour */
+.gs-modal .page-title-icon {
+  color: var(--primary) !important;
+}
+
+[data-theme-mode="dark"] .gs-modal .page-title-icon {
+  color: color-mix(in srgb, var(--primary) 55%, #ffffff) !important;
+}
+
+/* Window surface around the cards: Theme Studio's soft primary menu tint as a gradient
+   (title bar + tab row + body read as one surface; the cards keep their own surface). */
+[data-theme-mode="light"] .gs-modal.gs-modal {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--primary) 14%, var(--bg-card)) 0%,
+    color-mix(in srgb, var(--primary) 8%, var(--bg-card)) 45%,
+    color-mix(in srgb, var(--secondary) 10%, var(--bg-card)) 100%) !important;
+}
+
+[data-theme-mode="light"] .gs-modal .gs-header {
+  background: transparent !important;
+}
+
+/* Inactive tabs no longer sit on a separate band — the window surface shows through */
+.gs-modal .gs-tabs .gs-tab:not(.active) {
+  background-color: transparent;
+}
+
+/* Floating cards: the body/container used to clip the card shadows (overflow: hidden), which
+   left a hard-edged grey slab behind the cards. Let the shadow breathe (content still fits;
+   the window itself clips at its rounded edge) and use a soft, primary-tinted floating shadow
+   whose negative spread keeps the glow inside the window padding. */
+.gs-modal .gs-content-body,
+.gs-modal .gs-tab-content-container {
+  overflow: visible !important;
+}
+
+/* Shadow geometry scales with the studio's card shadow (--card-shadow-scale: 1 as designed, 0 = flat) */
+.gs-modal .gs-config-card {
+  --s: var(--card-shadow-scale, 1);
+  box-shadow:
+    0 calc(2px * var(--s)) calc(6px * var(--s)) color-mix(in srgb, var(--primary) 10%, transparent),
+    0 calc(14px * var(--s)) calc(28px * var(--s)) calc(-10px * var(--s)) color-mix(in srgb, var(--primary) 30%, transparent) !important;
+}
+
+.gs-modal .gs-config-card:hover {
+  box-shadow:
+    0 calc(2px * var(--s)) calc(6px * var(--s)) color-mix(in srgb, var(--primary) 12%, transparent),
+    0 calc(18px * var(--s)) calc(32px * var(--s)) calc(-10px * var(--s)) color-mix(in srgb, var(--primary) 36%, transparent) !important;
+}
+
+[data-theme-mode="dark"] .gs-modal .gs-config-card {
+  box-shadow:
+    0 calc(2px * var(--s)) calc(6px * var(--s)) rgba(0, 0, 0, 0.35),
+    0 calc(14px * var(--s)) calc(28px * var(--s)) calc(-10px * var(--s)) rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Card padding follows the studio's container padding / density (10 = as designed) */
+.gs-config-card {
+  --gs-pad-y: calc(var(--container-pad, 10px) * 2.2);
+  --gs-pad-x: calc(var(--container-pad, 10px) * 2.6);
+}
+
+/* Card header line height follows the studio's heading line height (1.2 → 1.5 as designed) */
+.gs-modal .gs-card-header {
+  line-height: calc(var(--heading-lh, 1.2) * 1.25);
 }

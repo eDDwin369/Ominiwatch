@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Dropdown } from '../shared/Dropdown';
-import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2, MailOpen, AtSign, Inbox, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2, MailOpen, AtSign, Inbox, Mail, ChevronLeft, ChevronRight, AlertTriangle, Plus, Info } from 'lucide-react';
 import type { NotificationItem } from './types';
 import avatarImg from '../../assets/john_doe_avatar.png';
 import './Notifications.css';
@@ -28,14 +28,14 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
     left: '-6px',
     width: '22px',
     height: '22px',
-    backgroundColor: '#e9ecef',
+    backgroundColor: 'color-mix(in srgb, var(--text-main) 8%, var(--bg-card))',
     border: '2px solid var(--bg-card)',
-    borderRadius: '8px',
+    borderRadius: 'calc(var(--radius-unit, 1px) * 8)',
     boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#212529',
+    color: 'var(--text-main)',
     zIndex: 2
   };
 
@@ -62,7 +62,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'system' || lower.includes('config') || lower.includes('enabled')) {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#eff6ff', color: 'var(--primary)' }}>
+      <div style={{ ...baseStyle, backgroundColor: 'color-mix(in srgb, var(--primary) 14%, var(--bg-card))', color: 'var(--primary)' }}>
         <Settings size={12} strokeWidth={2.5} />
       </div>
     );
@@ -70,23 +70,23 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'warning') {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#fffbeb', color: 'var(--warning)' }}>
-        <span style={{ fontSize: '11px', fontWeight: 'bold', lineHeight: 1 }}>!</span>
+      <div style={{ ...baseStyle, backgroundColor: 'color-mix(in srgb, var(--warning) 16%, var(--bg-card))', color: 'var(--warning)' }}>
+        <AlertTriangle size={11} strokeWidth={2.75} />
       </div>
     );
   }
 
   if (lower.includes('invite') || lower.includes('added')) {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#e9ecef', color: '#212529' }}>
-        <span style={{ fontSize: '11px', fontWeight: 'bold', lineHeight: 1 }}>+</span>
+      <div style={baseStyle}>
+        <Plus size={12} strokeWidth={3} />
       </div>
     );
   }
 
   return (
     <div style={baseStyle}>
-      <span style={{ fontSize: '10px', fontWeight: 'bold', lineHeight: 1 }}>i</span>
+      <Info size={12} strokeWidth={2.75} />
     </div>
   );
 };
@@ -257,7 +257,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               gap: '8px', 
               background: 'var(--bg-dashboard)', 
               padding: '4px 12px', 
-              borderRadius: '20px',
+              borderRadius: 'calc(var(--radius-unit, 1px) * 20)',
               height: '34px',
               transition: 'all 0.05s ease'
             }}
@@ -276,7 +276,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 flex: 1,
                 border: 'none',
                 outline: 'none',
-                fontSize: '13px',
+                fontSize: 'var(--font-size-body-sm, 14px)',
                 color: 'var(--text-main)',
                 background: 'transparent',
                 width: '100%'
@@ -307,7 +307,10 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </div>
         ) : (
           <>
-            <h2 className="new-notification-title">Notifications</h2>
+            <div className="page-title-group">
+              <span className="page-title-icon" aria-hidden="true"><Bell size={18} /></span>
+              <h2 className="new-notification-title brand-gradient-text">Notifications</h2>
+            </div>
             <div className="new-notification-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <button 
                 className="new-header-action-btn" 
@@ -324,7 +327,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '4px',
-                  borderRadius: '4px'
+                  borderRadius: 'calc(var(--radius-unit, 1px) * 4)'
                 }}
               >
                 <Search size={18} />
@@ -349,7 +352,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '4px',
-                  borderRadius: '4px'
+                  borderRadius: 'calc(var(--radius-unit, 1px) * 4)'
                 }}
               >
                 {isModalMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -371,6 +374,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
             <ChevronRight size={14} className="new-notif-breadcrumb-sep" aria-hidden="true" />
             <span className="new-notif-breadcrumb-current" aria-current="page">Settings</span>
           </nav>
+          <div className="new-notif-settings-card">
           <div className="new-notif-setting-row">
             <span className="new-notif-setting-label">Notifications</span>
             <button
@@ -395,6 +399,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               options={['5', '10', '15', '20']}
             />
           </div>
+          </div>
         </div>
       ) : (
       <>
@@ -403,6 +408,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
         <div className="new-tabs-pill-container">
           <button 
             className={`new-tab-pill-btn ${activeTab === 'mentions' ? 'active' : ''}`}
+            data-tip="Notifications that mention you."
             onClick={() => setActiveTab('mentions')}
           >
             <span className="new-tab-icon"><AtSign size={15} /></span>
@@ -410,6 +416,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </button>
           <button 
             className={`new-tab-pill-btn ${activeTab === 'all' ? 'active' : ''}`}
+            data-tip="Every notification."
             onClick={() => setActiveTab('all')}
           >
             <span className="new-tab-icon"><Inbox size={15} /></span>
@@ -417,6 +424,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </button>
           <button 
             className={`new-tab-pill-btn ${activeTab === 'unread' ? 'active' : ''}`}
+            data-tip="Notifications you haven't read yet."
             onClick={() => setActiveTab('unread')}
           >
             <span className="new-tab-icon"><Mail size={15} /></span>
@@ -465,7 +473,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'flex-start',
-                  padding: '16px 20px',
+                  padding: 'calc(var(--container-pad, 10px) * 1.6) calc(var(--container-pad, 10px) * 2)',
                   borderBottom: '1px solid var(--bg-dashboard)',
                   background: 'var(--bg-card)',
                   textAlign: 'left',
@@ -485,7 +493,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                       backgroundColor: 'var(--bg-dashboard)',
                       border: '1px solid var(--border-light)',
                       boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
-                      borderRadius: '8px',
+                      borderRadius: 'calc(var(--radius-unit, 1px) * 8)',
                       padding: '16px',
                       zIndex: 100,
                       display: 'flex',
@@ -513,15 +521,15 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                               display: 'flex', 
                               alignItems: 'center', 
                               justifyContent: 'center', 
-                              fontSize: '14px', 
-                              fontWeight: 400,
+                              fontSize: 'var(--font-size-body-sm, 14px)',
+                              fontWeight: 'var(--app-font-weight, 400)',
                               textTransform: 'uppercase'
                             }}
                           >
                             {initials}
                           </div>
                         )}
-                        <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>{item.actorName || 'System'}</span>
+                        <span style={{ fontWeight: 'var(--font-weight-strong, 600)', fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-main)' }}>{item.actorName || 'System'}</span>
                       </div>
                       <button 
                         onClick={() => setExpandedNotificationId(null)}
@@ -534,11 +542,11 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                     {/* Content Section */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '48px' }}>
                       {item.description && (
-                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                        <p style={{ margin: 0, fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                           {item.description}
                         </p>
                       )}
-                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                      <p style={{ margin: 0, fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
                         Detailed content expanded version of the notification with logo and all.
                       </p>
                     </div>
@@ -563,8 +571,8 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        fontSize: '14px', 
-                        fontWeight: 400,
+                        fontSize: 'var(--font-size-body-sm, 14px)',
+                        fontWeight: 'var(--app-font-weight, 400)',
                         textTransform: 'uppercase'
                       }}
                     >
@@ -580,21 +588,21 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '12px' }}>
                     
                     {/* Left Side Info */}
-                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', gap: '4px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                      <span style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-main)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', gap: '4px', fontSize: 'var(--font-size-caption, 12px)', color: 'var(--text-muted)' }}>
+                      <span style={{ fontWeight: 'var(--font-weight-strong, 600)', fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-main)' }}>
                         {item.actorName || 'System'}
                       </span>
                       <span>{item.actionText || 'alerted'}</span>
                       <span style={{ color: 'var(--border-hover)' }}>•</span>
-                      <span style={{ fontSize: '12px' }}>{getTargetEmoji(item.targetName, item.category)}</span>
-                      <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{item.targetName || item.title}</span>
+                      <span>{getTargetEmoji(item.targetName, item.category)}</span>
+                      <span style={{ color: 'var(--text-secondary)' }}>{item.targetName || item.title}</span>
                       <span style={{ color: 'var(--border-hover)' }}>•</span>
                       <span>{item.category}</span>
                     </div>
 
                     {/* Right Side: Time & Unread */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                      <span style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: 'var(--font-size-caption, 12px)', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                         {item.dateText || 'Just now'}
                       </span>
                       {!item.isRead && (
@@ -649,11 +657,11 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '12px 20px',
-          borderTop: '1px solid rgba(0,0,0,0.06)',
-          background: 'var(--bg-card)',
+          borderTop: '1px solid var(--border-light)',
+          background: 'transparent',
           flexShrink: 0
         }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
+          <div style={{ fontSize: 'var(--font-size-caption, 12px)', color: 'var(--text-muted)' }}>
             Page {currentPage} of {totalPages}
           </div>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
@@ -666,8 +674,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 border: '1px solid var(--border-light, var(--border-light))',
                 backgroundColor: 'var(--bg-card)',
                 color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-secondary)',
-                fontSize: '12px',
-                fontWeight: 400,
+                fontSize: 'var(--font-size-caption, 12px)',
                 cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
                 transition: 'all 0.05s ease'
               }}
@@ -689,8 +696,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 border: '1px solid var(--border-light, var(--border-light))',
                 backgroundColor: 'var(--bg-card)',
                 color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-secondary)',
-                fontSize: '12px',
-                fontWeight: 400,
+                fontSize: 'var(--font-size-caption, 12px)',
                 cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
                 transition: 'all 0.05s ease'
               }}
@@ -748,7 +754,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 marginTop: 0,
                 right: 'auto',
                 top: 'auto',
-                borderRadius: '16px',
+                borderRadius: 'calc(var(--radius-unit, 1px) * 16)',
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
                 animation: 'none',
                 transition: 'none',
