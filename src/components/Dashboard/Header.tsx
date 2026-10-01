@@ -15,6 +15,7 @@ interface HeaderProps {
   onLogout?: () => void;
   onNavigate?: (view: string, options?: any) => void;
   onSettingsClick?: () => void;
+  settingsOpen?: boolean;
   headerConfig?: any;
   isEditing?: boolean;
   showCustomerProfile?: boolean;
@@ -42,6 +43,7 @@ interface HeaderProps {
 
 export function Header({
   notifications,
+  settingsOpen = false,
   onMarkAllRead,
   onNotificationClick,
   onViewAllClick,
@@ -254,7 +256,8 @@ export function Header({
         </button>
 
         <button 
-          className="header-icon-btn" 
+          className={`header-icon-btn ${settingsOpen ? 'active' : ''}`}
+          aria-pressed={settingsOpen}
           title="Global Settings" 
           onClick={(e) => {
             e.stopPropagation();
@@ -268,7 +271,8 @@ export function Header({
 
         <div className="header-bell-wrapper">
           <button
-            className="header-icon-btn"
+            className={`header-icon-btn ${showNotifications ? 'active' : ''}`}
+            aria-pressed={showNotifications}
             title="Notifications"
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
@@ -301,6 +305,8 @@ export function Header({
         {/* Profile Card relocate */}
         <div className="header-profile-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px' }}>
           <div
+            className={`header-avatar-btn ${showProfileMenu ? 'active' : ''}`}
+            title="Account"
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
@@ -308,17 +314,17 @@ export function Header({
               setShowNotifications(false);
             }}
             style={{
-              background: profileImage ? 'transparent' : '#f3ba2f',
-              color: '#ffffff',
-              fontFamily: 'var(--app-font-family)',
+              background: profileImage ? 'transparent' : 'var(--secondary)',
+              color: 'var(--on-accent, #ffffff)',
+              fontFamily: 'var(--app-heading-family, var(--app-font-family))',
               width: '38px',
               height: '38px',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontWeight: 600,
-              fontSize: '18px',
+              fontWeight: 'var(--font-weight-strong, 600)',
+              fontSize: 'var(--h5-size, 17px)',
               cursor: 'pointer',
               transition: 'transform 0.05s',
               userSelect: 'none',
@@ -339,14 +345,11 @@ export function Header({
           {showProfileMenu && (
             <div
               ref={profileMenuRef}
+              className="profile-menu"
               style={{
                 position: 'absolute',
                 top: 'calc(100% + 16px)', // Positions it exactly below the header bottom border
                 right: '-12px', // Very little padding from the right edge of the screen
-                background: 'var(--bg-card)',
-                border: '1px solid var(--border-light)',
-                borderRadius: 'var(--radius-xl, 18px)',
-                boxShadow: 'var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.08))',
                 width: '230px',
                 zIndex: 200,
                 display: 'flex',
@@ -355,7 +358,7 @@ export function Header({
                 fontFamily: 'var(--app-font-family)'
               }}
             >
-              {/* Top User Card section — gradient title band, same as Global Settings / Notifications */}
+              {/* Top user section — plain header on the window wash (same standard as the other windows) */}
               <div className="profile-menu-header" style={{
                 padding: '16px',
                 display: 'flex',
@@ -374,16 +377,17 @@ export function Header({
                     borderRadius: '50%',
                     cursor: 'pointer',
                     overflow: 'hidden',
-                    background: profileImage ? 'transparent' : '#F3BA2F',
+                    background: profileImage ? 'transparent' : 'var(--secondary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: 'var(--on-accent)',
-                    fontWeight: '600',
-                    fontSize: '18px',
+                    fontFamily: 'var(--app-heading-family, var(--app-font-family))',
+                    fontWeight: 'var(--font-weight-strong, 600)',
+                    fontSize: 'var(--h5-size, 17px)',
                     userSelect: 'none',
                     flexShrink: 0,
-                    boxShadow: '0 0 0 2px color-mix(in srgb, var(--on-accent, #ffffff) 70%, transparent), 0 2px 6px rgba(0, 0, 0, 0.15)'
+                    boxShadow: '0 0 0 2px color-mix(in srgb, var(--primary) 35%, transparent), 0 2px 6px rgba(0, 0, 0, 0.12)'
                   }}
                   title="Upload profile picture"
                 >
@@ -430,11 +434,7 @@ export function Header({
                   gap: '2px',
                   minWidth: 0
                 }}>
-                  <div style={{
-                    fontFamily: 'var(--app-heading-family, var(--app-font-family))',
-                    fontWeight: '600',
-                    fontSize: 'var(--font-size-body, 14px)',
-                    color: 'var(--on-accent, #ffffff)',
+                  <div className="profile-menu-name" style={{
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -442,10 +442,7 @@ export function Header({
                   }}>
                     B Anand
                   </div>
-                  <div style={{
-                    color: 'color-mix(in srgb, var(--on-accent, #ffffff) 80%, transparent)',
-                    fontSize: 'var(--font-size-caption, 11px)',
-                    fontWeight: '400',
+                  <div className="profile-menu-role" style={{
                     width: '100%',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
@@ -457,7 +454,7 @@ export function Header({
               </div>
 
               {/* Bottom Menu Items */}
-              <div style={{ padding: '4px 0', background: 'var(--bg-card)' }}>
+              <div style={{ padding: '4px 0 8px' }}>
                 {/* Profile Settings Item */}
                 <div
                   onClick={() => {
@@ -489,9 +486,6 @@ export function Header({
                   </span>
                 </div>
 
-                {/* Divider */}
-                <div style={{ height: '1px', backgroundColor: 'var(--border-light)', margin: '4px 0' }} />
-
                 {/* Sign Out Item */}
                 <div
                   onClick={() => {
@@ -517,7 +511,7 @@ export function Header({
                   </div>
                   <span style={{
                     fontSize: 'var(--font-size-body-sm, 13px)',
-                    fontWeight: '500',
+                    fontWeight: 'var(--font-weight-medium, 500)',
                     color: 'var(--danger)'
                   }}>
                     Sign Out

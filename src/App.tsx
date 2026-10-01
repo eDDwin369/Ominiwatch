@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Eye, EyeOff, Mail, Lock, ArrowRight, CheckCircle2, XCircle, KeyRound, Check, Info, Headset } from 'lucide-react';
+import { ArrowRight, CheckCircle2, XCircle, Check, Info, Headset } from 'lucide-react';
+import { TextField } from './components/shared/TextField';
 import './index.css';
 import logo from './assets/logo.png';
 import loginBg from './assets/login-bg.jpg';
@@ -85,7 +86,6 @@ function App() {
   // Shared state
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -211,8 +211,6 @@ function App() {
   // New Password State
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -416,14 +414,14 @@ function App() {
             visual-panel above) instead of the --login-panel-color CSS var, which
             theme-bridge.tsx always overwrites with a flat color (even when unset),
             permanently hiding this panel's intended default gradient. */}
-        <div className="form-panel" style={{ background: brand.loginPanelColor || 'radial-gradient(ellipse 70% 65% at 50% 77%, #101E39 0%, #0D1421 50%, #090909 100%)' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+        <div className="form-panel" style={{ background: brand.loginPanelColor || 'var(--brand-page-wash)' }}>
+          <div className="auth-logo">
             {brand.logoMode === 'image' && brand.logoUrl ? (
               // Uploaded logo is cropped to a 3.5:1 box in Theme Studio (LoginPanel) —
               // match that aspect here instead of forcing it into a 220x220 square.
               <img src={brand.logoUrl} alt="Logo" style={{ maxWidth: '220px', maxHeight: '63px', width: 'auto', height: 'auto', objectFit: 'contain' }} />
             ) : (
-              <img src={logo} alt="Logo" style={{ width: '220px', height: '220px', objectFit: 'contain' }} />
+              <img src={logo} alt="Logo" className="auth-logo-default" />
             )}
           </div>
           <div className="outer-auth-card">
@@ -434,7 +432,7 @@ function App() {
                   <div style={{
                     background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
                     border: '1px solid var(--primary)',
-                    borderRadius: 'var(--radius-md, 8px)',
+                    borderRadius: 'calc(var(--radius-unit, 1px) * 12)',
                     padding: '10px 14px',
                     marginBottom: '1.25rem',
                     display: 'flex',
@@ -442,13 +440,13 @@ function App() {
                     justifyContent: 'space-between',
                     gap: '10px'
                   }}>
-                    <span style={{ fontSize: '12.5px', color: 'var(--text-main)' }}>
+                    <span style={{ fontSize: 'var(--font-size-caption, 12px)', color: 'var(--text-main)' }}>
                       Active session as <strong>{getSessionEmail() || 'Edwin Antony'}</strong>
                     </span>
                     <button
                       type="button"
-                      className="btn btn-primary"
-                      style={{ padding: '6px 12px', fontSize: '12px', whiteSpace: 'nowrap' }}
+                      className="shell-btn-primary shell-btn-sm"
+                      style={{ whiteSpace: 'nowrap' }}
                       onClick={() => {
                         replaceAppRoute({ screen: 'dashboard', view: 'overview' });
                         setCurrentScreen('dashboard');
@@ -460,62 +458,31 @@ function App() {
                 )}
                 <form onSubmit={handleLoginSubmit}>
                   <div className="form-group">
-                    <div className="input-wrapper">
-                      <Mail className="input-icon" size={18} />
-                      <input
-                        type="email"
-                        id="login-email"
-                        className="form-input"
-                        placeholder="User email address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
+                    <TextField
+                      label="Email address"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                      required
+                    />
                   </div>
                   <div className="form-group">
-                    <div className="input-wrapper">
-                      <Lock className="input-icon" size={18} />
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        id="login-password"
-                        className="form-input"
-                        placeholder=""
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowPassword(!showPassword)}
-                        aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      >
-                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
+                    <TextField
+                      label="Password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                      required
+                    />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
-                    <label
-                      className="checkbox-wrapper"
-                      style={{
-                        fontSize: 'var(--font-size-caption)',
-                        fontWeight: 400,
-                        color: 'rgba(148,163,184,0.7)',
-                      }}
-                    >
-                      <input 
-                        type="checkbox" 
+                    <label className="checkbox-wrapper">
+                      <input
+                        type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        style={{
-                          width: '13px',
-                          height: '13px',
-                          color: 'rgba(148,163,184,0.7)',
-                          opacity: 0.6,
-                          cursor: 'pointer',
-                          margin: 0
-                        }}
                       />
                       <span style={{ marginLeft: '6px' }}>Remember me</span>
                     </label>
@@ -529,13 +496,13 @@ function App() {
                       </a>
                       <div
                         title="Please contact admin@oomnieye.com"
-                        style={{ display: 'flex', alignItems: 'center', cursor: 'help', color: 'rgba(148,163,184,0.7)' }}
+                        className="auth-help-icon"
                       >
                         <Headset size={14} />
                       </div>
                     </div>
                   </div>
-                  <button type="submit" className="submit-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <button type="submit" className="submit-btn shell-btn-primary" disabled={!email.trim() || !password} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     Sign in <ArrowRight size={18} />
                   </button>
                 </form>
@@ -546,20 +513,16 @@ function App() {
               <div className="fade-in">
                 <form onSubmit={handleForgotPasswordSubmit}>
                   <div className="form-group">
-                    <div className="input-wrapper">
-                      <Mail className="input-icon" size={18} />
-                      <input
-                        type="email"
-                        id="forgot-email"
-                        className="form-input"
-                        placeholder="User email address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
-                    </div>
+                    <TextField
+                      label="Email address"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                      required
+                    />
                   </div>
-                  <button type="submit" className={`submit-btn ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <button type="submit" className={`submit-btn shell-btn-primary ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     {isLoading ? 'Sending...' : 'Send OTP'} <ArrowRight size={18} />
                   </button>
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
@@ -605,17 +568,12 @@ function App() {
                 
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
                   {timeLeft > 0 ? (
-                    <span style={{ fontSize: 'var(--font-size-caption)', color: 'rgba(255,255,255,0.75)' }}>Resend code in {timeLeft}s</span>
+                    <span style={{ fontSize: 'var(--font-size-caption)', color: 'var(--text-secondary)' }}>Resend code in {timeLeft}s</span>
                   ) : (
                     <a
                       href="#"
                       onClick={(e) => { e.preventDefault(); handleResendOtp(); }}
-                      style={{
-                        fontSize: 'var(--font-size-caption)',
-                        color: 'var(--accent)',
-                        textDecoration: 'none',
-                        fontWeight: 500
-                      }}
+                      className="auth-nav-link"
                     >
                       Resend OTP
                     </a>
@@ -624,7 +582,7 @@ function App() {
 
                 <button
                   type="button"
-                  className={`submit-btn ${isLoading ? 'loading' : ''}`}
+                  className={`submit-btn shell-btn-primary ${isLoading ? 'loading' : ''}`}
                   onClick={handleVerifyOtp}
                   disabled={isLoading || otp.join('').length !== 6 || timeLeft === 0}
                   style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
@@ -647,37 +605,26 @@ function App() {
               <div className="fade-in">
                 <form onSubmit={handleCreateNewPassword}>
                   <div className="form-group">
-                    <div className="input-wrapper">
-                      <Lock className="input-icon" size={18} />
-                      <input
-                        type={showNewPassword ? 'text' : 'password'}
-                        id="new-password"
-                        className="form-input"
-                        placeholder="Enter your new password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowNewPassword(!showNewPassword)}
-                      >
-                        {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
+                    <TextField
+                      label="New password"
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      autoComplete="new-password"
+                      required
+                    />
                     {newPassword.length === 0 ? (
                       <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '0.75rem', fontSize: 'var(--font-size-caption)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary, var(--text-muted))' }}>
-                          <span style={{ fontWeight: 600 }}>•</span> At least 12 characters
+                          <span style={{ fontWeight: 'var(--font-weight-strong, 600)' }}>•</span> At least 12 characters
                         </div>
                       </div>
                     ) : (
                       (!passwordReqs.length || !passwordReqs.notCommon || !passwordReqs.noPersonal) && (
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '0.75rem', padding: '10px 12px', backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginTop: '0.75rem', padding: '10px 12px', backgroundColor: 'color-mix(in srgb, var(--danger) 6%, transparent)', borderRadius: 'calc(var(--radius-unit, 1px) * 8)', border: '1px solid color-mix(in srgb, var(--danger) 20%, transparent)' }}>
                           <Info size={14} style={{ color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }} />
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                            <span style={{ fontSize: 'var(--font-size-caption)', fontWeight: 600, color: 'var(--danger)' }}>Security requirements not met:</span>
+                            <span style={{ fontSize: 'var(--font-size-caption)', fontWeight: 'var(--font-weight-strong, 600)', color: 'var(--danger)' }}>Security requirements not met:</span>
                             <div className="validation-checklist" style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: 'var(--font-size-caption)' }}>
                               {!passwordReqs.length && (
                                 <div style={{ color: 'var(--text-secondary, var(--text-muted))' }}>
@@ -702,25 +649,14 @@ function App() {
                   </div>
 
                   <div className="form-group">
-                    <div className="input-wrapper">
-                      <KeyRound className="input-icon" size={18} />
-                      <input
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        id="confirm-password"
-                        className="form-input"
-                        placeholder="Confirm your new password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      >
-                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                      </button>
-                    </div>
+                    <TextField
+                      label="Confirm new password"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      autoComplete="new-password"
+                      required
+                    />
                     {confirmPassword && (
                       <div style={{ 
                         marginTop: '0.5rem', 
@@ -746,7 +682,7 @@ function App() {
 
                   <button
                     type="submit"
-                    className={`submit-btn ${isLoading ? 'loading' : ''}`}
+                    className={`submit-btn shell-btn-primary ${isLoading ? 'loading' : ''}`}
                     disabled={isLoading || !isPasswordValid}
                     style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
@@ -770,19 +706,17 @@ function App() {
                 <div className="success-icon-wrapper" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
                   <CheckCircle2 className="success-icon" size={64} color="var(--success)" />
                 </div>
-                <div style={{ fontSize: 'var(--font-size-body)', fontWeight: 600, color: '#ffffff', marginBottom: '2rem' }}>
+                <div style={{ fontSize: 'var(--font-size-body)', fontWeight: 'var(--font-weight-strong, 600)', color: 'var(--text-main)', marginBottom: '2rem' }}>
                   Password Updated Successfully
                 </div>
                 <button
                   type="button"
-                  className="submit-btn"
+                  className="submit-btn shell-btn-primary"
                   onClick={() => {
                     navigateScreen('login');
                     setPassword('');
                     setNewPassword('');
                     setConfirmPassword('');
-                    setShowNewPassword(false);
-                    setShowConfirmPassword(false);
                   }}
                   style={{ width: '100%' }}
                 >

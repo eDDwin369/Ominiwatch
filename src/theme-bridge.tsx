@@ -34,7 +34,8 @@ function syncCssVars(theme: any, settings: any) {
   set('--text-main', p.text.primary);
   set('--text-primary', p.text.primary);
   set('--text-secondary', p.text.secondary);
-  set('--text-muted', p.text.disabled);
+  // muted text follows a custom secondary text colour when one is set
+  set('--text-muted', settings.textSecondaryHex ? `color-mix(in srgb, ${settings.textSecondaryHex} 75%, transparent)` : p.text.disabled);
   set('--border-light', p.divider);
   set('--border-hover', p.divider);
   // status
@@ -66,6 +67,19 @@ function syncCssVars(theme: any, settings: any) {
     ? (rawCardHdrBg.startsWith('rgba') ? `linear-gradient(${rawCardHdrBg}, ${rawCardHdrBg}), var(--bg-card)` : rawCardHdrBg)
     : 'var(--bg-card)';
   set('--card-hdr', cardHdrBg);
+  // Colour-only parts of the card header for the shell's header band / field fill
+  // (--card-hdr itself can be a background layer list, which color-mix() can't take).
+  const hdrIsTint = !!rawCardHdrBg && rawCardHdrBg.startsWith('rgba');
+  set('--card-hdr-base', settings.cardHdrHex || (rawCardHdrBg && rawCardHdrBg !== 'transparent' && !hdrIsTint ? rawCardHdrBg : undefined));
+  set('--card-hdr-tint', hdrIsTint ? rawCardHdrBg : undefined);
+  // Solid header band only for Tinted / Accent or a custom header colour; Plain leaves it unset
+  // so the shell falls back to a soft fade into the card (no band edge).
+  const solidHdr = settings.cardHeader !== 'plain' || !!settings.cardHdrHex;
+  set('--card-hdr-solid-band', solidHdr
+    ? 'linear-gradient(var(--card-hdr-tint, transparent), var(--card-hdr-tint, transparent)), color-mix(in srgb, var(--card-hdr-base, var(--bg-card)) 85%, transparent)'
+    : undefined);
+  // a solid band replaces the Plain top-of-card wash
+  set('--card-hdr-wash', solidHdr ? 'linear-gradient(transparent, transparent)' : undefined);
   set('--notif-card', tk.toastBg);
   const btnBase = settings.btnColorHex || p.primary.main;
   set('--btn-color', settings.accentGradient ? `linear-gradient(135deg, ${btnBase}, ${p.primary.dark})` : btnBase);
@@ -73,12 +87,19 @@ function syncCssVars(theme: any, settings: any) {
   // shape / surface / density / misc tokens
   set('--card-border', tk.cardBodyBorder);
   set('--card-shadow', tk.cardBodyShadow);
+  // shell cards that layer their own (stronger) shadow scale it by the studio's card shadow (20 = as designed)
+  set('--card-shadow-scale', settings.cardShadowPx != null && settings.cardShadowPx >= 0 ? String(settings.cardShadowPx / 20) : undefined);
   set('--card-hdr-accent', tk.cardHdrAccent || 'none');
   set('--card-hdr-border', tk.cardHdrBorder === 'none' ? 'none' : (tk.cardHdrBorder || '1px solid var(--border-light)'));
   set('--container-pad', tk.containerPad != null ? `${tk.containerPad}px` : undefined);
   set('--edge-pad', tk.edgePad != null ? `${tk.edgePad}px` : undefined);
   set('--card-gap', tk.cardGap != null ? `${tk.cardGap}px` : undefined);
   set('--btn-case', theme.typography.button?.textTransform);
+  // Table settings (raw studio settings — the theme carries no tokens for them); the shell's
+  // list rows (Notifications) follow them: row dividers, row density, striped rows.
+  set('--table-row-divider', settings.tableDividers ? `${settings.tableRowDivW || 1}px solid var(--border-light)` : 'none');
+  set('--table-row-pad-scale', settings.tableDensity === 'compact' ? '0.7' : settings.tableDensity === 'comfortable' ? '1.3' : '1');
+  set('--table-stripe', settings.tableStripe ? 'color-mix(in srgb, var(--text-main) 4%, transparent)' : 'transparent');
   set('--status-weight', tk.statusBold ? '700' : '500');
 
   // Card Alignment
@@ -189,7 +210,7 @@ function syncCssVars(theme: any, settings: any) {
   set('--app-font-size', body.fontSize ? `${body.fontSize}px` : undefined);
   set('--app-line-height', body.lineHeight != null ? String(body.lineHeight) : undefined);
   set('--app-font-weight', body.fontWeight != null ? String(body.fontWeight) : undefined);
-  set('--app-letter-spacing', settings.letterSpace ? `${settings.letterSpace}px` : '0');
+  set('--app-letter-spacing', settings.letterSpace ? `${settings.letterSpace}px` : '0px');
   // per-heading tokens: size comes from raw settings.h{n}Size when set (presets pin
   // this explicitly), else the resolved theme (h1Size-derived fixed ratio); weight/color from raw settings
   // (0/'' = auto → fall back to headingWeight / --text-main default in index.css).
@@ -203,6 +224,8 @@ function syncCssVars(theme: any, settings: any) {
     const w = settings[`h${n}Weight`] || settings.headingWeight || h.fontWeight;
     set(`--h${n}-weight`, w ? String(w) : undefined);
     set(`--h${n}-color`, settings[`h${n}Color`] || 'var(--text-main)');
+    // only when the user picked a heading colour — lets it replace the shell's gradient titles
+    set(`--h${n}-color-custom`, settings[`h${n}Color`] || undefined);
   }
   set('--heading-lh', ty.h1?.lineHeight != null ? String(ty.h1.lineHeight) : undefined);
   // body typography tokens for Dashboard.css
@@ -216,7 +239,8 @@ function syncCssVars(theme: any, settings: any) {
   const secondaryHex = settings.secondaryHex || p.secondary?.main || '#00D2FF';
   const [pHue] = hexToHsl(primaryHex);
   const darkSidebar = hslToHexStr(pHue, 35, 7.2);
-  set('--login-panel-color', tk.loginPanelGradient);
+  // Theme Studio's Login panel colour wins over the preset's own panel gradient
+  set('--login-panel-color', settings.loginPanelColor || tk.loginPanelGradient);
   set('--dash-header-bg', tk.headerBg);
   // Sidebar bg/border — pinned per preset in dark mode (verified against
   // pixelPerfectNewReactCode for Emerald); other presets keep the primary-hue-derived bar.
@@ -264,7 +288,7 @@ function syncCssVars(theme: any, settings: any) {
   };
   set('--dash-progress-fill', figmaProgressFill[settings.presetId] || primaryHex);
   set('--dash-canvas-bg', tk.canvasBg);
-  set('--account-page-bg', tk.accountPageBg);
+  set('--account-page-bg', settings.pageBgHex || tk.accountPageBg);
   const figmaAccountCardLight: Record<string, string> = {
     corporate: 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
     'corporate-blue': 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)',
@@ -282,7 +306,11 @@ function syncCssVars(theme: any, settings: any) {
   const resolvedAccountCardBg = isDark
     ? figmaAccountCardDark[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #010D27 0%, #03205F 100%)'
     : figmaAccountCardLight[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)';
-  set('--account-card-bg', resolvedAccountCardBg);
+  // explicit card colour wins, then an active surface tint, else the preset's card gradient (release look)
+  const activeTintBg = effectiveTintHex && (surfaceTint !== 'snow' || tintHex) && effectiveOpacity > 0
+    ? `color-mix(in srgb, ${effectiveTintHex} ${Math.round(effectiveOpacity)}%, ${isDark ? '#1e293b' : '#ffffff'})`
+    : '';
+  set('--account-card-bg', settings.cardBgHex || activeTintBg || resolvedAccountCardBg);
   set('--dash-brand-gradient', tk.brandGradient);
   set('--dash-aura-color', primaryHex);
   set('--gs-accent-gradient', tk.gsAccentGradient);

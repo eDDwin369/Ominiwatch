@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Dropdown } from '../shared/Dropdown';
-import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2, MailOpen, AtSign, Inbox, Mail, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Settings, X, Download, FileText, Bell, Search, Maximize2, Minimize2, MailOpen, AtSign, Inbox, Mail, ChevronLeft, ChevronRight, AlertTriangle, Plus, Info } from 'lucide-react';
 import type { NotificationItem } from './types';
 import avatarImg from '../../assets/john_doe_avatar.png';
 import './Notifications.css';
@@ -28,14 +28,14 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
     left: '-6px',
     width: '22px',
     height: '22px',
-    backgroundColor: '#e9ecef',
+    backgroundColor: 'color-mix(in srgb, var(--text-main) 8%, var(--bg-card))',
     border: '2px solid var(--bg-card)',
-    borderRadius: '8px',
+    borderRadius: 'calc(var(--radius-unit, 1px) * 8)',
     boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#212529',
+    color: 'var(--text-main)',
     zIndex: 2
   };
 
@@ -62,7 +62,7 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'system' || lower.includes('config') || lower.includes('enabled')) {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#eff6ff', color: 'var(--primary)' }}>
+      <div style={{ ...baseStyle, backgroundColor: 'color-mix(in srgb, var(--primary) 14%, var(--bg-card))', color: 'var(--primary)' }}>
         <Settings size={12} strokeWidth={2.5} />
       </div>
     );
@@ -70,23 +70,23 @@ const getBadgeIcon = (actionText?: string, type?: string) => {
 
   if (type === 'warning') {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#fffbeb', color: 'var(--warning)' }}>
-        <span style={{ fontSize: '11px', fontWeight: 'bold', lineHeight: 1 }}>!</span>
+      <div style={{ ...baseStyle, backgroundColor: 'color-mix(in srgb, var(--warning) 16%, var(--bg-card))', color: 'var(--warning)' }}>
+        <AlertTriangle size={11} strokeWidth={2.75} />
       </div>
     );
   }
 
   if (lower.includes('invite') || lower.includes('added')) {
     return (
-      <div style={{ ...baseStyle, backgroundColor: '#e9ecef', color: '#212529' }}>
-        <span style={{ fontSize: '11px', fontWeight: 'bold', lineHeight: 1 }}>+</span>
+      <div style={baseStyle}>
+        <Plus size={12} strokeWidth={3} />
       </div>
     );
   }
 
   return (
     <div style={baseStyle}>
-      <span style={{ fontSize: '10px', fontWeight: 'bold', lineHeight: 1 }}>i</span>
+      <Info size={12} strokeWidth={2.75} />
     </div>
   );
 };
@@ -145,6 +145,16 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
   // tagged with what it was taken for, so it's only used while that still matches.
   const [fitMeasure, setFitMeasure] = useState<{ key: string; size: number } | null>(null);
   const [viewportTick, setViewportTick] = useState(0);
+  // Compact window: one fixed size for every tab and for Settings — the height of the first
+  // min(per-page, 10) "View all" rows (measured from a hidden copy), never below 5 standard rows.
+  // 15/20 per page scroll inside it; the pager bar is always there, so the size never jumps.
+  const MAX_VISIBLE_ROWS = 10;
+  const MIN_VISIBLE_ROWS = 5;
+  const measureRef = useRef<HTMLDivElement>(null);
+  const [standardListHeight, setStandardListHeight] = useState<number | null>(null);
+  const [windowHeight, setWindowHeight] = useState<number | null>(null);
+  // 10+ rows per page in the compact window: tighter row spacing so 10 rows fit on screen
+  const rowPadY = !isModalMode && basePerPage >= MAX_VISIBLE_ROWS ? 0.8 : 1.6;
 
   const handleToggleNotifications = () => {
     const next = !notificationsEnabled;
@@ -232,17 +242,230 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
       setFitMeasure({ key: fitKey, size: Math.max(rows.length, 1) }); // everything fits → single page, no pager
       return;
     }
-    // The list fills the fixed-height window, so the pager (shown once there are 2+ pages) takes its space.
-    const PAGER_HEIGHT = 56;
+    // The pager bar is always rendered, so the list's own height is already what's available.
     let used = 0;
     let fit = 0;
     for (const r of rows) {
-      if (used + r.offsetHeight > available - PAGER_HEIGHT) break;
+      if (used + r.offsetHeight > available) break;
       used += r.offsetHeight;
       fit++;
     }
     setFitMeasure({ key: fitKey, size: Math.max(fit, 1) });
   });
+
+  // Compact mode: read the hidden "View all" copy → standard list height; then, outside Settings,
+  // remember the resulting window height so the Settings view keeps exactly the same size.
+  useLayoutEffect(() => {
+    if (isModalMode) return;
+    const measured = measureRef.current?.offsetHeight ?? null;
+    if (measured !== null && measured !== standardListHeight) setStandardListHeight(measured);
+    if (!showSettings && dropdownRef.current) {
+      const h = dropdownRef.current.offsetHeight;
+      if (h && h !== windowHeight) setWindowHeight(h);
+    }
+  });
+
+  const standardRows = notifications.slice(0, Math.min(basePerPage, MAX_VISIBLE_ROWS));
+  const minListHeight = `${MIN_VISIBLE_ROWS} * (42px + 2 * var(--container-pad, 10px) * ${rowPadY} * var(--table-row-pad-scale, 1))`;
+  const compactListHeight = `min(max(${standardListHeight ?? 0}px, calc(${minListHeight})), calc(100vh - 230px))`;
+
+  // One notification row (also rendered hidden, `measuring`, to size the compact window)
+  const renderRow = (item: NotificationItem, measuring = false) => {
+    const initials = item.initials || item.actorName?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'UN';
+    const colorTheme = getInitialsBg(initials);
+    return (
+      <div 
+        key={item.id} 
+        className={`new-notification-item-row ${!item.isRead ? 'unread' : ''}`}
+        onClick={(e) => {
+          // Keep row clicks from reaching the container-level handler
+          // (which closes the detail box), so a row can open/switch it.
+          e.stopPropagation();
+          if (expandedNotificationId === item.id) {
+            setExpandedNotificationId(null);
+          } else {
+            setExpandedNotificationId(item.id);
+          }
+        }}
+        title={item.description}
+        style={{ 
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'flex-start',
+          padding: `calc(var(--container-pad, 10px) * ${rowPadY} * var(--table-row-pad-scale, 1)) calc(var(--container-pad, 10px) * 2)`,
+          borderBottom: '1px solid var(--bg-dashboard)',
+          background: 'var(--bg-card)',
+          textAlign: 'left',
+          position: 'relative'
+        }}
+      >
+        {/* Detailed Popup View */}
+        {!measuring && expandedNotificationId === item.id && (
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              left: '60px',
+              right: '20px',
+              width: 'auto',
+              backgroundColor: 'var(--bg-dashboard)',
+              border: '1px solid var(--border-light)',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
+              borderRadius: 'calc(var(--radius-unit, 1px) * 8)',
+              padding: '16px',
+              zIndex: 100,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}
+          >
+            {/* Top Row: Avatar + Heading + Close Icon */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {item.actorName && !['system', 'warning', 'integration'].some(k => item.actorName!.toLowerCase().includes(k)) ? (
+                  <img 
+                    src={avatarImg}
+                    alt={item.actorName}
+                    style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div 
+                    style={{ 
+                      width: '36px', 
+                      height: '36px', 
+                      borderRadius: '50%', 
+                      backgroundColor: colorTheme.bg, 
+                      color: colorTheme.text, 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center', 
+                      fontSize: 'var(--font-size-body-sm, 14px)',
+                      fontWeight: 'var(--app-font-weight, 400)',
+                      textTransform: 'uppercase'
+                    }}
+                  >
+                    {initials}
+                  </div>
+                )}
+                <span style={{ fontWeight: 'var(--font-weight-strong, 600)', fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-main)' }}>{item.actorName || 'System'}</span>
+              </div>
+              <button 
+                onClick={() => setExpandedNotificationId(null)}
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Content Section */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '48px' }}>
+              {item.description && (
+                <p style={{ margin: 0, fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                  {item.description}
+                </p>
+              )}
+              <p style={{ margin: 0, fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
+                Detailed content expanded version of the notification with logo and all.
+              </p>
+            </div>
+          </div>
+        )}
+        {/* Left Column: Avatar + Badge */}
+        <div style={{ position: 'relative', width: '42px', height: '42px', flexShrink: 0, marginRight: '14px' }}>
+          {item.actorName && !['system', 'warning', 'integration'].some(k => item.actorName!.toLowerCase().includes(k)) ? (
+            <img 
+              src={avatarImg}
+              alt={item.actorName}
+              style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover' }}
+            />
+          ) : (
+            <div 
+              style={{ 
+                width: '42px', 
+                height: '42px', 
+                borderRadius: '50%', 
+                backgroundColor: colorTheme.bg, 
+                color: colorTheme.text, 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                fontSize: 'var(--font-size-body-sm, 14px)',
+                fontWeight: 'var(--app-font-weight, 400)',
+                textTransform: 'uppercase'
+              }}
+            >
+              {initials}
+            </div>
+          )}
+          {getBadgeIcon(item.actionText, item.type)}
+        </div>
+
+        {/* Right Details Column */}
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          {/* Single Line: Actor Name, Action, Target, Category, Time, Unread Dot */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '12px' }}>
+            
+            {/* Left Side Info */}
+            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', gap: '4px', fontSize: 'var(--font-size-caption, 12px)', color: 'var(--text-muted)' }}>
+              <span style={{ fontWeight: 'var(--font-weight-strong, 600)', fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-main)' }}>
+                {item.actorName || 'System'}
+              </span>
+              <span>{item.actionText || 'alerted'}</span>
+              <span style={{ color: 'var(--border-hover)' }}>•</span>
+              <span>{getTargetEmoji(item.targetName, item.category)}</span>
+              <span style={{ color: 'var(--text-secondary)' }}>{item.targetName || item.title}</span>
+              <span style={{ color: 'var(--border-hover)' }}>•</span>
+              <span>{item.category}</span>
+            </div>
+
+            {/* Right Side: Time & Unread */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+              <span style={{ fontSize: 'var(--font-size-caption, 12px)', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                {item.dateText || 'Just now'}
+              </span>
+              {!item.isRead && (
+                <span 
+                  style={{ 
+                    width: '8px', 
+                    height: '8px', 
+                    backgroundColor: 'var(--danger)', 
+                    borderRadius: '50%', 
+                    display: 'inline-block',
+                    flexShrink: 0
+                  }} 
+                />
+              )}
+            </div>
+          </div>
+
+          {/* Accept/Decline action buttons */}
+          {item.hasButtons && (
+            <div className="notification-row-actions" onClick={(e) => e.stopPropagation()}>
+              <button className="notification-action-decline-btn">Decline</button>
+              <button className="notification-action-accept-btn">Accept</button>
+            </div>
+          )}
+
+          {/* PDF File Attachment preview block */}
+          {item.attachment && (
+            <div className="notification-attachment-box" onClick={(e) => e.stopPropagation()}>
+              <div className="attachment-file-icon-box">
+                <FileText size={18} />
+              </div>
+              <div className="attachment-file-details">
+                <span className="attachment-file-name">{item.attachment.name}</span>
+                <span className="attachment-file-size">{item.attachment.size}</span>
+              </div>
+              <button className="attachment-file-download-btn" title="Download file">
+                <Download size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   const renderInnerContent = () => (
     <>
@@ -257,7 +480,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               gap: '8px', 
               background: 'var(--bg-dashboard)', 
               padding: '4px 12px', 
-              borderRadius: '20px',
+              borderRadius: 'calc(var(--radius-unit, 1px) * 20)',
               height: '34px',
               transition: 'all 0.05s ease'
             }}
@@ -276,7 +499,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 flex: 1,
                 border: 'none',
                 outline: 'none',
-                fontSize: '13px',
+                fontSize: 'var(--font-size-body-sm, 14px)',
                 color: 'var(--text-main)',
                 background: 'transparent',
                 width: '100%'
@@ -307,7 +530,10 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </div>
         ) : (
           <>
-            <h2 className="new-notification-title">Notifications</h2>
+            <div className="page-title-group">
+              <span className="page-title-icon" aria-hidden="true"><Bell size={18} /></span>
+              <h2 className="new-notification-title brand-gradient-text">Notifications</h2>
+            </div>
             <div className="new-notification-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <button 
                 className="new-header-action-btn" 
@@ -324,7 +550,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '4px',
-                  borderRadius: '4px'
+                  borderRadius: 'calc(var(--radius-unit, 1px) * 4)'
                 }}
               >
                 <Search size={18} />
@@ -349,7 +575,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '4px',
-                  borderRadius: '4px'
+                  borderRadius: 'calc(var(--radius-unit, 1px) * 4)'
                 }}
               >
                 {isModalMode ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -371,6 +597,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
             <ChevronRight size={14} className="new-notif-breadcrumb-sep" aria-hidden="true" />
             <span className="new-notif-breadcrumb-current" aria-current="page">Settings</span>
           </nav>
+          <div className="new-notif-settings-card">
           <div className="new-notif-setting-row">
             <span className="new-notif-setting-label">Notifications</span>
             <button
@@ -395,6 +622,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
               options={['5', '10', '15', '20']}
             />
           </div>
+          </div>
         </div>
       ) : (
       <>
@@ -403,6 +631,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
         <div className="new-tabs-pill-container">
           <button 
             className={`new-tab-pill-btn ${activeTab === 'mentions' ? 'active' : ''}`}
+            data-tip="Notifications that mention you."
             onClick={() => setActiveTab('mentions')}
           >
             <span className="new-tab-icon"><AtSign size={15} /></span>
@@ -410,6 +639,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </button>
           <button 
             className={`new-tab-pill-btn ${activeTab === 'all' ? 'active' : ''}`}
+            data-tip="Every notification."
             onClick={() => setActiveTab('all')}
           >
             <span className="new-tab-icon"><Inbox size={15} /></span>
@@ -417,6 +647,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           </button>
           <button 
             className={`new-tab-pill-btn ${activeTab === 'unread' ? 'active' : ''}`}
+            data-tip="Notifications you haven't read yet."
             onClick={() => setActiveTab('unread')}
           >
             <span className="new-tab-icon"><Mail size={15} /></span>
@@ -436,270 +667,46 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
       </div>
 
       {/* 4. Notifications List feed */}
-      <div ref={listRef} className="new-notification-list-scroll" style={isModalMode ? { flex: 1, minHeight: 0 } : { flex: 1 }}>
+      <div ref={listRef} className="new-notification-list-scroll" style={isModalMode ? { flex: 1, minHeight: 0 } : { flex: '0 0 auto', height: compactListHeight }}>
         {paginatedNotifications.length === 0 ? (
           <div className="new-notification-empty">
             <Bell size={40} className="empty-bell-icon" />
             <p>No notifications found in this view</p>
           </div>
         ) : (
-          paginatedNotifications.map(item => {
-            const initials = item.initials || item.actorName?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'UN';
-            const colorTheme = getInitialsBg(initials);
-            return (
-              <div 
-                key={item.id} 
-                className={`new-notification-item-row ${!item.isRead ? 'unread' : ''}`}
-                onClick={(e) => {
-                  // Keep row clicks from reaching the container-level handler
-                  // (which closes the detail box), so a row can open/switch it.
-                  e.stopPropagation();
-                  if (expandedNotificationId === item.id) {
-                    setExpandedNotificationId(null);
-                  } else {
-                    setExpandedNotificationId(item.id);
-                  }
-                }}
-                title={item.description}
-                style={{ 
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  padding: '16px 20px',
-                  borderBottom: '1px solid var(--bg-dashboard)',
-                  background: 'var(--bg-card)',
-                  textAlign: 'left',
-                  position: 'relative'
-                }}
-              >
-                {/* Detailed Popup View */}
-                {expandedNotificationId === item.id && (
-                  <div 
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                      position: 'absolute',
-                      top: '20px',
-                      left: '60px',
-                      right: '20px',
-                      width: 'auto',
-                      backgroundColor: 'var(--bg-dashboard)',
-                      border: '1px solid var(--border-light)',
-                      boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)',
-                      borderRadius: '8px',
-                      padding: '16px',
-                      zIndex: 100,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '12px'
-                    }}
-                  >
-                    {/* Top Row: Avatar + Heading + Close Icon */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        {item.actorName && !['system', 'warning', 'integration'].some(k => item.actorName!.toLowerCase().includes(k)) ? (
-                          <img 
-                            src={avatarImg}
-                            alt={item.actorName}
-                            style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover' }}
-                          />
-                        ) : (
-                          <div 
-                            style={{ 
-                              width: '36px', 
-                              height: '36px', 
-                              borderRadius: '50%', 
-                              backgroundColor: colorTheme.bg, 
-                              color: colorTheme.text, 
-                              display: 'flex', 
-                              alignItems: 'center', 
-                              justifyContent: 'center', 
-                              fontSize: '14px', 
-                              fontWeight: 400,
-                              textTransform: 'uppercase'
-                            }}
-                          >
-                            {initials}
-                          </div>
-                        )}
-                        <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-main)' }}>{item.actorName || 'System'}</span>
-                      </div>
-                      <button 
-                        onClick={() => setExpandedNotificationId(null)}
-                        style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '4px' }}
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-
-                    {/* Content Section */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '48px' }}>
-                      {item.description && (
-                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                          {item.description}
-                        </p>
-                      )}
-                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-                        Detailed content expanded version of the notification with logo and all.
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {/* Left Column: Avatar + Badge */}
-                <div style={{ position: 'relative', width: '42px', height: '42px', flexShrink: 0, marginRight: '14px' }}>
-                  {item.actorName && !['system', 'warning', 'integration'].some(k => item.actorName!.toLowerCase().includes(k)) ? (
-                    <img 
-                      src={avatarImg}
-                      alt={item.actorName}
-                      style={{ width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div 
-                      style={{ 
-                        width: '42px', 
-                        height: '42px', 
-                        borderRadius: '50%', 
-                        backgroundColor: colorTheme.bg, 
-                        color: colorTheme.text, 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'center', 
-                        fontSize: '14px', 
-                        fontWeight: 400,
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      {initials}
-                    </div>
-                  )}
-                  {getBadgeIcon(item.actionText, item.type)}
-                </div>
-
-                {/* Right Details Column */}
-                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  {/* Single Line: Actor Name, Action, Target, Category, Time, Unread Dot */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '12px' }}>
-                    
-                    {/* Left Side Info */}
-                    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', gap: '4px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                      <span style={{ fontWeight: 700, fontSize: '13px', color: 'var(--text-main)' }}>
-                        {item.actorName || 'System'}
-                      </span>
-                      <span>{item.actionText || 'alerted'}</span>
-                      <span style={{ color: 'var(--border-hover)' }}>•</span>
-                      <span style={{ fontSize: '12px' }}>{getTargetEmoji(item.targetName, item.category)}</span>
-                      <span style={{ fontWeight: 400, color: 'var(--text-secondary)' }}>{item.targetName || item.title}</span>
-                      <span style={{ color: 'var(--border-hover)' }}>•</span>
-                      <span>{item.category}</span>
-                    </div>
-
-                    {/* Right Side: Time & Unread */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                      <span style={{ fontSize: '10px', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
-                        {item.dateText || 'Just now'}
-                      </span>
-                      {!item.isRead && (
-                        <span 
-                          style={{ 
-                            width: '8px', 
-                            height: '8px', 
-                            backgroundColor: 'var(--danger)', 
-                            borderRadius: '50%', 
-                            display: 'inline-block',
-                            flexShrink: 0
-                          }} 
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Accept/Decline action buttons */}
-                  {item.hasButtons && (
-                    <div className="notification-row-actions" onClick={(e) => e.stopPropagation()}>
-                      <button className="notification-action-decline-btn">Decline</button>
-                      <button className="notification-action-accept-btn">Accept</button>
-                    </div>
-                  )}
-
-                  {/* PDF File Attachment preview block */}
-                  {item.attachment && (
-                    <div className="notification-attachment-box" onClick={(e) => e.stopPropagation()}>
-                      <div className="attachment-file-icon-box">
-                        <FileText size={18} />
-                      </div>
-                      <div className="attachment-file-details">
-                        <span className="attachment-file-name">{item.attachment.name}</span>
-                        <span className="attachment-file-size">{item.attachment.size}</span>
-                      </div>
-                      <button className="attachment-file-download-btn" title="Download file">
-                        <Download size={16} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })
+          paginatedNotifications.map(item => renderRow(item))
         )}
       </div>
 
       {/* 5. Pagination controls Section */}
-      {totalPages > 1 && (
+      {/* Pager bar is always shown (compact and full screen), so the layout is identical on every tab */}
+      {(
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '12px 20px',
-          borderTop: '1px solid rgba(0,0,0,0.06)',
-          background: 'var(--bg-card)',
+          borderTop: '1px solid var(--border-light)',
+          background: 'transparent',
           flexShrink: 0
         }}>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>
-            Page {currentPage} of {totalPages}
+          <div style={{ fontSize: 'var(--font-size-caption, 12px)', color: 'var(--text-muted)' }}>
+            Page {currentPage} of {Math.max(totalPages, 1)}
           </div>
           <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
             <button
+              type="button"
+              className="shell-btn-secondary shell-btn-sm"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              style={{
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-sm, 6px)',
-                border: '1px solid var(--border-light, var(--border-light))',
-                backgroundColor: 'var(--bg-card)',
-                color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-secondary)',
-                fontSize: '12px',
-                fontWeight: 400,
-                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                transition: 'all 0.05s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (currentPage !== 1) e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--bg-card)';
-              }}
             >
               Prev
             </button>
             <button
-              disabled={currentPage === totalPages}
+              type="button"
+              className="shell-btn-secondary shell-btn-sm"
+              disabled={currentPage >= totalPages}
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              style={{
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-sm, 6px)',
-                border: '1px solid var(--border-light, var(--border-light))',
-                backgroundColor: 'var(--bg-card)',
-                color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-secondary)',
-                fontSize: '12px',
-                fontWeight: 400,
-                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                transition: 'all 0.05s ease'
-              }}
-              onMouseEnter={(e) => {
-                if (currentPage !== totalPages) e.currentTarget.style.backgroundColor = 'var(--bg-dashboard)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--bg-card)';
-              }}
             >
               Next
             </button>
@@ -748,7 +755,7 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
                 marginTop: 0,
                 right: 'auto',
                 top: 'auto',
-                borderRadius: '16px',
+                borderRadius: 'calc(var(--radius-unit, 1px) * 16)',
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
                 animation: 'none',
                 transition: 'none',
@@ -769,13 +776,19 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
           ref={dropdownRef}
           onClick={() => setExpandedNotificationId(null)}
           style={{
-            height: basePerPage === 10 ? 'calc(100vh - 120px)' : '520px',
+            // Sized to its rows (5 or 10 fit with no scrollbar), never taller than the screen;
+            // Settings keeps the same height as the notification views.
+            maxHeight: 'calc(100vh - 72px)',
+            height: showSettings && windowHeight ? `${windowHeight}px` : undefined,
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between'
+            flexDirection: 'column'
           }}
         >
           {renderInnerContent()}
+          {/* Hidden copy of the first "View all" rows — measured to size the list */}
+          <div ref={measureRef} aria-hidden="true" className="new-notification-measure">
+            {standardRows.map(item => renderRow(item, true))}
+          </div>
         </div>
       )}
     </>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { Crop, X } from 'lucide-react';
 
 export interface ImageCropperModalProps {
   isOpen: boolean;
@@ -142,23 +143,18 @@ export function ImageCropperModal({
       alignItems: 'center',
       justifyContent: 'center'
     }}>
-      <div style={{
-        width: '420px',
-        backgroundColor: 'var(--bg-card)',
-        border: '1px solid var(--border-light)',
-        borderRadius: '16px',
-        padding: '24px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px'
-      }}>
-        <div>
-          <h2 style={{ margin: '0 0 8px 0', fontSize: 'var(--font-size-18)', fontWeight: 700, color: 'var(--text-main)' }}>{title}</h2>
-          <p style={{ margin: 0, fontSize: 'var(--font-size-13)', color: 'var(--text-secondary)', lineHeight: '1.5' }}>
-            {subtitle}
-          </p>
+      <div className="gs-cropper" role="dialog" aria-modal="true" aria-labelledby="gs-cropper-title">
+        {/* Header — same dialog standard: icon circle + H4 title in primary, soft-red close */}
+        <div className="gs-cropper-header">
+          <div className="page-title-group">
+            <span className="page-title-icon" aria-hidden="true"><Crop size={18} /></span>
+            <h2 id="gs-cropper-title" className="gs-cropper-title brand-gradient-text">{title}</h2>
+          </div>
+          <button type="button" className="gs-cropper-close" onClick={onClose} aria-label="Close" title="Close">
+            <X size={16} />
+          </button>
         </div>
+        <p className="gs-cropper-desc">{subtitle}</p>
 
         {/* Cropper Area */}
         <div 
@@ -175,7 +171,7 @@ export function ImageCropperModal({
             backgroundImage: 'linear-gradient(45deg, var(--border-light) 25%, transparent 25%), linear-gradient(-45deg, var(--border-light) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--border-light) 75%), linear-gradient(-45deg, transparent 75%, var(--border-light) 75%)',
             backgroundSize: '20px 20px',
             backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-            borderRadius: '12px',
+            borderRadius: 'calc(var(--radius-unit, 1px) * 12)',
             position: 'relative',
             overflow: 'hidden',
             display: 'flex',
@@ -221,7 +217,7 @@ export function ImageCropperModal({
 
         {/* Zoom Slider */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '4px' }}>
-          <span style={{ fontSize: 'var(--font-size-14)', fontWeight: 700, color: 'var(--text-main)' }}>Zoom</span>
+          <span className="gs-cropper-label">Zoom</span>
           <input 
             type="range" 
             min="-100" 
@@ -232,22 +228,12 @@ export function ImageCropperModal({
           />
         </div>
 
-        {/* Buttons */}
-        <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-          <button 
-            type="button"
-            onClick={onClose}
-            className="btn btn-secondary"
-            style={{ flex: 1, padding: '10px 18px' }}
-          >
+        {/* Buttons — same pills as Global Settings' Cancel / Save prompt */}
+        <div className="gs-confirm-actions gs-cropper-actions">
+          <button type="button" onClick={onClose} className="gs-confirm-btn">
             Cancel
           </button>
-          <button 
-            type="button"
-            onClick={handleConfirm}
-            className="btn btn-primary"
-            style={{ flex: 1, padding: '10px 18px' }}
-          >
+          <button type="button" onClick={handleConfirm} className="gs-confirm-btn gs-top-btn-save">
             Confirm
           </button>
         </div>

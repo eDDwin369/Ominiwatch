@@ -31,9 +31,9 @@
   border: 1px solid var(--gs-input-border, rgba(255, 255, 255, 0.15));
   background: var(--gs-input-bg, rgba(255, 255, 255, 0.08));
   color: var(--gs-text-color, var(--text-main));
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-strong, 600);
+  letter-spacing: calc(0.3px + var(--app-letter-spacing, 0px));
   padding: 0 8px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   
@@ -55,11 +55,11 @@
 .gs-dd-trigger-rect {
   height: 32px;
   border: 1px solid var(--border-light, rgba(255, 255, 255, 0.12));
-  border-radius: 8px;
+  border-radius: calc(var(--radius-unit, 1px) * 8);
   background: var(--bg-card);
   color: var(--text-main);
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-medium, 500);
   padding: 0 10px;
   min-width: 130px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -87,8 +87,8 @@
 .gs-dd-trigger-input {
   text-align: center;
   cursor: text;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-strong, 600);
 }
 
 .gs-dd-trigger-input:focus {
@@ -133,7 +133,7 @@
   max-height: 148px;
   padding: 3px 2px;
   gap: 2px;
-  border-radius: 14px;
+  border-radius: calc(var(--radius-unit, 1px) * 14);
   background: rgba(16, 20, 34, 0.92);
   backdrop-filter: blur(20px) saturate(190%);
   -webkit-backdrop-filter: blur(20px) saturate(190%);
@@ -161,7 +161,7 @@
   max-height: 200px;
   padding: 4px;
   gap: 1px;
-  border-radius: 8px;
+  border-radius: calc(var(--radius-unit, 1px) * 8);
   background: var(--bg-card, #12151f);
   border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
   box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
@@ -215,9 +215,9 @@
   padding: 0 4px;
   margin: 0;
   border-radius: 999px;
-  font-size: 11.5px;
-  font-weight: 500;
-  letter-spacing: 0.2px;
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-medium, 500);
+  letter-spacing: calc(0.2px + var(--app-letter-spacing, 0px));
   text-align: center;
   display: flex;
   align-items: center;
@@ -249,7 +249,7 @@
 .gs-dd-menu-pill .gs-dd-option-selected:hover {
   background: var(--gs-accent-gradient, var(--primary));
   color: #ffffff !important;
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
   width: 100% !important;
 }
@@ -260,9 +260,9 @@
   height: 28px;
   min-height: 28px;
   padding: 0 10px;
-  border-radius: 6px;
-  font-size: 12.5px;
-  font-weight: 450;
+  border-radius: calc(var(--radius-unit, 1px) * 6);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--app-font-weight, 400);
   text-align: left;
   display: flex;
   align-items: center;
@@ -282,12 +282,12 @@
 .gs-dd-menu-rect .gs-dd-option-selected:hover {
   background: var(--highlight-soft, rgba(59, 130, 246, 0.12));
   color: var(--highlight, var(--primary));
-  font-weight: 600;
+  font-weight: var(--font-weight-strong, 600);
 }
 
 .gs-dd-option-check {
-  font-size: 11px;
-  font-weight: bold;
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-strong, 600);
   color: var(--highlight, var(--primary));
   margin-left: 8px;
 }

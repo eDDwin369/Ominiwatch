@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Upload,
   LayoutPanelTop, Layout, LayoutPanelLeft, Users,
-  Type, Image, CheckCircle2, Info, X, RotateCcw, AlertCircle
+  CheckCircle2, Info, X, RotateCcw, AlertCircle, Settings
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 
@@ -124,11 +124,11 @@ const InfoTooltip = ({
             ...positionStyle,
             background: 'var(--bg-dashboard)',
             border: '1px solid rgba(255, 255, 255, 0.25)',
-            borderRadius: '8px',
+            borderRadius: 'calc(var(--radius-unit, 1px) * 8)',
             padding: '7px 12px',
             color: 'var(--text-main)',
-            fontSize: '11.5px',
-            fontWeight: 400,
+            fontSize: 'var(--font-size-caption, 12px)',
+            fontWeight: 'var(--app-font-weight, 400)',
             whiteSpace: 'normal',
             width: 'max-content',
             maxWidth: '220px',
@@ -686,10 +686,10 @@ export function GlobalSettingsWorkspace({
   });
 
   const navItems = [
-    { id: 'header', label: 'Header', icon: <LayoutPanelTop size={20} /> },
-    { id: 'profile', label: 'Customer Profile', icon: <Users size={20} /> },
-    { id: 'footer', label: 'Footer', icon: <Layout size={20} /> },
-    { id: 'sidebar', label: 'Sidebar', icon: <LayoutPanelLeft size={20} /> },
+    { id: 'header', label: 'Header', tip: 'Company logo and header branding.', icon: <LayoutPanelTop size={20} /> },
+    { id: 'profile', label: 'Customer Profile', tip: 'Customer logo and profile text.', icon: <Users size={20} /> },
+    { id: 'footer', label: 'Footer', tip: 'Powered-by, copyright and footer links.', icon: <Layout size={20} /> },
+    { id: 'sidebar', label: 'Sidebar', tip: 'Sidebar colour, behaviour and widths.', icon: <LayoutPanelLeft size={20} /> },
   ];
 
   return (
@@ -754,6 +754,7 @@ export function GlobalSettingsWorkspace({
               setLogo(croppedUrl);
             } else if (cropperTarget === 'footer') {
               setFooterPoweredByImage(croppedUrl);
+              setFooterPoweredByType('image');
             } else if (cropperTarget === 'customer') {
               setCustomerLogo(croppedUrl);
             }
@@ -774,7 +775,7 @@ export function GlobalSettingsWorkspace({
                 background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
                 border: '1px solid rgba(255, 255, 255, 0.4)',
                 boxShadow: '0 10px 30px rgba(29, 78, 216, 0.7), 0 0 20px rgba(59, 130, 246, 0.5)',
-                borderRadius: '20px',
+                borderRadius: 'calc(var(--radius-unit, 1px) * 20)',
                 padding: '8px 24px',
                 color: 'var(--text-main)',
                 fontSize: '13.5px',
@@ -792,8 +793,9 @@ export function GlobalSettingsWorkspace({
             </div>
           )}
           <div className="gs-header">
-            <div className="gs-header-left">
-              <h2 style={{ ...headingStyle(1), color: 'var(--on-accent, var(--btn-text, #ffffff))' }}>Global Settings</h2>
+            <div className="gs-header-left page-title-group">
+              <span className="page-title-icon" aria-hidden="true"><Settings size={20} /></span>
+              <h2 className="brand-gradient-text" style={headingStyle(2)}>Global Settings</h2>
             </div>
             <div className="gs-header-right" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button 
@@ -849,6 +851,7 @@ export function GlobalSettingsWorkspace({
                 aria-selected={activeTab === item.id}
                 onClick={() => setActiveTab(item.id as TabId)}
                 className={`gs-tab ${activeTab === item.id ? 'active' : ''}`}
+                data-tip={item.tip}
               >
                 <span className="gs-tab-icon">{item.icon}</span>
                 {item.label}
@@ -863,9 +866,9 @@ export function GlobalSettingsWorkspace({
               <div className="gs-cards-2x2">
 
                 {/* Left Card: Company Logo (headerConfig.logo — the main logo, left of the header bar; distinct from the Customer Logo in the Profile tab) */}
-                <div className="gs-config-card gs-card-tint-strong">
-                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>Company Logo <InfoTooltip text="Upload or crop the primary company logo displayed on the page header." /></span>
+                <div className="gs-config-card">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}><span className="brand-gradient-text">Company Logo</span> <InfoTooltip text="Upload or crop the primary company logo displayed on the page header." /></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, justifyContent: 'center' }}>
@@ -905,7 +908,7 @@ export function GlobalSettingsWorkspace({
                     {logo && (
                       <div className="gs-iphone-file-card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <img src={logo} alt="Uploaded Preview" style={{ maxHeight: '32px', maxWidth: '64px', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: '4px' }} />
+                          <img src={logo} alt="Uploaded Preview" style={{ maxHeight: '32px', maxWidth: '64px', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: 'calc(var(--radius-unit, 1px) * 4)' }} />
                           <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
                         </div>
                         <button type="button" onClick={() => {
@@ -925,9 +928,9 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Right Card: Header Branding Visibility */}
-                <div className="gs-config-card gs-card-tint-soft">
-                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>Header Branding Visibility <InfoTooltip text="Configure font style, color, and visibility for company title and caption." position="below-right" /></span>
+                <div className="gs-config-card">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}><span className="brand-gradient-text">Header Branding</span> <InfoTooltip text="Configure font style, color, and visibility for company title and caption." position="below-right" /></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
@@ -1038,114 +1041,69 @@ export function GlobalSettingsWorkspace({
 
           {/* Footer Config Panel */}
           {activeTab === 'footer' && (
-            <div className="gs-tab-content-container" style={{ padding: '24px 32px' }}>
+            <div className="gs-tab-content-container">
               <div className="gs-cards-2x2">
-                            {/* Left Card: Powered By Settings */}
-                <div className="gs-config-card gs-config-card--stack gs-card-tint-strong">
-                  <div style={{ display: 'contents' }}>
-                    <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
-                      Powered By <InfoTooltip text="Configure footer 'Powered By' attribution as custom text or logo image." />
-                    </div>
-
-                    {/* Tabs: Text vs Image */}
-                    <div className="gs-segmented-tabs" style={{ display: 'flex', width: '100%' }}>
-                      <button
-                        type="button"
-                        onClick={() => setFooterPoweredByType('text')}
-                        className={`gs-tab-btn ${footerPoweredByType === 'text' ? 'active' : ''}`}
-                        style={{
-                          flex: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px'
-                        }}
-                      >
-                        <Type size={14} /> TEXT
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setFooterPoweredByType('image')}
-                        className={`gs-tab-btn ${footerPoweredByType === 'image' ? 'active' : ''}`}
-                        style={{
-                          flex: 1,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px'
-                        }}
-                      >
-                        <Image size={14} /> IMAGE
-                      </button>
-                    </div>
+                            {/* Left Card: Powered By (same layout as Company Logo: header, upload + preview, bottom row) */}
+                <div className="gs-config-card">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}><span className="brand-gradient-text">Powered By</span> <InfoTooltip text="Footer 'Powered By' attribution. An uploaded image is shown instead of the caption." /></span>
                   </div>
 
-                  {/* Dynamic Inputs */}
-                  {footerPoweredByType === 'text' ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <TextField
-                        label="Footer Caption"
-                        value={footerPoweredByText}
-                        maxLength={50}
-                        counter
-                        onChange={(e) => setFooterPoweredByText(e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 50))}
-                        placeholder={`Powered by ${companyName || 'OomniEye'} Digital Solutions`}
-                      />
-                    </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, justifyContent: 'center' }}>
-                      {/* Dashed upload area */}
-                      <div 
-                        className="gs-iphone-dropzone"
-                        onClick={() => footerFileInputRef.current?.click()}
-                      >
-                        <div className="gs-iphone-orb-btn">
-                          <Upload size={20} />
-                        </div>
-                        <span style={{ ...headingStyle(6, 'secondary') }}>Choose image</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, justifyContent: 'center' }}>
+                    <div
+                      className="gs-iphone-dropzone"
+                      onClick={() => footerFileInputRef.current?.click()}
+                    >
+                      <div className="gs-iphone-orb-btn">
+                        <Upload size={22} />
                       </div>
-                      <input
-                        ref={footerFileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFooterImageUpload}
-                        style={{ display: 'none' }}
-                      />
-
-                      {/* Uploaded image preview */}
-                      {footerPoweredByImage && (
-                        <div className="gs-iphone-file-card">
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <img src={footerPoweredByImage} alt="Uploaded Preview" style={{ height: '36px', width: '36px', objectFit: 'contain', borderRadius: '6px' }} />
-                            <span style={{ fontSize: '13.5px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded image</span>
-                          </div>
-                          <button type="button" onClick={() => {
-                            setFooterPoweredByImage('');
-                            if (footerFileInputRef.current) footerFileInputRef.current.value = '';
-                          }} className="gs-iphone-file-remove-btn">
-                            ×
-                          </button>
-                        </div>
-                      )}
+                      <span style={{ ...headingStyle(6, 'secondary') }}>Choose image</span>
                     </div>
-                  )}
+                    <input
+                      ref={footerFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFooterImageUpload}
+                      style={{ display: 'none' }}
+                    />
+
+                    {footerPoweredByImage && (
+                      <div className="gs-iphone-file-card">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <img src={footerPoweredByImage} alt="Uploaded Preview" style={{ maxHeight: '32px', maxWidth: '64px', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: 'calc(var(--radius-unit, 1px) * 4)' }} />
+                          <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded image</span>
+                        </div>
+                        <button type="button" onClick={() => {
+                          setFooterPoweredByImage('');
+                          setFooterPoweredByType('text');
+                          if (footerFileInputRef.current) footerFileInputRef.current.value = '';
+                        }} className="gs-iphone-file-remove-btn">
+                          ×
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
+                    <TextField
+                      label="Footer Caption"
+                      value={footerPoweredByText}
+                      maxLength={50}
+                      counter
+                      onChange={(e) => setFooterPoweredByText(e.target.value.replace(/[\r\n]+/g, ' ').slice(0, 50))}
+                      placeholder={`Powered by ${companyName || 'OomniEye'} Digital Solutions`}
+                    />
+                  </div>
                 </div>
 
                 {/* Right Card: Footer Settings */}
-                <div className="gs-config-card gs-config-card--stack gs-card-tint-soft">
-                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
-                    Footer Settings <InfoTooltip text="Control overall footer bar visibility, copyright text, and navigation links." position="below-right" />
+                <div className="gs-config-card">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}><span className="brand-gradient-text">Footer Settings</span> <InfoTooltip text="Control overall footer bar visibility, copyright text, and navigation links." position="below-right" /></span>
                   </div>
 
-                  {/* Row 1: Footer Visibility */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
-                    <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
-                  </div>
-
-                  <div style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }} />
-
-                  {/* Row 2: Copyright Text */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>
+                  {/* Row 1: Copyright Text */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <TextField
                       label="Copyright Text"
@@ -1156,9 +1114,7 @@ export function GlobalSettingsWorkspace({
                     />
                   </div>
 
-                  <div style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }} />
-
-                  {/* Row 3: Add Footer Link */}
+                  {/* Row 2: Footer Links */}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Footer Links <InfoTooltip text="Manage custom navigation links displayed in footer bar." /></span>
                     <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
@@ -1173,10 +1129,10 @@ export function GlobalSettingsWorkspace({
                             color: '#0f172a',
                             border: '1px solid rgba(0, 0, 0, 0.12)',
                             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08)',
-                            borderRadius: '10px',
+                            borderRadius: 'calc(var(--radius-unit, 1px) * 10)',
                             padding: '6px 12px',
-                            fontSize: '12px',
-                            fontWeight: 600,
+                            fontSize: 'var(--font-size-caption, 12px)',
+                            fontWeight: 'var(--font-weight-strong, 600)',
                             whiteSpace: 'nowrap',
                             zIndex: 1000,
                             display: 'flex',
@@ -1205,18 +1161,7 @@ export function GlobalSettingsWorkspace({
                         type="button"
                         onClick={handleAddFooterLink}
                         title={footerLinks.length >= 1 ? 'You can only add one link' : 'Add custom footer link'}
-                        style={{
-                          padding: '6px 16px',
-                          background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-                          color: 'var(--text-main)',
-                          border: 'none',
-                          borderRadius: '14px',
-                          fontSize: '12px',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          opacity: footerLinks.length >= 1 ? 0.8 : 1,
-                          transition: 'opacity 0.2s ease'
-                        }}
+                        className="shell-btn-primary shell-btn-sm"
                       >
                         + ADD LINK
                       </button>
@@ -1273,6 +1218,12 @@ export function GlobalSettingsWorkspace({
                       })}
                     </div>
                   )}
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.12)', paddingTop: '14px' }}>
+                    <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Footer Visibility <InfoTooltip text="Toggle whether footer bar is displayed at bottom of screen." /></span>
+                    <AppleToggle checked={footerVisible} onChange={setFooterVisible} />
+                  </div>
                 </div>
 
               </div>
@@ -1281,16 +1232,16 @@ export function GlobalSettingsWorkspace({
 
           {/* Sidebar Config Panel */}
           {activeTab === 'sidebar' && (
-            <div className="gs-tab-content-container" style={{ padding: '24px 32px' }}>
+            <div className="gs-tab-content-container">
               <div className="gs-cards-2x2">
                 
                 {/* Behavior Card — rows are direct children of .gs-config-card (not wrapped
                     in an inner flex div) so its `justify-content: space-between` spreads
                     slack evenly across every row instead of dumping it all into one gap
                     after the title (which is what a 2-child title+wrapper split does). */}
-                <div className="gs-config-card gs-config-card--stack gs-card-tint-strong">
-                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
-                    Sidebar Behavior <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
+                <div className="gs-config-card gs-config-card--stack">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'inline-flex', alignItems: 'center' }}>
+                    <span className="brand-gradient-text">Sidebar Behavior</span> <InfoTooltip text="Configure auto-collapse, auto-hide, and item visibility preferences for navigation sidebar." />
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <span style={{ ...bodyTextStyle, display: 'inline-flex', alignItems: 'center' }}>Choose color <InfoTooltip text="Custom background colour for the navigation sidebar." /></span>
@@ -1342,15 +1293,15 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Width Configuration Card — same flattening as the Behavior card above. */}
-                <div className="gs-config-card gs-config-card--stack gs-card-tint-soft">
-                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'inline-flex', alignItems: 'center' }}>
-                    Sidebar Dimensions <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
+                <div className="gs-config-card gs-config-card--stack">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'inline-flex', alignItems: 'center' }}>
+                    <span className="brand-gradient-text">Sidebar Dimensions</span> <InfoTooltip text="Adjust custom pixel widths for expanded and collapsed sidebar states." position="below-right" />
                   </div>
 
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center' }}>Expanded Width <InfoTooltip text="Set width (in pixels) of sidebar when fully expanded." /></span>
-                      <span style={{ fontWeight: 700 }}>{expandedWidth}px</span>
+                      <span style={{ fontWeight: 'var(--font-weight-strong, 600)' }}>{expandedWidth}px</span>
                     </div>
                     <input
                       type="range"
@@ -1374,9 +1325,9 @@ export function GlobalSettingsWorkspace({
                   <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }} />
 
                   <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--font-size-body-sm, 14px)', color: 'var(--text-secondary)', marginBottom: '8px' }}>
                       <span style={{ display: 'inline-flex', alignItems: 'center' }}>Collapsed Width <InfoTooltip text="Set width (in pixels) of sidebar when in minimal collapsed mode." /></span>
-                      <span style={{ fontWeight: 700 }}>{collapsedWidth}px</span>
+                      <span style={{ fontWeight: 'var(--font-weight-strong, 600)' }}>{collapsedWidth}px</span>
                     </div>
                     <input
                       type="range"
@@ -1404,13 +1355,13 @@ export function GlobalSettingsWorkspace({
 
           {/* Customer Profile Config Panel */}
           {activeTab === 'profile' && (
-            <div className="gs-tab-content-container" style={{ padding: '24px 32px' }}>
+            <div className="gs-tab-content-container">
               <div className="gs-cards-2x2">
                 
                 {/* Left Card: Customer Logo */}
-                <div className="gs-config-card gs-card-tint-strong">
-                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Logo <InfoTooltip text="Upload or crop customer profile logo image." /></span>
+                <div className="gs-config-card">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}><span className="brand-gradient-text">Customer Logo</span> <InfoTooltip text="Upload or crop customer profile logo image." /></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flex: 1, justifyContent: 'center' }}>
@@ -1450,7 +1401,7 @@ export function GlobalSettingsWorkspace({
                     {customerLogo && (
                       <div className="gs-iphone-file-card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <img src={customerLogo} alt="Uploaded Preview" style={{ maxHeight: '32px', maxWidth: '64px', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: '4px' }} />
+                          <img src={customerLogo} alt="Uploaded Preview" style={{ maxHeight: '32px', maxWidth: '64px', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: 'calc(var(--radius-unit, 1px) * 4)' }} />
                           <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 600 }}>Uploaded logo</span>
                         </div>
                         <button type="button" onClick={() => {
@@ -1470,9 +1421,9 @@ export function GlobalSettingsWorkspace({
                 </div>
 
                 {/* Right Card: Customer Profile Visibility */}
-                <div className="gs-config-card gs-card-tint-soft">
-                  <div className="gs-card-header" style={{ ...headingStyle(5), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ display: 'inline-flex', alignItems: 'center' }}>Customer Profile Visibility <InfoTooltip text="Manage visibility, typography styles, and color follow settings for customer profile." position="below-right" /></span>
+                <div className="gs-config-card">
+                  <div className="gs-card-header" style={{ ...headingStyle(4), display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center' }}><span className="brand-gradient-text">Customer Profile</span> <InfoTooltip text="Manage visibility, typography styles, and color follow settings for customer profile." position="below-right" /></span>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, justifyContent: 'center' }}>

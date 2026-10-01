@@ -369,6 +369,7 @@ export function Dashboard({
         onLogout={handleLogout}
         onNavigate={handleSetCurrentView}
         onSettingsClick={() => setIsGlobalSettingsOpen(true)}
+        settingsOpen={isGlobalSettingsOpen}
         headerConfig={headerConfig}
         isEditing={isGlobalSettingsOpen && (activeSettingsTab === 'header' || activeSettingsTab === 'profile')}
         showCustomerProfile={showCustomerProfile}
@@ -460,9 +461,9 @@ export function Dashboard({
       </div>
       {footerVisible && (
         <footer 
+          className="app-footer"
           style={{
             height: '32px',
-            backgroundColor: 'var(--bg-card, var(--bg-card))',
             borderTop: '1px solid var(--border-light, var(--border-light))',
             display: 'grid',
             gridTemplateColumns: '1fr auto 1fr',

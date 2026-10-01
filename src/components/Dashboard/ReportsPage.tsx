@@ -51,11 +51,22 @@ const PLACES = [
 
 const pick = <T,>(arr: T[], i: number) => arr[i % arr.length];
 
+const MAX_AUSTRALIA = 5;
+let australiaCount = 0;
+
 const dummyUsers = Array.from({ length: 1000 }, (_, idx) => {
   const n = idx + 1;
   const first = pick(FIRST, idx);
   const last = pick(LAST, idx * 3 + 1);
-  const place = pick(PLACES, idx);
+  let place = pick(PLACES, idx);
+  // Cap Australia entries at 5; overflow goes to the next place in the list
+  if (place.country === 'Australia') {
+    if (australiaCount < MAX_AUSTRALIA) {
+      australiaCount++;
+    } else {
+      place = pick(PLACES, idx + 1);
+    }
+  }
   const seq = String(n).padStart(3, '0');
   return {
     user_id: `USR-${String(n).padStart(4, '0')}`,
