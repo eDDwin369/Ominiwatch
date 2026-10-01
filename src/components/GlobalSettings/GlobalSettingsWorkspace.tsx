@@ -1161,18 +1161,7 @@ export function GlobalSettingsWorkspace({
                         type="button"
                         onClick={handleAddFooterLink}
                         title={footerLinks.length >= 1 ? 'You can only add one link' : 'Add custom footer link'}
-                        style={{
-                          padding: '6px 16px',
-                          background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)',
-                          color: 'var(--text-main)',
-                          border: 'none',
-                          borderRadius: 'calc(var(--radius-unit, 1px) * 14)',
-                          fontSize: 'var(--font-size-caption, 12px)',
-                          fontWeight: 'var(--font-weight-strong, 600)',
-                          cursor: 'pointer',
-                          opacity: footerLinks.length >= 1 ? 0.8 : 1,
-                          transition: 'opacity 0.2s ease'
-                        }}
+                        className="shell-btn-primary shell-btn-sm"
                       >
                         + ADD LINK
                       </button>

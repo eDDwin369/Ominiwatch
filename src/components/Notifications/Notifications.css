@@ -627,8 +627,8 @@
   border-color: var(--border-light);
 }
 
-[data-theme-mode="dark"] .new-notification-dropdown::before {
-  background: color-mix(in srgb, var(--primary) 12%, var(--bg-card));
+[data-theme-mode] .new-notification-dropdown::before {
+  background: var(--brand-page-wash-top);
 }
 
 /* Page header — H2, same as Global Settings / Account Settings */
@@ -673,11 +673,11 @@
   border-bottom-color: var(--border-light);
 }
 
-/* Menu tabs — H5, same as Global Settings tabs */
+/* Menu tabs — body text tokens, same as Global Settings tabs */
 .new-tab-pill-btn {
-  font-family: var(--app-heading-family, var(--app-font-family));
-  font-size: var(--h5-size, 17px);
-  font-weight: var(--h5-weight, var(--app-font-weight, 400));
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body, 15px);
+  font-weight: var(--app-font-weight, 400);
   color: color-mix(in srgb, var(--text-secondary) 40%, transparent);
 }
 
@@ -1119,18 +1119,8 @@
 
 /* Window surface = Global Settings window: soft primary tint fading into the card colour.
    (The full brand-card surface became a heavy green slab at full-screen size.) */
-.new-notification-dropdown {
-  background: linear-gradient(160deg,
-    color-mix(in srgb, var(--primary) 14%, var(--bg-card)) 0%,
-    color-mix(in srgb, var(--primary) 8%, var(--bg-card)) 45%,
-    color-mix(in srgb, var(--secondary) 10%, var(--bg-card)) 100%);
-}
-
-[data-theme-mode="dark"] .new-notification-dropdown {
-  background: linear-gradient(160deg,
-    color-mix(in srgb, var(--primary) 16%, var(--bg-card)) 0%,
-    color-mix(in srgb, var(--primary) 7%, var(--bg-card)) 45%,
-    color-mix(in srgb, var(--secondary) 10%, var(--bg-card)) 100%);
+[data-theme-mode] .new-notification-dropdown {
+  background: var(--brand-page-wash); /* same wash as the Account Settings page */
 }
 
 .new-notification-dropdown .new-notification-list-scroll,
@@ -1143,7 +1133,13 @@
 .new-notification-dropdown .new-notification-item-row,
 [data-theme-mode] .new-notification-dropdown .new-notification-item-row {
   background: transparent !important;
-  border-bottom-color: var(--border-light) !important;
+  /* Theme Studio › Tables › Row dividers (off by default) */
+  border-bottom: var(--table-row-divider, none) !important;
+}
+
+/* Theme Studio › Tables › Striped rows */
+[data-theme-mode] .new-notification-dropdown .new-notification-item-row:nth-child(even):not(.unread):not(:hover) {
+  background: var(--table-stripe, transparent) !important;
 }
 
 .new-notification-dropdown .new-notification-item-row.unread,
@@ -1221,17 +1217,30 @@
   background: transparent;
 }
 
-[data-theme-mode="dark"] .new-notification-dropdown .new-notification-header {
-  background: color-mix(in srgb, var(--primary) 16%, var(--bg-card));
-}
-
+[data-theme-mode="dark"] .new-notification-dropdown .new-notification-header,
 [data-theme-mode="dark"] .new-notification-dropdown .new-notification-tabs-row {
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--primary) 12%, var(--bg-card)) 0%,
-    color-mix(in srgb, var(--primary) 6%, var(--bg-card)) 100%);
+  background: transparent;
 }
 
 /* Caret = the window's top-left wash colour */
 .new-notification-dropdown::before {
   background: color-mix(in srgb, var(--primary) 14%, var(--bg-card));
+}
+
+/* Hidden measuring copy of the first "View all" rows (sizes the compact window) */
+.new-notification-measure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Settings view fills the fixed window height */
+.new-notification-dropdown .new-notification-settings {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }

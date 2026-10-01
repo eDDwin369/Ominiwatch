@@ -72,6 +72,14 @@ function syncCssVars(theme: any, settings: any) {
   const hdrIsTint = !!rawCardHdrBg && rawCardHdrBg.startsWith('rgba');
   set('--card-hdr-base', settings.cardHdrHex || (rawCardHdrBg && rawCardHdrBg !== 'transparent' && !hdrIsTint ? rawCardHdrBg : undefined));
   set('--card-hdr-tint', hdrIsTint ? rawCardHdrBg : undefined);
+  // Solid header band only for Tinted / Accent or a custom header colour; Plain leaves it unset
+  // so the shell falls back to a soft fade into the card (no band edge).
+  const solidHdr = settings.cardHeader !== 'plain' || !!settings.cardHdrHex;
+  set('--card-hdr-solid-band', solidHdr
+    ? 'linear-gradient(var(--card-hdr-tint, transparent), var(--card-hdr-tint, transparent)), color-mix(in srgb, var(--card-hdr-base, var(--bg-card)) 85%, transparent)'
+    : undefined);
+  // a solid band replaces the Plain top-of-card wash
+  set('--card-hdr-wash', solidHdr ? 'linear-gradient(transparent, transparent)' : undefined);
   set('--notif-card', tk.toastBg);
   const btnBase = settings.btnColorHex || p.primary.main;
   set('--btn-color', settings.accentGradient ? `linear-gradient(135deg, ${btnBase}, ${p.primary.dark})` : btnBase);
@@ -87,6 +95,11 @@ function syncCssVars(theme: any, settings: any) {
   set('--edge-pad', tk.edgePad != null ? `${tk.edgePad}px` : undefined);
   set('--card-gap', tk.cardGap != null ? `${tk.cardGap}px` : undefined);
   set('--btn-case', theme.typography.button?.textTransform);
+  // Table settings (raw studio settings — the theme carries no tokens for them); the shell's
+  // list rows (Notifications) follow them: row dividers, row density, striped rows.
+  set('--table-row-divider', settings.tableDividers ? `${settings.tableRowDivW || 1}px solid var(--border-light)` : 'none');
+  set('--table-row-pad-scale', settings.tableDensity === 'compact' ? '0.7' : settings.tableDensity === 'comfortable' ? '1.3' : '1');
+  set('--table-stripe', settings.tableStripe ? 'color-mix(in srgb, var(--text-main) 4%, transparent)' : 'transparent');
   set('--status-weight', tk.statusBold ? '700' : '500');
 
   // Card Alignment
@@ -292,7 +305,11 @@ function syncCssVars(theme: any, settings: any) {
   const resolvedAccountCardBg = isDark
     ? figmaAccountCardDark[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #010D27 0%, #03205F 100%)'
     : figmaAccountCardLight[settings.presetId] || tk.accountCardBg || 'linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)';
-  set('--account-card-bg', settings.cardBgHex || resolvedAccountCardBg);
+  // explicit card colour wins, then an active surface tint, else the preset's card gradient (release look)
+  const activeTintBg = effectiveTintHex && (surfaceTint !== 'snow' || tintHex) && effectiveOpacity > 0
+    ? `color-mix(in srgb, ${effectiveTintHex} ${Math.round(effectiveOpacity)}%, ${isDark ? '#1e293b' : '#ffffff'})`
+    : '';
+  set('--account-card-bg', settings.cardBgHex || activeTintBg || resolvedAccountCardBg);
   set('--dash-brand-gradient', tk.brandGradient);
   set('--dash-aura-color', primaryHex);
   set('--gs-accent-gradient', tk.gsAccentGradient);

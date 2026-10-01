@@ -1,5 +1,5 @@
 import { useId, useState, type InputHTMLAttributes, type SelectHTMLAttributes } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Eye, EyeOff } from 'lucide-react';
 import './TextField.css';
 
 type BaseProps = {
@@ -42,6 +42,8 @@ export function TextField(props: TextFieldProps) {
   const { label, error, className = '', as = 'input', ...rest } = props;
   const id = useId();
   const [focused, setFocused] = useState(false);
+  // Password fields get a built-in show / hide toggle
+  const [revealed, setRevealed] = useState(false);
 
   const isDisabled = !!(rest as { disabled?: boolean }).disabled;
   const wrapperClass = `tf-wrapper ${focused ? 'tf-focused' : ''} ${error ? 'tf-error' : ''} ${isDisabled ? 'tf-disabled' : ''}`.trim();
@@ -50,7 +52,8 @@ export function TextField(props: TextFieldProps) {
   if (as !== 'select') {
     const { showChevron, counter, maxLength, value, ...inputRest } = rest as InputProps;
     const counterText = counter && maxLength != null ? `${String(value ?? '').length}/${maxLength}` : undefined;
-    const inputWrapperClass = `${wrapperClass} ${showChevron ? '' : 'tf-no-chevron'}`.trim();
+    const isPassword = (inputRest as InputHTMLAttributes<HTMLInputElement>).type === 'password';
+    const inputWrapperClass = `${wrapperClass} ${showChevron ? '' : 'tf-no-chevron'} ${isPassword ? 'tf-has-reveal' : ''}`.trim();
     return (
       <div className={fieldClass}>
         <div className={inputWrapperClass}>
@@ -63,11 +66,26 @@ export function TextField(props: TextFieldProps) {
             value={value}
             maxLength={maxLength}
             {...(inputRest as InputHTMLAttributes<HTMLInputElement>)}
+            type={isPassword && revealed ? 'text' : (inputRest as InputHTMLAttributes<HTMLInputElement>).type}
             onFocus={(e) => { setFocused(true); (inputRest as InputHTMLAttributes<HTMLInputElement>).onFocus?.(e); }}
             onBlur={(e) => { setFocused(false); (inputRest as InputHTMLAttributes<HTMLInputElement>).onBlur?.(e); }}
             className="tf-input"
           />
           {showChevron && <ChevronDown size={14} className="tf-chevron" />}
+          {isPassword && (
+            <button
+              type="button"
+              className="tf-reveal"
+              onMouseDown={(e) => e.preventDefault()} // keep focus in the field
+              onClick={() => setRevealed(r => !r)}
+              aria-label={revealed ? `Hide ${label}` : `Show ${label}`}
+              aria-pressed={revealed}
+              title={revealed ? 'Hide password' : 'Show password'}
+              disabled={isDisabled}
+            >
+              {revealed ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          )}
         </div>
         {error ? <span className="tf-error-text">{error}</span> : counterText ? <span className="tf-counter">{counterText}</span> : null}
       </div>

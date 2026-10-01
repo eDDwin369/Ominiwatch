@@ -14,12 +14,7 @@
    as plain white (base colour still comes from --account-page-bg). */
 .figma-account-settings-page-wrapper,
 [data-theme-mode] .figma-account-settings-page-wrapper {
-  background:
-    linear-gradient(160deg,
-      color-mix(in srgb, var(--primary) 12%, transparent) 0%,
-      color-mix(in srgb, var(--primary) 6%, transparent) 45%,
-      color-mix(in srgb, var(--secondary) 10%, transparent) 100%),
-    var(--account-page-bg, var(--bg-dashboard)) !important;
+  background: var(--brand-page-wash) !important;
 }
 
 .figma-account-settings-container {
@@ -2050,18 +2045,11 @@
 /* Remaining fixed weights/sizes → theme tokens (buttons, accordion triggers, footer text) */
 .figma-account-settings-container .figma-sec-trigger,
 .figma-account-settings-container .figma-session-revoke,
-.figma-account-settings-container .figma-btn-outline,
 .figma-account-settings-container .figma-location-text {
   font-weight: var(--app-font-weight, 400) !important;
 }
 
-.figma-btn-delete-red,
-.figma-btn-modal-cancel,
-.figma-btn-modal-confirm,
-.figma-btn-modal-danger {
-  font-size: var(--app-font-size, 14px) !important;
-  font-weight: var(--font-weight-strong, 600) !important;
-}
+/* (Button typography comes from the shared button system in index.css) */
 
 /* Headings follow the studio's heading line height (1.2 as designed) */
 .figma-account-settings-container .figma-settings-title,
@@ -2072,4 +2060,39 @@
 
 .figma-account-settings-container .figma-card-personal .figma-user-name {
   line-height: calc(var(--heading-lh, 1.2) * 1.25 / 1.2) !important;
+}
+
+/* Accordion rows + dropdown triggers (Active Sessions, Login History, Advanced Settings,
+   Cookie Preferences, Language, Timezone): one field-like control in both modes —
+   soft fill + barely-there edge at rest; primary-tinted edge only on hover / open. Dark mode gets a
+   light fill so the controls stand out from the dark card. */
+[data-theme-mode] .figma-card .figma-sec-trigger,
+[data-theme-mode] .figma-card .figma-cookie-trigger,
+[data-theme-mode] .figma-card .figma-smooth-dropdown-trigger {
+  background: var(--ac-soft-fill);
+  border: 1px solid color-mix(in srgb, var(--text-main) 6%, transparent); /* barely-there edge */
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+[data-theme-mode] .figma-card .figma-sec-trigger:hover,
+[data-theme-mode] .figma-card .figma-cookie-trigger:hover,
+[data-theme-mode] .figma-card .figma-smooth-dropdown-trigger:hover,
+[data-theme-mode] .figma-card .figma-smooth-dropdown-trigger.active {
+  background: var(--ac-soft-fill-hover);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+[data-theme-mode="dark"] .figma-card .figma-sec-trigger,
+[data-theme-mode="dark"] .figma-card .figma-cookie-trigger,
+[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger {
+  background: color-mix(in srgb, var(--text-main) 7%, transparent);
+  border-color: color-mix(in srgb, var(--text-main) 6%, transparent);
+}
+
+[data-theme-mode="dark"] .figma-card .figma-sec-trigger:hover,
+[data-theme-mode="dark"] .figma-card .figma-cookie-trigger:hover,
+[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger:hover,
+[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger.active {
+  background: color-mix(in srgb, var(--text-main) 11%, transparent);
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
 }

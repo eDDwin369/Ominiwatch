@@ -1331,14 +1331,16 @@ input, button, select, textarea, span, p, div, label, a {
   font-family: inherit; /* beats the global span/div font reset, keeps the heading font */
   --grad-from: var(--primary);
   color: var(--primary);
-  background-image: linear-gradient(90deg, var(--h-custom, var(--grad-from)) 0%, var(--h-custom, var(--secondary)) 100%);
+  /* solid primary title (vivid highlight in dark); a studio heading colour replaces it when set */
+  background-image: linear-gradient(90deg, var(--h-custom, var(--grad-from)) 0%, var(--h-custom, var(--grad-from)) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* Dark mode: vivid highlight → secondary so page and card titles stand out on dark surfaces */
 [data-theme-mode="dark"] .brand-gradient-text {
-  --grad-from: color-mix(in srgb, var(--primary) 55%, #ffffff);
+  --grad-from: var(--highlight, color-mix(in srgb, var(--primary) 55%, #ffffff));
 }
 
 /* Which studio heading level each gradient title is: page titles = H2, card/dialog titles = H4 */
@@ -1357,19 +1359,26 @@ h2.brand-gradient-text,
    account card gradient with a soft top-left sheen for depth. Plus the matching header band
    and soft input fill, so all three screens read as one app. */
 :root {
+  /* Plain card header: the card itself carries a long, gentle wash of the card colour from its
+     top edge down into the body, so the title reads clearly with no band edge anywhere. */
+  --card-hdr-wash-default: linear-gradient(180deg,
+    color-mix(in srgb, var(--bg-card) 62%, transparent) 0px,
+    color-mix(in srgb, var(--bg-card) 38%, transparent) 60px,
+    color-mix(in srgb, var(--bg-card) 14%, transparent) 130px,
+    transparent 200px);
   --brand-card-surface:
+    var(--card-hdr-wash, var(--card-hdr-wash-default)),
     linear-gradient(160deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 45%),
     var(--account-card-bg, var(--bg-card));
-  /* Header band = studio card-header tint (Tinted + strength) over the header colour.
-     Plain = no tint, so the release look is unchanged. */
-  --brand-card-band:
-    linear-gradient(var(--card-hdr-tint, transparent), var(--card-hdr-tint, transparent)),
-    color-mix(in srgb, var(--card-hdr-base, var(--bg-card)) 85%, transparent);
+  /* Card header: Tinted / Accent / custom colour → solid band (set by the theme bridge).
+     Plain → no band at all; the card surface's top wash keeps the title readable. */
+  --brand-card-band: var(--card-hdr-solid-band, transparent);
   --brand-field-fill: color-mix(in srgb, var(--card-hdr-base, var(--bg-card)) 35%, transparent);
 }
 
 [data-theme-mode="dark"] {
   --brand-card-surface:
+    var(--card-hdr-wash, var(--card-hdr-wash-default)),
     linear-gradient(160deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 45%),
     var(--account-card-bg, var(--bg-card));
 }
@@ -1401,14 +1410,14 @@ h2.brand-gradient-text,
 
 /* ── Menu tabs — Theme Studio tab behaviour (Global Settings + Notifications) ──
    Unselected: transparent, secondary text. Hover: grey lift + shadow. Selected: highlight
-   tint (soft gradient), main text at 600, full-width 2px primary underline. Hint on hover:
+   tint (soft gradient), primary label at strong weight, full-width 2px primary underline. Hint on hover:
    Theme Studio's tooltip (dark grey pill below the tab), text from data-tip. */
 .gs-modal .gs-tabs .gs-tab,
 .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn {
   position: relative;
   background: transparent;
-  color: var(--h5-color-custom, var(--text-secondary));
-  font-weight: var(--h5-weight, 400);
+  color: var(--text-secondary);
+  font-weight: var(--app-font-weight, 400);
   border-bottom: 2px solid transparent;
   border-radius: calc(var(--radius-unit, 1px) * 6) calc(var(--radius-unit, 1px) * 6) 0 0;
   transition: color 0.16s, background 0.16s, border-color 0.16s, box-shadow 0.16s, transform 0.16s, opacity 0.16s, filter 0.16s;
@@ -1426,7 +1435,7 @@ h2.brand-gradient-text,
   opacity: 1;
   filter: none;
   z-index: 5;
-  color: var(--h5-color-custom, var(--text-main));
+  color: var(--text-main);
   background: rgba(150, 160, 175, 0.35);
   border-radius: calc(var(--radius-unit, 1px) * 8);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
@@ -1436,7 +1445,7 @@ h2.brand-gradient-text,
 .gs-modal .gs-tabs .gs-tab.active,
 .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn.active,
 .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn.active:hover {
-  color: var(--h5-color-custom, var(--text-main));
+  color: var(--primary);
   font-weight: var(--font-weight-strong, 600);
   background: linear-gradient(180deg,
     color-mix(in srgb, var(--highlight, var(--primary)) 26%, transparent) 0%,
@@ -1445,16 +1454,14 @@ h2.brand-gradient-text,
   border-radius: calc(var(--radius-unit, 1px) * 6) calc(var(--radius-unit, 1px) * 6) 0 0;
 }
 
-[data-theme-mode="dark"] .gs-modal .gs-tabs .gs-tab,
-[data-theme-mode="dark"] .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn {
-  color: var(--h5-color-custom, var(--text-secondary));
+[data-theme-mode="dark"] .gs-modal .gs-tabs .gs-tab:not(.active),
+[data-theme-mode="dark"] .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn:not(.active) {
+  color: var(--text-secondary);
 }
 
-[data-theme-mode="dark"] .gs-modal .gs-tabs .gs-tab.active,
-[data-theme-mode="dark"] .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn.active,
 [data-theme-mode="dark"] .gs-modal .gs-tabs .gs-tab:not(.active):hover,
 [data-theme-mode="dark"] .new-notification-dropdown .new-tabs-pill-container .new-tab-pill-btn:not(.active):hover {
-  color: var(--h5-color-custom, var(--text-main));
+  color: var(--text-main);
 }
 
 /* Hover hint (replaces the old short underline pseudo-element) */
@@ -1506,6 +1513,90 @@ h2.brand-gradient-text,
   /* Corner radius unit: 1px at the studio's design radius (9), scales with its radius setting.
      Shell radii are written as multiples of it, so every corner follows Theme Studio. */
   --radius-unit: calc(var(--radius-md, 9px) / 9);
+  /* One page wash for Account Settings, Global Settings and Notifications (both modes):
+     faint primary → secondary over the theme's page colour. */
+  --brand-page-wash:
+    linear-gradient(160deg,
+      color-mix(in srgb, var(--primary) 12%, transparent) 0%,
+      color-mix(in srgb, var(--primary) 6%, transparent) 45%,
+      color-mix(in srgb, var(--secondary) 10%, transparent) 100%),
+    var(--account-page-bg, var(--bg-dashboard));
+  /* solid approximation of the wash's top-left (page colour may be a gradient, so use --bg-dashboard) */
+  --brand-page-wash-top: color-mix(in srgb, var(--primary) 12%, var(--bg-dashboard));
+}
+
+/* Header bell stays in its hover (selected) state while the Notifications window is open */
+.dash-header .header-icon-btn.active {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+/* ── Profile menu — same window standard as Global Settings / Notifications ──
+   Page wash surface, card border/shadow, plain header (name in primary), rows on the wash. */
+.profile-menu {
+  background: var(--brand-page-wash);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl, 18px);
+  box-shadow: var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.08));
+}
+
+.profile-menu .profile-menu-header,
+[data-theme-mode] .profile-menu .profile-menu-header {
+  background: var(--card-hdr-solid-band, transparent);
+  border-bottom: var(--card-hdr-border, none);
+  box-shadow: var(--card-hdr-accent, none);
+}
+
+.profile-menu .profile-menu-name {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h5-size, 17px);
+  font-weight: var(--h5-weight, 400);
+  line-height: var(--heading-lh, 1.2);
+  color: var(--h5-color-custom, var(--primary));
+}
+
+.profile-menu .profile-menu-role {
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--app-font-weight, 400);
+  color: var(--text-secondary);
+}
+
+.profile-menu .profile-dropdown-item,
+[data-theme-mode] .profile-menu .profile-dropdown-item {
+  background: transparent !important;
+  margin: 0 8px;
+  border-radius: calc(var(--radius-unit, 1px) * 10);
+}
+
+.profile-menu .profile-dropdown-item:hover,
+[data-theme-mode] .profile-menu .profile-dropdown-item:hover {
+  background: color-mix(in srgb, var(--highlight, var(--primary)) 12%, transparent) !important;
+}
+
+.profile-menu .profile-dropdown-item.danger:hover,
+[data-theme-mode] .profile-menu .profile-dropdown-item.danger:hover {
+  background: color-mix(in srgb, var(--danger) 10%, transparent) !important;
+}
+
+/* Header avatar: selected ring while the profile menu is open (like the bell) */
+.header-avatar-btn.active {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 0 0 4px color-mix(in srgb, var(--primary) 60%, transparent) !important;
+}
+
+/* App footer bar: card colour in light mode; in dark, a horizontal version of the page wash
+   (primary → secondary over the page colour) so it continues the page instead of a grey strip. */
+.app-footer {
+  background: var(--bg-card);
+}
+
+[data-theme-mode="dark"] .app-footer {
+  /* tint layer over the page colour (which can itself be a gradient, so no color-mix on it) */
+  background:
+    linear-gradient(90deg,
+      color-mix(in srgb, var(--primary) 14%, transparent) 0%,
+      color-mix(in srgb, var(--primary) 6%, transparent) 55%,
+      color-mix(in srgb, var(--secondary) 9%, transparent) 100%),
+    var(--account-page-bg, var(--bg-dashboard));
 }
 
 /* Form controls default to the browser's own weight; inherit the theme's instead
@@ -1514,4 +1605,98 @@ h2.brand-gradient-text,
   :where(button, input, select, textarea) {
   font-weight: var(--app-font-weight, 400);
   letter-spacing: var(--app-letter-spacing, normal);
+}
+
+/* ── Buttons — one system for Account Settings, Global Settings, Notifications (light + dark) ──
+   Built only from Theme Studio tokens: --btn-color / --btn-text (primary), --danger, --primary,
+   --btn-case (Button case), body-small text, radius unit, container padding (density). */
+:is(.shell-btn-primary, .shell-btn-secondary, .shell-btn-danger,
+    .gs-confirm-btn, .notification-action-accept-btn, .notification-action-decline-btn,
+    .figma-btn-modal-confirm, .figma-btn-modal-cancel, .figma-btn-modal-danger,
+    .figma-btn-outline, .figma-btn-delete-red) {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: calc(var(--container-pad, 10px) * 0.8) calc(var(--container-pad, 10px) * 1.8) !important;
+  border-radius: calc(var(--radius-unit, 1px) * 16) !important;
+  border: 1px solid transparent !important;
+  font-family: var(--app-font-family) !important;
+  font-size: var(--font-size-body-sm, 14px) !important;
+  font-weight: var(--font-weight-medium, 500) !important;
+  letter-spacing: var(--app-letter-spacing, normal) !important;
+  line-height: 1.2 !important;
+  text-transform: var(--btn-case, none) !important;
+  cursor: pointer;
+  box-shadow: none !important;
+  transform: none;
+  filter: none;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s, filter 0.15s, transform 0.15s, box-shadow 0.15s !important;
+}
+
+/* Primary */
+:is(.shell-btn-primary, .gs-top-btn-save, .notification-action-accept-btn,
+    .figma-btn-modal-confirm, .figma-btn-outline.active-2fa),
+[data-theme-mode] :is(.gs-top-btn-save, .notification-action-accept-btn, .figma-btn-modal-confirm, .figma-btn-outline.active-2fa) {
+  background: var(--btn-color, var(--primary)) !important;
+  color: var(--btn-text, var(--on-accent, #ffffff)) !important;
+  border-color: transparent !important;
+}
+
+/* Secondary */
+:is(.shell-btn-secondary, .gs-confirm-btn:not(.gs-top-btn-save), .notification-action-decline-btn,
+    .figma-btn-modal-cancel, .figma-btn-outline:not(.active-2fa)),
+[data-theme-mode] :is(.gs-confirm-btn:not(.gs-top-btn-save), .notification-action-decline-btn, .figma-btn-modal-cancel, .figma-btn-outline:not(.active-2fa)) {
+  background: transparent !important;
+  color: var(--text-main) !important;
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border-light)) !important;
+}
+
+/* Danger */
+:is(.shell-btn-danger, .figma-btn-modal-danger, .figma-btn-delete-red),
+[data-theme-mode] :is(.figma-btn-modal-danger, .figma-btn-delete-red) {
+  background: var(--danger, #dc2626) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+/* Hover: same lift on every button; fills brighten, outlines get a primary wash */
+:is(.shell-btn-primary, .shell-btn-danger, .gs-top-btn-save, .notification-action-accept-btn,
+    .figma-btn-modal-confirm, .figma-btn-modal-danger, .figma-btn-delete-red, .figma-btn-outline.active-2fa):not(:disabled):hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 25%, transparent) !important;
+}
+
+:is(.shell-btn-secondary, .gs-confirm-btn:not(.gs-top-btn-save), .notification-action-decline-btn,
+    .figma-btn-modal-cancel, .figma-btn-outline:not(.active-2fa)):not(:disabled):hover,
+[data-theme-mode] :is(.gs-confirm-btn:not(.gs-top-btn-save), .notification-action-decline-btn, .figma-btn-modal-cancel, .figma-btn-outline:not(.active-2fa)):not(:disabled):hover {
+  background: color-mix(in srgb, var(--primary) 10%, transparent) !important;
+  border-color: color-mix(in srgb, var(--primary) 60%, transparent) !important;
+  transform: translateY(-1px);
+}
+
+/* Keyboard focus + disabled */
+:is(.shell-btn-primary, .shell-btn-secondary, .shell-btn-danger, .gs-confirm-btn,
+    .notification-action-accept-btn, .notification-action-decline-btn, .figma-btn-modal-confirm,
+    .figma-btn-modal-cancel, .figma-btn-modal-danger, .figma-btn-outline, .figma-btn-delete-red):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary) 60%, transparent);
+  outline-offset: 2px;
+}
+
+:is(.shell-btn-primary, .shell-btn-secondary, .shell-btn-danger, .gs-confirm-btn,
+    .notification-action-accept-btn, .notification-action-decline-btn, .figma-btn-modal-confirm,
+    .figma-btn-modal-cancel, .figma-btn-modal-danger, .figma-btn-outline, .figma-btn-delete-red):disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+/* Small size: pager Prev / Next, + Add link */
+.shell-btn-sm.shell-btn-sm {
+  min-height: 28px;
+  padding: calc(var(--container-pad, 10px) * 0.4) calc(var(--container-pad, 10px) * 1.2) !important;
+  font-size: var(--font-size-caption, 12px) !important;
 }
