@@ -239,7 +239,8 @@ function syncCssVars(theme: any, settings: any) {
   const secondaryHex = settings.secondaryHex || p.secondary?.main || '#00D2FF';
   const [pHue] = hexToHsl(primaryHex);
   const darkSidebar = hslToHexStr(pHue, 35, 7.2);
-  set('--login-panel-color', tk.loginPanelGradient);
+  // Theme Studio's Login panel colour wins over the preset's own panel gradient
+  set('--login-panel-color', settings.loginPanelColor || tk.loginPanelGradient);
   set('--dash-header-bg', tk.headerBg);
   // Sidebar bg/border — pinned per preset in dark mode (verified against
   // pixelPerfectNewReactCode for Emerald); other presets keep the primary-hue-derived bar.

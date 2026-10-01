@@ -1700,3 +1700,212 @@ h2.brand-gradient-text,
   padding: calc(var(--container-pad, 10px) * 0.4) calc(var(--container-pad, 10px) * 1.2) !important;
   font-size: var(--font-size-caption, 12px) !important;
 }
+
+/* ── Auth screens (login, forgot password, OTP, new password, success) — shell standard ──
+   Follow the theme mode and Theme Studio tokens like Account Settings / Global Settings:
+   page wash panel, brand card surface, shared field look, shared primary button. */
+.login-container {
+  background: var(--bg-dashboard);
+}
+
+.login-container .outer-auth-card,
+.login-container.layout-centered .outer-auth-card {
+  /* stop forcing white text — the card follows the theme's text colours */
+  --text-primary: inherit;
+  --text-secondary: inherit;
+  --text-muted: inherit;
+  --text-main: inherit;
+  color: var(--text-main);
+  background: var(--brand-card-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl, 18px);
+  box-shadow: var(--card-shadow);
+  padding: calc(var(--container-pad, 10px) * 2.4);
+}
+
+/* Fields: same look as the shell TextField */
+.login-container .form-input {
+  background: var(--brand-field-fill);
+  border: 1px solid var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 12);
+  color: var(--text-main);
+  font-family: var(--app-font-family);
+  font-size: var(--app-font-size, 15px);
+  font-weight: var(--app-font-weight, 400);
+  letter-spacing: var(--app-letter-spacing, normal);
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.login-container .form-input:hover {
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border-light));
+}
+
+.login-container .form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+  background: var(--brand-field-fill);
+}
+
+.login-container .form-input::placeholder {
+  color: var(--text-muted);
+}
+
+.login-container .form-input:-webkit-autofill,
+.login-container .form-input:-webkit-autofill:hover,
+.login-container .form-input:-webkit-autofill:focus,
+.login-container .form-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-card) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main);
+}
+
+.login-container .input-icon,
+.login-container .auth-help-icon {
+  color: var(--text-secondary);
+}
+
+.login-container .auth-help-icon {
+  display: flex;
+  align-items: center;
+  cursor: help;
+}
+
+/* Password eye: same as the shell TextField toggle */
+.login-container .password-toggle {
+  width: 30px;
+  height: 30px;
+  right: 0.6rem;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.login-container .password-toggle:hover {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+/* Remember me */
+.login-container .checkbox-wrapper {
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--app-font-weight, 400);
+  color: var(--text-secondary);
+}
+
+.login-container .checkbox-wrapper input[type="checkbox"] {
+  accent-color: var(--primary);
+  width: 14px;
+  height: 14px;
+  margin: 0;
+}
+
+/* Links: Forgot password?, Back to login, Resend OTP */
+.login-container .auth-nav-link {
+  color: var(--primary);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.login-container .auth-nav-link:hover {
+  color: var(--primary-hover, var(--primary));
+}
+
+/* Primary actions: full width inside the card (shell button styles come from .shell-btn-primary) */
+.login-container .submit-btn {
+  width: 100%;
+}
+
+/* OTP boxes: shell field look */
+.login-container .otp-input,
+[data-theme-mode] .login-container .otp-input {
+  background: var(--brand-field-fill);
+  border: 1px solid var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 10);
+  color: var(--text-main);
+  caret-color: var(--text-main);
+  font-family: var(--app-font-family);
+  font-size: var(--h4-size, 20px);
+  font-weight: var(--font-weight-strong, 600);
+}
+
+.login-container .otp-input:focus,
+[data-theme-mode] .login-container .otp-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+  background: var(--brand-field-fill);
+  color: var(--text-main);
+}
+
+.login-container .otp-input.error {
+  border-color: var(--danger);
+}
+
+.login-container .otp-input.error:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 20%, transparent);
+}
+
+/* Status colours from the theme */
+.login-container .error-message {
+  color: var(--danger);
+  font-size: var(--font-size-caption, 12px);
+}
+
+.login-container .checklist-item.met,
+.login-container .success-message {
+  color: var(--success);
+}
+
+.login-container .success-icon {
+  background: color-mix(in srgb, var(--success) 12%, transparent);
+}
+
+.login-container .back-btn:hover {
+  color: var(--text-main);
+}
+
+.login-container .text-btn {
+  color: var(--primary);
+}
+
+.login-container .tooltip-container {
+  color: var(--text-secondary);
+}
+
+/* Auth fields use the shared TextField (caption label in the outline, body-text value) —
+   soft field fill like Account Settings / Global Settings */
+.login-container .tf-outline {
+  background: var(--brand-field-fill);
+}
+
+.login-container .tf-input {
+  position: relative;
+}
+
+/* Login form panel positioning: logo + card centred as one group, sitting slightly above the
+   middle on any screen height; spacing scales with the viewport; the default logo shrinks on
+   short screens so the card never runs off the bottom (the panel scrolls as a last resort). */
+.login-container .form-panel {
+  justify-content: center;
+  padding-top: clamp(24px, 5vh, 72px);
+  padding-bottom: clamp(24px, 11vh, 140px);
+  overflow-y: auto;
+}
+
+.login-container .auth-logo {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: clamp(12px, 4vh, 44px);
+}
+
+.login-container .auth-logo-default {
+  width: auto;
+  height: clamp(120px, 24vh, 220px);
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.login-container .outer-auth-card {
+  flex-shrink: 0;
+  max-height: none;
+}
