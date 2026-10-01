@@ -268,10 +268,10 @@ export function Sidebar({
             {!isSidebarCollapsed && (
               <div
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingRight: '2px' }}
-                onClick={(e) => e.stopPropagation()}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
               >
                 <button
-                  onClick={() => setIsLocked(!isLocked)}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIsLocked(!isLocked); }}
                   title={isLocked ? "Unlock sidebar" : "Lock sidebar"}
                   style={{
                     background: 'transparent',
@@ -301,7 +301,7 @@ export function Sidebar({
                 </button>
                 <button
                   className="sidebar-toggle"
-                  onClick={() => setCollapsed(true)}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCollapsed(true); }}
                   title="Collapse sidebar"
                   style={{
                     background: 'transparent',
