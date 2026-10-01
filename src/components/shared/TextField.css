@@ -158,3 +158,24 @@
   opacity: 0.4;
   cursor: default;
 }
+
+/* Browser autofill (saved logins): keep the field's own see-through fill instead of the
+   browser's solid light-blue box. The browser's background is held off with a very long
+   transition; text and caret stay on the theme's text colour. */
+.tf-input:-webkit-autofill,
+.tf-input:-webkit-autofill:hover,
+.tf-input:-webkit-autofill:focus,
+.tf-input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text-main) !important;
+  caret-color: var(--text-main);
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  background-clip: content-box !important;
+  transition: background-color 99999s ease-out 0s, color 99999s ease-out 0s;
+}
+
+.tf-input:autofill {
+  background-color: transparent !important;
+  transition: background-color 99999s ease-out 0s;
+}
