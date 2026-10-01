@@ -1,4 +1,5 @@
 
+.user-tab-page [aria-label="New User"],
 .user-tab-page [aria-label="New Report"] {
   width: 100px !important;          
   height: 38px !important;        
@@ -18,16 +19,19 @@
   transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease !important;
 }
 
+.user-tab-page [aria-label="New User"]:hover,
 .user-tab-page [aria-label="New Report"]:hover {
   filter: brightness(1.08) !important;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45) !important;
 }
 
+.user-tab-page [aria-label="New User"]:active,
 .user-tab-page [aria-label="New Report"]:active {
   transform: translateY(0);
 }
 
+.user-tab-page [aria-label="New User"] svg,
 .user-tab-page [aria-label="New Report"] svg {
   font-size: 20px;
   stroke-width: 2.2;
@@ -40,232 +44,10 @@
   box-shadow: none !important;
 }
 
-/* URM's toolbar (header.tsx) is transparent by default as of dts-universal-report-module
-   — no host-side override needed here anymore. */
-
-/* URM-style Add User Modal */
-@keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes modalScaleIn {
-  from { opacity: 0; transform: scale(0.96) translateY(8px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.urm-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(4px);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  animation: modalFadeIn 0.2s ease;
-}
-
-.urm-modal-card {
-  background: var(--brand-card-surface) !important;
-  border-radius: var(--radius-modal, 24px) !important;
-  width: 620px;
-  max-width: 95vw;
-  max-height: min(720px, calc(100vh - 40px));
-  display: flex !important;
-  flex-direction: column !important;
-  overflow: hidden !important;
-  box-shadow: var(--card-shadow, 0 20px 40px rgba(0, 0, 0, 0.25)) !important;
-  border: 1px solid var(--border-light) !important;
-  transform: scale(0.97) translateY(12px);
-  animation: gsModalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  font-family: var(--app-font-family);
-  color: var(--text-main) !important;
-}
-
-[data-theme-mode="dark"] .urm-modal-card,
-[data-theme="dark"] .urm-modal-card {
-  background: var(--brand-card-surface) !important;
-  backdrop-filter: blur(50px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
-}
-
-.urm-modal-header {
-  height: 56px;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border-light) !important;
-  flex-shrink: 0;
-  background: transparent !important;
-}
-
-[data-theme-mode="dark"] .urm-modal-header,
-[data-theme="dark"] .urm-modal-header {
-  background: transparent !important;
-  border-bottom: 1px solid var(--border-light) !important;
-}
-
-.urm-modal-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.urm-modal-header-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-  flex-shrink: 0;
-}
-
-.urm-modal-title {
-  font-family: var(--app-heading-family, inherit);
-  font-size: var(--h1-size, 1.35rem);
-  font-weight: var(--h1-weight, 600);
-  color: #ffffff;
-  margin: 0;
-  line-height: 1.25;
-}
-
-.urm-modal-close-btn {
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: color-mix(in srgb, var(--danger, #dc2626) 14%, #ffffff);
-  color: var(--danger, #dc2626);
-  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent);
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 25%, transparent);
-}
-
-.urm-modal-close-btn:hover {
-  background: var(--danger, #dc2626) !important;
-  color: #ffffff !important;
-  transform: translateY(-1px);
-  filter: brightness(1.1);
-}
-
-[data-theme-mode="dark"] .urm-modal-close-btn,
-[data-theme="dark"] .urm-modal-close-btn {
-  background: color-mix(in srgb, var(--danger, #dc2626) 22%, var(--bg-card, #1e293b)) !important;
-  color: color-mix(in srgb, var(--danger, #dc2626) 55%, var(--text-main, #f8fafc)) !important;
-  border-color: color-mix(in srgb, var(--danger, #dc2626) 55%, transparent) !important;
-  box-shadow: none !important;
-}
-
-.urm-modal-body {
-  padding: 24px;
-  overflow-y: auto;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.urm-modal-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px 20px;
-}
-
-.urm-modal-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.urm-modal-label {
-  font-family: var(--app-font-family);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.urm-modal-input {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-light);
-  background: var(--bg-card);
-  color: var(--text-main);
-  outline: none;
-  font-family: var(--app-font-family);
-  font-size: var(--font-size-body, 0.875rem);
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.urm-modal-input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 2px var(--accent-glow, rgba(37, 99, 235, 0.2));
-}
-
-.urm-modal-footer {
-  padding: 16px 24px;
-  border-top: 1px solid var(--border-light);
-  background: transparent !important;
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.urm-modal-card .tf-outline {
-  background: var(--brand-field-fill);
-}
-
-.urm-btn-cancel {
-  padding: 8px 18px;
-  border-radius: var(--btn-radius, 16px);
-  border: 1px solid var(--border-light);
-  background: transparent;
-  color: var(--text-main);
-  font-family: var(--app-font-family);
-  font-weight: 600;
-  font-size: var(--font-size-body-sm, 0.8125rem);
-  text-transform: var(--btn-case, none);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.urm-btn-cancel:hover {
-  background: color-mix(in srgb, var(--text-main) 8%, transparent);
-}
-
-.urm-btn-save {
-  padding: 8px 22px;
-  border-radius: var(--btn-radius, 16px);
-  border: none;
-  background: var(--btn-color, var(--primary));
-  color: var(--btn-text, #ffffff);
-  box-shadow: 0 4px 12px var(--accent-glow, rgba(37, 99, 235, 0.25));
-  font-family: var(--app-font-family);
-  font-weight: 600;
-  font-size: var(--font-size-body-sm, 0.8125rem);
-  text-transform: var(--btn-case, none);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.urm-btn-save:hover:not(:disabled) {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
-}
-
-.urm-btn-save:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* Filter columns modal: vertical gap between blue gradient header and input controls */
+.MuiPaper-root > div:has([aria-label="Close"]) + div,
+.MuiPaper-root:has(svg[data-testid*="Filter"]) > div:has([aria-label="Close"]) + div,
+.user-tab-page .MuiPaper-root:has([aria-label="Close"]) > div:has([aria-label="Close"]) + div {
+  padding-top: 20px !important;
 }
 
