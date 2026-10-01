@@ -148,6 +148,13 @@ export function TemplateWelcome({
   const [isIntroFadingOut, setIsIntroFadingOut] = useState<boolean>(false);
 
   const handleDismissIntro = () => {
+    // Request native browser fullscreen on click, to cover browser tabs & header —
+    // tied to the overlay's own "Click anywhere to enter full screen" click, not a
+    // global window listener (which used to stay armed after the overlay auto-hid
+    // and fired on the next unrelated click anywhere, e.g. the dark-mode toggle).
+    if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
     setShowFullIntro(false);
   };
 
@@ -155,15 +162,6 @@ export function TemplateWelcome({
     setShowFullIntro(true);
     setIntroPhase('welcome');
     setIsIntroFadingOut(false);
-
-    // Request native browser fullscreen on user interaction to cover browser tabs & header
-    const triggerNativeFullscreen = () => {
-      if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-      }
-    };
-
-    window.addEventListener('click', triggerNativeFullscreen, { once: true });
 
     // Shortened from 2000/3800/4600ms — the overlay is `position: fixed` at a
     // very high z-index and blocks all pointer events (including the sidebar's
@@ -182,7 +180,6 @@ export function TemplateWelcome({
     }, 2100);
 
     return () => {
-      window.removeEventListener('click', triggerNativeFullscreen);
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
