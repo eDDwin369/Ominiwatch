@@ -68,7 +68,7 @@
 }
 
 .urm-modal-card {
-  background: var(--bg-dashboard, var(--bg-card)) !important;
+  background: var(--brand-card-surface) !important;
   border-radius: var(--radius-modal, 24px) !important;
   width: 620px;
   max-width: 95vw;
@@ -86,7 +86,7 @@
 
 [data-theme-mode="dark"] .urm-modal-card,
 [data-theme="dark"] .urm-modal-card {
-  background: var(--gs-modal-bg-dark, radial-gradient(circle at 50% 30%, var(--primary) 0%, var(--bg-dashboard) 100%)) !important;
+  background: var(--brand-card-surface) !important;
   backdrop-filter: blur(50px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
 }
@@ -99,7 +99,7 @@
   justify-content: space-between;
   border-bottom: 1px solid var(--border-light) !important;
   flex-shrink: 0;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%) !important;
+  background: transparent !important;
 }
 
 [data-theme-mode="dark"] .urm-modal-header,
@@ -215,11 +215,15 @@
 .urm-modal-footer {
   padding: 16px 24px;
   border-top: 1px solid var(--border-light);
-  background: color-mix(in srgb, var(--bg-card) 95%, var(--text-main) 5%);
+  background: transparent !important;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   flex-shrink: 0;
+}
+
+.urm-modal-card .tf-outline {
+  background: var(--brand-field-fill);
 }
 
 .urm-btn-cancel {

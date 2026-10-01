@@ -126,6 +126,17 @@ export function ReportsPage() {
           }
         }
       });
+
+      // Ensure the "New Report" button is labeled "New User"
+      const newButtons = container.querySelectorAll<HTMLElement>('[aria-label="New Report"], [aria-label="New User"], [title="New Report"]');
+      newButtons.forEach((btn) => {
+        if (btn.getAttribute('aria-label') !== 'New User') {
+          btn.setAttribute('aria-label', 'New User');
+        }
+        if (btn.getAttribute('title') === 'New Report') {
+          btn.setAttribute('title', 'New User');
+        }
+      });
     };
 
     assignTitles();
@@ -140,6 +151,44 @@ export function ReportsPage() {
       characterData: true,
     });
 
+    // Ensure gap between blue gradient header and filter condition controls in modals
+    const adjustFilterModalGap = () => {
+      const closeButtons = document.querySelectorAll<HTMLElement>('.MuiPaper-root [aria-label="Close"]');
+      closeButtons.forEach((btn) => {
+        const header = btn.closest('.MuiPaper-root > div');
+        if (header) {
+          const body = header.nextElementSibling as HTMLElement | null;
+          if (body && body.style.paddingTop !== '20px') {
+            body.style.setProperty('padding-top', '20px', 'important');
+          }
+        }
+      });
+    };
+
+    // Replace "New Report" tooltip text in document.body whenever MUI renders a tooltip popper
+    const replaceTooltipText = () => {
+      const tooltips = document.querySelectorAll<HTMLElement>('.MuiTooltip-tooltip');
+      tooltips.forEach((t) => {
+        if (t.textContent?.trim() === 'New Report') {
+          t.textContent = 'New User';
+        }
+      });
+    };
+
+    replaceTooltipText();
+    adjustFilterModalGap();
+
+    const bodyObserver = new MutationObserver(() => {
+      replaceTooltipText();
+      adjustFilterModalGap();
+    });
+
+    bodyObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
     const handleMouseOver = (e: MouseEvent) => {
       const target = (e.target as HTMLElement).closest<HTMLElement>('td, th, .urm-item-title');
       if (target && !target.getAttribute('title')) {
@@ -148,12 +197,14 @@ export function ReportsPage() {
           target.setAttribute('title', text);
         }
       }
+      replaceTooltipText();
     };
 
     container.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseover', replaceTooltipText, true);
 
     const handleNewClick = (e: MouseEvent) => {
-      const btn = (e.target as HTMLElement).closest('[aria-label="New Report"]');
+      const btn = (e.target as HTMLElement).closest('[aria-label="New User"], [aria-label="New Report"]');
       if (btn) {
         e.preventDefault();
         e.stopPropagation();
@@ -164,7 +215,9 @@ export function ReportsPage() {
 
     return () => {
       observer.disconnect();
+      bodyObserver.disconnect();
       container.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseover', replaceTooltipText, true);
       container.removeEventListener('click', handleNewClick, true);
     };
   }, [users]);
