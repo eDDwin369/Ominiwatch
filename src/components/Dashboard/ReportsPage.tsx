@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { UserPlus, X } from 'lucide-react';
 import { URMProvider, URMBuilderRaw, useURMContext } from 'dts-universal-report-module';
 import { isValidName } from '../AccountSettings/nameValidation';
 import { isValidPhone } from '../AccountSettings/phoneValidation';
-import { Dropdown } from '../shared/Dropdown';
+import { TextField } from '../shared/TextField';
 import './ReportsPage.css';
 
 const REPORT_ID = 'test-report';
@@ -209,16 +210,26 @@ export function ReportsPage() {
     setStateProvince('California');
   };
 
+  useEffect(() => {
+    if (!isAddModalOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsAddModalOpen(false);
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isAddModalOpen]);
+
   return (
     <div 
       ref={gridContainerRef}
       className="user-tab-page"
-      style={{ 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column', 
+      style={{
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         position: 'relative',
-        background: 'var(--bg-dashboard, var(--dash-canvas-bg))',
+        // Background is set in ReportsPage.css (.user-tab-page) via !important —
+        // the soft page gradient, same recipe as Account Settings.
         padding: 0,
         overflow: 'hidden',
         boxSizing: 'border-box'
@@ -241,199 +252,147 @@ export function ReportsPage() {
 
       {/* Modal for adding user */}
       {isAddModalOpen && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(15, 23, 42, 0.4)',
-          zIndex: 10000,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '20px'
-        }}>
-          <form onSubmit={handleAddUser} style={{
-            background: 'var(--bg-card)',
-            padding: '28px',
-            borderRadius: '16px',
-            width: '600px',
-            maxWidth: '100%',
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            boxShadow: 'var(--card-shadow)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px'
-          }}>
-            <h3 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.25rem' }}>Add User Details</h3>
-            
-            {/* Grid Layout for Fields */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '16px 20px'
-            }}>
-              
-              {/* Full Name */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Full Name</label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="John Doe"
-                  required
-                  aria-invalid={nameError}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: `1px solid ${nameError ? 'var(--danger)' : 'var(--border-light)'}`,
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                />
-                {nameError && (
-                  <span style={{ fontSize: '11px', color: 'var(--danger)' }}>
-                    Enter a valid full name (letters only, 2–60 characters)
-                  </span>
-                )}
+        <div 
+          className="urm-modal-backdrop" 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsAddModalOpen(false);
+          }}
+        >
+          <div className="urm-modal-card" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <div className="urm-modal-header">
+              <div className="urm-modal-header-left">
+                <div className="urm-modal-header-icon">
+                  <UserPlus size={20} />
+                </div>
+                <h1 className="urm-modal-title">Add User Details</h1>
               </div>
-
-              {/* Phone Number */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Phone Number</label>
-                <input
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+1-555-0199"
-                  aria-invalid={phoneError}
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: `1px solid ${phoneError ? 'var(--danger)' : 'var(--border-light)'}`,
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                />
-                {phoneError && (
-                  <span style={{ fontSize: '11px', color: 'var(--danger)' }}>
-                    Enter a valid phone number (7–15 digits, optional leading +)
-                  </span>
-                )}
-              </div>
-
-              {/* Department */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Department</label>
-                <Dropdown variant="rect" value={department} onChange={setDepartment} options={DEPARTMENTS} />
-              </div>
-
-              {/* Role */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Role</label>
-                <Dropdown variant="rect" value={role} onChange={setRole} options={ROLES} />
-              </div>
-
-              {/* Status */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Status</label>
-                <Dropdown variant="rect" value={status} onChange={setStatus} options={STATUSES} />
-              </div>
-
-              {/* Title */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Title</label>
-                <Dropdown variant="rect" value={title} onChange={setTitle} options={TITLES} />
-              </div>
-
-              {/* Territory */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Territory</label>
-                <Dropdown variant="rect" value={territory} onChange={setTerritory} options={TERRITORIES} />
-              </div>
-
-              {/* Continent */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Continent</label>
-                <input 
-                  type="text" 
-                  value={continent}
-                  onChange={(e) => setContinent(e.target.value)}
-                  placeholder="e.g. Europe"
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-
-              {/* Country */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>Country</label>
-                <input 
-                  type="text" 
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  placeholder="e.g. UK"
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-
-              {/* State/Province */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>State/Province</label>
-                <input 
-                  type="text" 
-                  value={stateProvince}
-                  onChange={(e) => setStateProvince(e.target.value)}
-                  placeholder="e.g. London"
-                  style={{
-                    padding: '10px 12px',
-                    borderRadius: '8px',
-                    border: '1px solid var(--border-light)',
-                    background: 'var(--bg-card)',
-                    color: 'var(--text-main)',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-
-            </div>
-
-            {/* Modal Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '10px' }}>
-              <button 
-                type="button" 
-                onClick={() => setIsAddModalOpen(false)}
-                className="btn btn-secondary"
-              >
-                Cancel
-              </button>
               <button
-                type="submit"
-                disabled={formHasErrors}
-                className="btn btn-primary"
+                type="button"
+                className="urm-modal-close-btn"
+                aria-label="Close"
+                title="Close"
+                onClick={() => setIsAddModalOpen(false)}
               >
-                Save
+                <X size={18} strokeWidth={2.25} />
               </button>
             </div>
-          </form>
+
+            <form onSubmit={handleAddUser} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, margin: 0 }}>
+              <div className="urm-modal-body">
+                {/* Grid Layout for Fields */}
+                <div className="urm-modal-grid">
+                  
+                  {/* Full Name */}
+                  <TextField
+                    label="Full Name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="John Doe"
+                    required
+                    error={nameError ? 'Enter a valid full name (letters only, 2–60 characters)' : undefined}
+                  />
+
+                  {/* Phone Number */}
+                  <TextField
+                    label="Phone Number"
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="+1-555-0199"
+                    error={phoneError ? 'Enter a valid phone number (7–15 digits, optional leading +)' : undefined}
+                  />
+
+                  {/* Department */}
+                  <TextField
+                    as="select"
+                    label="Department"
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                    options={DEPARTMENTS.map((d) => ({ value: d, label: d }))}
+                  />
+
+                  {/* Role */}
+                  <TextField
+                    as="select"
+                    label="Role"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    options={ROLES.map((r) => ({ value: r, label: r }))}
+                  />
+
+                  {/* Status */}
+                  <TextField
+                    as="select"
+                    label="Status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    options={STATUSES.map((s) => ({ value: s, label: s }))}
+                  />
+
+                  {/* Title */}
+                  <TextField
+                    as="select"
+                    label="Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    options={TITLES.map((t) => ({ value: t, label: t }))}
+                  />
+
+                  {/* Territory */}
+                  <TextField
+                    as="select"
+                    label="Territory"
+                    value={territory}
+                    onChange={(e) => setTerritory(e.target.value)}
+                    options={TERRITORIES.map((t) => ({ value: t, label: t }))}
+                  />
+
+                  {/* Continent */}
+                  <TextField
+                    label="Continent"
+                    value={continent}
+                    onChange={(e) => setContinent(e.target.value)}
+                    placeholder="e.g. Europe"
+                  />
+
+                  {/* Country */}
+                  <TextField
+                    label="Country"
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    placeholder="e.g. UK"
+                  />
+
+                  {/* State/Province */}
+                  <TextField
+                    label="State/Province"
+                    value={stateProvince}
+                    onChange={(e) => setStateProvince(e.target.value)}
+                    placeholder="e.g. London"
+                  />
+
+                </div>
+              </div>
+
+              {/* Modal Buttons */}
+              <div className="urm-modal-footer">
+                <button 
+                  type="button" 
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="urm-btn-cancel"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={formHasErrors}
+                  className="urm-btn-save"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
