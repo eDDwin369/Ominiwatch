@@ -303,10 +303,10 @@ export function Header({
         </div>
 
         {/* Profile Card relocate */}
-        <div className="header-profile-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px' }}>
+        <div className="header-profile-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px', zIndex: 1000 }}>
           <div
             className={`header-avatar-btn ${showProfileMenu ? 'active' : ''}`}
-            title="Account"
+            title={showProfileMenu ? undefined : "Account"}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
@@ -351,7 +351,7 @@ export function Header({
                 top: 'calc(100% + 16px)', // Positions it exactly below the header bottom border
                 right: '-12px', // Very little padding from the right edge of the screen
                 width: '230px',
-                zIndex: 200,
+                zIndex: 1000,
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',

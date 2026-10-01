@@ -90,6 +90,8 @@ interface UserProfile {
 
 export function AccountSettings({
   setHasUnsavedChanges,
+  editProfileOnLoad,
+  setEditProfileOnLoad,
 }: AccountSettingsProps) {
   // ----------------------------------------------------
   // State: Personal Information
@@ -117,6 +119,14 @@ export function AccountSettings({
 
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [tempProfile, setTempProfile] = useState<UserProfile>({ ...profile });
+
+  useEffect(() => {
+    if (editProfileOnLoad) {
+      setIsEditingProfile(true);
+      setTempProfile({ ...profile });
+      if (setEditProfileOnLoad) setEditProfileOnLoad(false);
+    }
+  }, [editProfileOnLoad, setEditProfileOnLoad, profile]);
 
   const handleStartEdit = () => {
     setTempProfile({ ...profile });

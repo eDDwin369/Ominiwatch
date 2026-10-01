@@ -1538,6 +1538,7 @@ h2.brand-gradient-text,
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl, 18px);
   box-shadow: var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.08));
+  z-index: 1000;
 }
 
 .profile-menu .profile-menu-header,
