@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Upload,
   LayoutPanelTop, Layout, LayoutPanelLeft, Users,
-  CheckCircle2, Info, X, RotateCcw, AlertCircle, Settings
+  CheckCircle2, Info, X, RotateCcw, AlertCircle, Settings, ArrowLeft, Trash2, Check
 } from 'lucide-react';
 import './GlobalSettingsWorkspace.css';
 
@@ -829,12 +829,21 @@ export function GlobalSettingsWorkspace({
                 aria-labelledby="gs-confirm-title"
                 onClick={e => e.stopPropagation()}
               >
-                <h3 id="gs-confirm-title" style={headingStyle(4, 'primary')}>Unsaved changes</h3>
+                <div className="page-title-group gs-confirm-header">
+                  <span className="page-title-icon" aria-hidden="true"><AlertCircle size={18} /></span>
+                  <h3 id="gs-confirm-title" className="gs-confirm-title brand-gradient-text">Unsaved changes</h3>
+                </div>
                 <p className="gs-confirm-text">You have unsaved changes. Save them before closing Global Settings?</p>
                 <div className="gs-confirm-actions">
-                  <button type="button" className="gs-confirm-btn" onClick={() => setShowUnsavedPrompt(false)}>Cancel</button>
-                  <button type="button" className="gs-confirm-btn" onClick={handleCancelAndClose}>Discard</button>
-                  <button type="button" className="gs-confirm-btn gs-top-btn-save" onClick={handleSave} autoFocus>Save</button>
+                  <button type="button" className="gs-confirm-btn shell-btn-icon" data-tip="Cancel — keep editing" aria-label="Cancel — keep editing" onClick={() => setShowUnsavedPrompt(false)}>
+                    <ArrowLeft size={18} />
+                  </button>
+                  <button type="button" className="gs-confirm-btn shell-btn-icon shell-btn-icon--danger" data-tip="Discard changes" aria-label="Discard changes" onClick={handleCancelAndClose}>
+                    <Trash2 size={17} />
+                  </button>
+                  <button type="button" className="gs-confirm-btn gs-top-btn-save shell-btn-icon shell-btn-icon--success" data-tip="Save changes" aria-label="Save changes" onClick={handleSave} autoFocus>
+                    <Check size={18} strokeWidth={2.5} />
+                  </button>
                 </div>
               </div>
             </div>

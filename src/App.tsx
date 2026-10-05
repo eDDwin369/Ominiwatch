@@ -477,7 +477,7 @@ function App() {
                       required
                     />
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', width: '100%' }}>
+                  <div className="auth-options" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                     <label className="checkbox-wrapper">
                       <input
                         type="checkbox"

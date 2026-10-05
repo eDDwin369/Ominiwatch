@@ -1538,6 +1538,7 @@ h2.brand-gradient-text,
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl, 18px);
   box-shadow: var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.08));
+  z-index: 1000;
 }
 
 .profile-menu .profile-menu-header,
@@ -1895,17 +1896,234 @@ h2.brand-gradient-text,
   display: flex;
   justify-content: center;
   flex-shrink: 0;
-  margin-bottom: clamp(12px, 4vh, 44px);
+  margin-bottom: clamp(16px, 6vh, 64px);
 }
 
 .login-container .auth-logo-default {
   width: auto;
-  height: clamp(120px, 24vh, 220px);
+  height: clamp(130px, 27vh, 250px);
   aspect-ratio: 1;
   object-fit: contain;
 }
 
+/* Airy card: wider, roomier padding, taller fields and button, more space between rows */
 .login-container .outer-auth-card {
   flex-shrink: 0;
   max-height: none;
+  width: 100%;
+  max-width: var(--login-card-w, 400px);
+  /* follows the studio's container padding / density, capped so it stays airy, not bloated */
+  padding: min(calc(var(--container-pad, 10px) * 3.2), 36px) min(calc(var(--container-pad, 10px) * 3), 32px);
+}
+
+.login-container .form-panel {
+  padding-left: clamp(16px, 2vw, 32px);
+  padding-right: clamp(16px, 2vw, 32px);
+}
+
+.login-container .outer-auth-card .form-group {
+  margin-bottom: min(calc(var(--container-pad, 10px) * 2), 24px);
+}
+
+.login-container .outer-auth-card .auth-options {
+  margin: 2px 0 min(calc(var(--container-pad, 10px) * 2.6), 30px);
+}
+
+.login-container .outer-auth-card .submit-btn {
+  min-height: 46px;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Floating login card: same float as the Account Settings cards — the theme's card shadow
+   layered twice (follows Theme Studio's Card shadow; 0 = flat), card border token. */
+.login-container .outer-auth-card,
+.login-container.layout-centered .outer-auth-card,
+[data-theme-mode] .login-container .outer-auth-card {
+  border: var(--card-border, 1px solid var(--border-light));
+  box-shadow: var(--card-shadow), var(--card-shadow);
+  transform: none;
+}
+
+/* Icon-only action buttons (e.g. the unsaved-changes prompt): round, same colours as the
+   shared button system, label shown as a hover / focus tip (same pill as the tab hints). */
+.shell-btn-icon.shell-btn-icon {
+  position: relative;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 !important;
+  border-radius: 50% !important;
+}
+
+.shell-btn-icon--danger:not(:disabled),
+[data-theme-mode] .shell-btn-icon--danger:not(:disabled) {
+  color: var(--danger) !important;
+}
+
+.shell-btn-icon--danger:not(:disabled):hover,
+[data-theme-mode] .shell-btn-icon--danger:not(:disabled):hover {
+  background: color-mix(in srgb, var(--danger) 12%, transparent) !important;
+  border-color: color-mix(in srgb, var(--danger) 55%, transparent) !important;
+}
+
+.shell-btn-icon[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 220px;
+  padding: 4px 8px;
+  border-radius: calc(var(--radius-unit, 1px) * 9);
+  background: rgba(97, 97, 97, 0.92);
+  color: #ffffff;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1.5;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 60;
+  transition: opacity 0.15s;
+}
+
+.shell-btn-icon[data-tip]:hover::after,
+.shell-btn-icon[data-tip]:focus-visible::after {
+  opacity: 1;
+}
+
+/* Confirm-type icon action (e.g. Save changes): the theme's success green */
+[data-theme-mode] .shell-btn-icon--success.shell-btn-icon--success,
+.shell-btn-icon--success.shell-btn-icon--success {
+  background: var(--success, #16a34a) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+}
+
+.shell-btn-icon--success.shell-btn-icon--success:not(:disabled):hover {
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--success, #16a34a) 35%, transparent) !important;
+}
+
+/* ── Dropdown menus + pop-out panels — one standard (light + dark) ──
+   Menus: shared Dropdown (Global Settings H1/weight pills, Notifications per page), Account
+   Settings Language / Timezone. Panels: Active Sessions, Login History, Cookie Preferences.
+   Surface = card colour with a faint primary tint, divider border, theme radius + card shadow;
+   options = body-small text, primary tint on hover, primary tint + primary text when selected. */
+[data-theme-mode] .gs-dd-menu,
+[data-theme-mode] .figma-smooth-dropdown-menu,
+[data-theme-mode] .figma-card .figma-sec-dropdown-content,
+[data-theme-mode] .figma-card .figma-cookie-details-panel {
+  background: color-mix(in srgb, var(--primary) 4%, var(--bg-card)) !important;
+  border: 1px solid var(--border-light) !important;
+  border-radius: calc(var(--radius-unit, 1px) * 14) !important;
+  box-shadow: var(--card-shadow) !important;
+  color: var(--text-main) !important;
+  backdrop-filter: none !important;
+}
+
+[data-theme-mode="dark"] .gs-dd-menu,
+[data-theme-mode="dark"] .figma-smooth-dropdown-menu,
+[data-theme-mode="dark"] .figma-card .figma-sec-dropdown-content,
+[data-theme-mode="dark"] .figma-card .figma-cookie-details-panel {
+  background: color-mix(in srgb, var(--primary) 8%, var(--bg-card)) !important;
+}
+
+[data-theme-mode] .gs-dd-menu,
+[data-theme-mode] .figma-smooth-dropdown-menu {
+  padding: 6px !important;
+}
+
+/* Options */
+[data-theme-mode] .gs-dd-menu .gs-dd-option,
+[data-theme-mode] .figma-smooth-dropdown-menu .figma-smooth-option {
+  border-radius: calc(var(--radius-unit, 1px) * 8) !important;
+  background: transparent !important;
+  color: var(--text-main) !important;
+  font-family: var(--app-font-family) !important;
+  font-size: var(--font-size-body-sm, 14px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  box-shadow: none !important;
+  transition: background-color 0.12s, color 0.12s;
+}
+
+[data-theme-mode] .gs-dd-menu-pill .gs-dd-option {
+  font-size: var(--font-size-caption, 12px) !important;
+}
+
+[data-theme-mode] .gs-dd-menu .gs-dd-option:hover,
+[data-theme-mode] .figma-smooth-dropdown-menu .figma-smooth-option:hover {
+  background: color-mix(in srgb, var(--primary) 10%, transparent) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme-mode] .gs-dd-menu .gs-dd-option.gs-dd-option-selected,
+[data-theme-mode] .gs-dd-menu .gs-dd-option.gs-dd-option-selected:hover,
+[data-theme-mode] .figma-smooth-dropdown-menu .figma-smooth-option.selected,
+[data-theme-mode] .figma-smooth-dropdown-menu .figma-smooth-option.selected:hover {
+  background: color-mix(in srgb, var(--primary) 16%, transparent) !important;
+  color: var(--primary) !important;
+  font-weight: var(--font-weight-strong, 600) !important;
+}
+
+[data-theme-mode] .gs-dd-menu .gs-dd-option-check,
+[data-theme-mode] .figma-smooth-dropdown-menu .figma-option-check {
+  color: var(--primary) !important;
+}
+
+/* Panel content: sessions, history, cookies */
+[data-theme-mode] .figma-card .figma-session-icon {
+  background: color-mix(in srgb, var(--primary) 12%, transparent) !important;
+  color: var(--primary) !important;
+  border-radius: calc(var(--radius-unit, 1px) * 10) !important;
+}
+
+[data-theme-mode] .figma-card .figma-session-device,
+[data-theme-mode] .figma-card .figma-toggle-subrow {
+  color: var(--text-main) !important;
+}
+
+[data-theme-mode] .figma-card .figma-session-sub,
+[data-theme-mode] .figma-card .figma-log-time {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme-mode] .figma-account-settings-container .figma-badge-current {
+  background: color-mix(in srgb, var(--success) 16%, transparent) !important;
+  color: var(--success) !important;
+  border: 1px solid color-mix(in srgb, var(--success) 35%, transparent) !important;
+  border-radius: 999px !important;
+  padding: 1px 8px !important;
+  font-size: var(--font-size-caption, 12px) !important;
+  font-weight: var(--font-weight-medium, 500) !important;
+}
+
+[data-theme-mode] .figma-account-settings-container .figma-session-revoke {
+  background: transparent !important;
+  color: var(--danger) !important;
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent) !important;
+  border-radius: 999px !important;
+  padding: 2px 10px !important;
+  font-size: var(--font-size-caption, 12px) !important;
+  font-weight: var(--font-weight-medium, 500) !important;
+  text-transform: var(--btn-case, none) !important;
+  cursor: pointer;
+  transition: background-color 0.12s;
+}
+
+[data-theme-mode] .figma-account-settings-container .figma-session-revoke:hover {
+  background: color-mix(in srgb, var(--danger) 10%, transparent) !important;
+}
+
+[data-theme-mode] .figma-account-settings-container .figma-status-ok {
+  color: var(--success) !important;
+}
+
+[data-theme-mode] .figma-account-settings-container .figma-status-warn {
+  color: var(--danger) !important;
 }
