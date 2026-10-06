@@ -37,6 +37,14 @@
   stroke-width: 2.2;
 }
 
+/* Hide the info-tooltip icon next to the report name in URM's breadcrumb header.
+   Structural selector (not data-testid, which MUI strips in production builds):
+   the active-report block is the breadcrumb's last <li>, and the info icon is
+   the last svg inside it (after the Description icon and the name text). */
+.user-tab-page .MuiBreadcrumbs-li:last-child svg:last-child {
+  display: none !important;
+}
+
 /* Remove section border around the table and toolbar */
 .user-tab-page #table-content-area,
 .user-tab-page #table-content-area > div {
