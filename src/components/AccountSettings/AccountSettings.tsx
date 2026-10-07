@@ -391,7 +391,7 @@ export function AccountSettings({
       if (expandedSecurity && !target.closest('.figma-sec-accordion')) {
         setExpandedSecurity(null);
       }
-      if (isCookieExpanded && !target.closest('.figma-pref-row-accordion')) {
+      if (isCookieExpanded && !target.closest('.figma-pref-cookie-wrap')) {
         setIsCookieExpanded(false);
       }
     };
