@@ -97,7 +97,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid var(--bg-dashboard)',
+            borderBottom: '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -142,7 +142,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isCookiesExpanded ? 'none' : '1px solid var(--bg-dashboard)',
+            borderBottom: isCookiesExpanded ? 'none' : '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -196,7 +196,7 @@ export function PreferencesTab() {
             paddingTop: isCookiesExpanded ? '10px' : '0px',
             paddingBottom: isCookiesExpanded ? '20px' : '0px',
             backgroundColor: 'var(--bg-card)',
-            borderBottom: isCookiesExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
+            borderBottom: isCookiesExpanded ? '1px solid var(--border-light)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -310,7 +310,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid var(--bg-dashboard)'
+            borderBottom: '1px solid var(--border-light)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -361,7 +361,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid var(--bg-dashboard)'
+            borderBottom: '1px solid var(--border-light)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -414,7 +414,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid var(--bg-dashboard)',
+            borderBottom: '1px solid var(--border-light)',
             textDecoration: 'none',
             transition: 'background-color 0.05s ease'
           }}
@@ -460,7 +460,7 @@ export function PreferencesTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid var(--bg-dashboard)',
+            borderBottom: '1px solid var(--border-light)',
             textDecoration: 'none',
             transition: 'background-color 0.05s ease'
           }}

@@ -141,7 +141,7 @@ export function SecurityTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isSessionsExpanded ? 'none' : '1px solid var(--bg-dashboard)',
+            borderBottom: isSessionsExpanded ? 'none' : '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -195,7 +195,7 @@ export function SecurityTab() {
             paddingTop: isSessionsExpanded ? '10px' : '0px',
             paddingBottom: isSessionsExpanded ? '20px' : '0px',
             backgroundColor: 'var(--bg-card)',
-            borderBottom: isSessionsExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
+            borderBottom: isSessionsExpanded ? '1px solid var(--border-light)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -321,7 +321,7 @@ export function SecurityTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isHistoryExpanded ? 'none' : '1px solid var(--bg-dashboard)',
+            borderBottom: isHistoryExpanded ? 'none' : '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -375,7 +375,7 @@ export function SecurityTab() {
             paddingTop: isHistoryExpanded ? '10px' : '0px',
             paddingBottom: isHistoryExpanded ? '20px' : '0px',
             backgroundColor: 'var(--bg-card)',
-            borderBottom: isHistoryExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
+            borderBottom: isHistoryExpanded ? '1px solid var(--border-light)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -452,7 +452,7 @@ export function SecurityTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isPasswordExpanded ? 'none' : '1px solid var(--bg-dashboard)',
+            borderBottom: isPasswordExpanded ? 'none' : '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -506,7 +506,7 @@ export function SecurityTab() {
             paddingTop: isPasswordExpanded ? '10px' : '0px',
             paddingBottom: isPasswordExpanded ? '20px' : '0px',
             backgroundColor: 'var(--bg-card)',
-            borderBottom: isPasswordExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
+            borderBottom: isPasswordExpanded ? '1px solid var(--border-light)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -620,7 +620,7 @@ export function SecurityTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: is2faExpanded ? 'none' : '1px solid var(--bg-dashboard)',
+            borderBottom: is2faExpanded ? 'none' : '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -674,7 +674,7 @@ export function SecurityTab() {
             paddingTop: is2faExpanded ? '10px' : '0px',
             paddingBottom: is2faExpanded ? '20px' : '0px',
             backgroundColor: 'var(--bg-card)',
-            borderBottom: is2faExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
+            borderBottom: is2faExpanded ? '1px solid var(--border-light)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
