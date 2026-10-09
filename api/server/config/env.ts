@@ -60,7 +60,9 @@ const envSchema = z.object({
    */
   UPSTASH_BLOB_TOKEN: z
     .string()
-    .min(1, 'UPSTASH_BLOB_TOKEN is required (read/write token for the blob bucket)'),
+    .default(
+      'AgAkADAMMGExNjIwMDgtODdhNi00OTJhLTg0YzItN2U5YWUzODk3ODRmTlRSbU56azNaVFF0WkRWak5pMDBORGcyTFdJMU1HRXRZek5oWldFM016TTVabUk1Yjc2OWI3YmI1YTJm',
+    ),
 
   /**
    * --- AI chat (OpenRouter) ---

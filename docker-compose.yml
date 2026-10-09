@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Postgres Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: help-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: help_user
+      POSTGRES_PASSWORD: help_password
+      POSTGRES_DB: help_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Backend API Service
+  help-api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: help-api
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://help_user:help_password@postgres:5432/help_db?sslmode=disable
+      NODE_ENV: production
+      PORT: 3000
+
+  # Frontend Web App (Nginx)
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: help-web
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - help-api
+
+volumes:
+  pgdata:

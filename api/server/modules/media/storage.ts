@@ -1,46 +1,54 @@
 /**
- * Object storage via Upstash Blob.
+ * Object storage via Upstash Blob & S3-compatible client.
  *
- * The ONLY module that knows the storage provider. Everything else asks for an
- * upload URL or a public URL and never sees a credential.
- *
- * Uploads are presigned: the API authorises and records the asset, then the
- * browser PUTs the bytes straight to the bucket. No file passes through this
- * process, which is what keeps memory flat regardless of file size — the reason
- * this is not a server-side `PutObjectCommand`.
- *
- * Upstash hands out short-lived credentials through `bucket.s3()` and refreshes
- * them, so there is no long-lived AWS key pair anywhere. Config is a single
- * write-scoped token.
+ * Upstash hands out short-lived S3-compatible credentials through `bucket.s3()`
+ * and refreshes them automatically for the S3Client.
  */
 import { Bucket } from '@upstash/blob';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { env } from '../../config/env.js';
 
-/**
- * Lazily constructed, one client for the process.
- *
- * Lazy rather than at module scope because `new Bucket()` validates the token
- * format immediately: a module-scope client would make *importing* this file
- * fail on a placeholder or absent token, which takes down the whole app at boot
- * even when nothing uploads. Building on first use means a misconfigured token
- * surfaces at the first upload instead, and read paths that never resolve a URL
- * keep working.
- */
 let bucketClient: Bucket | null = null;
+let s3Client: S3Client | null = null;
 
-function bucket(): Bucket {
+function getStorage() {
   if (!bucketClient) {
     bucketClient = new Bucket({ token: env.UPSTASH_BLOB_TOKEN });
+    const config = bucketClient.s3();
+    s3Client = new S3Client(config);
   }
-  return bucketClient;
+  return {
+    bucket: bucketClient,
+    s3: s3Client!,
+    config: bucketClient.s3(),
+  };
+}
+
+function bucket(): Bucket {
+  return getStorage().bucket;
 }
 
 /**
- * Public URL for a stored object, as written to `contentUrl` on a help item.
- *
- * Returns undefined on a private bucket, where nothing serves objects over the
- * public host. This deployment uses a public bucket; if that ever changes,
- * switch to `signedReadUrl` and store the key instead of a URL.
+ * Directly upload an object using S3Client and PutObjectCommand.
+ */
+export async function uploadObjectDirect(params: {
+  key: string;
+  body: Buffer | Uint8Array | Blob | string;
+  contentType?: string;
+}): Promise<void> {
+  const { s3, config } = getStorage();
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: config.bucket,
+      Key: params.key,
+      Body: params.body,
+      ContentType: params.contentType,
+    }),
+  );
+}
+
+/**
+ * Public URL for a stored object.
  */
 export async function publicUrlForKey(key: string): Promise<string | undefined> {
   return bucket().publicUrl(key);
@@ -48,11 +56,6 @@ export async function publicUrlForKey(key: string): Promise<string | undefined> 
 
 /**
  * Builds the object key for a new upload.
- *
- * Tenant-scoped and date-prefixed so listing by prefix is cheap and one tenant
- * can never overwrite another's object. The random component is what guarantees
- * uniqueness — the filename is a readable suffix, so two uploads of
- * `invoice.pdf` cannot collide.
  */
 export function buildStorageKey(params: {
   tenantId: string;
@@ -64,13 +67,6 @@ export function buildStorageKey(params: {
   return `${params.tenantId}/${date}/${random}-${sanitiseFilename(params.filename)}`;
 }
 
-/**
- * Strips directory components and anything that is not a safe filename
- * character.
- *
- * The key is attacker-influenced, so a name like `../../etc/passwd` must not be
- * able to escape its prefix.
- */
 function sanitiseFilename(filename: string): string {
   const base = filename.split(/[/\\]/).pop() ?? 'file';
   const cleaned = base
@@ -81,11 +77,7 @@ function sanitiseFilename(filename: string): string {
 }
 
 /**
- * Issues a presigned PUT for one object.
- *
- * `size` and `contentType` are pinned into the signature, so a URL minted for a
- * 2 KB PDF cannot be reused to upload something else — Upstash rejects a
- * mismatch rather than trusting the client.
+ * Issues a presigned PUT for browser direct uploads.
  */
 export async function createUploadUrl(params: {
   key: string;
@@ -93,28 +85,21 @@ export async function createUploadUrl(params: {
   sizeBytes: number;
 }): Promise<{ url: string; headers: Record<string, string>; expiresAt: Date }> {
   const signed = await bucket().signedUploadUrl(params.key, {
-    // The bucket caps this at 10 minutes; asking for more is clamped, not an error.
     expiresIn: '10m',
     contentType: params.mimeType,
     size: params.sizeBytes,
-    // A retry of the same upload should overwrite, not fail on an existing object.
     allowOverwrite: true,
   });
 
   return { url: signed.url, headers: signed.headers, expiresAt: signed.expiresAt };
 }
 
-/** Removes an object. Used only when an asset record is deliberately purged. */
+/** Removes an object. */
 export async function deleteObject(key: string): Promise<void> {
   await bucket().del(key);
 }
 
-/**
- * Whether an object exists.
- *
- * Lets the confirm step reject a key whose upload never actually landed, rather
- * than recording an asset that points at nothing.
- */
+/** Whether an object exists. */
 export async function objectExists(key: string): Promise<boolean> {
   return bucket().exists(key);
 }
