@@ -476,24 +476,6 @@ export function ReportsPage() {
 
                 </div>
               </div>
-
-              {/* Modal Buttons */}
-              <div className="urm-modal-footer">
-                <button
-                  type="button"
-                  onClick={requestCloseAddModal}
-                  className="urm-btn-cancel"
-                >
-                  CANCEL
-                </button>
-                <button
-                  type="submit"
-                  disabled={formHasErrors}
-                  className="urm-btn-save"
-                >
-                  SAVE
-                </button>
-              </div>
             </form>
 
             {showUnsavedConfirm && (
