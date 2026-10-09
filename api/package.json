@@ -1,0 +1,53 @@
+{
+  "name": "oomnieye-help-api",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Help-management API: content, folders, and file uploads. Self-contained service — the root app does not depend on it.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch server/index.ts",
+    "start": "node dist-server/server/index.js",
+    "build": "tsc -p tsconfig.server.json && node scripts/copy-assets.mjs",
+    "typecheck": "tsc -p tsconfig.server.json --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx server/db/migrate.ts",
+    "db:seed": "tsx server/db/seed.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^9.1.0",
+    "@aws-sdk/client-s3": "^3.1147.0",
+    "@aws-sdk/s3-request-presigner": "^3.1147.0",
+    "@electric-sql/pglite": "^0.5.8",
+    "@upstash/blob": "^0.0.10",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "drizzle-orm": "^0.45.3",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.4.0",
+    "pg": "^8.23.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^24.13.2",
+    "@types/pg": "^8.23.1",
+    "@types/supertest": "^7.2.1",
+    "drizzle-kit": "^0.31.11",
+    "supertest": "^7.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.2",
+    "vitest": "^4.1.11"
+  },
+  "allowScripts": {
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.2": true
+  }
+}

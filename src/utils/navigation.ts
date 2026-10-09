@@ -1,5 +1,8 @@
 export type Screen = 'login' | 'forgot-password' | 'otp' | 'new-password' | 'success' | 'dashboard' | 'forgot-username';
 
+/** Roles mirrored from the Help Management app, used to gate sidebar items. */
+export type AppRole = 'admin' | 'sub_admin' | 'customer';
+
 export interface AppRouteState {
   screen: Screen;
   view?: string;
@@ -10,6 +13,7 @@ export interface AppRouteState {
 
 const AUTH_KEY = 'omnieye_auth_session';
 const AUTH_EMAIL_KEY = 'omnieye_auth_email';
+const AUTH_ROLE_KEY = 'omnieye_auth_role';
 
 /**
  * Check whether an active user session exists in sessionStorage.
@@ -25,16 +29,20 @@ export function isAuthenticated(): boolean {
 /**
  * Set or clear the active user session in sessionStorage.
  */
-export function setSession(active: boolean, email?: string): void {
+export function setSession(active: boolean, email?: string, role?: AppRole): void {
   try {
     if (active) {
       sessionStorage.setItem(AUTH_KEY, 'true');
       if (email) {
         sessionStorage.setItem(AUTH_EMAIL_KEY, email);
       }
+      if (role) {
+        sessionStorage.setItem(AUTH_ROLE_KEY, role);
+      }
     } else {
       sessionStorage.removeItem(AUTH_KEY);
       sessionStorage.removeItem(AUTH_EMAIL_KEY);
+      sessionStorage.removeItem(AUTH_ROLE_KEY);
     }
   } catch {
     // sessionStorage not available or quota exceeded
@@ -50,6 +58,36 @@ export function getSessionEmail(): string {
   } catch {
     return '';
   }
+}
+
+/**
+ * Retrieve the saved session role. Defaults to `admin` so the built-in mock
+ * login (which has no role picker) still shows the full navigation.
+ */
+export function getSessionRole(): AppRole {
+  try {
+    const role = sessionStorage.getItem(AUTH_ROLE_KEY);
+    if (role === 'admin' || role === 'sub_admin' || role === 'customer') {
+      return role;
+    }
+  } catch {
+    // ignore
+  }
+  return 'admin';
+}
+
+/**
+ * Best-effort role for the mock login, so each sidebar variant can be reached
+ * by choice of email: `customer@…` → customer, `subadmin@…`/`help@…` →
+ * sub_admin, anything else → admin. Mirrors the Help Management demo accounts.
+ */
+export function roleFromEmail(email: string): AppRole {
+  const value = email.toLowerCase();
+  if (value.includes('customer')) return 'customer';
+  if (value.includes('subadmin') || value.includes('sub-admin') || value.includes('help')) {
+    return 'sub_admin';
+  }
+  return 'admin';
 }
 
 /**
