@@ -1,0 +1,104 @@
+/* Custom Smooth Dropdown Component — animated check-icon panel, opened from a
+   plain `tf-wrapper`/`tf-outline`/`tf-legend`/`tf-select` trigger (the same
+   boxed fieldset/legend field every other input in the app uses). */
+
+.figma-smooth-arrow {
+  color: var(--text-muted);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.figma-smooth-arrow.open {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+
+.figma-smooth-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 100%;
+  width: max-content;
+  max-width: 260px;
+  border-radius: var(--radius-md, 10px);
+  padding: 6px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: smoothDropdownPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--card-shadow, 0 10px 25px rgba(0, 0, 0, 0.1));
+}
+
+[data-theme-mode="dark"] .figma-smooth-dropdown-menu {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--card-shadow, 0 12px 28px rgba(0, 0, 0, 0.65));
+}
+
+[data-theme-mode="light"] .figma-smooth-dropdown-menu {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--card-shadow, 0 10px 25px rgba(0, 0, 0, 0.08));
+}
+
+@keyframes smoothDropdownPop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.figma-smooth-option {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--text-secondary);
+}
+
+[data-theme-mode="dark"] .figma-smooth-option {
+  color: var(--text-secondary);
+}
+
+[data-theme-mode="dark"] .figma-smooth-option:hover {
+  background: var(--bg-dashboard);
+  color: var(--text-main);
+}
+
+[data-theme-mode="dark"] .figma-smooth-option.selected {
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+[data-theme-mode="light"] .figma-smooth-option {
+  color: var(--text-secondary);
+}
+
+[data-theme-mode="light"] .figma-smooth-option:hover {
+  background: var(--bg-dashboard);
+  color: var(--text-main);
+}
+
+[data-theme-mode="light"] .figma-smooth-option.selected {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.figma-option-check {
+  color: var(--primary, #60a5fa);
+  flex-shrink: 0;
+}
