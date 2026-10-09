@@ -185,7 +185,7 @@ export function Header({
                 color: (headerConfig?.companyNameColor && headerConfig.companyNameColor !== 'transparent') ? headerConfig.companyNameColor : undefined,
               }}
             >
-              {appName || headerConfig?.companyName}
+              {headerConfig?.companyName || appName}
             </div>
           )}
           {(!headerConfig || headerConfig.showCompanyCaption !== false) && (
@@ -197,7 +197,7 @@ export function Header({
                 color: (headerConfig?.companyCaptionColor && headerConfig.companyCaptionColor !== 'transparent') ? headerConfig.companyCaptionColor : undefined,
               }}
             >
-              {appTagline || headerConfig?.companyCaption}
+              {headerConfig?.companyCaption || appTagline}
             </div>
           )}
         </div>

@@ -78,9 +78,13 @@
   border: none;
   outline: none;
   font-family: inherit;
-  font-size: var(--app-font-size, 14px);
-  font-weight: var(--app-font-weight, 400);
-  color: var(--text-main);
+  /* !important: a plain <button> (tf-select's element, used by CustomSmoothDropdown)
+     can pick up a UA/system button font weight/color that's weaker than an <input>'s —
+     force it so a dropdown's selected value always reads identically to a text field's
+     value, never a muted shade of it. */
+  font-size: var(--app-font-size, 14px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  color: var(--text-main) !important;
 }
 
 .tf-input::placeholder {
