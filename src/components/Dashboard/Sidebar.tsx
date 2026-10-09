@@ -2,13 +2,18 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
   LayoutGrid,
-  Grid,
   Store,
   BarChart2,
+  FlaskConical,
   Palette,
+  Ticket,
+  ShieldCheck,
+  Users,
+  UserCheck,
   ChevronRight,
   ChevronLeft
 } from 'lucide-react';
+import { getSessionRole } from '../../utils/navigation';
 import './Dashboard.css';
 
 interface SidebarProps {
@@ -43,6 +48,10 @@ export function Sidebar({
 
   // Evaluate collapsed status
   const isSidebarCollapsed = collapsed;
+
+  // Role gates the Customer and Superadmin/Help Admin items, mirroring the Help
+  // Management app's sidebar. Set at login (see App.tsx / navigation.ts).
+  const role = getSessionRole();
 
   // Hover state specifically for logo in collapsed state
   const [isLogoHovered, setIsLogoHovered] = useState(false);
@@ -86,6 +95,15 @@ export function Sidebar({
       setActiveItemId('overview');
     } else if (currentView === 'account') {
       setActiveItemId('account');
+    } else if (currentView === 'user') {
+      setActiveItemId('user');
+    } else if (currentView === 'tickets') {
+      setActiveItemId('tickets');
+    } else if (currentView === 'customer') {
+      setActiveItemId('customer');
+    } else if (currentView === 'admin') {
+      setActiveItemId('admin');    } else if (currentView === 'testing-reports') {
+      setActiveItemId('testing-reports');
     } else {
       setActiveItemId(null);
     }
@@ -322,18 +340,48 @@ export function Sidebar({
             )}
           </a>
 
-          {/* Menu Item 1 */}
+          {/* Customer — only visible to the customer role (mirrors Help Management) */}
+          {role === 'customer' && (
+            <a
+              href="#"
+              className={`nav-item ${activeItemId === 'customer' ? 'active' : ''}`}
+              onClick={(e) => handleNavItemClick('customer', e, 'customer')}
+              onMouseEnter={(e) => handleItemMouseEnter("Customer", e)}
+              onMouseLeave={handleItemMouseLeave}
+            >
+              <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <UserCheck size={20} className="nav-icon" color="#06B6D4" />
+              </div>
+              <span className="nav-label">Customer</span>
+            </a>
+          )}
+
+          {/* User */}
           <a
             href="#"
-            className="nav-item"
-            onClick={(e) => handleNavItemClick(null, e)}
-            onMouseEnter={(e) => handleItemMouseEnter("Menu Item 1", e)}
+            className={`nav-item ${activeItemId === 'user' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('user', e, 'user')}
+            onMouseEnter={(e) => handleItemMouseEnter("User", e)}
             onMouseLeave={handleItemMouseLeave}
           >
             <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Grid size={20} className="nav-icon" color="#22C55E" />
+              <Users size={20} className="nav-icon" color="#EC4899" />
             </div>
-            <span className="nav-label">Menu Item 1</span>
+            <span className="nav-label">User</span>
+          </a>
+
+          {/* Tickets */}
+          <a
+            href="#"
+            className={`nav-item ${activeItemId === 'tickets' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('tickets', e, 'tickets')}
+            onMouseEnter={(e) => handleItemMouseEnter("Tickets", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Ticket size={20} className="nav-icon" color="#10B981" />
+            </div>
+            <span className="nav-label">Tickets</span>
           </a>
 
           {/* Menu Item 2 */}
@@ -345,7 +393,7 @@ export function Sidebar({
             onMouseLeave={handleItemMouseLeave}
           >
             <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Store size={20} className="nav-icon" color="#F97316" />
+              <Store size={20} className="nav-icon" color="#F59E0B" />
             </div>
             <span className="nav-label">Menu Item 2</span>
           </a>
@@ -363,15 +411,44 @@ export function Sidebar({
             onMouseLeave={handleItemMouseLeave}
           >
             <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <BarChart2 size={20} className="nav-icon" color="#A855F7" />
+              <BarChart2 size={20} className="nav-icon" color="#8B5CF6" />
             </div>
             <span className="nav-label">Report Builder</span>
+          </a>
+
+          <a
+            href="#"
+            className={`nav-item ${activeItemId === 'testing-reports' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('testing-reports', e, 'testing-reports')}
+            onMouseEnter={(e) => handleItemMouseEnter("Testing Reports", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <FlaskConical size={20} className="nav-icon" color="#EC4899" />
+            </div>
+            <span className="nav-label">Testing Reports</span>
           </a>
 
           {/* System section */}
           <div className="nav-section-title">
             <span>System</span>
           </div>
+
+          {/* Superadmin / Help Admin — admin roles only (mirrors Help Management) */}
+          {(role === 'admin' || role === 'sub_admin') && (
+            <a
+              href="#"
+              className={`nav-item ${activeItemId === 'admin' ? 'active' : ''}`}
+              onClick={(e) => handleNavItemClick('admin', e, 'admin')}
+              onMouseEnter={(e) => handleItemMouseEnter(role === 'sub_admin' ? "Help Admin" : "Superadmin", e)}
+              onMouseLeave={handleItemMouseLeave}
+            >
+              <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <ShieldCheck size={20} className="nav-icon" color="#14B8A6" />
+              </div>
+              <span className="nav-label">{role === 'sub_admin' ? "Help Admin" : "Superadmin"}</span>
+            </a>
+          )}
 
           <a
             href="#"

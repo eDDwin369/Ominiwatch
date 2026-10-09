@@ -11,12 +11,49 @@ import { PlaceholderView } from './PlaceholderView';
 import { PreviewLogin } from './PreviewLogin';
 import { FormView } from './FormView';
 import { ReportsPage } from './ReportsPage';
+import {
+  HelpAdminView,
+  HelpUserView,
+  HelpTicketsView,
+  HelpCustomerView,
+} from '../../help-app/HelpFeatureMount';
 import { mockNotifications } from '../Notifications/mockData';
 import type { NotificationItem } from '../Notifications/types';
 import { GlobalSettingsWorkspace } from '../GlobalSettings/GlobalSettingsWorkspace';
+import { HelpDashboardView } from '../../help-app/HelpFeatureMount';
 import { useThemeStore } from 'omnieye-theme-studio';
 import { parseRouteFromUrl, pushAppRoute } from '../../utils/navigation';
 import './Dashboard.css';
+
+/**
+ * The shell's Dashboard (overview) view.
+ *
+ * The welcome/template screen is shown only the first time. After that the view
+ * is the ported Help Management "Site Recordings" dashboard (tabs + data table),
+ * so the workspace opens straight onto real data.
+ */
+const WELCOME_SEEN_KEY = 'omnieye_welcome_seen';
+
+function OverviewView({ onNavigate }: { onNavigate: (view: string) => void }) {
+  const [seenWelcome] = useState(() => {
+    try {
+      return localStorage.getItem(WELCOME_SEEN_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(WELCOME_SEEN_KEY, 'true');
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  if (!seenWelcome) return <TemplateWelcome onNavigate={onNavigate} />;
+  return <HelpDashboardView />;
+}
 
 interface DashboardProps {
   onLogout?: () => void;
@@ -415,7 +452,7 @@ export function Dashboard({
             ) : (
               <div className={`dashboard-container`}>
                 {currentView === 'overview' ? (
-                  <TemplateWelcome onNavigate={handleSetCurrentView} />
+                  <OverviewView onNavigate={handleSetCurrentView} />
                 ) : currentView === 'notifications' ? (
                   <NotificationsPage 
                     notifications={notifications}
@@ -439,6 +476,14 @@ export function Dashboard({
                   <FormView />
                 ) : currentView === 'reports' ? (
                   <ReportsPage />
+                 ) : currentView === 'admin' ? (
+                   <HelpAdminView />
+                 ) : currentView === 'user' ? (
+                   <HelpUserView />
+                 ) : currentView === 'tickets' ? (
+                   <HelpTicketsView />
+                 ) : currentView === 'customer' ? (
+                   <HelpCustomerView />
                 ) : ['operations', 'cameras', 'settings', 'components'].includes(currentView) ? (
                   <PlaceholderView title={currentView.charAt(0).toUpperCase() + currentView.slice(1)} />
                 ) : (
