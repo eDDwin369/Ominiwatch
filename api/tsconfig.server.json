@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.server.tsbuildinfo",
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "types": ["node"],
+
+    /* Node runtime semantics: real ESM, .js extensions in relative imports */
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    /* Path alias mirrors the Vite alias so imports read identically both sides */
+    "paths": {
+      "@server/*": ["./server/*"]
+    },
+
+    /* Server emits JS; the frontend config (tsconfig.app) stays noEmit */
+    "outDir": "./dist-server",
+    "sourceMap": true,
+
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["server", "drizzle.config.ts"]
+}

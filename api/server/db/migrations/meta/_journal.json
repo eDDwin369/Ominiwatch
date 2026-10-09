@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791441598805,
+      "tag": "0000_pg_init",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791454117877,
+      "tag": "0001_media_assets_folder_scope",
+      "breakpoints": true
+    }
+  ]
+}
