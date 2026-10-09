@@ -33,82 +33,345 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+  --color-background: var(--hs-background);
+  --color-foreground: var(--hs-foreground);
+  --color-card: var(--hs-card);
+  --color-card-foreground: var(--hs-card-foreground);
+  --color-popover: var(--hs-popover);
+  --color-popover-foreground: var(--hs-popover-foreground);
+  --color-primary: var(--hs-primary);
+  --color-primary-foreground: var(--hs-primary-foreground);
+  --color-secondary: var(--hs-secondary);
+  --color-secondary-foreground: var(--hs-secondary-foreground);
+  --color-muted: var(--hs-muted);
+  --color-muted-foreground: var(--hs-muted-foreground);
+  --color-accent: var(--hs-accent);
+  --color-accent-foreground: var(--hs-accent-foreground);
+  --color-destructive: var(--hs-destructive);
+  --color-destructive-foreground: var(--hs-destructive-foreground);
+  --color-border: var(--hs-border);
+  --color-input: var(--hs-input);
+  --color-ring: var(--hs-ring);
+  --color-chart-1: var(--hs-chart-1);
+  --color-chart-2: var(--hs-chart-2);
+  --color-chart-3: var(--hs-chart-3);
+  --color-chart-4: var(--hs-chart-4);
+  --color-chart-5: var(--hs-chart-5);
 }
 
-/* Token values, scoped so they can never clobber the host app's variables. */
+/* ── Theme Studio → help feature ──
+   Every colour, font, weight, size and radius below is read from the shell's Theme Studio
+   tokens (see theme-bridge.tsx), so the help panel, the right-click help modal, its dialogs
+   and the admin pages follow the studio in light and dark mode like Account Settings,
+   Global Settings and Notifications. At the Emerald defaults the sizes and radii resolve to
+   the help app's original px values, so its layout is unchanged. */
 .help-scope {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  /* shadcn surface tokens (consumed by the ui/ components through @theme above) */
+  --radius: calc(var(--radius-unit, 1px) * 10);
+  --hs-background: var(--bg-card);
+  --hs-foreground: var(--text-main);
+  --hs-card: var(--bg-card);
+  --hs-card-foreground: var(--text-main);
+  --hs-popover: color-mix(in srgb, var(--primary) 4%, var(--bg-card));
+  --hs-popover-foreground: var(--text-main);
+  --hs-primary: var(--btn-color, var(--primary));
+  --hs-primary-foreground: var(--btn-text, #ffffff);
+  --hs-secondary: color-mix(in srgb, var(--text-main) 6%, var(--bg-card));
+  --hs-secondary-foreground: var(--text-main);
+  --hs-muted: color-mix(in srgb, var(--text-main) 6%, var(--bg-card));
+  --hs-muted-foreground: var(--text-secondary);
+  --hs-accent: color-mix(in srgb, var(--primary) 10%, var(--bg-card));
+  --hs-accent-foreground: var(--text-main);
+  --hs-destructive: var(--danger);
+  --hs-destructive-foreground: #ffffff;
+  --hs-border: var(--border-light);
+  --hs-input: var(--border-light);
+  --hs-ring: color-mix(in srgb, var(--primary) 60%, transparent);
+  --hs-chart-1: var(--primary);
+  --hs-chart-2: var(--secondary);
+  --hs-chart-3: var(--info);
+  --hs-chart-4: var(--warning);
+  --hs-chart-5: var(--success);
+
+  /* Typography: font family, sizes (caption / body scale) and weights (body weight + n) */
+  --font-sans: var(--app-font-family);
+  --font-mono: var(--app-font-family);
+  --text-xs: var(--font-size-caption, 12px);
+  --text-sm: calc(var(--app-font-size, 15px) * 14 / 15);
+  --text-base: calc(var(--app-font-size, 15px) * 16 / 15);
+  --text-lg: calc(var(--app-font-size, 15px) * 18 / 15);
+  --text-xl: calc(var(--app-font-size, 15px) * 20 / 15);
+  --text-2xl: calc(var(--app-font-size, 15px) * 24 / 15);
+  --text-3xl: calc(var(--app-font-size, 15px) * 30 / 15);
+  --font-weight-normal: var(--app-font-weight, 400);
+  --font-weight-medium: min(900, calc(var(--app-font-weight, 400) + 100));
+  --font-weight-semibold: min(900, calc(var(--app-font-weight, 400) + 200));
+  --font-weight-bold: min(900, calc(var(--app-font-weight, 400) + 300));
+  --font-weight-extrabold: min(900, calc(var(--app-font-weight, 400) + 400));
+  /* arbitrary px sizes used by the ported markup (text-[11px] etc.) and inline styles */
+  --hs-fs-8: calc(var(--font-size-caption, 12px) * 8 / 12);
+  --hs-fs-9: calc(var(--font-size-caption, 12px) * 9 / 12);
+  --hs-fs-10: calc(var(--font-size-caption, 12px) * 10 / 12);
+  --hs-fs-11: calc(var(--font-size-caption, 12px) * 11 / 12);
+  --hs-fs-12: var(--font-size-caption, 12px);
+  --hs-fs-13: calc(var(--app-font-size, 15px) * 13 / 15);
+  --hs-fs-14: calc(var(--app-font-size, 15px) * 14 / 15);
+  --hs-fs-15: var(--app-font-size, 15px);
+  --hs-fs-16: calc(var(--app-font-size, 15px) * 16 / 15);
+  --hs-fs-18: calc(var(--app-font-size, 15px) * 18 / 15);
+  letter-spacing: var(--app-letter-spacing, normal);
+
+  /* Tailwind palette → theme. Neutrals are a ramp from the card colour to the text colours,
+     brand hues follow the primary colour and status hues follow success / warning / danger /
+     info, so every bg-*, text-*, border-* utility flips with the theme mode. */
+  --color-slate-50: color-mix(in srgb, var(--text-main) 3%, var(--bg-card));
+  --color-slate-100: color-mix(in srgb, var(--text-main) 6%, var(--bg-card));
+  --color-slate-200: color-mix(in srgb, var(--border-light) 70%, var(--bg-card));
+  --color-slate-300: var(--border-light);
+  --color-slate-400: color-mix(in srgb, var(--text-secondary) 60%, var(--bg-card));
+  --color-slate-500: color-mix(in srgb, var(--text-secondary) 80%, var(--bg-card));
+  --color-slate-600: var(--text-secondary);
+  --color-slate-700: color-mix(in srgb, var(--text-main) 40%, var(--text-secondary));
+  --color-slate-800: color-mix(in srgb, var(--text-main) 75%, var(--text-secondary));
+  --color-slate-900: var(--text-main);
+  --color-slate-950: var(--text-main);
+  --color-gray-50: color-mix(in srgb, var(--text-main) 3%, var(--bg-card));
+  --color-gray-100: color-mix(in srgb, var(--text-main) 6%, var(--bg-card));
+  --color-gray-200: color-mix(in srgb, var(--border-light) 70%, var(--bg-card));
+  --color-gray-300: var(--border-light);
+  --color-gray-400: color-mix(in srgb, var(--text-secondary) 60%, var(--bg-card));
+  --color-gray-500: color-mix(in srgb, var(--text-secondary) 80%, var(--bg-card));
+  --color-gray-600: var(--text-secondary);
+  --color-gray-700: color-mix(in srgb, var(--text-main) 40%, var(--text-secondary));
+  --color-gray-800: color-mix(in srgb, var(--text-main) 75%, var(--text-secondary));
+  --color-gray-900: var(--text-main);
+  --color-gray-950: var(--text-main);
+  --color-zinc-50: color-mix(in srgb, var(--text-main) 3%, var(--bg-card));
+  --color-zinc-100: color-mix(in srgb, var(--text-main) 6%, var(--bg-card));
+  --color-zinc-200: color-mix(in srgb, var(--border-light) 70%, var(--bg-card));
+  --color-zinc-300: var(--border-light);
+  --color-zinc-400: color-mix(in srgb, var(--text-secondary) 60%, var(--bg-card));
+  --color-zinc-500: color-mix(in srgb, var(--text-secondary) 80%, var(--bg-card));
+  --color-zinc-600: var(--text-secondary);
+  --color-zinc-700: color-mix(in srgb, var(--text-main) 40%, var(--text-secondary));
+  --color-zinc-800: color-mix(in srgb, var(--text-main) 75%, var(--text-secondary));
+  --color-zinc-900: var(--text-main);
+  --color-zinc-950: var(--text-main);
+  --color-neutral-50: color-mix(in srgb, var(--text-main) 3%, var(--bg-card));
+  --color-neutral-100: color-mix(in srgb, var(--text-main) 6%, var(--bg-card));
+  --color-neutral-200: color-mix(in srgb, var(--border-light) 70%, var(--bg-card));
+  --color-neutral-300: var(--border-light);
+  --color-neutral-400: color-mix(in srgb, var(--text-secondary) 60%, var(--bg-card));
+  --color-neutral-500: color-mix(in srgb, var(--text-secondary) 80%, var(--bg-card));
+  --color-neutral-600: var(--text-secondary);
+  --color-neutral-700: color-mix(in srgb, var(--text-main) 40%, var(--text-secondary));
+  --color-neutral-800: color-mix(in srgb, var(--text-main) 75%, var(--text-secondary));
+  --color-neutral-900: var(--text-main);
+  --color-neutral-950: var(--text-main);
+  --color-stone-50: color-mix(in srgb, var(--text-main) 3%, var(--bg-card));
+  --color-stone-100: color-mix(in srgb, var(--text-main) 6%, var(--bg-card));
+  --color-stone-200: color-mix(in srgb, var(--border-light) 70%, var(--bg-card));
+  --color-stone-300: var(--border-light);
+  --color-stone-400: color-mix(in srgb, var(--text-secondary) 60%, var(--bg-card));
+  --color-stone-500: color-mix(in srgb, var(--text-secondary) 80%, var(--bg-card));
+  --color-stone-600: var(--text-secondary);
+  --color-stone-700: color-mix(in srgb, var(--text-main) 40%, var(--text-secondary));
+  --color-stone-800: color-mix(in srgb, var(--text-main) 75%, var(--text-secondary));
+  --color-stone-900: var(--text-main);
+  --color-stone-950: var(--text-main);
+  --color-blue-50: color-mix(in srgb, var(--primary) 7%, var(--bg-card));
+  --color-blue-100: color-mix(in srgb, var(--primary) 13%, var(--bg-card));
+  --color-blue-200: color-mix(in srgb, var(--primary) 24%, var(--bg-card));
+  --color-blue-300: color-mix(in srgb, var(--primary) 40%, var(--bg-card));
+  --color-blue-400: color-mix(in srgb, var(--primary) 70%, var(--bg-card));
+  --color-blue-500: var(--primary);
+  --color-blue-600: var(--primary);
+  --color-blue-700: color-mix(in srgb, var(--primary) 80%, var(--text-main));
+  --color-blue-800: color-mix(in srgb, var(--primary) 65%, var(--text-main));
+  --color-blue-900: color-mix(in srgb, var(--primary) 50%, var(--text-main));
+  --color-blue-950: color-mix(in srgb, var(--primary) 40%, var(--text-main));
+  --color-indigo-50: color-mix(in srgb, var(--primary) 7%, var(--bg-card));
+  --color-indigo-100: color-mix(in srgb, var(--primary) 13%, var(--bg-card));
+  --color-indigo-200: color-mix(in srgb, var(--primary) 24%, var(--bg-card));
+  --color-indigo-300: color-mix(in srgb, var(--primary) 40%, var(--bg-card));
+  --color-indigo-400: color-mix(in srgb, var(--primary) 70%, var(--bg-card));
+  --color-indigo-500: var(--primary);
+  --color-indigo-600: var(--primary);
+  --color-indigo-700: color-mix(in srgb, var(--primary) 80%, var(--text-main));
+  --color-indigo-800: color-mix(in srgb, var(--primary) 65%, var(--text-main));
+  --color-indigo-900: color-mix(in srgb, var(--primary) 50%, var(--text-main));
+  --color-indigo-950: color-mix(in srgb, var(--primary) 40%, var(--text-main));
+  --color-violet-50: color-mix(in srgb, var(--primary) 7%, var(--bg-card));
+  --color-violet-100: color-mix(in srgb, var(--primary) 13%, var(--bg-card));
+  --color-violet-200: color-mix(in srgb, var(--primary) 24%, var(--bg-card));
+  --color-violet-300: color-mix(in srgb, var(--primary) 40%, var(--bg-card));
+  --color-violet-400: color-mix(in srgb, var(--primary) 70%, var(--bg-card));
+  --color-violet-500: var(--primary);
+  --color-violet-600: var(--primary);
+  --color-violet-700: color-mix(in srgb, var(--primary) 80%, var(--text-main));
+  --color-violet-800: color-mix(in srgb, var(--primary) 65%, var(--text-main));
+  --color-violet-900: color-mix(in srgb, var(--primary) 50%, var(--text-main));
+  --color-violet-950: color-mix(in srgb, var(--primary) 40%, var(--text-main));
+  --color-purple-50: color-mix(in srgb, var(--primary) 7%, var(--bg-card));
+  --color-purple-100: color-mix(in srgb, var(--primary) 13%, var(--bg-card));
+  --color-purple-200: color-mix(in srgb, var(--primary) 24%, var(--bg-card));
+  --color-purple-300: color-mix(in srgb, var(--primary) 40%, var(--bg-card));
+  --color-purple-400: color-mix(in srgb, var(--primary) 70%, var(--bg-card));
+  --color-purple-500: var(--primary);
+  --color-purple-600: var(--primary);
+  --color-purple-700: color-mix(in srgb, var(--primary) 80%, var(--text-main));
+  --color-purple-800: color-mix(in srgb, var(--primary) 65%, var(--text-main));
+  --color-purple-900: color-mix(in srgb, var(--primary) 50%, var(--text-main));
+  --color-purple-950: color-mix(in srgb, var(--primary) 40%, var(--text-main));
+  --color-fuchsia-50: color-mix(in srgb, var(--primary) 7%, var(--bg-card));
+  --color-fuchsia-100: color-mix(in srgb, var(--primary) 13%, var(--bg-card));
+  --color-fuchsia-200: color-mix(in srgb, var(--primary) 24%, var(--bg-card));
+  --color-fuchsia-300: color-mix(in srgb, var(--primary) 40%, var(--bg-card));
+  --color-fuchsia-400: color-mix(in srgb, var(--primary) 70%, var(--bg-card));
+  --color-fuchsia-500: var(--primary);
+  --color-fuchsia-600: var(--primary);
+  --color-fuchsia-700: color-mix(in srgb, var(--primary) 80%, var(--text-main));
+  --color-fuchsia-800: color-mix(in srgb, var(--primary) 65%, var(--text-main));
+  --color-fuchsia-900: color-mix(in srgb, var(--primary) 50%, var(--text-main));
+  --color-fuchsia-950: color-mix(in srgb, var(--primary) 40%, var(--text-main));
+  --color-green-50: color-mix(in srgb, var(--success) 7%, var(--bg-card));
+  --color-green-100: color-mix(in srgb, var(--success) 13%, var(--bg-card));
+  --color-green-200: color-mix(in srgb, var(--success) 24%, var(--bg-card));
+  --color-green-300: color-mix(in srgb, var(--success) 40%, var(--bg-card));
+  --color-green-400: color-mix(in srgb, var(--success) 70%, var(--bg-card));
+  --color-green-500: var(--success);
+  --color-green-600: var(--success);
+  --color-green-700: color-mix(in srgb, var(--success) 80%, var(--text-main));
+  --color-green-800: color-mix(in srgb, var(--success) 65%, var(--text-main));
+  --color-green-900: color-mix(in srgb, var(--success) 50%, var(--text-main));
+  --color-green-950: color-mix(in srgb, var(--success) 40%, var(--text-main));
+  --color-emerald-50: color-mix(in srgb, var(--success) 7%, var(--bg-card));
+  --color-emerald-100: color-mix(in srgb, var(--success) 13%, var(--bg-card));
+  --color-emerald-200: color-mix(in srgb, var(--success) 24%, var(--bg-card));
+  --color-emerald-300: color-mix(in srgb, var(--success) 40%, var(--bg-card));
+  --color-emerald-400: color-mix(in srgb, var(--success) 70%, var(--bg-card));
+  --color-emerald-500: var(--success);
+  --color-emerald-600: var(--success);
+  --color-emerald-700: color-mix(in srgb, var(--success) 80%, var(--text-main));
+  --color-emerald-800: color-mix(in srgb, var(--success) 65%, var(--text-main));
+  --color-emerald-900: color-mix(in srgb, var(--success) 50%, var(--text-main));
+  --color-emerald-950: color-mix(in srgb, var(--success) 40%, var(--text-main));
+  --color-teal-50: color-mix(in srgb, var(--success) 7%, var(--bg-card));
+  --color-teal-100: color-mix(in srgb, var(--success) 13%, var(--bg-card));
+  --color-teal-200: color-mix(in srgb, var(--success) 24%, var(--bg-card));
+  --color-teal-300: color-mix(in srgb, var(--success) 40%, var(--bg-card));
+  --color-teal-400: color-mix(in srgb, var(--success) 70%, var(--bg-card));
+  --color-teal-500: var(--success);
+  --color-teal-600: var(--success);
+  --color-teal-700: color-mix(in srgb, var(--success) 80%, var(--text-main));
+  --color-teal-800: color-mix(in srgb, var(--success) 65%, var(--text-main));
+  --color-teal-900: color-mix(in srgb, var(--success) 50%, var(--text-main));
+  --color-teal-950: color-mix(in srgb, var(--success) 40%, var(--text-main));
+  --color-lime-50: color-mix(in srgb, var(--success) 7%, var(--bg-card));
+  --color-lime-100: color-mix(in srgb, var(--success) 13%, var(--bg-card));
+  --color-lime-200: color-mix(in srgb, var(--success) 24%, var(--bg-card));
+  --color-lime-300: color-mix(in srgb, var(--success) 40%, var(--bg-card));
+  --color-lime-400: color-mix(in srgb, var(--success) 70%, var(--bg-card));
+  --color-lime-500: var(--success);
+  --color-lime-600: var(--success);
+  --color-lime-700: color-mix(in srgb, var(--success) 80%, var(--text-main));
+  --color-lime-800: color-mix(in srgb, var(--success) 65%, var(--text-main));
+  --color-lime-900: color-mix(in srgb, var(--success) 50%, var(--text-main));
+  --color-lime-950: color-mix(in srgb, var(--success) 40%, var(--text-main));
+  --color-amber-50: color-mix(in srgb, var(--warning) 7%, var(--bg-card));
+  --color-amber-100: color-mix(in srgb, var(--warning) 13%, var(--bg-card));
+  --color-amber-200: color-mix(in srgb, var(--warning) 24%, var(--bg-card));
+  --color-amber-300: color-mix(in srgb, var(--warning) 40%, var(--bg-card));
+  --color-amber-400: color-mix(in srgb, var(--warning) 70%, var(--bg-card));
+  --color-amber-500: var(--warning);
+  --color-amber-600: var(--warning);
+  --color-amber-700: color-mix(in srgb, var(--warning) 80%, var(--text-main));
+  --color-amber-800: color-mix(in srgb, var(--warning) 65%, var(--text-main));
+  --color-amber-900: color-mix(in srgb, var(--warning) 50%, var(--text-main));
+  --color-amber-950: color-mix(in srgb, var(--warning) 40%, var(--text-main));
+  --color-yellow-50: color-mix(in srgb, var(--warning) 7%, var(--bg-card));
+  --color-yellow-100: color-mix(in srgb, var(--warning) 13%, var(--bg-card));
+  --color-yellow-200: color-mix(in srgb, var(--warning) 24%, var(--bg-card));
+  --color-yellow-300: color-mix(in srgb, var(--warning) 40%, var(--bg-card));
+  --color-yellow-400: color-mix(in srgb, var(--warning) 70%, var(--bg-card));
+  --color-yellow-500: var(--warning);
+  --color-yellow-600: var(--warning);
+  --color-yellow-700: color-mix(in srgb, var(--warning) 80%, var(--text-main));
+  --color-yellow-800: color-mix(in srgb, var(--warning) 65%, var(--text-main));
+  --color-yellow-900: color-mix(in srgb, var(--warning) 50%, var(--text-main));
+  --color-yellow-950: color-mix(in srgb, var(--warning) 40%, var(--text-main));
+  --color-orange-50: color-mix(in srgb, var(--warning) 7%, var(--bg-card));
+  --color-orange-100: color-mix(in srgb, var(--warning) 13%, var(--bg-card));
+  --color-orange-200: color-mix(in srgb, var(--warning) 24%, var(--bg-card));
+  --color-orange-300: color-mix(in srgb, var(--warning) 40%, var(--bg-card));
+  --color-orange-400: color-mix(in srgb, var(--warning) 70%, var(--bg-card));
+  --color-orange-500: var(--warning);
+  --color-orange-600: var(--warning);
+  --color-orange-700: color-mix(in srgb, var(--warning) 80%, var(--text-main));
+  --color-orange-800: color-mix(in srgb, var(--warning) 65%, var(--text-main));
+  --color-orange-900: color-mix(in srgb, var(--warning) 50%, var(--text-main));
+  --color-orange-950: color-mix(in srgb, var(--warning) 40%, var(--text-main));
+  --color-red-50: color-mix(in srgb, var(--danger) 7%, var(--bg-card));
+  --color-red-100: color-mix(in srgb, var(--danger) 13%, var(--bg-card));
+  --color-red-200: color-mix(in srgb, var(--danger) 24%, var(--bg-card));
+  --color-red-300: color-mix(in srgb, var(--danger) 40%, var(--bg-card));
+  --color-red-400: color-mix(in srgb, var(--danger) 70%, var(--bg-card));
+  --color-red-500: var(--danger);
+  --color-red-600: var(--danger);
+  --color-red-700: color-mix(in srgb, var(--danger) 80%, var(--text-main));
+  --color-red-800: color-mix(in srgb, var(--danger) 65%, var(--text-main));
+  --color-red-900: color-mix(in srgb, var(--danger) 50%, var(--text-main));
+  --color-red-950: color-mix(in srgb, var(--danger) 40%, var(--text-main));
+  --color-rose-50: color-mix(in srgb, var(--danger) 7%, var(--bg-card));
+  --color-rose-100: color-mix(in srgb, var(--danger) 13%, var(--bg-card));
+  --color-rose-200: color-mix(in srgb, var(--danger) 24%, var(--bg-card));
+  --color-rose-300: color-mix(in srgb, var(--danger) 40%, var(--bg-card));
+  --color-rose-400: color-mix(in srgb, var(--danger) 70%, var(--bg-card));
+  --color-rose-500: var(--danger);
+  --color-rose-600: var(--danger);
+  --color-rose-700: color-mix(in srgb, var(--danger) 80%, var(--text-main));
+  --color-rose-800: color-mix(in srgb, var(--danger) 65%, var(--text-main));
+  --color-rose-900: color-mix(in srgb, var(--danger) 50%, var(--text-main));
+  --color-rose-950: color-mix(in srgb, var(--danger) 40%, var(--text-main));
+  --color-pink-50: color-mix(in srgb, var(--primary) 7%, var(--bg-card));
+  --color-pink-100: color-mix(in srgb, var(--primary) 13%, var(--bg-card));
+  --color-pink-200: color-mix(in srgb, var(--primary) 24%, var(--bg-card));
+  --color-pink-300: color-mix(in srgb, var(--primary) 40%, var(--bg-card));
+  --color-pink-400: color-mix(in srgb, var(--primary) 70%, var(--bg-card));
+  --color-pink-500: var(--primary);
+  --color-pink-600: var(--primary);
+  --color-pink-700: color-mix(in srgb, var(--primary) 80%, var(--text-main));
+  --color-pink-800: color-mix(in srgb, var(--primary) 65%, var(--text-main));
+  --color-pink-900: color-mix(in srgb, var(--primary) 50%, var(--text-main));
+  --color-pink-950: color-mix(in srgb, var(--primary) 40%, var(--text-main));
+  --color-sky-50: color-mix(in srgb, var(--info) 7%, var(--bg-card));
+  --color-sky-100: color-mix(in srgb, var(--info) 13%, var(--bg-card));
+  --color-sky-200: color-mix(in srgb, var(--info) 24%, var(--bg-card));
+  --color-sky-300: color-mix(in srgb, var(--info) 40%, var(--bg-card));
+  --color-sky-400: color-mix(in srgb, var(--info) 70%, var(--bg-card));
+  --color-sky-500: var(--info);
+  --color-sky-600: var(--info);
+  --color-sky-700: color-mix(in srgb, var(--info) 80%, var(--text-main));
+  --color-sky-800: color-mix(in srgb, var(--info) 65%, var(--text-main));
+  --color-sky-900: color-mix(in srgb, var(--info) 50%, var(--text-main));
+  --color-sky-950: color-mix(in srgb, var(--info) 40%, var(--text-main));
+  --color-cyan-50: color-mix(in srgb, var(--info) 7%, var(--bg-card));
+  --color-cyan-100: color-mix(in srgb, var(--info) 13%, var(--bg-card));
+  --color-cyan-200: color-mix(in srgb, var(--info) 24%, var(--bg-card));
+  --color-cyan-300: color-mix(in srgb, var(--info) 40%, var(--bg-card));
+  --color-cyan-400: color-mix(in srgb, var(--info) 70%, var(--bg-card));
+  --color-cyan-500: var(--info);
+  --color-cyan-600: var(--info);
+  --color-cyan-700: color-mix(in srgb, var(--info) 80%, var(--text-main));
+  --color-cyan-800: color-mix(in srgb, var(--info) 65%, var(--text-main));
+  --color-cyan-900: color-mix(in srgb, var(--info) 50%, var(--text-main));
+  --color-cyan-950: color-mix(in srgb, var(--info) 40%, var(--text-main));
 }
 
-.help-scope.dark {
-  --background: oklch(0.129 0.042 264.695);
-  --foreground: oklch(0.984 0.003 247.858);
-  --card: oklch(0.208 0.042 265.755);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-}
+/* White surfaces are cards: `bg-white` follows the card colour (text-white stays white).
+   :where() keeps this at class specificity, so hover:/focus: variants still win. */
+:where(.help-scope) .bg-white { background-color: var(--bg-card); }
+:where(.help-scope) .bg-white\/90 { background-color: color-mix(in srgb, var(--bg-card) 90%, transparent); }
 
 /*
  * Minimal, low-specificity preflight for the help subtree only.
@@ -123,7 +386,7 @@
   box-sizing: border-box;
   border-width: 0;
   border-style: solid;
-  border-color: var(--border, currentColor);
+  border-color: var(--hs-border, currentColor);
 }
 
 :where(.help-scope) button,
@@ -159,7 +422,7 @@
 /* Floating-panel scrollbars, ported from the help app's global stylesheet. */
 .help-scope .hms-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgb(0 0 0 / 0.14) transparent;
+  scrollbar-color: color-mix(in srgb, var(--text-main) 14%, transparent) transparent;
   scrollbar-gutter: stable;
   overscroll-behavior: contain;
 }
@@ -167,10 +430,267 @@
   width: 6px;
 }
 .help-scope .hms-scroll::-webkit-scrollbar-thumb {
-  background-color: rgb(0 0 0 / 0.14);
+  background-color: color-mix(in srgb, var(--text-main) 14%, transparent);
   border-radius: 999px;
 }
 .help-scope .hms-back:hover {
-  background-color: #f9fafb !important;
-  border-color: #d1d5db !important;
+  background-color: var(--color-gray-50) !important;
+  border-color: var(--color-gray-300) !important;
+}
+
+/* ── Help feature — shell design standard ─────────────────────────────────────────────────── */
+
+/* Fixed px text sizes in the ported markup follow the caption token. */
+.help-scope .text-\[8px\] { font-size: var(--hs-fs-8); }
+.help-scope .text-\[9px\] { font-size: var(--hs-fs-9); }
+.help-scope .text-\[10px\] { font-size: var(--hs-fs-10); }
+.help-scope .text-\[11px\] { font-size: var(--hs-fs-11); }
+.help-scope .text-\[11\.5px\] { font-size: calc(var(--font-size-caption, 12px) * 11.5 / 12); }
+.help-scope .rounded-\[16px\] { border-radius: calc(var(--radius-unit, 1px) * 16); }
+.help-scope .rounded-t-\[15px\] {
+  border-top-left-radius: calc(var(--radius-unit, 1px) * 15);
+  border-top-right-radius: calc(var(--radius-unit, 1px) * 15);
+}
+
+/* Text on brand fills uses the button text colour, like the shell's primary buttons. */
+:where(.help-scope) :is(.bg-primary, .bg-blue-500, .bg-blue-600, .bg-blue-700, .bg-indigo-600,
+    .bg-violet-600, .bg-purple-500, .bg-purple-600, .bg-purple-700, .bg-\[var\(--color-blue-600\)\],
+    [class*="from-purple-"], [class*="from-blue-"], [class*="from-indigo-"], [class*="from-violet-"]).text-white {
+  color: var(--hs-primary-foreground);
+}
+
+/* Dark chips (bottom inspector bar, tags) keep a dark surface in both modes. */
+:where(.help-scope) :is(.bg-slate-800, .bg-slate-900, .bg-slate-950, .bg-gray-800, .bg-gray-900,
+    .bg-zinc-900, .bg-neutral-900).text-white:not(:has(video, img, iframe)) {
+  background-color: rgba(97, 97, 97, 0.92);
+}
+
+/* Dark surfaces — media previews (video / image viewer), the inspector bar, dark toolbars —
+   stay dark in both modes (like the shell's tooltip pill): inside them the slate palette is
+   the original one, so their light text stays readable; accent hues still follow the theme. */
+.help-scope :is(.hms-preview-dialog, .bg-slate-800, .bg-slate-800\/80, .bg-slate-900, .bg-slate-900\/60,
+    .bg-slate-900\/95, .bg-slate-950, .bg-slate-950\/90, .bg-slate-950\/95):not(.hms-window-header *) {
+  --color-slate-50: oklch(98.4% 0.003 247.858);
+  --color-slate-100: oklch(96.8% 0.007 247.896);
+  --color-slate-200: oklch(92.9% 0.013 255.508);
+  --color-slate-300: oklch(86.9% 0.022 252.894);
+  --color-slate-400: oklch(70.4% 0.04 256.788);
+  --color-slate-500: oklch(55.4% 0.046 257.417);
+  --color-slate-600: oklch(44.6% 0.043 257.281);
+  --color-slate-700: oklch(37.2% 0.044 257.287);
+  --color-slate-800: oklch(27.9% 0.041 260.031);
+  --color-slate-900: oklch(20.8% 0.042 265.755);
+  --color-slate-950: oklch(12.9% 0.042 264.695);
+  --color-white: #ffffff;
+}
+
+/* Windows — the floating help panel and the right-click help modal: page wash surface,
+   card border and card shadow, like the Global Settings and Notifications windows. */
+.help-scope .hms-window,
+.help-scope #help-admin-right-click-modal {
+  background: var(--brand-page-wash, var(--bg-card));
+  border-color: var(--border-light); /* colour only: border widths stay as designed */
+  box-shadow: var(--card-shadow);
+  color: var(--text-main);
+  font-family: var(--app-font-family);
+}
+
+/* Full-width sections inside a window (views, toolbars, footers) sit on the window wash;
+   rounded white boxes are cards and keep their surface. */
+.help-scope :is(.hms-window, #help-admin-right-click-modal)
+    :is(.bg-white, .bg-card, .bg-gray-50, .bg-slate-50, .bg-\[var\(--color-slate-50\)\]):not([class*="rounded"]) {
+  background-color: transparent;
+}
+
+/* Option tiles (Present me Summary, Talk to me, Help me, Teach me): floating cards. */
+.help-scope .hms-tile {
+  background: var(--bg-card); /* headerless cards: card colour, no header wash */
+  border-color: var(--border-light);
+  box-shadow: var(--card-shadow);
+}
+
+.help-scope .hms-tile:hover {
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent);
+}
+
+/* Window header: transparent over the wash, primary title, muted icons (no dark bar).
+   The header's dark-bar classes are re-pointed at light-surface colours here. */
+.help-scope .hms-window-header {
+  background: transparent;
+  color: var(--text-main);
+  border-color: var(--border-light);
+  --color-white: var(--text-main);
+  --color-slate-100: var(--text-main);
+  --color-slate-200: var(--text-main);
+  --color-slate-300: var(--text-secondary);
+  --color-slate-400: var(--text-secondary);
+  --color-slate-700: color-mix(in srgb, var(--primary) 14%, transparent);
+  --color-slate-800: color-mix(in srgb, var(--text-main) 6%, transparent);
+}
+
+.help-scope .hms-window-header button:hover {
+  color: var(--primary);
+}
+
+/* Tooltips: the shell's tooltip pill. */
+.help-scope .hms-tooltip {
+  background: rgba(97, 97, 97, 0.92);
+  color: #ffffff;
+  border: none;
+  border-radius: calc(var(--radius-unit, 1px) * 9);
+  box-shadow: none;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--app-font-weight, 400);
+}
+
+/* Dropdown menus / selects: the shell dropdown standard (tinted card surface, theme radius,
+   card shadow; options with a primary tint on hover). */
+.help-scope :is([role="menu"], [role="listbox"])[data-state],
+.help-scope .hms-menu {
+  background-color: var(--hs-popover);
+  border-color: var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 14);
+  box-shadow: var(--card-shadow);
+}
+
+.help-scope :is([role="menuitem"], [role="option"], [role="menuitemcheckbox"], [role="menuitemradio"], .hms-menu button) {
+  border-radius: calc(var(--radius-unit, 1px) * 8);
+}
+
+[data-theme-mode="dark"] .help-scope {
+  --hs-popover: color-mix(in srgb, var(--primary) 8%, var(--bg-card));
+}
+
+/* Dialogs (New Folder, contact support, previews' confirmations): the shell dialog standard. */
+.help-scope :is([role="dialog"], [role="alertdialog"])[data-state]:not(.hms-preview-dialog) {
+  background: var(--brand-card-surface, var(--bg-card));
+  border-color: var(--border-light);
+  border-radius: var(--radius-xl, 18px);
+  box-shadow: var(--card-shadow), var(--card-shadow);
+  color: var(--text-main);
+}
+
+/* Fields: theme field fill, primary edge on focus. */
+.help-scope :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]), textarea) {
+  caret-color: var(--text-main);
+}
+
+.help-scope :is(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]), textarea):focus {
+  border-color: var(--primary);
+}
+
+/* Remaining fixed Tailwind values → theme tokens */
+:where(.help-scope) .rounded { border-radius: calc(var(--radius-unit, 1px) * 4); }
+:where(.help-scope) .rounded-tl { border-top-left-radius: calc(var(--radius-unit, 1px) * 4); }
+:where(.help-scope) .rounded-tr { border-top-right-radius: calc(var(--radius-unit, 1px) * 4); }
+:where(.help-scope) .rounded-bl { border-bottom-left-radius: calc(var(--radius-unit, 1px) * 4); }
+:where(.help-scope) .rounded-br { border-bottom-right-radius: calc(var(--radius-unit, 1px) * 4); }
+
+/* Tailwind shadow-* utilities take a primary-tinted colour scaled by the studio's card shadow
+   strength (shadow-<colour> utilities still win: this rule has zero specificity). */
+:where(.help-scope) * {
+  --tw-shadow-color: color-mix(in srgb, var(--primary) calc(16% * var(--card-shadow-scale, 1)), transparent);
+}
+
+/* Glow used by the visual highlighter / hover focus / snapshot markers */
+.help-scope {
+  --hs-glow-strong: color-mix(in srgb, var(--primary) 80%, transparent);
+  --hs-glow: color-mix(in srgb, var(--primary) 50%, transparent);
+}
+
+/* Titles — page (h1), card / section (h2, h3) and dialog titles use the primary colour
+   (highlight in dark mode, like the shell's gradient titles); a Theme Studio heading
+   colour for that level wins, and the heading font follows the studio. */
+.help-scope {
+  --hs-title: var(--primary);
+}
+[data-theme-mode="dark"] .help-scope {
+  --hs-title: var(--highlight, var(--primary));
+}
+.help-scope :is(h1, h2, h3, .hms-title):not(.sr-only):not(.text-white) {
+  font-family: var(--app-heading-family, var(--app-font-family));
+}
+.help-scope h1:not(.sr-only):not(.text-white) { color: var(--h1-color-custom, var(--hs-title)); }
+.help-scope h2:not(.text-white) { color: var(--h2-color-custom, var(--hs-title)); }
+.help-scope h3:not(.text-white) { color: var(--h3-color-custom, var(--hs-title)); }
+/* page / card titles written as spans */
+.help-scope .hms-title { color: var(--h2-color-custom, var(--hs-title)); }
+
+/* Dialog header band + divider follow the studio's card header style (Plain = none). */
+.help-scope .hms-dialog-header {
+  background: var(--card-hdr-solid-band, transparent);
+}
+.help-scope .hms-dialog-header.border-b {
+  border-bottom: var(--card-hdr-border, none);
+}
+
+/* Tabs — the shell's menu tab behaviour: selected = primary label at strong weight on a
+   highlight tint; unselected recede (faded + softly blurred), hover brings them back. */
+.help-scope [role="tab"] {
+  transition: color 0.16s, background 0.16s, opacity 0.16s, filter 0.16s;
+}
+.help-scope [role="tab"][data-state="active"] {
+  color: var(--primary);
+  font-weight: var(--font-weight-semibold);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--highlight, var(--primary)) 26%, var(--bg-card)) 0%,
+    color-mix(in srgb, var(--highlight, var(--primary)) 12%, var(--bg-card)) 100%);
+}
+.help-scope [role="tab"][data-state="inactive"] {
+  color: var(--text-secondary);
+  opacity: 0.5;
+  filter: blur(0.5px);
+}
+.help-scope [role="tab"][data-state="inactive"]:hover {
+  opacity: 1;
+  filter: none;
+  color: var(--text-main);
+}
+
+/* Dialog backdrops: the shell's modal backdrop (slate veil + blur), as in Account Settings. */
+.help-scope .fixed.inset-0[data-state]:is(.bg-black\/80, .bg-black\/60, .bg-black\/40) {
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
+}
+
+/* Pages (Help Admin, Approvals, Customer) — the shell page standard, as in Account Settings:
+   the page sits on the studio's page wash (full-size page backgrounds become transparent) and
+   its rounded, bordered boxes are floating cards (card surface + card shadow). */
+.help-scope.hms-page {
+  background: var(--brand-page-wash, transparent);
+}
+.help-scope.hms-page :is(.bg-background, .bg-white, .bg-card):not([class*="rounded"]):not([role="dialog"]) {
+  background-color: transparent;
+}
+.help-scope.hms-page :is(.bg-white, .bg-card, .bg-background):is(.rounded-xl, .rounded-2xl, .rounded-lg).border:not(:is(.bg-white, .bg-card, .bg-background):is(.rounded-xl, .rounded-2xl, .rounded-lg).border *) {
+  background: var(--brand-card-surface, var(--bg-card));
+  box-shadow: var(--card-shadow);
+}
+
+/* Dark mode: status colours used as text (-500 / -600) are lifted toward the text colour so
+   they stay readable on dark cards (the studio's success / warning / error / info stay the source). */
+[data-theme-mode="dark"] .help-scope {
+  --color-green-500: color-mix(in srgb, var(--success) 70%, var(--text-main));
+  --color-green-600: color-mix(in srgb, var(--success) 60%, var(--text-main));
+  --color-emerald-500: color-mix(in srgb, var(--success) 70%, var(--text-main));
+  --color-emerald-600: color-mix(in srgb, var(--success) 60%, var(--text-main));
+  --color-teal-500: color-mix(in srgb, var(--success) 70%, var(--text-main));
+  --color-teal-600: color-mix(in srgb, var(--success) 60%, var(--text-main));
+  --color-lime-500: color-mix(in srgb, var(--success) 70%, var(--text-main));
+  --color-lime-600: color-mix(in srgb, var(--success) 60%, var(--text-main));
+  --color-amber-500: color-mix(in srgb, var(--warning) 70%, var(--text-main));
+  --color-amber-600: color-mix(in srgb, var(--warning) 60%, var(--text-main));
+  --color-yellow-500: color-mix(in srgb, var(--warning) 70%, var(--text-main));
+  --color-yellow-600: color-mix(in srgb, var(--warning) 60%, var(--text-main));
+  --color-orange-500: color-mix(in srgb, var(--warning) 70%, var(--text-main));
+  --color-orange-600: color-mix(in srgb, var(--warning) 60%, var(--text-main));
+  --color-red-500: color-mix(in srgb, var(--danger) 70%, var(--text-main));
+  --color-red-600: color-mix(in srgb, var(--danger) 60%, var(--text-main));
+  --color-rose-500: color-mix(in srgb, var(--danger) 70%, var(--text-main));
+  --color-rose-600: color-mix(in srgb, var(--danger) 60%, var(--text-main));
+  --color-sky-500: color-mix(in srgb, var(--info) 70%, var(--text-main));
+  --color-sky-600: color-mix(in srgb, var(--info) 60%, var(--text-main));
+  --color-cyan-500: color-mix(in srgb, var(--info) 70%, var(--text-main));
+  --color-cyan-600: color-mix(in srgb, var(--info) 60%, var(--text-main));
 }

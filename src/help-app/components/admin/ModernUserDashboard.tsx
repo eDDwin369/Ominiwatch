@@ -1017,7 +1017,7 @@ export function ModernUserDashboard({
 
           <Button
             onClick={() => setAddWidgetOpen(true)}
-            style={{ background: "linear-gradient(90deg, #0029FF 0%, #00144B 100%)" }}
+            style={{ background: "linear-gradient(90deg, var(--color-blue-600) 0%, var(--color-blue-950) 100%)" }}
             className="text-white rounded-full px-4 py-2 text-xs font-medium shadow-md hover:opacity-90 transition-all flex items-center gap-1.5 border-0"
           >
             <Plus className="h-3.5 w-3.5" />
@@ -1086,7 +1086,7 @@ export function ModernUserDashboard({
           </h3>
           <Button
             onClick={() => setAddWidgetOpen(true)}
-            style={{ background: "linear-gradient(90deg, #0029FF 0%, #00144B 100%)" }}
+            style={{ background: "linear-gradient(90deg, var(--color-blue-600) 0%, var(--color-blue-950) 100%)" }}
             className="mt-4 text-white rounded-full px-5 py-2 text-xs font-medium shadow-md hover:opacity-90 transition-all flex items-center gap-1.5 mx-auto border-0"
           >
             <Plus className="h-3.5 w-3.5" />

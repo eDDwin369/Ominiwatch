@@ -131,7 +131,7 @@ export function HoverFocusHighlight() {
         className="z-50 transition-none"
       >
         {/* Pulsing Highlight Box */}
-        <div className="absolute -inset-1 rounded-xl border-2 border-indigo-500 bg-indigo-500/20 shadow-[0_0_30px_rgba(99,102,241,0.7)] animate-pulse" />
+        <div className="absolute -inset-1 rounded-xl border-2 border-indigo-500 bg-indigo-500/20 shadow-[0_0_30px_var(--hs-glow-strong)] animate-pulse" />
 
         {/* Corner Target Brackets */}
         <div className="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 border-t-2 border-l-2 border-indigo-400 rounded-tl" />

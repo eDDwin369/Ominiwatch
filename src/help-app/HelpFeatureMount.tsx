@@ -7,12 +7,16 @@ import { HelpDashboard } from '@help/pages/HelpDashboardPage';
 import { UserPage } from '@help/pages/UserPage';
 import { TicketsPage } from '@help/pages/TicketsPage';
 import { CustomerPage } from '@help/pages/CustomerPage';
+import { TooltipProvider } from '@help/components/ui/tooltip';
 
-/** Providers every ported help screen needs (identity + HMS store). */
+/** Providers every ported help screen needs (identity + HMS store + tooltips). */
 export function HelpProviders({ children }: { children: ReactNode }) {
   return (
     <AuthProvider>
-      <HmsProvider>{children}</HmsProvider>
+      <HmsProvider>
+        {/* Radix tooltips throw without a provider (e.g. the Add Widget dialog blanked the app) */}
+        <TooltipProvider delayDuration={150}>{children}</TooltipProvider>
+      </HmsProvider>
     </AuthProvider>
   );
 }
@@ -21,7 +25,7 @@ export function HelpProviders({ children }: { children: ReactNode }) {
 function HelpView({ children }: { children: ReactNode }) {
   return (
     <div
-      className="help-scope"
+      className="help-scope hms-page"
       style={{ flex: 1, minHeight: 0, minWidth: 0, display: 'flex', flexDirection: 'column', width: '100%' }}
     >
       <HelpProviders>{children}</HelpProviders>

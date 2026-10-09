@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
+import { helpPortalContainer } from "@help/lib/portal-root";
 import { useAuth } from "@help/lib/auth-context";
 import { useHmsStore, type ContentType } from "@help/components/hms/hmsStore";
 import { Input } from "@help/components/ui/input";
@@ -1497,7 +1498,7 @@ export function HelpAdminRightClickModal() {
         {/* Header Bar - Draggable */}
         <div
           onMouseDown={isModalExpanded ? undefined : handleHeaderMouseDown}
-          className={`h-11 bg-[#0F172A] px-3.5 flex items-center justify-between shrink-0 text-white border-b border-slate-800 ${
+          className={`hms-window-header h-11 px-3.5 flex items-center justify-between shrink-0 border-b ${
             isModalExpanded ? "cursor-default" : isDragging ? "cursor-grabbing" : "cursor-grab"
           }`}
         >
@@ -1511,7 +1512,7 @@ export function HelpAdminRightClickModal() {
               />
             </div>
 
-            <span className="font-bold text-sm tracking-tight truncate text-slate-100">
+            <span className="hms-window-title brand-gradient-text font-bold text-sm tracking-tight truncate">
               {activeSection.sectionLabel}
             </span>
 
@@ -1826,7 +1827,7 @@ export function HelpAdminRightClickModal() {
               top: `${Math.max(10, Math.min(window.innerHeight - 180, folderContextMenu.y))}px`,
               left: `${Math.max(10, Math.min(window.innerWidth - 190, folderContextMenu.x))}px`,
             }}
-            className="fixed z-[100020] w-44 rounded-lg bg-card border border-border shadow-2xl p-1 text-xs animate-in fade-in zoom-in-95 duration-100"
+            className="hms-menu fixed z-[100020] w-44 rounded-lg bg-card border border-border shadow-2xl p-1 text-xs animate-in fade-in zoom-in-95 duration-100"
             onClick={(e) => e.stopPropagation()}
           >
               <div className="px-2 py-1 font-bold text-[10px] text-muted-foreground border-b border-border/50 truncate">
@@ -1878,7 +1879,8 @@ export function HelpAdminRightClickModal() {
                 Delete {folderContextMenu.folderNode.kind === "folder" || folderContextMenu.folderNode.kind === "subfolder" ? "Folder" : "Content"}
               </button>
             </div>,
-          document.body
+          // inside #help-portal-root so the menu keeps the help theme tokens
+          helpPortalContainer() ?? document.body
         )}
 
       {/* Hidden native file input for direct OS file picker upload */}
@@ -2531,9 +2533,9 @@ function GridNodeItem({
       className="group relative rounded-[16px] border border-border/80 bg-white dark:bg-card hover:border-blue-600 hover:shadow-md transition-all flex flex-col justify-between overflow-hidden select-none cursor-pointer w-full h-[225px]"
     >
       {/* Top Preview Box */}
-      <div className="h-[140px] w-full bg-[#F1F5F9] dark:bg-muted/40 relative flex items-center justify-center p-2 rounded-t-[15px] border-b border-border/40 overflow-hidden group-hover:bg-[#E2E8F0] transition-colors">
+      <div className="h-[140px] w-full bg-[var(--color-slate-100)] dark:bg-muted/40 relative flex items-center justify-center p-2 rounded-t-[15px] border-b border-border/40 overflow-hidden group-hover:bg-[var(--color-slate-200)] transition-colors">
         {/* Top-Left Level Badge */}
-        <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-full bg-[#FFEDD5] text-[#EA580C] text-[9px] font-bold tracking-tight border border-orange-200/80 shadow-2xs z-10 flex items-center gap-0.5">
+        <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-full bg-[var(--color-orange-100)] text-[var(--color-orange-600)] text-[9px] font-bold tracking-tight border border-orange-200/80 shadow-2xs z-10 flex items-center gap-0.5">
           <span className="text-[8px]">↳</span> {isFolder ? "L1" : "L2"}
         </span>
 

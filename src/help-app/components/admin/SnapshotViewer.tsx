@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { helpPortalContainer } from "@help/lib/portal-root";
 import { type HmsArticle, getArticleHierarchy } from "@help/components/hms/hmsStore";
 import { SCREEN_IMAGES, COMPONENT_HOTSPOTS, defaultHotspot } from "@help/lib/screen-assets";
 import { Badge } from "@help/components/ui/badge";
@@ -321,7 +322,7 @@ export function SnapshotViewer({
 
                   {/* Highlighted Bounding Box Overlay */}
                   <div
-                    className="absolute border-2 border-purple-500 bg-purple-500/20 rounded shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-all animate-pulse pointer-events-none"
+                    className="absolute border-2 border-purple-500 bg-purple-500/20 rounded shadow-[0_0_15px_var(--hs-glow)] transition-all animate-pulse pointer-events-none"
                     style={{
                       left: `${hotspot.x}%`,
                       top: `${hotspot.y}%`,
@@ -540,7 +541,7 @@ export function SnapshotViewer({
         typeof document !== "undefined" &&
         createPortal(
           <div
-            className="fixed inset-0 z-[100050] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-4 animate-in fade-in-0 duration-200"
+            className="hms-preview-dialog fixed inset-0 z-[100050] bg-black/95 backdrop-blur-md flex flex-col items-center justify-between p-4 animate-in fade-in-0 duration-200"
             onClick={() => setFullscreenImg(null)}
           >
             {/* Top Toolbar */}
@@ -600,7 +601,7 @@ export function SnapshotViewer({
               Press <kbd className="px-1.5 py-0.5 rounded bg-white/10 font-mono text-[10px] text-white/80">Esc</kbd> or click outside to close full screen
             </div>
           </div>,
-          document.body
+          helpPortalContainer() ?? document.body
         )}
     </div>
   );

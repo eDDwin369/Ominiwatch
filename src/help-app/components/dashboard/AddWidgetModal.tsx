@@ -135,7 +135,7 @@ export function AddWidgetModal({
                     ) : (
                       <button
                         type="button"
-                        style={{ background: "linear-gradient(90deg, #0029FF 0%, #00144B 100%)" }}
+                        style={{ background: "linear-gradient(90deg, var(--color-blue-600) 0%, var(--color-blue-950) 100%)" }}
                         className="w-10 h-8 rounded-full text-white flex items-center justify-center shadow-sm hover:opacity-90 transition-all shrink-0 border-0"
                         onClick={() => onAddWidget(widget.id)}
                         title="Add widget"

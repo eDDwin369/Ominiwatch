@@ -447,9 +447,9 @@ export function VisualHelpHighlighter() {
               }}
               className={`absolute inset-0 rounded-lg border-2 border-indigo-500 bg-indigo-500/10 cursor-pointer transition-all duration-200 ${
                 isActive
-                  ? "border-indigo-400 bg-indigo-500/25 shadow-[0_0_25px_rgba(99,102,241,0.8)] scale-[1.01]"
+                  ? "border-indigo-400 bg-indigo-500/25 shadow-[0_0_25px_var(--hs-glow-strong)] scale-[1.01]"
                   : isHovered
-                  ? "border-indigo-400 bg-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.5)]"
+                  ? "border-indigo-400 bg-indigo-500/20 shadow-[0_0_15px_var(--hs-glow)]"
                   : "opacity-60 hover:opacity-100"
               }`}
             />

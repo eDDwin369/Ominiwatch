@@ -1507,7 +1507,8 @@ h2.brand-gradient-text,
 /* ── Typography: every shell text follows Theme Studio's tokens ──
    Emphasis weights are derived from the body weight, so bold/medium text keeps its
    hierarchy and still moves with the studio's font-weight setting. */
-:root {
+/* :root:root — beats the identically named tokens in the help feature's Tailwind theme */
+:root:root {
   --font-weight-medium: min(900, calc(var(--app-font-weight, 400) + 100));
   --font-weight-strong: min(900, calc(var(--app-font-weight, 400) + 200));
   /* Corner radius unit: 1px at the studio's design radius (9), scales with its radius setting.

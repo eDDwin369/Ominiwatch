@@ -448,7 +448,7 @@ export function ApprovalsManager({
               </Button>
             )}
             <div className="flex items-center gap-1.5 font-semibold text-base text-foreground">
-              <span>{user?.role === "sub_admin" ? "My Approvals" : "Approvals & Review"}</span>
+              <span className="hms-title">{user?.role === "sub_admin" ? "My Approvals" : "Approvals & Review"}</span>
               <InfoHint text="Review help articles and folders. Superadmins can inspect previews, approve to make live, or reject with feedback." />
             </div>
           </div>
@@ -521,7 +521,7 @@ export function ApprovalsManager({
               ) : (
                 <Layers className="size-4 text-purple-600 dark:text-purple-400" />
               )}
-              <span className="font-semibold text-foreground text-xs uppercase tracking-wider">
+              <span className="hms-title font-semibold text-foreground text-xs uppercase tracking-wider">
                 {viewLayout === "queue" ? "Pending Approval Requests" : "UI Hierarchy Report"}
               </span>
               <Badge variant="secondary" className="text-[11px] font-normal ml-1">
@@ -1139,7 +1139,7 @@ export function ApprovalsManager({
       {/* Custom Context Menu (Right Click) */}
       {contextMenu && (
         <div
-          className="fixed z-50 bg-popover text-popover-foreground border rounded-xl shadow-lg p-1 w-52 text-xs space-y-0.5 animate-in fade-in-50 zoom-in-95"
+          className="hms-menu fixed z-50 bg-popover text-popover-foreground border rounded-xl shadow-lg p-1 w-52 text-xs space-y-0.5 animate-in fade-in-50 zoom-in-95"
           style={{ top: `${contextMenu.y}px`, left: `${contextMenu.x}px` }}
           onClick={(e) => e.stopPropagation()}
         >

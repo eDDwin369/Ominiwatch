@@ -255,7 +255,7 @@ export function ContactSupportDialog({
               <Button 
                 onClick={submit} 
                 disabled={submitting}
-                style={{ backgroundColor: '#0f172a', color: '#ffffff', fontWeight: 700, borderRadius: '8px', padding: '0 20px' }}
+                style={{ backgroundColor: 'var(--hs-primary)', color: 'var(--hs-primary-foreground)', fontWeight: "var(--font-weight-bold)", borderRadius: "calc(var(--radius-unit, 1px) * 8)", padding: '0 20px' }}
               >
                 {submitting && <Loader2 className="size-4 animate-spin mr-1.5" />}
                 Submit Ticket

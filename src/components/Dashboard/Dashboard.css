@@ -4780,7 +4780,8 @@
   gap: 8px;
 }
 
-.block {
+/* scoped: a bare .block collided with Tailwind's `block` utility in the help feature */
+.v4-layout-blocks .block {
   height: 18px;
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.1);

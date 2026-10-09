@@ -63,7 +63,8 @@ import { trackHmsEvent } from "@help/lib/hms-analytics";
 import { HelpNodeTreeView } from "@help/components/help/HelpNodeTreeView";
 import { getSectionFromContext, calculateNonOverlappingPosition } from "@help/lib/help-nodes";
 
-const NAVY = "#102040";
+/** Primary actions / selected controls follow the Theme Studio button colour. */
+const NAVY = "var(--hs-primary)";
 
 /** Small, quickly-dismissed success pill used across the panel. */
 /**
@@ -88,14 +89,14 @@ function compactToast(message: string) {
     duration: 2200,
     style: {
       padding: "7px 12px",
-      fontSize: "12px",
+      fontSize: "var(--hs-fs-12)",
       minHeight: "unset",
       width: "auto",
-      borderRadius: "8px",
+      borderRadius: "calc(var(--radius-unit, 1px) * 8)",
     },
   });
 }
-const NAVY_HOVER = "#1C3054";
+const NAVY_HOVER = "color-mix(in srgb, var(--hs-primary) 88%, var(--text-main))";
 
 type View =
   | { name: "list" }
@@ -116,17 +117,17 @@ type View =
 function typeColors(t: ContentType): { bg: string; color: string } {
   switch (t) {
     case "video":
-      return { bg: "#FFF0F0", color: "#DC2626" };
+      return { bg: "var(--color-red-50)", color: "var(--color-red-600)" };
     case "pdf":
-      return { bg: "#EFF6FF", color: "#1D4ED8" };
+      return { bg: "var(--color-blue-50)", color: "var(--color-blue-700)" };
     case "image":
-      return { bg: "#F0FDF4", color: "#15803D" };
+      return { bg: "var(--color-green-50)", color: "var(--color-green-700)" };
     case "text":
-      return { bg: "#F5F3FF", color: "#7C3AED" };
+      return { bg: "var(--color-violet-50)", color: "var(--color-violet-600)" };
     case "folder":
-      return { bg: "#FEF3C7", color: "#D97706" };
+      return { bg: "var(--color-amber-100)", color: "var(--color-amber-600)" };
     default:
-      return { bg: "#F3F4F6", color: "#6B7280" };
+      return { bg: "var(--color-gray-100)", color: "var(--color-gray-500)" };
   }
 }
 
@@ -147,10 +148,10 @@ function TypeBox({ t }: { t: ContentType }) {
 }
 
 const APPROVAL_MAP: Record<ApprovalStatus, { bg: string; color: string; label: string }> = {
-  approved: { bg: "#F0FDF4", color: "#22C55E", label: "✓ Approved" },
-  pending: { bg: "#FFFBEB", color: "#B45309", label: "Pending Approval" },
-  unapproved: { bg: "#FEE2E2", color: "#EF4444", label: "✕ Rejected" },
-  rejected: { bg: "#FEE2E2", color: "#EF4444", label: "✕ Rejected" },
+  approved: { bg: "var(--color-green-50)", color: "var(--color-green-500)", label: "✓ Approved" },
+  pending: { bg: "var(--color-amber-50)", color: "var(--color-amber-700)", label: "Pending Approval" },
+  unapproved: { bg: "var(--color-red-100)", color: "var(--color-red-500)", label: "✕ Rejected" },
+  rejected: { bg: "var(--color-red-100)", color: "var(--color-red-500)", label: "✕ Rejected" },
 };
 
 function ApprovalBadge({ status }: { status: ApprovalStatus }) {
@@ -161,9 +162,9 @@ function ApprovalBadge({ status }: { status: ApprovalStatus }) {
       style={{
         backgroundColor: map.bg,
         color: map.color,
-        borderRadius: 3,
+        borderRadius: "calc(var(--radius-unit, 1px) * 3)",
         padding: "1px 6px",
-        fontSize: 10,
+        fontSize: "var(--hs-fs-10)",
       }}
     >
       {map.label}
@@ -177,11 +178,11 @@ function ArchivedBadge() {
     <span
       className="shrink-0 font-medium"
       style={{
-        backgroundColor: "#F3F4F6",
-        color: "#6B7280",
-        borderRadius: 3,
+        backgroundColor: "var(--color-gray-100)",
+        color: "var(--color-gray-500)",
+        borderRadius: "calc(var(--radius-unit, 1px) * 3)",
         padding: "1px 6px",
-        fontSize: 10,
+        fontSize: "var(--hs-fs-10)",
       }}
     >
       Archived
@@ -194,8 +195,8 @@ function Label({ children }: { children: ReactNode }) {
     <div
       className="uppercase font-semibold"
       style={{
-        fontSize: 10,
-        color: "#9CA3AF",
+        fontSize: "var(--hs-fs-10)",
+        color: "var(--color-gray-400)",
         letterSpacing: "0.05em",
         marginBottom: 3,
       }}
@@ -206,14 +207,14 @@ function Label({ children }: { children: ReactNode }) {
 }
 
 const inputBase =
-  "w-full outline-none focus:border-[#102040] transition-colors";
+  "w-full outline-none focus:border-[var(--primary)] transition-colors";
 const inputStyle: React.CSSProperties = {
-  backgroundColor: "#F9FAFB",
-  border: "0.8px solid #E5E7EB",
-  borderRadius: 6,
+  backgroundColor: "var(--color-gray-50)",
+  border: "0.8px solid var(--color-gray-200)",
+  borderRadius: "calc(var(--radius-unit, 1px) * 6)",
   padding: "0 10px",
-  fontSize: 11,
-  color: "#374151",
+  fontSize: "var(--hs-fs-11)",
+  color: "var(--color-gray-700)",
   height: 28,
 };
 const textareaStyle: React.CSSProperties = {
@@ -226,17 +227,17 @@ const textareaStyle: React.CSSProperties = {
 };
 
 const PRIORITY_MAP: Record<Priority, { bg: string; color: string; label: string }> = {
-  low: { bg: "#F3F4F6", color: "#6B7280", label: "Low" },
-  medium: { bg: "#FFFBEB", color: "#F59E0B", label: "Medium" },
-  high: { bg: "#FEF3C7", color: "#D97706", label: "High" },
-  urgent: { bg: "#FEF2F2", color: "#EF4444", label: "Urgent" },
+  low: { bg: "var(--color-gray-100)", color: "var(--color-gray-500)", label: "Low" },
+  medium: { bg: "var(--color-amber-50)", color: "var(--color-amber-500)", label: "Medium" },
+  high: { bg: "var(--color-amber-100)", color: "var(--color-amber-600)", label: "High" },
+  urgent: { bg: "var(--color-red-50)", color: "var(--color-red-500)", label: "Urgent" },
 };
 
 const TICKET_STATUS_MAP: Record<string, { bg: string; color: string; label: string }> = {
-  pending: { bg: "#FFFBEB", color: "#B45309", label: "Pending" },
-  "under-review": { bg: "#EFF6FF", color: "#1D4ED8", label: "Under Review" },
-  resolved: { bg: "#F0FDF4", color: "#15803D", label: "Resolved" },
-  closed: { bg: "#F3F4F6", color: "#6B7280", label: "Closed" },
+  pending: { bg: "var(--color-amber-50)", color: "var(--color-amber-700)", label: "Pending" },
+  "under-review": { bg: "var(--color-blue-50)", color: "var(--color-blue-700)", label: "Under Review" },
+  resolved: { bg: "var(--color-green-50)", color: "var(--color-green-700)", label: "Resolved" },
+  closed: { bg: "var(--color-gray-100)", color: "var(--color-gray-500)", label: "Closed" },
 };
 
 /**
@@ -263,7 +264,7 @@ function PriorityBadge({
         border: outline ? `1px solid ${m.color}40` : "1px solid transparent",
         color: m.color,
         padding: outline ? "1px 7px" : "2px 8px",
-        fontSize: 11,
+        fontSize: "var(--hs-fs-11)",
       }}
     >
       {m.label}
@@ -280,9 +281,9 @@ function TicketStatusBadge({ status }: { status: string }) {
       style={{
         backgroundColor: s.bg,
         color: s.color,
-        borderRadius: 4,
+        borderRadius: "calc(var(--radius-unit, 1px) * 4)",
         padding: "2px 8px",
-        fontSize: 10,
+        fontSize: "var(--hs-fs-10)",
       }}
     >
       {s.label}
@@ -318,15 +319,15 @@ function PrioritySelect({
             aria-checked={on}
             aria-label={m.label}
             onClick={() => onChange(p)}
-            className="flex items-center justify-center transition-all focus-visible:ring-2 focus-visible:ring-[#3B6BF5]"
+            className="flex items-center justify-center transition-all focus-visible:ring-2 focus-visible:ring-[var(--color-blue-600)]"
             style={{
               height: 28,
-              borderRadius: 6,
-              fontSize: 11,
+              borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+              fontSize: "var(--hs-fs-11)",
               fontWeight: on ? 700 : 500,
-              backgroundColor: on ? m.bg : "#F9FAFB",
-              color: on ? m.color : "#9CA3AF",
-              border: `1px solid ${on ? m.color : "#E5E7EB"}`,
+              backgroundColor: on ? m.bg : "var(--color-gray-50)",
+              color: on ? m.color : "var(--color-gray-400)",
+              border: `1px solid ${on ? m.color : "var(--color-gray-200)"}`,
               boxShadow: on ? `0 0 0 2px ${m.bg}` : "none",
             }}
           >
@@ -490,15 +491,14 @@ function Header({
 }) {
   return (
     <div
-      className="flex items-center shrink-0 cursor-grab active:cursor-grabbing select-none"
+      className="hms-window-header flex items-center shrink-0 cursor-grab active:cursor-grabbing select-none"
       onMouseDown={(e) => {
         if ((e.target as HTMLElement).closest("button")) return;
         onDragStart?.(e);
       }}
       style={{
         height: 48,
-        backgroundColor: "#0B1736",
-        borderRadius: "10px 10px 0 0",
+        borderRadius: "calc(var(--radius-unit, 1px) * 10) calc(var(--radius-unit, 1px) * 10) 0 0",
         padding: "0 12px",
       }}
     >
@@ -519,7 +519,7 @@ function Header({
           alt="HMS Avatar"
           className="w-7 h-7 object-contain rounded-lg"
         />
-        <span className="truncate text-sm font-bold text-white font-['DM_Sans',sans-serif]">
+        <span className="hms-window-title brand-gradient-text truncate text-sm font-bold">
           {crumb.split(" › ")[0] || "Help"}
         </span>
       </div>
@@ -570,14 +570,14 @@ function SearchBar({
       className="flex items-center shrink-0 bg-white"
       style={{
         padding: "8px 12px",
-        borderBottom: "0.8px solid #F3F4F6",
+        borderBottom: "0.8px solid var(--color-gray-100)",
         gap: 8,
       }}
     >
       <div className="relative flex-1">
         <Search
           className="absolute left-2 top-1/2 -translate-y-1/2"
-          style={{ width: 12, height: 12, color: "#9CA3AF" }}
+          style={{ width: 12, height: 12, color: "var(--color-gray-400)" }}
         />
         <input
           type="text"
@@ -585,15 +585,15 @@ function SearchBar({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           aria-label={placeholder}
-          className="w-full outline-none focus-visible:ring-2 focus-visible:ring-[#3B6BF5]"
+          className="w-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-blue-600)]"
           style={{
             height: 26,
-            backgroundColor: "#F9FAFB",
-            border: "0.8px solid #E5E7EB",
-            borderRadius: 6,
+            backgroundColor: "var(--color-gray-50)",
+            border: "0.8px solid var(--color-gray-200)",
+            borderRadius: "calc(var(--radius-unit, 1px) * 6)",
             padding: value ? "0 24px 0 26px" : "0 8px 0 26px",
-            fontSize: 12,
-            color: "#374151",
+            fontSize: "var(--hs-fs-12)",
+            color: "var(--color-gray-700)",
           }}
         />
         {value && (
@@ -612,12 +612,12 @@ function SearchBar({
         aria-label={filterCount > 0 ? `Filter, ${filterCount} active` : "Filter"}
         aria-expanded={filterOpen}
         aria-haspopup="dialog"
-        className="relative flex items-center rounded focus-visible:ring-2 focus-visible:ring-[#3B6BF5]"
+        className="relative flex items-center rounded focus-visible:ring-2 focus-visible:ring-[var(--color-blue-600)]"
         style={{
           gap: 4,
-          fontSize: 11,
-          color: active || filterOpen ? "#3B6BF5" : "#6B7280",
-          backgroundColor: active || filterOpen ? "#EFF6FF" : "transparent",
+          fontSize: "var(--hs-fs-11)",
+          color: active || filterOpen ? "var(--color-blue-600)" : "var(--color-gray-500)",
+          backgroundColor: active || filterOpen ? "var(--color-blue-50)" : "transparent",
           padding: "4px 6px",
         }}
       >
@@ -626,7 +626,7 @@ function SearchBar({
         {active && (
           <span
             className="absolute -top-1 -right-1 flex items-center justify-center rounded-full text-white font-bold"
-            style={{ width: 14, height: 14, backgroundColor: "#EF4444", fontSize: 8 }}
+            style={{ width: 14, height: 14, backgroundColor: "var(--color-red-500)", fontSize: "var(--hs-fs-8)" }}
           >
             {filterCount}
           </span>
@@ -659,19 +659,19 @@ function Radio({ selected, label, onClick }: { selected: boolean; label: string;
       aria-checked={selected}
       aria-label={label}
       className="flex items-center w-full text-left"
-      style={{ gap: 8, padding: "5px 0", fontSize: 12, color: "#374151" }}
+      style={{ gap: 8, padding: "5px 0", fontSize: "var(--hs-fs-12)", color: "var(--color-gray-700)" }}
     >
       <span
         className="flex items-center justify-center rounded-full shrink-0"
         style={{
           width: 14,
           height: 14,
-          backgroundColor: selected ? NAVY : "white",
-          border: `1px solid ${selected ? NAVY : "#D1D5DB"}`,
+          backgroundColor: selected ? NAVY : "var(--bg-card)",
+          border: `1px solid ${selected ? NAVY : "var(--color-gray-300)"}`,
         }}
       >
         {selected && (
-          <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "white" }} />
+          <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--hs-primary-foreground)" }} />
         )}
       </span>
       {label}
@@ -695,19 +695,19 @@ function Checkbox({
       aria-checked={checked}
       aria-label={label}
       className="flex items-center w-full text-left"
-      style={{ gap: 8, padding: "5px 0", fontSize: 12, color: "#374151" }}
+      style={{ gap: 8, padding: "5px 0", fontSize: "var(--hs-fs-12)", color: "var(--color-gray-700)" }}
     >
       <span
         className="flex items-center justify-center shrink-0"
         style={{
           width: 14,
           height: 14,
-          borderRadius: 3,
-          backgroundColor: checked ? NAVY : "white",
-          border: `1px solid ${checked ? NAVY : "#D1D5DB"}`,
+          borderRadius: "calc(var(--radius-unit, 1px) * 3)",
+          backgroundColor: checked ? NAVY : "var(--bg-card)",
+          border: `1px solid ${checked ? NAVY : "var(--color-gray-300)"}`,
         }}
       >
-        {checked && <Check style={{ width: 10, height: 10, color: "white" }} strokeWidth={3} />}
+        {checked && <Check style={{ width: 10, height: 10, color: "var(--hs-primary-foreground)" }} strokeWidth={3} />}
       </span>
       {label}
     </button>
@@ -768,9 +768,9 @@ function FilterDropdown({
       style={{
         top: 4,
         right: 8,
-        borderRadius: 8,
-        border: "0.8px solid #E5E7EB",
-        boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+        borderRadius: "calc(var(--radius-unit, 1px) * 8)",
+        border: "0.8px solid var(--color-gray-200)",
+        boxShadow: "var(--card-shadow)",
         width: cols === 3 ? 300 : cols === 2 ? 220 : 160,
       }}
     >
@@ -802,7 +802,7 @@ function FilterDropdown({
           gridTemplateColumns: `repeat(${cols}, minmax(96px,1fr))`,
         }}
       >
-        <div style={{ padding: "8px 12px", borderRight: cols > 1 ? "1px solid #F3F4F6" : "none" }}>
+        <div style={{ padding: "8px 12px", borderRight: cols > 1 ? "1px solid var(--color-gray-100)" : "none" }}>
           <Label>Type</Label>
           <Checkbox
             checked={isAllTypesChecked}
@@ -819,7 +819,7 @@ function FilterDropdown({
           ))}
         </div>
         {cols >= 2 && (
-          <div style={{ padding: "8px 12px", borderRight: cols > 2 ? "1px solid #F3F4F6" : "none" }}>
+          <div style={{ padding: "8px 12px", borderRight: cols > 2 ? "1px solid var(--color-gray-100)" : "none" }}>
             <Label>Archive</Label>
             {[
               { v: "active", l: "Active" },
@@ -867,7 +867,7 @@ function BtnRow({ children }: { children: ReactNode }) {
       style={{
         padding: "9px 12px",
         gap: 8,
-        borderTop: "0.8px solid #F3F4F6",
+        borderTop: "0.8px solid var(--color-gray-100)",
       }}
     >
       {children}
@@ -896,10 +896,10 @@ function PrimaryBtn({
       style={{
         height: 32,
         backgroundColor: NAVY,
-        color: "white",
-        borderRadius: 10,
-        fontSize: 12,
-        fontWeight: 500,
+        color: "var(--hs-primary-foreground)",
+        borderRadius: "calc(var(--radius-unit, 1px) * 10)",
+        fontSize: "var(--hs-fs-12)",
+        fontWeight: "var(--font-weight-medium)",
         ...style,
       }}
     >
@@ -925,12 +925,12 @@ function OutlineBtn({
       className={`inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 transition-all hover:bg-gray-50 active:scale-95 cursor-pointer shrink-0 ${className}`}
       style={{
         height: 32,
-        backgroundColor: "white",
-        border: "0.8px solid #E5E7EB",
-        color: "#374151",
-        borderRadius: 10,
-        fontSize: 12,
-        fontWeight: 500,
+        backgroundColor: "var(--bg-card)",
+        border: "0.8px solid var(--color-gray-200)",
+        color: "var(--color-gray-700)",
+        borderRadius: "calc(var(--radius-unit, 1px) * 10)",
+        fontSize: "var(--hs-fs-12)",
+        fontWeight: "var(--font-weight-medium)",
         ...style,
       }}
     >
@@ -985,7 +985,7 @@ function ListView({
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-white overflow-hidden">
       {/* Sub-header Breadcrumb Bar */}
-      <div className="flex items-center justify-between px-3 py-2 bg-[#F4F6FB] border-b border-slate-200/80 text-xs font-semibold text-slate-800 shrink-0 select-none">
+      <div className="flex items-center justify-between px-3 py-2 bg-[var(--color-slate-50)] border-b border-slate-200/80 text-xs font-semibold text-slate-800 shrink-0 select-none">
         <div className="flex items-center gap-2 min-w-0">
           <Home className="w-3.5 h-3.5 text-slate-600 shrink-0" />
           <span className="truncate">{context || "Site Recordings"}</span>
@@ -1039,7 +1039,7 @@ function ListView({
                   initialPrompt: "Present me Summary",
                 })
               }
-              className="flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
+              className="hms-tile flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
             >
               <ImageOrFallback
                 src="/images/present-summary.png"
@@ -1061,7 +1061,7 @@ function ListView({
                   initialPrompt: "Talk to me",
                 })
               }
-              className="flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
+              className="hms-tile flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
             >
               <ImageOrFallback
                 src="/images/talk-to-me.png"
@@ -1083,7 +1083,7 @@ function ListView({
                   initialPrompt: "Help me",
                 })
               }
-              className="flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
+              className="hms-tile flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
             >
               <ImageOrFallback
                 src="/images/help-me.png"
@@ -1105,7 +1105,7 @@ function ListView({
                   initialPrompt: "Teach me",
                 })
               }
-              className="flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
+              className="hms-tile flex flex-col items-center justify-center p-2 rounded-2xl hover:bg-slate-50 border border-slate-100 hover:border-blue-200 transition-all hover:scale-102 active:scale-95 group cursor-pointer h-full"
             >
               <ImageOrFallback
                 src="/images/teach-me.png"
@@ -1128,7 +1128,7 @@ function ListView({
       />
 
       {/* Footer Bar */}
-      <div className="shrink-0 px-3.5 py-2 bg-[#F8FAFC] border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-500 font-medium select-none">
+      <div className="shrink-0 px-3.5 py-2 bg-[var(--color-slate-50)] border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-500 font-medium select-none">
         <span>
           {role === "customer"
             ? state.articles.filter((a) => a.approvalStatus === "approved").length
@@ -1871,7 +1871,7 @@ function AiChatView({
                     type="button"
                     onClick={handleSendVoice}
                     title="Send voice message"
-                    className="size-7 rounded-full bg-[#2563EB] hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center shadow-xs transition-all shrink-0 cursor-pointer"
+                    className="size-7 rounded-full bg-[var(--color-blue-600)] hover:bg-blue-700 active:scale-95 text-white flex items-center justify-center shadow-xs transition-all shrink-0 cursor-pointer"
                   >
                     <ArrowUp className="size-3.5 stroke-[2.8]" />
                   </button>
@@ -1938,17 +1938,17 @@ function EmptyStateBody() {
     >
       <div
         className="flex items-center justify-center rounded-full mb-4"
-        style={{ width: 36, height: 36, backgroundColor: "#F3F4F6" }}
+        style={{ width: 36, height: 36, backgroundColor: "var(--color-gray-100)" }}
       >
-        <FileQuestion style={{ width: 18, height: 18, color: "#9CA3AF" }} />
+        <FileQuestion style={{ width: 18, height: 18, color: "var(--color-gray-400)" }} />
       </div>
-      <div style={{ fontSize: 13, color: "#374151", fontWeight: 500 }}>
+      <div style={{ fontSize: "var(--hs-fs-13)", color: "var(--color-gray-700)", fontWeight: "var(--font-weight-medium)" }}>
         No help available yet
       </div>
       <div
         style={{
-          fontSize: 11,
-          color: "#9CA3AF",
+          fontSize: "var(--hs-fs-11)",
+          color: "var(--color-gray-400)",
           marginTop: 6,
           lineHeight: 1.5,
           maxWidth: 220,
@@ -2044,11 +2044,11 @@ function DetailView({
                   <Play style={{ width: 20, height: 20 }} fill="white" />
                 </button>
               </div>
-              <div className="flex items-center" style={{ padding: "0 12px", height: 36, gap: 8, color: "rgba(255,255,255,0.8)", fontSize: 11, background: "rgba(0,0,0,0.6)" }}>
+              <div className="flex items-center" style={{ padding: "0 12px", height: 36, gap: 8, color: "rgba(255,255,255,0.8)", fontSize: "var(--hs-fs-11)", background: "rgba(0,0,0,0.6)" }}>
                 <Play style={{ width: 12, height: 12 }} fill="white" />
                 <span>0:00</span>
                 <div className="flex-1 rounded-full" style={{ height: 4, backgroundColor: "rgba(255,255,255,0.25)" }}>
-                  <div className="rounded-full" style={{ width: "28%", height: 4, backgroundColor: "white" }} />
+                  <div className="rounded-full" style={{ width: "28%", height: 4, backgroundColor: "var(--bg-card)" }} />
                 </div>
                 <span>4:28</span>
                 <Volume2 style={{ width: 14, height: 14 }} />
@@ -2076,7 +2076,7 @@ function DetailView({
             </div>
           ) : (
             <div className="flex items-center justify-center w-full h-[240px] bg-gray-100 rounded">
-              <ImageIcon style={{ width: 56, height: 56, color: "#D1D5DB" }} />
+              <ImageIcon style={{ width: 56, height: 56, color: "var(--color-gray-300)" }} />
             </div>
           )
         )}
@@ -2097,26 +2097,26 @@ function DetailView({
                 />
               )
             ) : (
-              <div style={{ backgroundColor: "#F3F4F6", padding: "16px 20px 32px" }}>
-                <div style={{ height: 8, width: "60%", backgroundColor: "#D1D5DB", borderRadius: 2, marginBottom: 8 }} />
-                <div style={{ height: 6, width: "90%", backgroundColor: "#E5E7EB", borderRadius: 2, marginBottom: 5 }} />
-                <div style={{ height: 6, width: "80%", backgroundColor: "#E5E7EB", borderRadius: 2, marginBottom: 5 }} />
-                <div style={{ height: 6, width: "70%", backgroundColor: "#E5E7EB", borderRadius: 2 }} />
+              <div style={{ backgroundColor: "var(--color-gray-100)", padding: "16px 20px 32px" }}>
+                <div style={{ height: 8, width: "60%", backgroundColor: "var(--color-gray-300)", borderRadius: "calc(var(--radius-unit, 1px) * 2)", marginBottom: 8 }} />
+                <div style={{ height: 6, width: "90%", backgroundColor: "var(--color-gray-200)", borderRadius: "calc(var(--radius-unit, 1px) * 2)", marginBottom: 5 }} />
+                <div style={{ height: 6, width: "80%", backgroundColor: "var(--color-gray-200)", borderRadius: "calc(var(--radius-unit, 1px) * 2)", marginBottom: 5 }} />
+                <div style={{ height: 6, width: "70%", backgroundColor: "var(--color-gray-200)", borderRadius: "calc(var(--radius-unit, 1px) * 2)" }} />
               </div>
             )}
           </div>
         )}
 
         {article.contentType === "text" && (
-          <div style={{ padding: "12px 16px", fontSize: 12, color: "#374151", lineHeight: 1.7, width: "100%" }}>
+          <div style={{ padding: "12px 16px", fontSize: "var(--hs-fs-12)", color: "var(--color-gray-700)", lineHeight: 1.7, width: "100%" }}>
             <p style={{ marginBottom: 10 }}>{article.description}</p>
             {(article.body ?? []).map((section) => (
               <div key={section.heading} style={{ marginBottom: 12 }}>
                 <div
                   style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    color: "#111827",
+                    fontSize: "var(--hs-fs-11)",
+                    fontWeight: "var(--font-weight-bold)",
+                    color: "var(--color-gray-900)",
                     textTransform: "uppercase",
                     letterSpacing: 0.4,
                     marginBottom: 4,
@@ -2152,14 +2152,14 @@ function DetailView({
             style={{
               padding: "6px 8px",
               gap: 7,
-              backgroundColor: "#FFFBEB",
-              border: "0.8px solid #FDE68A",
-              borderRadius: 6,
+              backgroundColor: "var(--color-amber-50)",
+              border: "0.8px solid var(--color-amber-200)",
+              borderRadius: "calc(var(--radius-unit, 1px) * 6)",
             }}
           >
-            <AlertTriangle style={{ width: 13, height: 13, color: "#B45309", marginTop: 1 }} />
-            <div style={{ fontSize: 11, color: "#92400E", lineHeight: 1.45 }}>
-              <strong style={{ fontWeight: 600 }}>Awaiting admin review.</strong> This resource is
+            <AlertTriangle style={{ width: 13, height: 13, color: "var(--color-amber-700)", marginTop: 1 }} />
+            <div style={{ fontSize: "var(--hs-fs-11)", color: "var(--color-amber-800)", lineHeight: 1.45 }}>
+              <strong style={{ fontWeight: "var(--font-weight-semibold)" }}>Awaiting admin review.</strong> This resource is
               not yet visible to customers.
             </div>
           </div>
@@ -2183,10 +2183,10 @@ function DetailView({
 
         {role !== "customer" && article.approvalStatus === "approved" && article.approvedBy && (
           <div className="flex" style={{ padding: "4px 0" }}>
-            <div style={{ width: 90, fontSize: 10, color: "#9CA3AF", textTransform: "uppercase", fontWeight: 600 }}>
+            <div style={{ width: 90, fontSize: "var(--hs-fs-10)", color: "var(--color-gray-400)", textTransform: "uppercase", fontWeight: "var(--font-weight-semibold)" }}>
               Approval
             </div>
-            <div style={{ fontSize: 11, color: "#22C55E", fontWeight: 500 }}>
+            <div style={{ fontSize: "var(--hs-fs-11)", color: "var(--color-green-500)", fontWeight: "var(--font-weight-medium)" }}>
               ✓ Approved by {article.approvedBy} · {formatDate(article.approvedAt!)}
             </div>
           </div>
@@ -2207,7 +2207,7 @@ function DetailView({
                         approveArticle(article.id);
                         toast.success("✓ Approved");
                       }}
-                      style={{ border: "0.8px solid #BBF7D0", color: "#22C55E" }}
+                      style={{ border: "0.8px solid var(--color-green-200)", color: "var(--color-green-500)" }}
                     >
                       <Check style={{ width: 12, height: 12 }} /> Approve
                     </OutlineBtn>
@@ -2218,7 +2218,7 @@ function DetailView({
                         unapproveArticle(article.id);
                         toast.success("Rejected");
                       }}
-                      style={{ border: "0.8px solid #FECDD3", color: "#E11D48" }}
+                      style={{ border: "0.8px solid var(--color-rose-200)", color: "var(--color-rose-600)" }}
                     >
                       <XCircle style={{ width: 12, height: 12 }} /> Reject
                     </OutlineBtn>
@@ -2241,7 +2241,7 @@ function DetailView({
               {role === "admin" && (
                 <OutlineBtn
                   onClick={() => setConfirmDelete(true)}
-                  style={{ border: "0.8px solid #FECACA", color: "#EF4444" }}
+                  style={{ border: "0.8px solid var(--color-red-200)", color: "var(--color-red-500)" }}
                 >
                   <Trash2 style={{ width: 12, height: 12 }} /> Delete
                 </OutlineBtn>
@@ -2254,11 +2254,11 @@ function DetailView({
             className="flex items-center justify-between"
             style={{
               padding: "8px 12px",
-              backgroundColor: "#FEF2F2",
-              borderTop: "0.8px solid #FECACA",
-              fontSize: 11,
-              color: "#991B1B",
-              borderRadius: 6,
+              backgroundColor: "var(--color-red-50)",
+              borderTop: "0.8px solid var(--color-red-200)",
+              fontSize: "var(--hs-fs-11)",
+              color: "var(--color-red-800)",
+              borderRadius: "calc(var(--radius-unit, 1px) * 6)",
             }}
           >
             <span>Delete this article?</span>
@@ -2273,7 +2273,7 @@ function DetailView({
                   onBack();
                 }}
                 className="font-semibold"
-                style={{ color: "#EF4444" }}
+                style={{ color: "var(--color-red-500)" }}
               >
                 Delete
               </button>
@@ -2299,25 +2299,25 @@ function MediaError({
     <div
       role="alert"
       className="flex flex-col items-center justify-center text-center"
-      style={{ height: 164, backgroundColor: "#F9FAFB", borderBottom: "0.8px solid #F3F4F6", padding: "0 20px", gap: 6 }}
+      style={{ height: 164, backgroundColor: "var(--color-gray-50)", borderBottom: "0.8px solid var(--color-gray-100)", padding: "0 20px", gap: 6 }}
     >
-      <AlertTriangle style={{ width: 18, height: 18, color: "#D97706" }} />
-      <div style={{ fontSize: 12, fontWeight: 500, color: "#374151" }}>
+      <AlertTriangle style={{ width: 18, height: 18, color: "var(--color-amber-600)" }} />
+      <div style={{ fontSize: "var(--hs-fs-12)", fontWeight: "var(--font-weight-medium)", color: "var(--color-gray-700)" }}>
         This {kind} could not be loaded
       </div>
-      <div style={{ fontSize: 11, color: "#9CA3AF", lineHeight: 1.4 }}>
+      <div style={{ fontSize: "var(--hs-fs-11)", color: "var(--color-gray-400)", lineHeight: 1.4 }}>
         The file may be unavailable or unsupported by your browser.
       </div>
       <div className="flex items-center" style={{ gap: 10, marginTop: 2 }}>
         <button
           onClick={onRetry}
           className="inline-flex items-center"
-          style={{ gap: 4, fontSize: 11, color: "#3B6BF5" }}
+          style={{ gap: 4, fontSize: "var(--hs-fs-11)", color: "var(--color-blue-600)" }}
         >
           <RotateCw style={{ width: 11, height: 11 }} /> Retry
         </button>
         {url && (
-          <a href={url} download style={{ fontSize: 11, color: "#3B6BF5" }}>
+          <a href={url} download style={{ fontSize: "var(--hs-fs-11)", color: "var(--color-blue-600)" }}>
             Download instead
           </a>
         )}
@@ -2332,16 +2332,16 @@ function MetaRow({ label, value }: { label: string; value: string }) {
       <div
         style={{
           width: 90,
-          fontSize: 10,
-          color: "#9CA3AF",
+          fontSize: "var(--hs-fs-10)",
+          color: "var(--color-gray-400)",
           textTransform: "uppercase",
-          fontWeight: 600,
+          fontWeight: "var(--font-weight-semibold)",
           letterSpacing: "0.05em",
         }}
       >
         {label}
       </div>
-      <div style={{ fontSize: 12, color: "#374151", flex: 1, minWidth: 0 }}>{value}</div>
+      <div style={{ fontSize: "var(--hs-fs-12)", color: "var(--color-gray-700)", flex: 1, minWidth: 0 }}>{value}</div>
     </div>
   );
 }
@@ -2434,9 +2434,9 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
           className="flex items-center"
           style={{
             height: 30,
-            border: "0.8px solid #E5E7EB",
-            borderRadius: 6,
-            backgroundColor: "#F9FAFB",
+            border: "0.8px solid var(--color-gray-200)",
+            borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+            backgroundColor: "var(--color-gray-50)",
             padding: "0 10px",
             gap: 8,
             marginBottom: 8,
@@ -2444,13 +2444,13 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
         >
           <span
             className="uppercase font-semibold shrink-0"
-            style={{ fontSize: 9, color: "#9CA3AF", letterSpacing: "0.05em" }}
+            style={{ fontSize: "var(--hs-fs-9)", color: "var(--color-gray-400)", letterSpacing: "0.05em" }}
           >
             To
           </span>
-          <span className="truncate" style={{ fontSize: 11, color: "#374151" }}>
-            <strong style={{ fontWeight: 600 }}>{HELPDESK.name}</strong>
-            <span style={{ color: "#9CA3AF" }}> — {HELPDESK.email}</span>
+          <span className="truncate" style={{ fontSize: "var(--hs-fs-11)", color: "var(--color-gray-700)" }}>
+            <strong style={{ fontWeight: "var(--font-weight-semibold)" }}>{HELPDESK.name}</strong>
+            <span style={{ color: "var(--color-gray-400)" }}> — {HELPDESK.email}</span>
           </span>
         </div>
 
@@ -2471,7 +2471,7 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
         <div style={{ marginBottom: 8 }}>
           <div className="flex items-baseline justify-between">
             <Label>Description</Label>
-            <span style={{ fontSize: 9, color: "#9CA3AF", marginBottom: 3 }}>
+            <span style={{ fontSize: "var(--hs-fs-9)", color: "var(--color-gray-400)", marginBottom: 3 }}>
               {description.length}/200
             </span>
           </div>
@@ -2519,12 +2519,12 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
                 key={t}
                 className="inline-flex items-center gap-1"
                 style={{
-                  backgroundColor: "#F3F4F6",
-                  border: "0.8px solid #E5E7EB",
-                  borderRadius: 4,
+                  backgroundColor: "var(--color-gray-100)",
+                  border: "0.8px solid var(--color-gray-200)",
+                  borderRadius: "calc(var(--radius-unit, 1px) * 4)",
                   padding: "1px 6px",
-                  fontSize: 11,
-                  color: "#374151",
+                  fontSize: "var(--hs-fs-11)",
+                  color: "var(--color-gray-700)",
                 }}
               >
                 {t}
@@ -2533,7 +2533,7 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
                     setTags(tags.filter((x) => x !== t));
                     setNotice("");
                   }}
-                  style={{ color: "#9CA3AF" }}
+                  style={{ color: "var(--color-gray-400)" }}
                 >
                   ×
                 </button>
@@ -2572,11 +2572,11 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
             className="w-full flex items-center justify-center transition-colors"
             style={{
               height: 30,
-              backgroundColor: dragging ? "#EFF6FF" : "#F9FAFB",
-              border: `0.8px dashed ${dragging ? "#3B6BF5" : "#E5E7EB"}`,
-              borderRadius: 6,
-              color: dragging ? "#3B6BF5" : "#9CA3AF",
-              fontSize: 11,
+              backgroundColor: dragging ? "var(--color-blue-50)" : "var(--color-gray-50)",
+              border: `0.8px dashed ${dragging ? "var(--color-blue-600)" : "var(--color-gray-200)"}`,
+              borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+              color: dragging ? "var(--color-blue-600)" : "var(--color-gray-400)",
+              fontSize: "var(--hs-fs-11)",
               gap: 6,
             }}
           >
@@ -2599,28 +2599,28 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
                 marginTop: 5,
                 height: 26,
                 padding: "0 8px",
-                border: "0.8px solid #E5E7EB",
-                borderRadius: 6,
-                fontSize: 11,
+                border: "0.8px solid var(--color-gray-200)",
+                borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+                fontSize: "var(--hs-fs-11)",
                 gap: 8,
-                backgroundColor: "white",
+                backgroundColor: "var(--bg-card)",
               }}
             >
               {a.type.startsWith("image") ? (
-                <ImageIcon style={{ width: 12, height: 12, color: "#15803D" }} />
+                <ImageIcon style={{ width: 12, height: 12, color: "var(--color-green-700)" }} />
               ) : (
-                <FileText style={{ width: 12, height: 12, color: "#1D4ED8" }} />
+                <FileText style={{ width: 12, height: 12, color: "var(--color-blue-700)" }} />
               )}
-              <span className="flex-1 truncate" style={{ color: "#374151" }}>
+              <span className="flex-1 truncate" style={{ color: "var(--color-gray-700)" }}>
                 {a.name}
               </span>
-              <span style={{ color: "#9CA3AF" }}>{formatBytes(a.size)}</span>
+              <span style={{ color: "var(--color-gray-400)" }}>{formatBytes(a.size)}</span>
               <button
                 onClick={() => {
                   setAttachments(attachments.filter((_, j) => j !== i));
                   setNotice("");
                 }}
-                style={{ color: "#9CA3AF" }}
+                style={{ color: "var(--color-gray-400)" }}
               >
                 ×
               </button>
@@ -2629,7 +2629,7 @@ function ContactForm({ onSubmitted, onCancel }: { onSubmitted: (id: string) => v
         </div>
 
         {notice && (
-          <div style={{ fontSize: 10, color: "#D97706", marginTop: 6 }}>{notice}</div>
+          <div style={{ fontSize: "var(--hs-fs-10)", color: "var(--color-amber-600)", marginTop: 6 }}>{notice}</div>
         )}
       </div>
       <BtnRow>
@@ -2656,34 +2656,34 @@ function SuccessView({ ticketId, onView, onBack }: { ticketId: string; onView: (
           style={{
             width: 64,
             height: 64,
-            backgroundColor: "#ECFDF5",
-            boxShadow: "0 0 0 8px rgba(34,197,94,0.07)",
+            backgroundColor: "var(--color-emerald-50)",
+            boxShadow: "0 0 0 8px color-mix(in srgb, var(--success) 8%, transparent)",
             marginBottom: 16,
           }}
         >
-          <CheckCircle2 style={{ width: 34, height: 34, color: "#22C55E" }} strokeWidth={2} />
+          <CheckCircle2 style={{ width: 34, height: 34, color: "var(--color-green-500)" }} strokeWidth={2} />
         </div>
-        <div style={{ fontSize: 18, fontWeight: 700, color: "#111827", letterSpacing: "-0.01em" }}>
+        <div style={{ fontSize: "var(--hs-fs-18)", fontWeight: "var(--font-weight-bold)", color: "var(--color-gray-900)", letterSpacing: "-0.01em" }}>
           Request submitted
         </div>
-        <div style={{ fontSize: 12, color: "#6B7280", marginTop: 6, maxWidth: 230, lineHeight: 1.5 }}>
+        <div style={{ fontSize: "var(--hs-fs-12)", color: "var(--color-gray-500)", marginTop: 6, maxWidth: 230, lineHeight: 1.5 }}>
           Our support team has received your request and will respond shortly.
         </div>
         <div
           className="inline-flex items-center"
           style={{
             marginTop: 16,
-            backgroundColor: "#F9FAFB",
-            border: "0.8px solid #E5E7EB",
-            color: "#6B7280",
+            backgroundColor: "var(--color-gray-50)",
+            border: "0.8px solid var(--color-gray-200)",
+            color: "var(--color-gray-500)",
             padding: "3px 10px",
             borderRadius: 999,
-            fontSize: 10,
+            fontSize: "var(--hs-fs-10)",
             gap: 5,
           }}
         >
           <span className="uppercase" style={{ letterSpacing: "0.06em" }}>Reference</span>
-          <span style={{ color: "#374151", fontWeight: 600 }}>#{ticketId}</span>
+          <span style={{ color: "var(--color-gray-700)", fontWeight: "var(--font-weight-semibold)" }}>#{ticketId}</span>
         </div>
       </div>
       <BtnRow>
@@ -2752,9 +2752,9 @@ function RequestsView({
               top: 4,
               right: 8,
               width: 150,
-              borderRadius: 8,
-              border: "0.8px solid #E5E7EB",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+              borderRadius: "calc(var(--radius-unit, 1px) * 8)",
+              border: "0.8px solid var(--color-gray-200)",
+              boxShadow: "var(--card-shadow)",
               padding: "10px 12px",
             }}
             role="radiogroup"
@@ -2778,18 +2778,18 @@ function RequestsView({
           className="flex items-center justify-between shrink-0"
           style={{
             height: 28,
-            backgroundColor: "#FAFAFA",
-            borderBottom: "0.8px solid #F3F4F6",
+            backgroundColor: "var(--color-neutral-50)",
+            borderBottom: "0.8px solid var(--color-gray-100)",
             padding: "0 12px",
           }}
         >
           <span
             className="uppercase font-semibold"
-            style={{ fontSize: 10, color: "#9CA3AF", letterSpacing: "0.5px" }}
+            style={{ fontSize: "var(--hs-fs-10)", color: "var(--color-gray-400)", letterSpacing: "0.5px" }}
           >
             {role === "customer" ? "My requests" : "Resources raised"}
           </span>
-          <span style={{ fontSize: 10, color: "#9CA3AF" }}>{open} open</span>
+          <span style={{ fontSize: "var(--hs-fs-10)", color: "var(--color-gray-400)" }}>{open} open</span>
         </div>
         <div className="flex-1 min-h-0 overflow-y-auto hms-scroll flex flex-col" role="list">
           {list.length === 0 && (
@@ -2821,19 +2821,19 @@ function RequestsView({
               role="listitem"
               onClick={() => onOpen(t.id)}
               aria-label={`Open request ${t.subject}`}
-              className="w-full text-left hover:bg-[#FAFAFA]"
-              style={{ padding: "9px 12px", borderBottom: "0.8px solid #F3F4F6" }}
+              className="w-full text-left hover:bg-[var(--color-neutral-50)]"
+              style={{ padding: "9px 12px", borderBottom: "0.8px solid var(--color-gray-100)" }}
             >
               <div className="flex items-center" style={{ gap: 10 }}>
                 <div className="flex-1 min-w-0">
                   <div
                     className="truncate"
-                    style={{ fontSize: 12.5, fontWeight: 600, color: "#111827" }}
+                    style={{ fontSize: "calc(var(--app-font-size, 15px) * 12.5 / 15)", fontWeight: "var(--font-weight-semibold)", color: "var(--color-gray-900)" }}
                     title={t.subject}
                   >
                     {t.subject}
                   </div>
-                  <div style={{ fontSize: 10, color: "#9CA3AF", marginTop: 3 }}>
+                  <div style={{ fontSize: "var(--hs-fs-10)", color: "var(--color-gray-400)", marginTop: 3 }}>
                     {role === "customer" ? "" : `${t.authorName} · `}
                     {formatDate(t.createdAt)}
                   </div>
@@ -2872,18 +2872,18 @@ function RequestDetailView({
     <>
       <div className="flex-1 overflow-y-auto hms-scroll" style={{ padding: "12px" }}>
         <div className="flex items-start" style={{ gap: 8 }}>
-          <div className="flex-1 min-w-0" style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>
+          <div className="flex-1 min-w-0" style={{ fontSize: "var(--hs-fs-13)", fontWeight: "var(--font-weight-bold)", color: "var(--color-gray-900)" }}>
             {ticket.subject}
           </div>
           <TicketStatusBadge status={ticket.status} />
         </div>
-        <div style={{ fontSize: 10, color: "#9CA3AF", marginTop: 4 }}>
+        <div style={{ fontSize: "var(--hs-fs-10)", color: "var(--color-gray-400)", marginTop: 4 }}>
           #{ticket.id} · {ticket.authorName} · {formatDate(ticket.createdAt)}
         </div>
 
         <div style={{ marginTop: 12 }}>
           <Label>Description</Label>
-          <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.6 }}>
+          <div style={{ fontSize: "var(--hs-fs-12)", color: "var(--color-gray-700)", lineHeight: 1.6 }}>
             {ticket.description || "—"}
           </div>
         </div>
@@ -2896,19 +2896,19 @@ function RequestDetailView({
         <div style={{ marginTop: 12 }}>
           <Label>Tags</Label>
           {ticket.tags.length === 0 ? (
-            <span style={{ fontSize: 12, color: "#9CA3AF" }}>—</span>
+            <span style={{ fontSize: "var(--hs-fs-12)", color: "var(--color-gray-400)" }}>—</span>
           ) : (
             <div className="flex flex-wrap gap-1.5">
               {ticket.tags.map((t) => (
                 <span
                   key={t}
                   style={{
-                    backgroundColor: "#F3F4F6",
-                    border: "0.8px solid #E5E7EB",
-                    borderRadius: 4,
+                    backgroundColor: "var(--color-gray-100)",
+                    border: "0.8px solid var(--color-gray-200)",
+                    borderRadius: "calc(var(--radius-unit, 1px) * 4)",
                     padding: "1px 6px",
-                    fontSize: 11,
-                    color: "#374151",
+                    fontSize: "var(--hs-fs-11)",
+                    color: "var(--color-gray-700)",
                   }}
                 >
                   {t}
@@ -2920,13 +2920,13 @@ function RequestDetailView({
 
         <div style={{ marginTop: 12 }}>
           <Label>Context</Label>
-          <div style={{ fontSize: 12, color: "#374151" }}>{ticket.context || "—"}</div>
+          <div style={{ fontSize: "var(--hs-fs-12)", color: "var(--color-gray-700)" }}>{ticket.context || "—"}</div>
         </div>
 
         <div style={{ marginTop: 12 }}>
           <Label>Attachments</Label>
           {ticket.attachments.length === 0 ? (
-            <span style={{ fontSize: 12, color: "#9CA3AF" }}>None</span>
+            <span style={{ fontSize: "var(--hs-fs-12)", color: "var(--color-gray-400)" }}>None</span>
           ) : (
             ticket.attachments.map((a, i) => (
               <a
@@ -2938,17 +2938,17 @@ function RequestDetailView({
                   marginTop: 5,
                   height: 28,
                   padding: "0 8px",
-                  border: "0.8px solid #E5E7EB",
-                  borderRadius: 6,
-                  fontSize: 11,
+                  border: "0.8px solid var(--color-gray-200)",
+                  borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+                  fontSize: "var(--hs-fs-11)",
                   gap: 8,
                 }}
               >
-                <Paperclip style={{ width: 12, height: 12, color: "#6B7280" }} />
-                <span className="flex-1 truncate" style={{ color: "#374151" }}>
+                <Paperclip style={{ width: 12, height: 12, color: "var(--color-gray-500)" }} />
+                <span className="flex-1 truncate" style={{ color: "var(--color-gray-700)" }}>
                   {a.name}
                 </span>
-                <span style={{ color: "#9CA3AF" }}>{formatBytes(a.size)}</span>
+                <span style={{ color: "var(--color-gray-400)" }}>{formatBytes(a.size)}</span>
               </a>
             ))
           )}
@@ -3194,16 +3194,16 @@ function AddHelpView({
             style={{
               marginBottom: 8,
               padding: "8px 10px",
-              borderRadius: 6,
-              border: "0.8px solid #E5E7EB",
-              backgroundColor: autoApprove ? "#ECFDF5" : "#FAFAFA",
+              borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+              border: "0.8px solid var(--color-gray-200)",
+              backgroundColor: autoApprove ? "var(--color-emerald-50)" : "var(--color-neutral-50)",
             }}
           >
             <span className="text-left">
-              <span style={{ display: "block", fontSize: 11, fontWeight: 600, color: "#111827" }}>
+              <span style={{ display: "block", fontSize: "var(--hs-fs-11)", fontWeight: "var(--font-weight-semibold)", color: "var(--color-gray-900)" }}>
                 Auto-approve
               </span>
-              <span style={{ display: "block", fontSize: 10, color: "#6B7280" }}>
+              <span style={{ display: "block", fontSize: "var(--hs-fs-10)", color: "var(--color-gray-500)" }}>
                 {autoApprove ? "Publishes immediately" : "Saves as pending approval"}
               </span>
             </span>
@@ -3212,7 +3212,7 @@ function AddHelpView({
                 width: 30,
                 height: 17,
                 borderRadius: 999,
-                backgroundColor: autoApprove ? "#10B981" : "#D1D5DB",
+                backgroundColor: autoApprove ? "var(--color-emerald-500)" : "var(--color-gray-300)",
                 position: "relative",
                 flexShrink: 0,
                 transition: "background-color 120ms ease",
@@ -3250,7 +3250,7 @@ function AddHelpView({
         <div style={{ marginBottom: 8 }}>
           <div className="flex items-baseline justify-between">
             <Label>Description</Label>
-            <span style={{ fontSize: 9, color: "#9CA3AF", marginBottom: 3 }}>
+            <span style={{ fontSize: "var(--hs-fs-9)", color: "var(--color-gray-400)", marginBottom: 3 }}>
               {description.length}/200
             </span>
           </div>
@@ -3299,16 +3299,16 @@ function AddHelpView({
                 key={t}
                 className="inline-flex items-center gap-1"
                 style={{
-                  backgroundColor: "#F3F4F6",
-                  border: "0.8px solid #E5E7EB",
-                  borderRadius: 4,
+                  backgroundColor: "var(--color-gray-100)",
+                  border: "0.8px solid var(--color-gray-200)",
+                  borderRadius: "calc(var(--radius-unit, 1px) * 4)",
                   padding: "1px 6px",
-                  fontSize: 11,
-                  color: "#374151",
+                  fontSize: "var(--hs-fs-11)",
+                  color: "var(--color-gray-700)",
                 }}
               >
                 {t}
-                <button onClick={() => setTags(tags.filter((x) => x !== t))} style={{ color: "#9CA3AF" }}>
+                <button onClick={() => setTags(tags.filter((x) => x !== t))} style={{ color: "var(--color-gray-400)" }}>
                   ×
                 </button>
               </span>
@@ -3339,11 +3339,11 @@ function AddHelpView({
             className="w-full flex items-center justify-center transition-colors"
             style={{
               height: 30,
-              backgroundColor: dragging ? "#EFF6FF" : "#F9FAFB",
-              border: `0.8px dashed ${dragging ? "#3B6BF5" : "#E5E7EB"}`,
-              borderRadius: 6,
-              color: dragging ? "#3B6BF5" : "#9CA3AF",
-              fontSize: 11,
+              backgroundColor: dragging ? "var(--color-blue-50)" : "var(--color-gray-50)",
+              border: `0.8px dashed ${dragging ? "var(--color-blue-600)" : "var(--color-gray-200)"}`,
+              borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+              color: dragging ? "var(--color-blue-600)" : "var(--color-gray-400)",
+              fontSize: "var(--hs-fs-11)",
               gap: 6,
             }}
           >
@@ -3364,26 +3364,26 @@ function AddHelpView({
                 marginTop: 5,
                 height: 26,
                 padding: "0 8px",
-                border: "0.8px solid #E5E7EB",
-                borderRadius: 6,
-                fontSize: 11,
+                border: "0.8px solid var(--color-gray-200)",
+                borderRadius: "calc(var(--radius-unit, 1px) * 6)",
+                fontSize: "var(--hs-fs-11)",
                 gap: 8,
-                backgroundColor: "white",
+                backgroundColor: "var(--bg-card)",
               }}
             >
-              <FileText style={{ width: 12, height: 12, color: "#6B7280" }} />
-              <span className="flex-1 truncate" style={{ color: "#374151" }}>
+              <FileText style={{ width: 12, height: 12, color: "var(--color-gray-500)" }} />
+              <span className="flex-1 truncate" style={{ color: "var(--color-gray-700)" }}>
                 {file.name}
               </span>
-              <span style={{ color: "#9CA3AF" }}>{formatBytes(file.size)}</span>
+              <span style={{ color: "var(--color-gray-400)" }}>{formatBytes(file.size)}</span>
               <button
                 onClick={() => fileRef.current?.click()}
                 aria-label="Replace uploaded file"
-                style={{ color: "#3B6BF5", fontSize: 11 }}
+                style={{ color: "var(--color-blue-600)", fontSize: "var(--hs-fs-11)" }}
               >
                 Replace
               </button>
-              <button onClick={() => setFile(null)} aria-label="Remove uploaded file" style={{ color: "#9CA3AF" }}>
+              <button onClick={() => setFile(null)} aria-label="Remove uploaded file" style={{ color: "var(--color-gray-400)" }}>
                 ×
               </button>
             </div>
@@ -3688,7 +3688,7 @@ export function HmsPanel() {
       aria-modal="false"
       aria-label={`Help Management System — ${crumb}`}
       aria-hidden={!isOpen}
-      className={`fixed flex flex-col bg-white ${
+      className={`hms-window fixed flex flex-col bg-white ${
         isDragging || isResizing ? "" : "transition-opacity transition-transform duration-150 ease-out"
       } ${
         isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2 pointer-events-none"
@@ -3702,8 +3702,8 @@ export function HmsPanel() {
         height: size.height,
         zIndex: 99999,
         pointerEvents: isOpen ? "auto" : "none",
-        borderRadius: 10,
-        boxShadow: "0 4px 6px rgba(0,0,0,0.06), 0 10px 28px rgba(0,0,0,0.13)",
+        borderRadius: "calc(var(--radius-unit, 1px) * 10)",
+        boxShadow: "var(--card-shadow, 0 4px 6px rgba(0,0,0,0.06), 0 10px 28px rgba(0,0,0,0.13))",
         overflow: "hidden",
         userSelect: isDragging || isResizing ? "none" : undefined,
       }}

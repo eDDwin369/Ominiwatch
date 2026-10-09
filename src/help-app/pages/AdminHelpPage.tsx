@@ -291,8 +291,8 @@ function OverviewTab() {
               <AreaChart data={activity} margin={{ top: 6, right: 8, bottom: 0, left: 0 }}>
                 <defs>
                   <linearGradient id="gHelp" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gTickets" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="hsl(38 92% 50%)" stopOpacity={0.35} />
@@ -304,18 +304,18 @@ function OverviewTab() {
                 <YAxis tickLine={false} axisLine={false} fontSize={10} width={28} />
                 <RTooltip
                   contentStyle={{
-                    fontSize: 11,
-                    borderRadius: 8,
-                    border: "1px solid hsl(var(--border))",
-                    background: "hsl(var(--card))",
+                    fontSize: "var(--hs-fs-11)",
+                    borderRadius: "calc(var(--radius-unit, 1px) * 8)",
+                    border: "1px solid var(--hs-border)",
+                    background: "var(--hs-card)",
                   }}
                 />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <Legend wrapperStyle={{ fontSize: "var(--hs-fs-11)" }} />
                 <Area
                   type="monotone"
                   dataKey="help"
                   name="Help activity"
-                  stroke="hsl(var(--primary))"
+                  stroke="var(--primary)"
                   fill="url(#gHelp)"
                   strokeWidth={2}
                 />
