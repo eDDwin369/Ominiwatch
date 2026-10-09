@@ -101,3 +101,4 @@ npm test
 Runs against in-process Postgres (PGlite), so no database or network is needed.
 Covers the help review workflow, folder tree, media validation, and the generated
 OpenAPI document.
+# CI/CD pipeline verification comment - 2026-10-09T18:03:23Z
