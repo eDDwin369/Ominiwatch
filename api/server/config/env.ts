@@ -65,18 +65,23 @@ const envSchema = z.object({
     ),
 
   /**
-   * --- AI chat (OpenRouter) ---
+   * --- AI chat (self-hosted Ollama, via the oomnieye auth proxy) ---
    *
-   * The key is server-side only: it is a bearer credential, so anything the
-   * browser holds is readable by anyone with devtools. Requests are proxied
-   * through POST /api/chat rather than called from the client.
+   * The proxy at OLLAMA_BASE_URL is a single POST endpoint - every request
+   * (regardless of which underlying Ollama route it targets) is a POST with
+   * a JSON body {key, path, payload}. The key is never sent as a header or
+   * query param on purpose: the proxy's own Cloudflare layer blocks
+   * random-looking values there but not inside a request body, so this
+   * shape is the proxy's documented API, not a quirk of this service.
    */
-  OPENROUTER_API_KEY: z.string().min(1, 'OPENROUTER_API_KEY is required for the help chat'),
+  OLLAMA_BASE_URL: z.string().min(1).default('https://ollama.oomnieye.com'),
+  /** Bearer-equivalent credential for the proxy's body-based auth. */
+  OLLAMA_API_KEY: z.string().min(1, 'OLLAMA_API_KEY is required for the help chat'),
   /**
    * Fixed model. A client-selectable model would let a caller spend the
-   * deployment's credit on an expensive one.
+   * deployment's shared compute on an expensive one.
    */
-  OPENROUTER_MODEL: z.string().min(1).default('meta-llama/llama-3.1-8b-instruct'),
+  OLLAMA_DEFAULT_MODEL: z.string().min(1).default('qwen3-coder:30b'),
 });
 
 const parsed = envSchema.safeParse(process.env);
