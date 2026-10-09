@@ -96,6 +96,9 @@
   appearance: none;
   cursor: pointer;
   padding-right: 20px;
+  /* <button>'s UA default is text-align: center, unlike <input>'s left — without this,
+     a dropdown's selected value centers instead of lining up with every other field's value. */
+  text-align: left;
 }
 
 .tf-chevron {

@@ -476,24 +476,6 @@ export function ReportsPage() {
 
                 </div>
               </div>
-
-              {/* Modal Buttons */}
-              <div className="urm-modal-footer">
-                <button
-                  type="button"
-                  onClick={requestCloseAddModal}
-                  className="urm-btn-cancel"
-                >
-                  CANCEL
-                </button>
-                <button
-                  type="submit"
-                  disabled={formHasErrors}
-                  className="urm-btn-save"
-                >
-                  SAVE
-                </button>
-              </div>
             </form>
 
             {showUnsavedConfirm && (
@@ -519,7 +501,7 @@ export function ReportsPage() {
                   <div className="urm-confirm-actions">
                     <button
                       type="button"
-                      className="shell-btn-icon"
+                      className="gs-confirm-btn shell-btn-icon"
                       data-tip="Cancel — keep editing"
                       aria-label="Cancel — keep editing"
                       onClick={() => setShowUnsavedConfirm(false)}
@@ -528,7 +510,7 @@ export function ReportsPage() {
                     </button>
                     <button
                       type="button"
-                      className="shell-btn-icon shell-btn-icon--danger"
+                      className="gs-confirm-btn shell-btn-icon shell-btn-icon--danger"
                       data-tip="Discard changes"
                       aria-label="Discard changes"
                       onClick={handleDiscardAddUser}
@@ -537,7 +519,7 @@ export function ReportsPage() {
                     </button>
                     <button
                       type="button"
-                      className="shell-btn-icon shell-btn-icon--success"
+                      className="gs-confirm-btn gs-top-btn-save shell-btn-icon shell-btn-icon--success"
                       data-tip="Save changes"
                       aria-label="Save changes"
                       autoFocus
