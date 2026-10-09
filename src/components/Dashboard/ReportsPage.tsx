@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { UserPlus, X } from 'lucide-react';
+import { UserPlus, X, AlertCircle, ArrowLeft, Trash2, Check } from 'lucide-react';
 import { URMProvider, URMBuilderRaw, useURMContext } from 'dts-universal-report-module';
 import { isValidName } from '../AccountSettings/nameValidation';
 import { isValidPhone } from '../AccountSettings/phoneValidation';
 import { TextField } from '../shared/TextField';
+import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
 import './ReportsPage.css';
 
 const REPORT_ID = 'test-report';
@@ -51,6 +52,20 @@ const PLACES = [
 
 const pick = <T,>(arr: T[], i: number) => arr[i % arr.length];
 
+// Baseline the Add User form starts from (and resets back to) — used to detect unsaved edits.
+const DEFAULT_ADD_USER_FORM = {
+  fullName: '',
+  phoneNumber: '',
+  department: 'Engineering',
+  role: 'Software Engineer',
+  status: 'Full Time',
+  title: 'Individual Contributor',
+  territory: 'Territory West',
+  continent: 'North America',
+  country: 'USA',
+  stateProvince: 'California',
+};
+
 const MAX_AUSTRALIA = 5;
 let australiaCount = 0;
 
@@ -89,18 +104,60 @@ const dummyUsers = Array.from({ length: 1000 }, (_, idx) => {
 export function ReportsPage() {
   const [users, setUsers] = useState(dummyUsers);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  
+  const [showUnsavedConfirm, setShowUnsavedConfirm] = useState(false);
+
   // Fields state
-  const [fullName, setFullName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [department, setDepartment] = useState('Engineering');
-  const [role, setRole] = useState('Software Engineer');
-  const [status, setStatus] = useState('Full Time');
-  const [title, setTitle] = useState('Individual Contributor');
-  const [territory, setTerritory] = useState('Territory West');
-  const [continent, setContinent] = useState('North America');
-  const [country, setCountry] = useState('USA');
-  const [stateProvince, setStateProvince] = useState('California');
+  const [fullName, setFullName] = useState(DEFAULT_ADD_USER_FORM.fullName);
+  const [phoneNumber, setPhoneNumber] = useState(DEFAULT_ADD_USER_FORM.phoneNumber);
+  const [department, setDepartment] = useState(DEFAULT_ADD_USER_FORM.department);
+  const [role, setRole] = useState(DEFAULT_ADD_USER_FORM.role);
+  const [status, setStatus] = useState(DEFAULT_ADD_USER_FORM.status);
+  const [title, setTitle] = useState(DEFAULT_ADD_USER_FORM.title);
+  const [territory, setTerritory] = useState(DEFAULT_ADD_USER_FORM.territory);
+  const [continent, setContinent] = useState(DEFAULT_ADD_USER_FORM.continent);
+  const [country, setCountry] = useState(DEFAULT_ADD_USER_FORM.country);
+  const [stateProvince, setStateProvince] = useState(DEFAULT_ADD_USER_FORM.stateProvince);
+
+  const hasUnsavedChanges =
+    JSON.stringify({
+      fullName,
+      phoneNumber,
+      department,
+      role,
+      status,
+      title,
+      territory,
+      continent,
+      country,
+      stateProvince,
+    }) !== JSON.stringify(DEFAULT_ADD_USER_FORM);
+
+  const resetAddUserForm = () => {
+    setFullName(DEFAULT_ADD_USER_FORM.fullName);
+    setPhoneNumber(DEFAULT_ADD_USER_FORM.phoneNumber);
+    setDepartment(DEFAULT_ADD_USER_FORM.department);
+    setRole(DEFAULT_ADD_USER_FORM.role);
+    setStatus(DEFAULT_ADD_USER_FORM.status);
+    setTitle(DEFAULT_ADD_USER_FORM.title);
+    setTerritory(DEFAULT_ADD_USER_FORM.territory);
+    setContinent(DEFAULT_ADD_USER_FORM.continent);
+    setCountry(DEFAULT_ADD_USER_FORM.country);
+    setStateProvince(DEFAULT_ADD_USER_FORM.stateProvince);
+  };
+
+  const requestCloseAddModal = () => {
+    if (hasUnsavedChanges) {
+      setShowUnsavedConfirm(true);
+    } else {
+      setIsAddModalOpen(false);
+    }
+  };
+
+  const handleDiscardAddUser = () => {
+    setShowUnsavedConfirm(false);
+    setIsAddModalOpen(false);
+    resetAddUserForm();
+  };
 
   const nameValid = isValidName(fullName);
   // phone is optional here (a placeholder is generated when left blank)
@@ -222,8 +279,7 @@ export function ReportsPage() {
     };
   }, [users]);
 
-  const handleAddUser = (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitNewUser = () => {
     if (formHasErrors) return;
 
     const nextId = users.length + 1;
@@ -249,28 +305,27 @@ export function ReportsPage() {
 
     setUsers([newUser, ...users]); // Prepend new user
     setIsAddModalOpen(false);
-    
-    // Reset fields
-    setFullName('');
-    setPhoneNumber('');
-    setDepartment('Engineering');
-    setRole('Software Engineer');
-    setStatus('Full Time');
-    setTitle('Individual Contributor');
-    setTerritory('Territory West');
-    setContinent('North America');
-    setCountry('USA');
-    setStateProvince('California');
+    resetAddUserForm();
+  };
+
+  const handleAddUser = (e: React.FormEvent) => {
+    e.preventDefault();
+    submitNewUser();
   };
 
   useEffect(() => {
     if (!isAddModalOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsAddModalOpen(false);
+      if (e.key !== 'Escape') return;
+      if (showUnsavedConfirm) {
+        setShowUnsavedConfirm(false);
+      } else {
+        requestCloseAddModal();
+      }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isAddModalOpen]);
+  }, [isAddModalOpen, showUnsavedConfirm, hasUnsavedChanges]);
 
   return (
     <div 
@@ -305,26 +360,26 @@ export function ReportsPage() {
 
       {/* Modal for adding user */}
       {isAddModalOpen && (
-        <div 
-          className="urm-modal-backdrop" 
+        <div
+          className="urm-modal-backdrop"
           onClick={(e) => {
-            if (e.target === e.currentTarget) setIsAddModalOpen(false);
+            if (e.target === e.currentTarget) requestCloseAddModal();
           }}
         >
           <div className="urm-modal-card" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <div className="urm-modal-header">
               <div className="urm-modal-header-left">
-                <div className="urm-modal-header-icon">
+                <span className="page-title-icon" aria-hidden="true">
                   <UserPlus size={20} />
-                </div>
-                <h1 className="urm-modal-title">Add User Details</h1>
+                </span>
+                <h1 className="urm-modal-title brand-gradient-text">Add User Details</h1>
               </div>
               <button
                 type="button"
                 className="urm-modal-close-btn"
                 aria-label="Close"
                 title="Close"
-                onClick={() => setIsAddModalOpen(false)}
+                onClick={requestCloseAddModal}
               >
                 <X size={18} strokeWidth={2.25} />
               </button>
@@ -356,47 +411,42 @@ export function ReportsPage() {
                   />
 
                   {/* Department */}
-                  <TextField
-                    as="select"
+                  <CustomSmoothDropdown
                     label="Department"
                     value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
+                    onChange={setDepartment}
                     options={DEPARTMENTS.map((d) => ({ value: d, label: d }))}
                   />
 
                   {/* Role */}
-                  <TextField
-                    as="select"
+                  <CustomSmoothDropdown
                     label="Role"
                     value={role}
-                    onChange={(e) => setRole(e.target.value)}
+                    onChange={setRole}
                     options={ROLES.map((r) => ({ value: r, label: r }))}
                   />
 
                   {/* Status */}
-                  <TextField
-                    as="select"
+                  <CustomSmoothDropdown
                     label="Status"
                     value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    onChange={setStatus}
                     options={STATUSES.map((s) => ({ value: s, label: s }))}
                   />
 
                   {/* Title */}
-                  <TextField
-                    as="select"
+                  <CustomSmoothDropdown
                     label="Title"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={setTitle}
                     options={TITLES.map((t) => ({ value: t, label: t }))}
                   />
 
                   {/* Territory */}
-                  <TextField
-                    as="select"
+                  <CustomSmoothDropdown
                     label="Territory"
                     value={territory}
-                    onChange={(e) => setTerritory(e.target.value)}
+                    onChange={setTerritory}
                     options={TERRITORIES.map((t) => ({ value: t, label: t }))}
                   />
 
@@ -426,25 +476,65 @@ export function ReportsPage() {
 
                 </div>
               </div>
-
-              {/* Modal Buttons */}
-              <div className="urm-modal-footer">
-                <button 
-                  type="button" 
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="urm-btn-cancel"
-                >
-                  CANCEL
-                </button>
-                <button
-                  type="submit"
-                  disabled={formHasErrors}
-                  className="urm-btn-save"
-                >
-                  SAVE
-                </button>
-              </div>
             </form>
+
+            {showUnsavedConfirm && (
+              <div className="urm-confirm-backdrop" onClick={() => setShowUnsavedConfirm(false)}>
+                <div
+                  className="urm-confirm"
+                  role="alertdialog"
+                  aria-modal="true"
+                  aria-labelledby="urm-confirm-title"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="page-title-group">
+                    <span className="page-title-icon" aria-hidden="true">
+                      <AlertCircle size={18} />
+                    </span>
+                    <h3 id="urm-confirm-title" className="urm-confirm-title brand-gradient-text">
+                      Unsaved changes
+                    </h3>
+                  </div>
+                  <p className="urm-confirm-text">
+                    You have unsaved changes. Save them before closing Add User Details?
+                  </p>
+                  <div className="urm-confirm-actions">
+                    <button
+                      type="button"
+                      className="gs-confirm-btn shell-btn-icon"
+                      data-tip="Cancel — keep editing"
+                      aria-label="Cancel — keep editing"
+                      onClick={() => setShowUnsavedConfirm(false)}
+                    >
+                      <ArrowLeft size={18} />
+                    </button>
+                    <button
+                      type="button"
+                      className="gs-confirm-btn shell-btn-icon shell-btn-icon--danger"
+                      data-tip="Discard changes"
+                      aria-label="Discard changes"
+                      onClick={handleDiscardAddUser}
+                    >
+                      <Trash2 size={17} />
+                    </button>
+                    <button
+                      type="button"
+                      className="gs-confirm-btn gs-top-btn-save shell-btn-icon shell-btn-icon--success"
+                      data-tip="Save changes"
+                      aria-label="Save changes"
+                      autoFocus
+                      disabled={formHasErrors}
+                      onClick={() => {
+                        setShowUnsavedConfirm(false);
+                        submitNewUser();
+                      }}
+                    >
+                      <Check size={18} strokeWidth={2.5} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
