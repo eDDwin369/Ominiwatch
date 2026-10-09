@@ -807,29 +807,6 @@
   transform: translateX(16px);
 }
 
-/* Inline Select Controls */
-.figma-select-inline-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.figma-select-label {
-  font-family: var(--app-font-family);
-  font-size: var(--app-font-size, 14px);
-  font-weight: var(--app-font-weight, 400);
-  white-space: nowrap;
-  color: var(--text-main);
-}
-
-[data-theme-mode="dark"] .figma-select-label {
-  color: var(--text-main);
-}
-
-[data-theme-mode="light"] .figma-select-label {
-  color: var(--text-main);
-}
-
 .figma-delete-btn-row {
     margin-top: 20px;
     display: flex;
@@ -837,51 +814,6 @@
 }
 
 /* Custom Smooth Dropdown Component */
-.figma-smooth-dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.figma-smooth-dropdown-trigger {
-  border-radius: var(--radius-md, 8px);
-  font-size: var(--app-font-size, 13px);
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  outline: none;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: inherit;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  color: var(--text-main);
-}
-
-[data-theme-mode="dark"] .figma-smooth-dropdown-trigger {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  color: var(--text-main);
-}
-
-[data-theme-mode="dark"] .figma-smooth-dropdown-trigger:hover,
-[data-theme-mode="dark"] .figma-smooth-dropdown-trigger.active {
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-}
-
-[data-theme-mode="light"] .figma-smooth-dropdown-trigger {
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  color: var(--text-main);
-}
-
-[data-theme-mode="light"] .figma-smooth-dropdown-trigger:hover,
-[data-theme-mode="light"] .figma-smooth-dropdown-trigger.active {
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
 .figma-smooth-arrow {
   color: var(--text-muted);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1372,12 +1304,6 @@
   color: var(--text-main);
 }
 
-.figma-dropdown-compact .figma-smooth-dropdown-trigger {
-  min-width: 58px;
-  justify-content: space-between;
-  padding: 5px 10px;
-}
-
 .figma-small-select .figma-custom-select {
   padding-right: 28px;
   min-width: 60px;
@@ -1674,16 +1600,6 @@
 
 .figma-card .tf-input {
   position: relative;
-}
-
-/* Language / Timezone dropdowns */
-.figma-card .figma-smooth-dropdown-trigger,
-[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger {
-  background: var(--ac-soft-fill);
-}
-
-.figma-card .figma-smooth-dropdown-trigger:hover {
-  background: var(--ac-soft-fill-hover);
 }
 
 /* Cookie Preferences + Active Sessions / Login History: soft pills instead of bare rows */
@@ -2063,36 +1979,30 @@
 }
 
 /* Accordion rows + dropdown triggers (Active Sessions, Login History, Advanced Settings,
-   Cookie Preferences, Language, Timezone): one field-like control in both modes —
+   Cookie Preferences): one field-like control in both modes —
    soft fill + barely-there edge at rest; primary-tinted edge only on hover / open. Dark mode gets a
    light fill so the controls stand out from the dark card. */
 [data-theme-mode] .figma-card .figma-sec-trigger,
-[data-theme-mode] .figma-card .figma-cookie-trigger,
-[data-theme-mode] .figma-card .figma-smooth-dropdown-trigger {
+[data-theme-mode] .figma-card .figma-cookie-trigger {
   background: var(--ac-soft-fill);
   border: 1px solid color-mix(in srgb, var(--text-main) 6%, transparent); /* barely-there edge */
   transition: background-color 0.15s, border-color 0.15s;
 }
 
 [data-theme-mode] .figma-card .figma-sec-trigger:hover,
-[data-theme-mode] .figma-card .figma-cookie-trigger:hover,
-[data-theme-mode] .figma-card .figma-smooth-dropdown-trigger:hover,
-[data-theme-mode] .figma-card .figma-smooth-dropdown-trigger.active {
+[data-theme-mode] .figma-card .figma-cookie-trigger:hover {
   background: var(--ac-soft-fill-hover);
   border-color: color-mix(in srgb, var(--primary) 35%, transparent);
 }
 
 [data-theme-mode="dark"] .figma-card .figma-sec-trigger,
-[data-theme-mode="dark"] .figma-card .figma-cookie-trigger,
-[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger {
+[data-theme-mode="dark"] .figma-card .figma-cookie-trigger {
   background: color-mix(in srgb, var(--text-main) 7%, transparent);
   border-color: color-mix(in srgb, var(--text-main) 6%, transparent);
 }
 
 [data-theme-mode="dark"] .figma-card .figma-sec-trigger:hover,
-[data-theme-mode="dark"] .figma-card .figma-cookie-trigger:hover,
-[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger:hover,
-[data-theme-mode="dark"] .figma-card .figma-smooth-dropdown-trigger.active {
+[data-theme-mode="dark"] .figma-card .figma-cookie-trigger:hover {
   background: color-mix(in srgb, var(--text-main) 11%, transparent);
   border-color: color-mix(in srgb, var(--primary) 40%, transparent);
 }

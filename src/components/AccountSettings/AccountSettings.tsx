@@ -7,6 +7,7 @@ import {
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { ImageCropperModal } from '../GlobalSettings/ImageCropperModal';
 import { TextField } from '../shared/TextField';
+import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
 import { isValidPhone } from './phoneValidation';
 import { isValidName } from './nameValidation';
 import { isValidEmail } from './emailValidation';
@@ -18,63 +19,6 @@ interface AccountSettingsProps {
   editProfileOnLoad?: boolean;
   setEditProfileOnLoad?: (value: boolean) => void;
   initialTab?: string;
-}
-
-interface CustomSmoothDropdownProps {
-  value: string;
-  options: { label: string; value: string }[];
-  onChange: (val: string) => void;
-  className?: string;
-}
-
-function CustomSmoothDropdown({ value, options, onChange, className = '' }: CustomSmoothDropdownProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const selectedOption = options.find(o => o.value === value) || options[0];
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen]);
-
-  return (
-    <div className={`figma-smooth-dropdown ${className}`} ref={dropdownRef}>
-      <button 
-        type="button"
-        className={`figma-smooth-dropdown-trigger ${isOpen ? 'active' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span>{selectedOption?.label || value}</span>
-        <ChevronDown size={14} className={`figma-smooth-arrow ${isOpen ? 'open' : ''}`} />
-      </button>
-
-      {isOpen && (
-        <div className="figma-smooth-dropdown-menu">
-          {options.map((opt) => (
-            <div 
-              key={opt.value}
-              className={`figma-smooth-option ${opt.value === value ? 'selected' : ''}`}
-              onClick={() => {
-                onChange(opt.value);
-                setIsOpen(false);
-              }}
-            >
-              <span>{opt.label}</span>
-              {opt.value === value && <Check size={14} className="figma-option-check" />}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
 }
 
 interface UserProfile {
@@ -609,36 +553,32 @@ export function AccountSettings({
               </div>
 
               {/* Item 2: Language */}
-              <div className="figma-select-inline-item">
-                <span className="figma-select-label">Language</span>
-                <CustomSmoothDropdown 
-                  value={language}
-                  onChange={handleLanguageChange}
-                  options={[
-                    { label: 'English', value: 'English' },
-                    { label: 'Spanish', value: 'Spanish' },
-                    { label: 'French', value: 'French' },
-                    { label: 'German', value: 'German' },
-                    { label: 'Hindi', value: 'Hindi' }
-                  ]}
-                />
-              </div>
+              <CustomSmoothDropdown
+                label="Language"
+                value={language}
+                onChange={handleLanguageChange}
+                options={[
+                  { label: 'English', value: 'English' },
+                  { label: 'Spanish', value: 'Spanish' },
+                  { label: 'French', value: 'French' },
+                  { label: 'German', value: 'German' },
+                  { label: 'Hindi', value: 'Hindi' }
+                ]}
+              />
 
               {/* Item 3: Timezone */}
-              <div className="figma-select-inline-item">
-                <span className="figma-select-label">Timezone</span>
-                <CustomSmoothDropdown
-                  value={timezone}
-                  onChange={handleTimezoneChange}
-                  options={[
-                    { label: '(GMT + 05:30) Asia', value: '(GMT + 05:30) Asia/Kolkata' },
-                    { label: '(UTC) London / GMT', value: '(UTC) GMT Standard Time' },
-                    { label: '(EST) New York', value: '(EST) Eastern Time' },
-                    { label: '(PST) Los Angeles', value: '(PST) Pacific Time' },
-                    { label: '(SGT) Singapore', value: '(SGT) Singapore Time' }
-                  ]}
-                />
-              </div>
+              <CustomSmoothDropdown
+                label="Timezone"
+                value={timezone}
+                onChange={handleTimezoneChange}
+                options={[
+                  { label: '(GMT + 05:30) Asia', value: '(GMT + 05:30) Asia/Kolkata' },
+                  { label: '(UTC) London / GMT', value: '(UTC) GMT Standard Time' },
+                  { label: '(EST) New York', value: '(EST) Eastern Time' },
+                  { label: '(PST) Los Angeles', value: '(PST) Pacific Time' },
+                  { label: '(SGT) Singapore', value: '(SGT) Singapore Time' }
+                ]}
+              />
             </div>
 
           </div>

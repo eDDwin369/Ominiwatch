@@ -85,6 +85,7 @@
 }
 
 .urm-modal-card {
+  position: relative;
   background: var(--brand-card-surface, var(--bg-card, #0f231a)) !important;
   border-radius: var(--radius-modal, 20px) !important;
   width: 640px;
@@ -131,24 +132,10 @@
   gap: 12px;
 }
 
-.urm-modal-header-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  flex-shrink: 0;
-}
-
 .urm-modal-title {
   font-family: var(--app-heading-family, inherit);
   font-size: var(--h1-size, 1.35rem);
   font-weight: var(--h1-weight, 600);
-  color: #ffffff;
   margin: 0;
   line-height: 1.25;
 }
@@ -163,14 +150,14 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background: rgba(239, 68, 68, 0.18);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.4);
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+  background: color-mix(in srgb, var(--danger, #dc2626) 14%, transparent);
+  color: var(--danger, #dc2626);
+  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 20%, transparent);
 }
 
 .urm-modal-close-btn:hover {
-  background: #dc2626 !important;
+  background: var(--danger, #dc2626) !important;
   color: #ffffff !important;
   transform: scale(1.05);
   filter: brightness(1.1);
@@ -178,10 +165,10 @@
 
 [data-theme-mode="dark"] .urm-modal-close-btn,
 [data-theme="dark"] .urm-modal-close-btn {
-  background: rgba(239, 68, 68, 0.22) !important;
-  color: #fca5a5 !important;
-  border-color: rgba(239, 68, 68, 0.45) !important;
-  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25) !important;
+  background: color-mix(in srgb, var(--danger, #dc2626) 22%, transparent) !important;
+  color: var(--danger, #dc2626) !important;
+  border-color: color-mix(in srgb, var(--danger, #dc2626) 45%, transparent) !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 25%, transparent) !important;
 }
 
 .urm-modal-body {
@@ -199,16 +186,6 @@
   gap: 16px 20px;
 }
 
-.urm-modal-card .tf-outline {
-  background: var(--brand-field-fill, rgba(0, 0, 0, 0.25));
-  border-color: var(--border-light, rgba(255, 255, 255, 0.15));
-}
-
-.urm-modal-card .tf-select option {
-  background: var(--bg-card, #1e293b);
-  color: var(--text-main, #ffffff);
-}
-
 .urm-modal-footer {
   padding: 16px 24px 20px 24px;
   border-top: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
@@ -223,9 +200,9 @@
 .urm-btn-cancel {
   padding: 8px 22px;
   border-radius: var(--btn-radius, 20px);
-  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.2));
-  background: rgba(0, 0, 0, 0.25);
-  color: #ffffff;
+  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent);
+  background: color-mix(in srgb, var(--danger, #dc2626) 14%, transparent);
+  color: var(--danger, #dc2626);
   font-family: var(--app-font-family, inherit);
   font-weight: 700;
   font-size: 13px;
@@ -239,8 +216,9 @@
 }
 
 .urm-btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: var(--danger, #dc2626);
+  color: #ffffff;
+  border-color: var(--danger, #dc2626);
 }
 
 .urm-btn-save {
@@ -249,7 +227,7 @@
   border: none;
   background: var(--btn-color, var(--primary, #22c55e));
   color: var(--btn-text, #0f172a);
-  box-shadow: 0 4px 14px color-mix(in srgb, var(--btn-color, var(--primary, #22c55e)) 40%, transparent);
+  box-shadow: 0 4px 14px var(--accent-glow, color-mix(in srgb, var(--btn-color, var(--primary, #22c55e)) 40%, transparent));
   font-family: var(--app-font-family, inherit);
   font-weight: 700;
   font-size: 13px;
@@ -265,12 +243,59 @@
 .urm-btn-save:hover:not(:disabled) {
   filter: brightness(1.08);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px color-mix(in srgb, var(--btn-color, var(--primary, #22c55e)) 55%, transparent);
+  box-shadow: 0 6px 18px var(--accent-glow, color-mix(in srgb, var(--btn-color, var(--primary, #22c55e)) 55%, transparent));
 }
 
 .urm-btn-save:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Unsaved-changes prompt — same recipe as Global Settings' .gs-confirm */
+.urm-confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 12, 18, 0.35);
+  border-radius: inherit;
+}
+
+.urm-confirm {
+  width: 400px;
+  max-width: calc(100% - 32px);
+  box-sizing: border-box;
+  padding: calc(var(--container-pad, 10px) * 2.4);
+  background: var(--brand-card-surface);
+  border: var(--card-border, 1px solid var(--border-light));
+  border-radius: var(--radius-xl, 18px);
+  box-shadow: var(--card-shadow), var(--card-shadow);
+  color: var(--text-main);
+  font-family: var(--app-font-family);
+}
+
+.urm-confirm-title {
+  margin: 0;
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h4-size, 20px);
+  font-weight: var(--h4-weight, 400);
+  line-height: var(--heading-lh, 1.2);
+}
+
+.urm-confirm-text {
+  margin: calc(var(--container-pad, 10px) * 1.2) 0 calc(var(--container-pad, 10px) * 2);
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: var(--app-font-weight, 400);
+  line-height: var(--app-line-height, 1.5);
+  color: var(--text-secondary);
+}
+
+.urm-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 
