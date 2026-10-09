@@ -34,6 +34,39 @@ export function getSectionFromContext(
   const normKey = (key || "").toLowerCase();
   const normLabel = (label || "").toLowerCase();
 
+  // 0. Shell surfaces (header, sidebar, dashboard, reports, account,
+  // notifications) sit outside the ported help app's page sections, so resolve
+  // them before the ported rules below.
+  const SHELL_SECTIONS: Record<string, { sectionKey: string; sectionLabel: string }> = {
+    "section-dashboard": { sectionKey: "section-dashboard", sectionLabel: "Dashboard" },
+    "section-reports": { sectionKey: "section-reports", sectionLabel: "Reports" },
+    "section-account": { sectionKey: "section-account", sectionLabel: "Account Settings" },
+    "section-notifications": { sectionKey: "section-notifications", sectionLabel: "Notifications" },
+    "section-customer": { sectionKey: "section-customer", sectionLabel: "Customer" },
+    "section-user": { sectionKey: "section-user", sectionLabel: "User" },
+    "section-theme-studio": { sectionKey: "section-theme-studio", sectionLabel: "Theme Studio" },
+    "section-workspace": { sectionKey: "section-workspace", sectionLabel: "Workspace" },
+  };
+  const shellDirect = SHELL_SECTIONS[normKey];
+  if (shellDirect) return shellDirect;
+  if (normKey.startsWith("dashboard-")) return SHELL_SECTIONS["section-dashboard"];
+  if (normKey.startsWith("reports-")) return SHELL_SECTIONS["section-reports"];
+  if (normKey.startsWith("account-")) return SHELL_SECTIONS["section-account"];
+  if (normKey.startsWith("notifications-")) return SHELL_SECTIONS["section-notifications"];
+  if (normKey.startsWith("workspace-")) return SHELL_SECTIONS["section-workspace"];
+  if (
+    normKey.startsWith("app-header") ||
+    normKey.startsWith("app-sidebar") ||
+    normKey.startsWith("app-theme") ||
+    normKey.startsWith("app-notifications") ||
+    normKey.startsWith("app-settings") ||
+    normKey.startsWith("app-profile") ||
+    normKey.startsWith("app-fullscreen") ||
+    normKey.startsWith("app-refresh")
+  ) {
+    return SHELL_SECTIONS["section-workspace"];
+  }
+
   // 1. Site Recordings
   if (
     normKey.includes("site-recordings") ||

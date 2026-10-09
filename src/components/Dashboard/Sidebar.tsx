@@ -4,11 +4,8 @@ import {
   LayoutGrid,
   Store,
   BarChart2,
-  FlaskConical,
   Palette,
-  Ticket,
   ShieldCheck,
-  Users,
   UserCheck,
   ChevronRight,
   ChevronLeft
@@ -95,15 +92,10 @@ export function Sidebar({
       setActiveItemId('overview');
     } else if (currentView === 'account') {
       setActiveItemId('account');
-    } else if (currentView === 'user') {
-      setActiveItemId('user');
-    } else if (currentView === 'tickets') {
-      setActiveItemId('tickets');
     } else if (currentView === 'customer') {
       setActiveItemId('customer');
     } else if (currentView === 'admin') {
-      setActiveItemId('admin');    } else if (currentView === 'testing-reports') {
-      setActiveItemId('testing-reports');
+      setActiveItemId('admin');
     } else {
       setActiveItemId(null);
     }
@@ -356,34 +348,6 @@ export function Sidebar({
             </a>
           )}
 
-          {/* User */}
-          <a
-            href="#"
-            className={`nav-item ${activeItemId === 'user' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('user', e, 'user')}
-            onMouseEnter={(e) => handleItemMouseEnter("User", e)}
-            onMouseLeave={handleItemMouseLeave}
-          >
-            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Users size={20} className="nav-icon" color="#EC4899" />
-            </div>
-            <span className="nav-label">User</span>
-          </a>
-
-          {/* Tickets */}
-          <a
-            href="#"
-            className={`nav-item ${activeItemId === 'tickets' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('tickets', e, 'tickets')}
-            onMouseEnter={(e) => handleItemMouseEnter("Tickets", e)}
-            onMouseLeave={handleItemMouseLeave}
-          >
-            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Ticket size={20} className="nav-icon" color="#10B981" />
-            </div>
-            <span className="nav-label">Tickets</span>
-          </a>
-
           {/* Menu Item 2 */}
           <a
             href="#"
@@ -414,19 +378,6 @@ export function Sidebar({
               <BarChart2 size={20} className="nav-icon" color="#8B5CF6" />
             </div>
             <span className="nav-label">Report Builder</span>
-          </a>
-
-          <a
-            href="#"
-            className={`nav-item ${activeItemId === 'testing-reports' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('testing-reports', e, 'testing-reports')}
-            onMouseEnter={(e) => handleItemMouseEnter("Testing Reports", e)}
-            onMouseLeave={handleItemMouseLeave}
-          >
-            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <FlaskConical size={20} className="nav-icon" color="#EC4899" />
-            </div>
-            <span className="nav-label">Testing Reports</span>
           </a>
 
           {/* System section */}

@@ -13,14 +13,11 @@ import { FormView } from './FormView';
 import { ReportsPage } from './ReportsPage';
 import {
   HelpAdminView,
-  HelpUserView,
-  HelpTicketsView,
   HelpCustomerView,
 } from '../../help-app/HelpFeatureMount';
 import { mockNotifications } from '../Notifications/mockData';
 import type { NotificationItem } from '../Notifications/types';
 import { GlobalSettingsWorkspace } from '../GlobalSettings/GlobalSettingsWorkspace';
-import { HelpDashboardView } from '../../help-app/HelpFeatureMount';
 import { useThemeStore } from 'omnieye-theme-studio';
 import { parseRouteFromUrl, pushAppRoute } from '../../utils/navigation';
 import './Dashboard.css';
@@ -28,31 +25,12 @@ import './Dashboard.css';
 /**
  * The shell's Dashboard (overview) view.
  *
- * The welcome/template screen is shown only the first time. After that the view
- * is the ported Help Management "Site Recordings" dashboard (tabs + data table),
- * so the workspace opens straight onto real data.
+ * Always opens on the welcome/template intro screen. The ported Help Management
+ * "Site Recordings" dashboard (tabs + data table) is intentionally not rendered
+ * here, so refreshing keeps the intro on screen.
  */
-const WELCOME_SEEN_KEY = 'omnieye_welcome_seen';
-
 function OverviewView({ onNavigate }: { onNavigate: (view: string) => void }) {
-  const [seenWelcome] = useState(() => {
-    try {
-      return localStorage.getItem(WELCOME_SEEN_KEY) === 'true';
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(WELCOME_SEEN_KEY, 'true');
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  if (!seenWelcome) return <TemplateWelcome onNavigate={onNavigate} />;
-  return <HelpDashboardView />;
+  return <TemplateWelcome onNavigate={onNavigate} />;
 }
 
 interface DashboardProps {
@@ -478,10 +456,6 @@ export function Dashboard({
                   <ReportsPage />
                  ) : currentView === 'admin' ? (
                    <HelpAdminView />
-                 ) : currentView === 'user' ? (
-                   <HelpUserView />
-                 ) : currentView === 'tickets' ? (
-                   <HelpTicketsView />
                  ) : currentView === 'customer' ? (
                    <HelpCustomerView />
                 ) : ['operations', 'cameras', 'settings', 'components'].includes(currentView) ? (

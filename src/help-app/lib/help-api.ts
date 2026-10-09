@@ -357,5 +357,12 @@ export function toArticleShape(
   };
 }
 
+/**
+ * Help content and approvals are stored in localStorage only for now — no API
+ * or database. Flip API_ENABLED to true (and set VITE_HELP_API_TOKEN) to
+ * re-enable the API service path.
+ */
+const API_ENABLED = false;
+
 /** Whether the client is configured at all, so the UI can explain itself. */
-export const isHelpApiConfigured = Boolean(TOKEN);
+export const isHelpApiConfigured = API_ENABLED && Boolean(TOKEN);

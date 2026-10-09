@@ -91,6 +91,9 @@ export function ApprovalsManager({
   onBack?: () => void;
 }) {
   const { user } = useAuth();
+  // Authoring (add / edit) belongs to the Help Manager. The Superadmin only
+  // verifies (approve / reject); customers never reach this view.
+  const canAuthor = user?.role === "sub_admin";
   const {
     state,
     approveArticle,
@@ -449,13 +452,15 @@ export function ApprovalsManager({
               <InfoHint text="Review help articles and folders. Superadmins can inspect previews, approve to make live, or reject with feedback." />
             </div>
           </div>
-          <Button
-            size="sm"
-            className="h-8 gap-1.5 bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-xs"
-            onClick={() => requestPanelView({ type: "add" })}
-          >
-            <Plus className="size-3.5" /> Add help
-          </Button>
+          {canAuthor && (
+            <Button
+              size="sm"
+              className="h-8 gap-1.5 bg-purple-600 hover:bg-purple-700 text-white font-medium shadow-xs"
+              onClick={() => requestPanelView({ type: "add" })}
+            >
+              <Plus className="size-3.5" /> Add help
+            </Button>
+          )}
         </div>
 
         {/* Search & Filter Toolbar */}
@@ -724,13 +729,15 @@ export function ApprovalsManager({
                                   <DropdownMenuItem onClick={() => handleCopyLink(article)}>
                                     <Copy className="size-3.5 mr-2" /> Copy Hierarchy Link
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      requestPanelView({ type: "add", editId: article.id })
-                                    }
-                                  >
-                                    <Pencil className="size-3.5 mr-2" /> Edit Entry
-                                  </DropdownMenuItem>
+                                  {canAuthor && (
+                                    <DropdownMenuItem
+                                      onClick={() =>
+                                        requestPanelView({ type: "add", editId: article.id })
+                                      }
+                                    >
+                                      <Pencil className="size-3.5 mr-2" /> Edit Entry
+                                    </DropdownMenuItem>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </div>
@@ -1023,13 +1030,15 @@ export function ApprovalsManager({
                                       <DropdownMenuItem onClick={() => handleCopyLink(article)}>
                                         <Copy className="size-3.5 mr-2" /> Copy Hierarchy Link
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        onClick={() =>
-                                          requestPanelView({ type: "add", editId: article.id })
-                                        }
-                                      >
-                                        <Pencil className="size-3.5 mr-2" /> Edit Entry
-                                      </DropdownMenuItem>
+                                      {canAuthor && (
+                                        <DropdownMenuItem
+                                          onClick={() =>
+                                            requestPanelView({ type: "add", editId: article.id })
+                                          }
+                                        >
+                                          <Pencil className="size-3.5 mr-2" /> Edit Entry
+                                        </DropdownMenuItem>
+                                      )}
                                       <DropdownMenuItem
                                         onClick={() => {
                                           archiveArticle(article.id);

@@ -180,7 +180,9 @@ export function HelpAdminRightClickModal() {
   const { user } = useAuth();
   const { state: hmsState, context, contextKey, addArticle, updateArticle, setContext } = useHmsStore();
 
-  const isHelpAdmin = user?.role === "sub_admin" || user?.role === "admin";
+  // Only the Help Manager (sub_admin) authors help by right-clicking. The
+  // Superadmin verifies it (see ApprovalsManager) rather than creating it.
+  const isHelpAdmin = user?.role === "sub_admin";
 
   const [visible, setVisible] = useState(false);
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -1087,7 +1089,7 @@ export function HelpAdminRightClickModal() {
       modified: "Just now",
       size: formatFileSize(file.size),
       contentUrl: contentUrl || SAMPLE_MEDIA[kind] || SAMPLE_MEDIA.image,
-      approvalStatus: user?.role === "admin" ? "approved" : "pending",
+      approvalStatus: "pending",
     };
 
     const mappedType: ContentType =
@@ -1112,12 +1114,12 @@ export function HelpAdminRightClickModal() {
       relatedContext: meta.relatedContext,
       contexts: meta.contexts || [meta.contextKey],
       hierarchy: meta.hierarchy,
-      approvalStatus: user?.role === "admin" ? "approved" : "pending",
+      approvalStatus: "pending",
       archiveStatus: "active",
-      authorId: user?.id || (user?.role === "admin" ? "admin" : "sub_admin"),
+      authorId: user?.id || "sub_admin",
       authorName: newNode.owner,
-      approvedBy: user?.role === "admin" ? user?.name || "Jordan Admin" : null,
-      approvedAt: user?.role === "admin" ? new Date().toISOString() : null,
+      approvedBy: null,
+      approvedAt: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       tags: ["help-admin", kind],
@@ -1159,8 +1161,7 @@ export function HelpAdminRightClickModal() {
     // Guard against a double submit while the first request is in flight.
     if (isCreatingFolder) return;
 
-    const isSuperadmin = user?.role === "admin";
-    const initialStatus = isSuperadmin ? "approved" : "pending";
+    const initialStatus = "pending";
 
     const findNodeById = (list: HelpAdminNode[], id: string): HelpAdminNode | null => {
       for (const item of list) {
@@ -1237,7 +1238,7 @@ export function HelpAdminRightClickModal() {
       parentId: targetParentId,
       section: nodeSection,
       sectionKey: nodeSectionKey,
-      owner: user?.name || (isSuperadmin ? "Superadmin" : "Help Admin"),
+      owner: user?.name || "Help Admin",
       modified: "Just now",
       description: itemDescription.trim(),
       approvalStatus: initialStatus,
@@ -1264,10 +1265,10 @@ export function HelpAdminRightClickModal() {
       hierarchy: meta.hierarchy,
       approvalStatus: initialStatus,
       archiveStatus: "active",
-      authorId: user?.id || (isSuperadmin ? "admin" : "sub_admin"),
+      authorId: user?.id || "sub_admin",
       authorName: newNode.owner,
-      approvedBy: isSuperadmin ? user?.name || "Jordan Admin" : null,
-      approvedAt: isSuperadmin ? new Date().toISOString() : null,
+      approvedBy: null,
+      approvedAt: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       tags: ["folder", "help-admin"],
@@ -1300,11 +1301,7 @@ export function HelpAdminRightClickModal() {
       setExpandedIds((prev) => new Set(prev).add(targetParentId));
     }
 
-    toast.success(
-      isSuperadmin
-        ? `Created folder "${newNode.name}" (Approved)`
-        : `Created folder "${newNode.name}" — Submitted to Superadmin for review`
-    );
+    toast.success(`Created folder "${newNode.name}" — submitted to the Superadmin for review`);
     setItemName("");
     setItemDescription("");
     setAddDialogOpen(false);

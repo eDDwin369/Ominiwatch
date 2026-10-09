@@ -1175,8 +1175,10 @@ export function HmsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (pathname.startsWith("/login") || !user) return;
     return initHmsRightClickHandler((key, label, e) => {
-      // If Admin / Super Admin or Help Admin role is active, dedicated HelpAdminRightClickModal handles the right-click UI
-      if (role === "admin" || role === "help-admin") {
+      // The Help Manager's right-click is owned by HelpAdminRightClickModal
+      // (the authoring UI). Everyone else — Superadmin and Customer — views the
+      // approved help for the clicked element in the panel.
+      if (role === "help-admin") {
         setOverride({ key, label });
         return;
       }

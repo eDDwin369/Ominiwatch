@@ -21,6 +21,13 @@ export const SECTION_LABELS: Record<string, string> = {
   "section-admin-content": "Approvals",
   "section-admin-coverage": "Areas Without Help",
   "section-workspace": "Workspace",
+  "section-dashboard": "Dashboard",
+  "section-reports": "Reports",
+  "section-account": "Account Settings",
+  "section-notifications": "Notifications",
+  "section-customer": "Customer",
+  "section-user": "User",
+  "section-theme-studio": "Theme Studio",
 };
 
 export const CONTEXT_LABELS: Record<string, string> = {
@@ -95,6 +102,15 @@ export const CONTEXT_LABELS: Record<string, string> = {
   "app-theme-toggle": "Workspace › Theme Toggle",
   "app-support": "Workspace › Contact Support",
   "app-tickets-button": "Workspace › My Tickets",
+
+  // Shell screens
+  "dashboard-welcome-card": "Dashboard › Welcome Card",
+  "dashboard-setup-steps": "Dashboard › Setup Steps",
+  "dashboard-video-player": "Dashboard › Video Player",
+  "reports-builder": "Reports › Report Builder",
+  "reports-filters": "Reports › Filters",
+  "account-profile": "Account Settings › Profile",
+  "notifications-list": "Notifications › Notifications List",
 
   // Tickets
   "tickets-search": "My Tickets › Search Bar",
@@ -220,13 +236,52 @@ export function labelForContext(key: string): string {
   return CONTEXT_LABELS[key] ?? key;
 }
 
+/** The host app routes on the hash (`#/dashboard/<view>`), not the path. */
+function currentRoutePath(): string {
+  if (typeof window === "undefined") return "/";
+  const hash = window.location.hash || "";
+  const clean = hash.replace(/^#!?/, "").split("?")[0];
+  if (clean) return clean.startsWith("/") ? clean : `/${clean}`;
+  return window.location.pathname || "/";
+}
+
 /** Section shown when no in-page section has registered itself yet. */
 export function detectPageContext(pathname?: string): { context: string; label: string } {
-  const path = pathname ?? (typeof window !== "undefined" ? window.location.pathname : "/");
+  const path = pathname ?? currentRoutePath();
   const make = (context: string) => ({ context, label: labelForContext(context) });
+
   if (path.startsWith("/tickets")) return make("section-tickets");
   if (path.startsWith("/admin")) return make("section-admin-overview");
-  if (path.startsWith("/dashboard")) return make("section-site-recordings");
+
+  if (path.startsWith("/dashboard")) {
+    // `#/dashboard/<view>` — resolve the view so each shell screen gets its own
+    // title instead of everything collapsing to one section.
+    const view = path.split("/")[2] ?? "";
+    switch (view) {
+      case "":
+      case "overview":
+        return make("section-dashboard");
+      case "reports":
+        return make("section-reports");
+      case "account":
+        return make("section-account");
+      case "notifications":
+        return make("section-notifications");
+      case "admin":
+        return make("section-admin-overview");
+      case "user":
+        return make("section-user");
+      case "tickets":
+        return make("section-tickets");
+      case "customer":
+        return make("section-customer");
+      case "theme-studio":
+        return make("section-theme-studio");
+      default:
+        return make("section-dashboard");
+    }
+  }
+
   return make("section-workspace");
 }
 

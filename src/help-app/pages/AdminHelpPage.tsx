@@ -756,6 +756,8 @@ const PAGE_SIZE = 8;
 
 function ContentLibraryTab({ canApprove }: { canApprove: boolean }) {
   const { user } = useAuth();
+  // Only the Help Manager authors content; the Superadmin only approves/rejects.
+  const canAuthor = user?.role === "sub_admin";
   const {
     state,
     approveArticle,
@@ -801,9 +803,11 @@ function ContentLibraryTab({ canApprove }: { canApprove: boolean }) {
           <div className="font-semibold text-sm">{user?.role === "sub_admin" ? "My Approvals" : "Approvals"}</div>
           <p className="text-xs text-muted-foreground">Every help article across the system</p>
         </div>
-        <Button size="sm" className="h-8 gap-1.5" onClick={() => requestPanelView({ type: "add" })}>
-          <Plus className="size-3.5" /> Add help
-        </Button>
+        {canAuthor && (
+          <Button size="sm" className="h-8 gap-1.5" onClick={() => requestPanelView({ type: "add" })}>
+            <Plus className="size-3.5" /> Add help
+          </Button>
+        )}
       </div>
       <SectionToolbar
         searchContext="admin-content-search"
@@ -901,15 +905,17 @@ function ContentLibraryTab({ canApprove }: { canApprove: boolean }) {
                       >
                         <Eye className="size-3.5" />
                       </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="size-7"
-                        aria-label="Edit"
-                        onClick={() => requestPanelView({ type: "add", editId: a.id })}
-                      >
-                        <Pencil className="size-3.5" />
-                      </Button>
+                      {canAuthor && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-7"
+                          aria-label="Edit"
+                          onClick={() => requestPanelView({ type: "add", editId: a.id })}
+                        >
+                          <Pencil className="size-3.5" />
+                        </Button>
+                      )}
                       {canApprove && (
                         <>
                           {a.approvalStatus !== "approved" && (
@@ -1024,7 +1030,7 @@ const SECTION_IMAGE: Record<string, string> = {
 };
 
 function CoverageTab() {
-  const { state, setContext, requestPanelView } = useHmsStore();
+  const { state, role, setContext, requestPanelView } = useHmsStore();
 
   const groups = useMemo(() => {
     const bySection: Record<string, { key: string; label: string; count: number }[]> = {};
@@ -1114,15 +1120,17 @@ function CoverageTab() {
                         {i.label.split(" › ")[1] ?? i.label}
                       </span>
                       {i.count === 0 ? (
-                        <button
-                          className="shrink-0 text-destructive underline"
-                          onClick={() => {
-                            setContext(i.key);
-                            requestPanelView({ type: "add" });
-                          }}
-                        >
-                          Add help
-                        </button>
+                        role === "help-admin" ? (
+                          <button
+                            className="shrink-0 text-destructive underline"
+                            onClick={() => {
+                              setContext(i.key);
+                              requestPanelView({ type: "add" });
+                            }}
+                          >
+                            Add help
+                          </button>
+                        ) : null
                       ) : (
                         <Badge variant="outline" className="text-[10px] shrink-0">
                           {i.count}

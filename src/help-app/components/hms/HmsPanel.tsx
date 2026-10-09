@@ -520,7 +520,7 @@ function Header({
           className="w-7 h-7 object-contain rounded-lg"
         />
         <span className="truncate text-sm font-bold text-white font-['DM_Sans',sans-serif]">
-          {crumb.split(" › ")[0] || "Site Recordings"}
+          {crumb.split(" › ")[0] || "Help"}
         </span>
       </div>
 
@@ -2956,7 +2956,7 @@ function RequestDetailView({
       </div>
       <BtnRow>
         <BackBtn onClick={onBack} />
-        {role !== "customer" && (
+        {role === "help-admin" && (
           <PrimaryBtn onClick={onCreateHelp}>
             <Upload style={{ width: 12, height: 12 }} /> Create help
           </PrimaryBtn>
@@ -3778,7 +3778,7 @@ export function HmsPanel() {
         />
       )}
 
-      {view.name === "add" && (
+      {view.name === "add" && role === "help-admin" && (
         <AddHelpView
           editId={view.editId}
           prefill={view.prefill}
