@@ -89,7 +89,7 @@ export function NotificationsPage({
   const hasNotifications = filteredNotifications.length > 0;
 
   return (
-    <div className="notifications-page-container dashboard-fade-in" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+    <div className="notifications-page-container dashboard-fade-in" data-hms-context="notifications-list" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
       <div 
         className="tw-parent-card" 
         style={{ 

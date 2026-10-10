@@ -5,6 +5,7 @@ import './index.css';
 import logo from './assets/logo.png';
 import loginBg from './assets/login-bg.jpg';
 import { Dashboard } from './components/Dashboard/Dashboard';
+import { HelpFeatureMount } from './help-app/HelpFeatureMount';
 import { useThemeStore } from 'omnieye-theme-studio';
 import { 
   type Screen, 
@@ -14,7 +15,8 @@ import {
   getSessionEmail, 
   parseRouteFromUrl, 
   pushAppRoute, 
-  replaceAppRoute 
+  replaceAppRoute,
+  roleFromEmail
 } from './utils/navigation';
 
 function App() {
@@ -230,7 +232,7 @@ function App() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setSession(true, email);
+      setSession(true, email, roleFromEmail(email));
       const targetRoute: AppRouteState = { screen: 'dashboard', view: 'overview' };
       replaceAppRoute(targetRoute);
       setCurrentScreen('dashboard');
@@ -378,23 +380,27 @@ function App() {
 
   if (currentScreen === 'dashboard') {
     return (
-      <Dashboard 
-        onLogout={handleLogout} 
-        sidebarLocked={sidebarLocked}
-        setSidebarLocked={handleSetSidebarLocked}
-        sidebarCollapsed={sidebarCollapsed}
-        setSidebarCollapsed={handleSetSidebarCollapsed}
-        sidebarVisible={sidebarVisible}
-        setSidebarVisible={setSidebarVisible}
-        sidebarAutoHide={sidebarAutoHide}
-        setSidebarAutoHide={handleSetSidebarAutoHide}
-        sidebarExpandedWidth={sidebarExpandedWidth}
-        setSidebarExpandedWidth={handleSetSidebarExpandedWidth}
-        sidebarCollapsedWidth={sidebarCollapsedWidth}
-        setSidebarCollapsedWidth={handleSetSidebarCollapsedWidth}
-        sidebarShowIcons={sidebarShowIcons}
-        setSidebarShowIcons={handleSetSidebarShowIcons}
-      />
+      <>
+        <div id="help-portal-root" className="help-scope" />
+        <Dashboard 
+          onLogout={handleLogout} 
+          sidebarLocked={sidebarLocked}
+          setSidebarLocked={handleSetSidebarLocked}
+          sidebarCollapsed={sidebarCollapsed}
+          setSidebarCollapsed={handleSetSidebarCollapsed}
+          sidebarVisible={sidebarVisible}
+          setSidebarVisible={setSidebarVisible}
+          sidebarAutoHide={sidebarAutoHide}
+          setSidebarAutoHide={handleSetSidebarAutoHide}
+          sidebarExpandedWidth={sidebarExpandedWidth}
+          setSidebarExpandedWidth={handleSetSidebarExpandedWidth}
+          sidebarCollapsedWidth={sidebarCollapsedWidth}
+          setSidebarCollapsedWidth={handleSetSidebarCollapsedWidth}
+          sidebarShowIcons={sidebarShowIcons}
+          setSidebarShowIcons={handleSetSidebarShowIcons}
+        />
+        <HelpFeatureMount />
+      </>
     );
   }
 

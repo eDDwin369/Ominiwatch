@@ -11,12 +11,27 @@ import { PlaceholderView } from './PlaceholderView';
 import { PreviewLogin } from './PreviewLogin';
 import { FormView } from './FormView';
 import { ReportsPage } from './ReportsPage';
+import {
+  HelpAdminView,
+  HelpCustomerView,
+} from '../../help-app/HelpFeatureMount';
 import { mockNotifications } from '../Notifications/mockData';
 import type { NotificationItem } from '../Notifications/types';
 import { GlobalSettingsWorkspace } from '../GlobalSettings/GlobalSettingsWorkspace';
 import { useThemeStore } from 'omnieye-theme-studio';
 import { parseRouteFromUrl, pushAppRoute } from '../../utils/navigation';
 import './Dashboard.css';
+
+/**
+ * The shell's Dashboard (overview) view.
+ *
+ * Always opens on the welcome/template intro screen. The ported Help Management
+ * "Site Recordings" dashboard (tabs + data table) is intentionally not rendered
+ * here, so refreshing keeps the intro on screen.
+ */
+function OverviewView({ onNavigate }: { onNavigate: (view: string) => void }) {
+  return <TemplateWelcome onNavigate={onNavigate} />;
+}
 
 interface DashboardProps {
   onLogout?: () => void;
@@ -415,7 +430,7 @@ export function Dashboard({
             ) : (
               <div className={`dashboard-container`}>
                 {currentView === 'overview' ? (
-                  <TemplateWelcome onNavigate={handleSetCurrentView} />
+                  <OverviewView onNavigate={handleSetCurrentView} />
                 ) : currentView === 'notifications' ? (
                   <NotificationsPage 
                     notifications={notifications}
@@ -439,6 +454,10 @@ export function Dashboard({
                   <FormView />
                 ) : currentView === 'reports' ? (
                   <ReportsPage />
+                 ) : currentView === 'admin' ? (
+                   <HelpAdminView />
+                 ) : currentView === 'customer' ? (
+                   <HelpCustomerView />
                 ) : ['operations', 'cameras', 'settings', 'components'].includes(currentView) ? (
                   <PlaceholderView title={currentView.charAt(0).toUpperCase() + currentView.slice(1)} />
                 ) : (

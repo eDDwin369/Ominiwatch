@@ -324,7 +324,7 @@ export function TemplateWelcome({
           <div className="particle-orb orb-8" />
         </div>
 
-        <div className="v2-ice-card">
+        <div className="v2-ice-card" data-hms-context="dashboard-welcome-card">
           <div className="v6-ventures-body">
             {/* Left Column: Venture Titles */}
             <div className="v6-ventures-left">
@@ -335,7 +335,7 @@ export function TemplateWelcome({
 
               {/* Step highlights list below */}
               {/* Step highlights list below */}
-              <div className="v6-highlight-list">
+              <div className="v6-highlight-list" data-hms-context="dashboard-setup-steps">
                 {venturesData.map((venture, idx) => (
                   <div
                     key={venture.id}
@@ -361,6 +361,7 @@ export function TemplateWelcome({
                 {/* Rectangular Video Frame */}
                 <div 
                   className="v5-video-screen"
+                  data-hms-context="dashboard-video-player"
                   onClick={() => setIsPlayingVideo(!isPlayingVideo)}
                   title="Click to play / pause video"
                 >
