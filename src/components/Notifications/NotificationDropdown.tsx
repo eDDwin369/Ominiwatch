@@ -277,6 +277,8 @@ export function NotificationDropdown(props: NotificationDropdownProps) {
       <div 
         key={item.id} 
         className={`new-notification-item-row ${!item.isRead ? 'unread' : ''}`}
+        data-hms-label="Notification"
+        data-hms-type="List item"
         onClick={(e) => {
           // Keep row clicks from reaching the container-level handler
           // (which closes the detail box), so a row can open/switch it.

@@ -28,6 +28,7 @@ import {
   DialogTitle,
 } from "@help/components/ui/dialog";
 import {
+  ClipboardCheck,
   Archive,
   Check,
   ChevronDown,
@@ -447,8 +448,9 @@ export function ApprovalsManager({
                 <ArrowLeft className="size-3.5" /> Back to Dashboard
               </Button>
             )}
-            <div className="flex items-center gap-1.5 font-semibold text-base text-foreground">
-              <span className="hms-title">{user?.role === "sub_admin" ? "My Approvals" : "Approvals & Review"}</span>
+            <div className="page-title-group">
+              <span className="page-title-icon" aria-hidden="true"><ClipboardCheck size={20} /></span>
+              <h1 className="hms-page-title brand-gradient-text">{user?.role === "sub_admin" ? "My Approvals" : "Approvals & Review"}</h1>
               <InfoHint text="Review help articles and folders. Superadmins can inspect previews, approve to make live, or reject with feedback." />
             </div>
           </div>
@@ -521,7 +523,7 @@ export function ApprovalsManager({
               ) : (
                 <Layers className="size-4 text-purple-600 dark:text-purple-400" />
               )}
-              <span className="hms-title font-semibold text-foreground text-xs uppercase tracking-wider">
+              <span className="hms-card-title brand-gradient-text">
                 {viewLayout === "queue" ? "Pending Approval Requests" : "UI Hierarchy Report"}
               </span>
               <Badge variant="secondary" className="text-[11px] font-normal ml-1">

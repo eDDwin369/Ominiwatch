@@ -14,6 +14,8 @@ export interface AppRouteState {
 const AUTH_KEY = 'omnieye_auth_session';
 const AUTH_EMAIL_KEY = 'omnieye_auth_email';
 const AUTH_ROLE_KEY = 'omnieye_auth_role';
+/** Set at login; the dashboard plays the "Welcome to OomniEye" intro once and clears it. */
+export const INTRO_PENDING_KEY = 'omnieye_intro_pending';
 
 /**
  * Check whether an active user session exists in sessionStorage.
@@ -61,8 +63,8 @@ export function getSessionEmail(): string {
 }
 
 /**
- * Retrieve the saved session role. Defaults to `admin` so the built-in mock
- * login (which has no role picker) still shows the full navigation.
+ * Retrieve the saved session role. Every login stores one; a missing or unknown value
+ * falls back to the least-privileged role.
  */
 export function getSessionRole(): AppRole {
   try {
@@ -73,21 +75,25 @@ export function getSessionRole(): AppRole {
   } catch {
     // ignore
   }
-  return 'admin';
+  return 'customer';
 }
 
 /**
- * Best-effort role for the mock login, so each sidebar variant can be reached
- * by choice of email: `customer@…` → customer, `subadmin@…`/`help@…` →
- * sub_admin, anything else → admin. Mirrors the Help Management demo accounts.
+ * The only accounts that can sign in: the three Help Management roles.
+ * Customer sees the app + right-click help; Help Admin creates help and sends it for approval;
+ * Superadmin approves / rejects and controls which help is shown.
+ * (Front-end only until the app has a real identity provider.)
  */
-export function roleFromEmail(email: string): AppRole {
-  const value = email.toLowerCase();
-  if (value.includes('customer')) return 'customer';
-  if (value.includes('subadmin') || value.includes('sub-admin') || value.includes('help')) {
-    return 'sub_admin';
-  }
-  return 'admin';
+const LOGIN_ACCOUNTS: { email: string; password: string; role: AppRole }[] = [
+  { email: 'customer@oomnieye.com', password: 'Customer@123', role: 'customer' },
+  { email: 'subadmin@oomnieye.com', password: 'SubAdmin@123', role: 'sub_admin' },
+  { email: 'admin@oomnieye.com', password: 'Admin@123', role: 'admin' },
+];
+
+/** The role for a valid email + password, or null when the credentials don't match an account. */
+export function authenticate(email: string, password: string): AppRole | null {
+  const account = LOGIN_ACCOUNTS.find((a) => a.email === email.trim().toLowerCase());
+  return account && account.password === password ? account.role : null;
 }
 
 /**

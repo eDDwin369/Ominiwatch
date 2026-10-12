@@ -252,8 +252,16 @@ function syncCssVars(theme: any, settings: any) {
     'indigo-violet': { bg: '#120a2b', border: '#2c1e57' },
   };
   const sidebarPreset = isDark ? figmaSidebarDark[settings.presetId] : undefined;
-  set('--dash-sidebar-bg', settings.mode === 'dark' ? sidebarPreset?.bg || darkSidebar : '#ffffff');
-  set('--dash-sidebar-border', sidebarPreset?.border || (isDark ? 'rgba(255, 255, 255, 0.08)' : '#e2e8f0'));
+  const darkSidebarBase = sidebarPreset?.bg || darkSidebar;
+
+  // Subtle 10% gradient for sidebar matching the main background palette & direction (180deg vertical)
+  const sidebarGradientLight = `linear-gradient(180deg, color-mix(in srgb, ${primaryHex} 8%, #ffffff) 0%, color-mix(in srgb, ${primaryHex} 3%, #ffffff) 45%, #ffffff 100%)`;
+  const sidebarGradientDark = `linear-gradient(180deg, color-mix(in srgb, ${primaryHex} 10%, ${darkSidebarBase}) 0%, ${darkSidebarBase} 45%, color-mix(in srgb, #000000 30%, ${darkSidebarBase}) 100%)`;
+
+  set('--dash-sidebar-bg-light', sidebarGradientLight);
+  set('--dash-sidebar-bg-dark', sidebarGradientDark);
+  set('--dash-sidebar-bg', isDark ? sidebarGradientDark : sidebarGradientLight);
+  set('--dash-sidebar-border', sidebarPreset?.border || (isDark ? 'rgba(255, 255, 255, 0.08)' : '#dde2f0'));
   // Hero video-card fill — differs per colour template in Figma (not theme-neutral #080a09).
   const figmaVideoBg: Record<string, string> = {
     corporate: '#0b1024',

@@ -1,3 +1,4 @@
+import { flashHelpTarget, resolveHelpTarget } from "@help/lib/help-target";
 /**
  * HMS context registry.
  *
@@ -298,18 +299,10 @@ export function initHmsRightClickHandler(
 
     e.preventDefault(); // suppress the browser context menu
 
-    while (el && el !== document.body) {
-      const ctx = el.getAttribute?.("data-hms-context");
-      if (ctx) {
-        const lbl = el.getAttribute("data-hms-label") ?? labelForContext(ctx);
-        onContextDetected(ctx, lbl, e);
-        return;
-      }
-      el = el.parentElement;
-    }
-
-    const page = detectPageContext();
-    onContextDetected(page.context, page.label, e);
+    // The exact element right-clicked (button, dropdown, field, card, page…), see help-target.ts
+    const target = resolveHelpTarget(el);
+    flashHelpTarget(target.element);
+    onContextDetected(target.key, target.label, e);
   };
 
   document.addEventListener("contextmenu", handler);

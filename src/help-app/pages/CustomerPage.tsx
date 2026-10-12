@@ -1,4 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
+import { UserCheck } from "lucide-react";
 import { useEffect } from "react";
 import { useAuth } from "@help/lib/auth-context";
 import { ModernUserDashboard } from "@help/components/admin/ModernUserDashboard";
@@ -27,6 +28,8 @@ export function CustomerPage() {
         <h1 className="sr-only">Customer Dashboard</h1>
         <div className="flex-1 min-h-0 overflow-hidden">
           <ModernUserDashboard
+            title="Customer"
+            icon={<UserCheck size={20} />}
             onOpenReview={() => {
               navigate({ to: "/admin", search: { tab: "content" } });
             }}

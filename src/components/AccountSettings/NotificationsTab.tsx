@@ -92,7 +92,7 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isEmailExpanded ? 'none' : '1px solid var(--bg-dashboard)',
+            borderBottom: isEmailExpanded ? 'none' : '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -146,7 +146,7 @@ export function NotificationsTab() {
             paddingTop: isEmailExpanded ? '10px' : '0px',
             paddingBottom: isEmailExpanded ? '20px' : '0px',
             backgroundColor: 'var(--bg-card)',
-            borderBottom: isEmailExpanded ? '1px solid var(--bg-dashboard)' : '0px solid transparent',
+            borderBottom: isEmailExpanded ? '1px solid var(--border-light)' : '0px solid transparent',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -213,7 +213,7 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: isInAppExpanded ? 'none' : '1px solid var(--bg-dashboard)',
+            borderBottom: isInAppExpanded ? 'none' : '1px solid var(--border-light)',
             cursor: 'pointer',
             transition: 'background-color 0.05s ease'
           }}
@@ -267,7 +267,7 @@ export function NotificationsTab() {
             paddingTop: isInAppExpanded ? '10px' : '0px',
             paddingBottom: isInAppExpanded ? '20px' : '0px',
             backgroundColor: 'var(--bg-card)',
-            borderBottom: isInAppExpanded ? '1px solid var(--bg-dashboard)' : '1px solid var(--bg-dashboard)',
+            borderBottom: isInAppExpanded ? '1px solid var(--border-light)' : '1px solid var(--border-light)',
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -317,7 +317,7 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid var(--bg-dashboard)',
+            borderBottom: '1px solid var(--border-light)',
             backgroundColor: 'var(--bg-card)'
           }}
         >
@@ -368,7 +368,7 @@ export function NotificationsTab() {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '20px 24px',
-            borderBottom: '1px solid var(--bg-dashboard)',
+            borderBottom: '1px solid var(--border-light)',
             backgroundColor: 'var(--bg-card)'
           }}
         >

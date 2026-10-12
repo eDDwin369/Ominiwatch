@@ -1969,7 +1969,8 @@ h2.brand-gradient-text,
   border-color: color-mix(in srgb, var(--danger) 55%, transparent) !important;
 }
 
-.shell-btn-icon[data-tip]::after {
+.shell-btn-icon[data-tip]::after,
+.as-tip[data-tip]::after {
   content: attr(data-tip);
   position: absolute;
   top: calc(100% + 8px);
@@ -1995,7 +1996,9 @@ h2.brand-gradient-text,
 }
 
 .shell-btn-icon[data-tip]:hover::after,
-.shell-btn-icon[data-tip]:focus-visible::after {
+.shell-btn-icon[data-tip]:focus-visible::after,
+.as-tip[data-tip]:hover::after,
+.as-tip[data-tip]:focus-visible::after {
   opacity: 1;
 }
 
