@@ -373,7 +373,7 @@ export function ReportsPage() {
                 <span className="page-title-icon" aria-hidden="true">
                   <UserPlus size={20} />
                 </span>
-                <h1 className="urm-modal-title brand-gradient-text">Add User Details</h1>
+                <h2 className="urm-modal-title brand-gradient-text">Add User Details</h2>
               </div>
               <button
                 type="button"
