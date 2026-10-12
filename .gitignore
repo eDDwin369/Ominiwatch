@@ -84,9 +84,7 @@ helm-charts-deploy.pub
 # Next.js build output
 .next
 out
-
-# Nuxt.js build / generate output
-.nuxt
+dist-server/
 dist
 .output
 

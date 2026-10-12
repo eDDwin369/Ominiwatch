@@ -1,5 +1,8 @@
 export type Screen = 'login' | 'forgot-password' | 'otp' | 'new-password' | 'success' | 'dashboard' | 'forgot-username';
 
+/** Roles mirrored from the Help Management app, used to gate sidebar items. */
+export type AppRole = 'admin' | 'sub_admin' | 'customer';
+
 export interface AppRouteState {
   screen: Screen;
   view?: string;
@@ -10,6 +13,9 @@ export interface AppRouteState {
 
 const AUTH_KEY = 'omnieye_auth_session';
 const AUTH_EMAIL_KEY = 'omnieye_auth_email';
+const AUTH_ROLE_KEY = 'omnieye_auth_role';
+/** Set at login; the dashboard plays the "Welcome to OomniEye" intro once and clears it. */
+export const INTRO_PENDING_KEY = 'omnieye_intro_pending';
 
 /**
  * Check whether an active user session exists in sessionStorage.
@@ -25,16 +31,20 @@ export function isAuthenticated(): boolean {
 /**
  * Set or clear the active user session in sessionStorage.
  */
-export function setSession(active: boolean, email?: string): void {
+export function setSession(active: boolean, email?: string, role?: AppRole): void {
   try {
     if (active) {
       sessionStorage.setItem(AUTH_KEY, 'true');
       if (email) {
         sessionStorage.setItem(AUTH_EMAIL_KEY, email);
       }
+      if (role) {
+        sessionStorage.setItem(AUTH_ROLE_KEY, role);
+      }
     } else {
       sessionStorage.removeItem(AUTH_KEY);
       sessionStorage.removeItem(AUTH_EMAIL_KEY);
+      sessionStorage.removeItem(AUTH_ROLE_KEY);
     }
   } catch {
     // sessionStorage not available or quota exceeded
@@ -50,6 +60,40 @@ export function getSessionEmail(): string {
   } catch {
     return '';
   }
+}
+
+/**
+ * Retrieve the saved session role. Every login stores one; a missing or unknown value
+ * falls back to the least-privileged role.
+ */
+export function getSessionRole(): AppRole {
+  try {
+    const role = sessionStorage.getItem(AUTH_ROLE_KEY);
+    if (role === 'admin' || role === 'sub_admin' || role === 'customer') {
+      return role;
+    }
+  } catch {
+    // ignore
+  }
+  return 'customer';
+}
+
+/**
+ * The only accounts that can sign in: the three Help Management roles.
+ * Customer sees the app + right-click help; Help Admin creates help and sends it for approval;
+ * Superadmin approves / rejects and controls which help is shown.
+ * (Front-end only until the app has a real identity provider.)
+ */
+const LOGIN_ACCOUNTS: { email: string; password: string; role: AppRole }[] = [
+  { email: 'customer@oomnieye.com', password: 'Customer@123', role: 'customer' },
+  { email: 'subadmin@oomnieye.com', password: 'SubAdmin@123', role: 'sub_admin' },
+  { email: 'admin@oomnieye.com', password: 'Admin@123', role: 'admin' },
+];
+
+/** The role for a valid email + password, or null when the credentials don't match an account. */
+export function authenticate(email: string, password: string): AppRole | null {
+  const account = LOGIN_ACCOUNTS.find((a) => a.email === email.trim().toLowerCase());
+  return account && account.password === password ? account.role : null;
 }
 
 /**

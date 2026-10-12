@@ -1507,7 +1507,8 @@ h2.brand-gradient-text,
 /* ── Typography: every shell text follows Theme Studio's tokens ──
    Emphasis weights are derived from the body weight, so bold/medium text keeps its
    hierarchy and still moves with the studio's font-weight setting. */
-:root {
+/* :root:root — beats the identically named tokens in the help feature's Tailwind theme */
+:root:root {
   --font-weight-medium: min(900, calc(var(--app-font-weight, 400) + 100));
   --font-weight-strong: min(900, calc(var(--app-font-weight, 400) + 200));
   /* Corner radius unit: 1px at the studio's design radius (9), scales with its radius setting.
@@ -1968,7 +1969,8 @@ h2.brand-gradient-text,
   border-color: color-mix(in srgb, var(--danger) 55%, transparent) !important;
 }
 
-.shell-btn-icon[data-tip]::after {
+.shell-btn-icon[data-tip]::after,
+.as-tip[data-tip]::after {
   content: attr(data-tip);
   position: absolute;
   top: calc(100% + 8px);
@@ -1994,7 +1996,9 @@ h2.brand-gradient-text,
 }
 
 .shell-btn-icon[data-tip]:hover::after,
-.shell-btn-icon[data-tip]:focus-visible::after {
+.shell-btn-icon[data-tip]:focus-visible::after,
+.as-tip[data-tip]:hover::after,
+.as-tip[data-tip]:focus-visible::after {
   opacity: 1;
 }
 

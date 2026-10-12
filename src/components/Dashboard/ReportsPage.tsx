@@ -331,6 +331,7 @@ export function ReportsPage() {
     <div 
       ref={gridContainerRef}
       className="user-tab-page"
+      data-hms-context="reports-builder"
       style={{
         height: '100%',
         display: 'flex',

@@ -147,6 +147,7 @@ export function Header({
   return (
     <header 
       className={`dash-header ${isEditing ? 'editing-focus' : ''}`}
+      data-hms-context="app-header"
       style={{
         background: (headerConfig?.headerBgColor && headerConfig.headerBgColor !== 'transparent')
           ? headerConfig.headerBgColor
@@ -241,6 +242,7 @@ export function Header({
       <div className="header-right">
         <button
           className="header-icon-btn"
+          data-hms-context="app-theme-toggle"
           title={brand.mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           onClick={() => set({ mode: brand.mode === 'dark' ? 'light' : 'dark' })}
         >
@@ -249,6 +251,7 @@ export function Header({
 
         <button
           className="header-icon-btn"
+          data-hms-context="app-fullscreen"
           title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Mode"}
           onClick={toggleFullscreen}
         >
@@ -258,6 +261,7 @@ export function Header({
         <button 
           className={`header-icon-btn ${settingsOpen ? 'active' : ''}`}
           aria-pressed={settingsOpen}
+          data-hms-context="app-settings"
           title="Global Settings" 
           onClick={(e) => {
             e.stopPropagation();
@@ -273,6 +277,7 @@ export function Header({
           <button
             className={`header-icon-btn ${showNotifications ? 'active' : ''}`}
             aria-pressed={showNotifications}
+            data-hms-context="app-notifications"
             title="Notifications"
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {
@@ -306,6 +311,7 @@ export function Header({
         <div className="header-profile-wrapper" style={{ position: 'relative', display: 'flex', alignItems: 'center', marginLeft: '12px', zIndex: 1000 }}>
           <div
             className={`header-avatar-btn ${showProfileMenu ? 'active' : ''}`}
+            data-hms-context="app-profile"
             title={showProfileMenu ? undefined : "Account"}
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => {

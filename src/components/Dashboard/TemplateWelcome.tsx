@@ -11,6 +11,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import './Dashboard.css';
+import { INTRO_PENDING_KEY } from '../../utils/navigation';
 
 interface TemplateWelcomeProps {
   onNavigate?: (tab: string) => void;
@@ -158,7 +159,14 @@ export function TemplateWelcome({
     setShowFullIntro(false);
   };
 
+  // The intro plays once per login — not every time the user comes back to the dashboard.
+  const [playIntro] = useState(() => {
+    try { return sessionStorage.getItem(INTRO_PENDING_KEY) === '1'; } catch { return false; }
+  });
+
   useEffect(() => {
+    if (!playIntro) return;
+    try { sessionStorage.removeItem(INTRO_PENDING_KEY); } catch { /* ignore */ }
     setShowFullIntro(true);
     setIntroPhase('welcome');
     setIsIntroFadingOut(false);
@@ -184,7 +192,7 @@ export function TemplateWelcome({
       clearTimeout(timer2);
       clearTimeout(timer3);
     };
-  }, []);
+  }, [playIntro]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -324,7 +332,7 @@ export function TemplateWelcome({
           <div className="particle-orb orb-8" />
         </div>
 
-        <div className="v2-ice-card">
+        <div className="v2-ice-card" data-hms-context="dashboard-welcome-card">
           <div className="v6-ventures-body">
             {/* Left Column: Venture Titles */}
             <div className="v6-ventures-left">
@@ -335,7 +343,7 @@ export function TemplateWelcome({
 
               {/* Step highlights list below */}
               {/* Step highlights list below */}
-              <div className="v6-highlight-list">
+              <div className="v6-highlight-list" data-hms-context="dashboard-setup-steps">
                 {venturesData.map((venture, idx) => (
                   <div
                     key={venture.id}
@@ -361,6 +369,7 @@ export function TemplateWelcome({
                 {/* Rectangular Video Frame */}
                 <div 
                   className="v5-video-screen"
+                  data-hms-context="dashboard-video-player"
                   onClick={() => setIsPlayingVideo(!isPlayingVideo)}
                   title="Click to play / pause video"
                 >

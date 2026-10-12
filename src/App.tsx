@@ -5,6 +5,7 @@ import './index.css';
 import logo from './assets/logo.png';
 import loginBg from './assets/login-bg.jpg';
 import { Dashboard } from './components/Dashboard/Dashboard';
+import { HelpFeatureMount } from './help-app/HelpFeatureMount';
 import { useThemeStore } from 'omnieye-theme-studio';
 import { 
   type Screen, 
@@ -14,7 +15,9 @@ import {
   getSessionEmail, 
   parseRouteFromUrl, 
   pushAppRoute, 
-  replaceAppRoute 
+  replaceAppRoute,
+  authenticate,
+  INTRO_PENDING_KEY
 } from './utils/navigation';
 
 function App() {
@@ -183,11 +186,10 @@ function App() {
   useEffect(() => {
     const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
     setRememberMe(savedRememberMe);
+    // Passwords are never stored; clear one saved by an older version.
+    localStorage.removeItem('password');
     if (savedRememberMe) {
-      const savedEmail = localStorage.getItem('email') || '';
-      const savedPassword = localStorage.getItem('password') || '';
-      setEmail(savedEmail);
-      setPassword(savedPassword);
+      setEmail(localStorage.getItem('email') || '');
     }
   }, []);
 
@@ -206,6 +208,7 @@ function App() {
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [timeLeft, setTimeLeft] = useState(60);
   const [otpError, setOtpError] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [otpAttempts, setOtpAttempts] = useState(0);
 
   // New Password State
@@ -215,22 +218,27 @@ function App() {
   // Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt', { email, password });
     
-    if (rememberMe) {
-      localStorage.setItem('rememberMe', 'true');
-      localStorage.setItem('email', email);
-      localStorage.setItem('password', password);
-    } else {
-      localStorage.removeItem('rememberMe');
-      localStorage.removeItem('email');
-      localStorage.removeItem('password');
-    }
-
+    setLoginError('');
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setSession(true, email);
+      const role = authenticate(email, password);
+      if (!role) {
+        // Don't reveal whether the email or the password was wrong.
+        setLoginError('Incorrect email or password.');
+        return;
+      }
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('email', email.trim());
+      } else {
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('email');
+      }
+      setSession(true, email.trim().toLowerCase(), role);
+      // the welcome intro plays once, right after login
+      try { sessionStorage.setItem(INTRO_PENDING_KEY, '1'); } catch { /* storage unavailable: skip the intro */ }
       const targetRoute: AppRouteState = { screen: 'dashboard', view: 'overview' };
       replaceAppRoute(targetRoute);
       setCurrentScreen('dashboard');
@@ -378,23 +386,27 @@ function App() {
 
   if (currentScreen === 'dashboard') {
     return (
-      <Dashboard 
-        onLogout={handleLogout} 
-        sidebarLocked={sidebarLocked}
-        setSidebarLocked={handleSetSidebarLocked}
-        sidebarCollapsed={sidebarCollapsed}
-        setSidebarCollapsed={handleSetSidebarCollapsed}
-        sidebarVisible={sidebarVisible}
-        setSidebarVisible={setSidebarVisible}
-        sidebarAutoHide={sidebarAutoHide}
-        setSidebarAutoHide={handleSetSidebarAutoHide}
-        sidebarExpandedWidth={sidebarExpandedWidth}
-        setSidebarExpandedWidth={handleSetSidebarExpandedWidth}
-        sidebarCollapsedWidth={sidebarCollapsedWidth}
-        setSidebarCollapsedWidth={handleSetSidebarCollapsedWidth}
-        sidebarShowIcons={sidebarShowIcons}
-        setSidebarShowIcons={handleSetSidebarShowIcons}
-      />
+      <>
+        <div id="help-portal-root" className="help-scope" />
+        <Dashboard 
+          onLogout={handleLogout} 
+          sidebarLocked={sidebarLocked}
+          setSidebarLocked={handleSetSidebarLocked}
+          sidebarCollapsed={sidebarCollapsed}
+          setSidebarCollapsed={handleSetSidebarCollapsed}
+          sidebarVisible={sidebarVisible}
+          setSidebarVisible={setSidebarVisible}
+          sidebarAutoHide={sidebarAutoHide}
+          setSidebarAutoHide={handleSetSidebarAutoHide}
+          sidebarExpandedWidth={sidebarExpandedWidth}
+          setSidebarExpandedWidth={handleSetSidebarExpandedWidth}
+          sidebarCollapsedWidth={sidebarCollapsedWidth}
+          setSidebarCollapsedWidth={handleSetSidebarCollapsedWidth}
+          sidebarShowIcons={sidebarShowIcons}
+          setSidebarShowIcons={handleSetSidebarShowIcons}
+        />
+        <HelpFeatureMount />
+      </>
     );
   }
 
@@ -462,7 +474,7 @@ function App() {
                       label="Email address"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); setLoginError(''); }}
                       autoComplete="email"
                       required
                     />
@@ -472,10 +484,15 @@ function App() {
                       label="Password"
                       type="password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => { setPassword(e.target.value); setLoginError(''); }}
                       autoComplete="current-password"
                       required
                     />
+                    {loginError && (
+                      <div className="error-message" role="alert" style={{ marginTop: '0.5rem' }}>
+                        <XCircle size={14} /> {loginError}
+                      </div>
+                    )}
                   </div>
                   <div className="auth-options" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                     <label className="checkbox-wrapper">
@@ -502,8 +519,8 @@ function App() {
                       </div>
                     </div>
                   </div>
-                  <button type="submit" className="submit-btn shell-btn-primary" disabled={!email.trim() || !password} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                    Sign in <ArrowRight size={18} />
+                  <button type="submit" className={`submit-btn shell-btn-primary ${isLoading ? 'loading' : ''}`} disabled={isLoading || !email.trim() || !password} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    {isLoading ? 'Signing in...' : 'Sign in'} <ArrowRight size={18} />
                   </button>
                 </form>
               </div>
