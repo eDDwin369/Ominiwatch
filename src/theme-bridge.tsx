@@ -262,6 +262,13 @@ function syncCssVars(theme: any, settings: any) {
   set('--dash-sidebar-bg-dark', sidebarGradientDark);
   set('--dash-sidebar-bg', isDark ? sidebarGradientDark : sidebarGradientLight);
   set('--dash-sidebar-border', sidebarPreset?.border || (isDark ? 'rgba(255, 255, 255, 0.08)' : '#dde2f0'));
+
+  // Sidebar navigation hover background - adheres to Theme Studio highlight / primary tokens
+  const navHoverBgLight = alpha(highlight, 0.08);
+  const navHoverBgDark = alpha(highlight, 0.12);
+  set('--dash-nav-hover-bg-light', navHoverBgLight);
+  set('--dash-nav-hover-bg-dark', navHoverBgDark);
+  set('--dash-nav-hover-bg', isDark ? navHoverBgDark : navHoverBgLight);
   // Hero video-card fill — differs per colour template in Figma (not theme-neutral #080a09).
   const figmaVideoBg: Record<string, string> = {
     corporate: '#0b1024',

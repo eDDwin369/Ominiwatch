@@ -148,6 +148,7 @@
   --info: #0288d1;
   --highlight: var(--primary);
   --highlight-hover: color-mix(in srgb, var(--highlight) 12%, transparent);
+  --dash-nav-hover-bg: color-mix(in srgb, var(--highlight, var(--primary)) 8%, transparent);
   --card-hdr: var(--bg-card);
   --notif-card: var(--bg-card);
   --btn-color: var(--primary);

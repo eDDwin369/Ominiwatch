@@ -403,7 +403,7 @@
 }
 
 [data-theme-mode="light"] .nav-item:hover {
-  background: rgba(37, 99, 235, 0.08);
+  background: var(--dash-nav-hover-bg, var(--dash-nav-hover-bg-light, color-mix(in srgb, var(--highlight, var(--primary, #10B981)) 8%, transparent)));
   color: #0f172a;
 }
 
@@ -412,7 +412,7 @@
 }
 
 [data-theme-mode="dark"] .nav-item:hover {
-  background: var(--highlight-hover, rgba(169, 123, 255, 0.08));
+  background: var(--dash-nav-hover-bg, var(--dash-nav-hover-bg-dark, var(--highlight-hover, color-mix(in srgb, var(--highlight, var(--primary, #10B981)) 12%, transparent))));
   color: #ffffff;
 }
 
@@ -517,7 +517,7 @@
 }
 
 .sidebar-collapse-btn:hover {
-  background: var(--highlight-hover, rgba(169, 123, 255, 0.08));
+  background: var(--dash-nav-hover-bg, var(--highlight-hover, color-mix(in srgb, var(--highlight, var(--primary, #10B981)) 10%, transparent)));
   color: var(--highlight, var(--primary));
 }
 
