@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { UserPlus, X, AlertCircle, ArrowLeft, Trash2, Check } from 'lucide-react';
 import { URMProvider, URMBuilderRaw, useURMContext } from 'dts-universal-report-module';
 import { isValidName } from '../AccountSettings/nameValidation';
@@ -371,7 +372,7 @@ export function ReportsPage() {
       </URMProvider>
 
       {/* Modal for adding user */}
-      {isAddModalOpen && (
+      {isAddModalOpen && createPortal(
         <div
           className="urm-modal-backdrop"
           onClick={(e) => {
@@ -566,7 +567,8 @@ export function ReportsPage() {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>
