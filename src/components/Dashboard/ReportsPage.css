@@ -73,9 +73,9 @@
 .urm-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(10, 15, 25, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(241, 245, 249, 0.4);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   z-index: 10000;
   display: flex;
   align-items: center;
@@ -84,10 +84,15 @@
   animation: modalFadeIn 0.2s ease;
 }
 
+[data-theme-mode="dark"] .urm-modal-backdrop,
+[data-theme="dark"] .urm-modal-backdrop {
+  background: rgba(10, 12, 18, 0.72);
+}
+
 .urm-modal-card {
   position: relative;
   background: var(--brand-card-surface, var(--bg-card, #0f231a)) !important;
-  border-radius: var(--radius-modal, 20px) !important;
+  border-radius: calc(var(--radius-unit, 1px) * 36) !important;
   width: 640px;
   max-width: 95vw;
   max-height: min(720px, calc(100vh - 40px));
@@ -110,8 +115,7 @@
 }
 
 .urm-modal-header {
-  height: 60px;
-  padding: 0 24px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -132,17 +136,26 @@
   gap: 12px;
 }
 
+/* Icon tile — matches URM's own ModalShell header tile (40px rounded square),
+   not the generic 36px circular .page-title-icon used elsewhere in the app. */
+.urm-modal-header-left .page-title-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-lg, 12px);
+}
+
 .urm-modal-title {
-  font-family: var(--app-heading-family, inherit);
-  font-size: var(--h1-size, 1.35rem);
-  font-weight: var(--h1-weight, 600);
+  font-family: var(--app-heading-family, var(--app-font-family, inherit));
+  font-size: var(--h2-size, 1.25rem);
+  font-weight: var(--h2-weight, 300);
+  letter-spacing: calc(-0.01em + var(--app-letter-spacing, 0px));
   margin: 0;
-  line-height: 1.25;
+  line-height: var(--heading-lh, 1.25);
 }
 
 .urm-modal-close-btn {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   border-radius: 50%;
   display: flex;
