@@ -28,7 +28,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
-    "dts-universal-report-module": "^1.4.16",
+    "dts-universal-report-module": "^1.4.17",
     "lenis": "^1.3.25",
     "lucide-react": "^1.23.0",
     "omnieye-theme-studio": "^1.3.4",
