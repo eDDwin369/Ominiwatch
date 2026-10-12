@@ -3,6 +3,7 @@ import { UserPlus, X, AlertCircle, ArrowLeft, Trash2, Check } from 'lucide-react
 import { URMProvider, URMBuilderRaw, useURMContext } from 'dts-universal-report-module';
 import { isValidName } from '../AccountSettings/nameValidation';
 import { isValidPhone } from '../AccountSettings/phoneValidation';
+import { isValidEmail } from '../AccountSettings/emailValidation';
 import { TextField } from '../shared/TextField';
 import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
 import './ReportsPage.css';
@@ -55,6 +56,8 @@ const pick = <T,>(arr: T[], i: number) => arr[i % arr.length];
 // Baseline the Add User form starts from (and resets back to) — used to detect unsaved edits.
 const DEFAULT_ADD_USER_FORM = {
   fullName: '',
+  username: '',
+  email: '',
   phoneNumber: '',
   department: 'Engineering',
   role: 'Software Engineer',
@@ -108,6 +111,8 @@ export function ReportsPage() {
 
   // Fields state
   const [fullName, setFullName] = useState(DEFAULT_ADD_USER_FORM.fullName);
+  const [username, setUsername] = useState(DEFAULT_ADD_USER_FORM.username);
+  const [email, setEmail] = useState(DEFAULT_ADD_USER_FORM.email);
   const [phoneNumber, setPhoneNumber] = useState(DEFAULT_ADD_USER_FORM.phoneNumber);
   const [department, setDepartment] = useState(DEFAULT_ADD_USER_FORM.department);
   const [role, setRole] = useState(DEFAULT_ADD_USER_FORM.role);
@@ -121,6 +126,8 @@ export function ReportsPage() {
   const hasUnsavedChanges =
     JSON.stringify({
       fullName,
+      username,
+      email,
       phoneNumber,
       department,
       role,
@@ -134,6 +141,8 @@ export function ReportsPage() {
 
   const resetAddUserForm = () => {
     setFullName(DEFAULT_ADD_USER_FORM.fullName);
+    setUsername(DEFAULT_ADD_USER_FORM.username);
+    setEmail(DEFAULT_ADD_USER_FORM.email);
     setPhoneNumber(DEFAULT_ADD_USER_FORM.phoneNumber);
     setDepartment(DEFAULT_ADD_USER_FORM.department);
     setRole(DEFAULT_ADD_USER_FORM.role);
@@ -160,12 +169,14 @@ export function ReportsPage() {
   };
 
   const nameValid = isValidName(fullName);
-  // phone is optional here (a placeholder is generated when left blank)
+  // phone, username and email are optional here — a placeholder is generated when left blank
   const phoneValid = phoneNumber.trim() === '' || isValidPhone(phoneNumber);
+  const emailValid = email.trim() === '' || isValidEmail(email);
   // only surface a message once the field has been typed into
   const nameError = fullName.trim() !== '' && !nameValid;
   const phoneError = phoneNumber.trim() !== '' && !phoneValid;
-  const formHasErrors = !nameValid || !phoneValid;
+  const emailError = email.trim() !== '' && !emailValid;
+  const formHasErrors = !nameValid || !phoneValid || !emailValid;
 
   const gridContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -290,8 +301,8 @@ export function ReportsPage() {
     const newUser = {
       user_id: `USR-${String(nextId).padStart(4, '0')}`,
       full_name: fullName,
-      username: `${first.toLowerCase()}.${last.toLowerCase()}${seq}`,
-      email: `${first.toLowerCase()}.${last.toLowerCase()}${seq}@company.com`,
+      username: username.trim() || `${first.toLowerCase()}.${last.toLowerCase()}${seq}`,
+      email: email.trim() || `${first.toLowerCase()}.${last.toLowerCase()}${seq}@company.com`,
       phone_number: phoneNumber || `+1-555-${1000 + nextId}`,
       department,
       role,
@@ -399,6 +410,24 @@ export function ReportsPage() {
                     placeholder="John Doe"
                     required
                     error={nameError ? 'Enter a valid full name (letters only, 2–60 characters)' : undefined}
+                  />
+
+                  {/* Username */}
+                  <TextField
+                    label="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="john.doe001"
+                  />
+
+                  {/* Email */}
+                  <TextField
+                    label="Email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="john.doe001@company.com"
+                    error={emailError ? 'Enter a valid email address' : undefined}
                   />
 
                   {/* Phone Number */}
