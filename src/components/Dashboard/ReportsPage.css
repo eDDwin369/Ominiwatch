@@ -91,11 +91,12 @@
 
 .urm-modal-card {
   position: relative;
-  background: var(--brand-card-surface, var(--bg-card, #0f231a)) !important;
+  background: var(--brand-page-wash, var(--bg-card, #0f231a)) !important;
   border-radius: calc(var(--radius-unit, 1px) * 36) !important;
-  width: 640px;
+  width: 860px;
   max-width: 95vw;
-  max-height: min(720px, calc(100vh - 40px));
+  max-height: min(760px, calc(100vh - 40px));
+  min-height: min(760px, calc(100vh - 40px));
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
@@ -109,7 +110,7 @@
 
 [data-theme-mode="dark"] .urm-modal-card,
 [data-theme="dark"] .urm-modal-card {
-  background: var(--brand-card-surface, var(--bg-card, #0f231a)) !important;
+  background: var(--brand-page-wash, var(--bg-card, #0f231a)) !important;
   backdrop-filter: blur(50px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(50px) saturate(180%) !important;
 }
