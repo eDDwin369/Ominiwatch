@@ -34,6 +34,10 @@ export function getSectionFromContext(
   const normKey = (key || "").toLowerCase();
   const normLabel = (label || "").toLowerCase();
 
+  // Element-level scope (a specific button, field, card… — see help-target.ts): the key is
+  // already unique, and the label is its breadcrumb.
+  if (normKey.startsWith("el:")) return { sectionKey: key as string, sectionLabel: label || (key as string) };
+
   // 0. Shell surfaces (header, sidebar, dashboard, reports, account,
   // notifications) sit outside the ported help app's page sections, so resolve
   // them before the ported rules below.
@@ -46,6 +50,7 @@ export function getSectionFromContext(
     "section-user": { sectionKey: "section-user", sectionLabel: "User" },
     "section-theme-studio": { sectionKey: "section-theme-studio", sectionLabel: "Theme Studio" },
     "section-workspace": { sectionKey: "section-workspace", sectionLabel: "Workspace" },
+    "section-global-settings": { sectionKey: "section-global-settings", sectionLabel: "Global Settings" },
   };
   const shellDirect = SHELL_SECTIONS[normKey];
   if (shellDirect) return shellDirect;

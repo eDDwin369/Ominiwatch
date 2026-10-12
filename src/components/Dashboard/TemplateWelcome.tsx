@@ -11,6 +11,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import './Dashboard.css';
+import { INTRO_PENDING_KEY } from '../../utils/navigation';
 
 interface TemplateWelcomeProps {
   onNavigate?: (tab: string) => void;
@@ -158,7 +159,14 @@ export function TemplateWelcome({
     setShowFullIntro(false);
   };
 
+  // The intro plays once per login — not every time the user comes back to the dashboard.
+  const [playIntro] = useState(() => {
+    try { return sessionStorage.getItem(INTRO_PENDING_KEY) === '1'; } catch { return false; }
+  });
+
   useEffect(() => {
+    if (!playIntro) return;
+    try { sessionStorage.removeItem(INTRO_PENDING_KEY); } catch { /* ignore */ }
     setShowFullIntro(true);
     setIntroPhase('welcome');
     setIsIntroFadingOut(false);
@@ -184,7 +192,7 @@ export function TemplateWelcome({
       clearTimeout(timer2);
       clearTimeout(timer3);
     };
-  }, []);
+  }, [playIntro]);
 
   useEffect(() => {
     const interval = setInterval(() => {

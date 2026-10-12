@@ -2006,3 +2006,233 @@
   background: color-mix(in srgb, var(--text-main) 11%, transparent);
   border-color: color-mix(in srgb, var(--primary) 40%, transparent);
 }
+
+/* ── Backup & Reset + License (Security & Sessions card) — Theme Studio tokens only ── */
+.figma-account-settings-container .as-section-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--app-font-weight, 400);
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.figma-account-settings-container .as-section-note--ok {
+  margin: 10px 0 0;
+  color: var(--success);
+}
+
+.figma-account-settings-container .figma-security-buttons-row :is(.figma-btn-outline, .figma-btn-delete-red) svg {
+  flex-shrink: 0;
+}
+
+/* Import summary */
+.as-summary-list {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 4px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 12);
+  background: color-mix(in srgb, var(--primary) 4%, transparent);
+}
+
+.as-summary-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  font-size: var(--font-size-body-sm, 14px);
+  color: var(--text-main);
+}
+
+.as-summary-list li + li {
+  border-top: 1px solid color-mix(in srgb, var(--text-main) 8%, transparent);
+}
+
+.as-summary-list strong {
+  font-weight: var(--font-weight-strong, 600);
+  color: var(--primary);
+}
+
+/* Reset choice cards */
+.as-choice-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.as-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  padding: 12px 14px;
+  text-align: left;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--text-main) 3%, transparent);
+  border: 1px solid var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 12);
+  color: var(--text-main);
+  font-family: var(--app-font-family);
+  transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+}
+
+.as-choice:hover {
+  border-color: color-mix(in srgb, var(--primary) 45%, var(--border-light));
+}
+
+.as-choice.is-selected {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 14%, transparent);
+}
+
+.as-choice--danger.is-selected {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 14%, transparent);
+}
+
+.as-choice-title {
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: var(--font-weight-strong, 600);
+}
+
+.as-choice.is-selected .as-choice-title { color: var(--primary); }
+.as-choice--danger.is-selected .as-choice-title { color: var(--danger); }
+
+.as-choice-desc {
+  font-size: var(--font-size-caption, 12px);
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.figma-modal-footer .figma-btn-modal-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* License */
+.as-license-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 12px;
+  padding-top: 6px;
+}
+
+.as-license-form > :nth-child(1),
+.as-license-form > :nth-child(4),
+.as-license-form > :nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+.as-license-rows {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.as-license-rows > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 34px;
+  padding: 4px 0;
+}
+
+.as-license-rows > div + div {
+  border-top: 1px solid color-mix(in srgb, var(--text-main) 8%, transparent);
+}
+
+.as-license-rows dt {
+  font-size: var(--font-size-caption, 12px);
+  color: var(--text-secondary);
+}
+
+.as-license-rows dd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: var(--font-size-body-sm, 14px);
+  color: var(--text-main);
+  text-align: right;
+}
+
+.as-license-key span {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.as-license-key .shell-btn-icon {
+  width: 26px;
+  height: 26px;
+}
+
+.as-license-rows .figma-log-status {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: var(--font-size-caption, 12px);
+  font-weight: var(--font-weight-medium, 500);
+}
+
+.as-status-ok { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); }
+.as-status-warn { color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }
+.as-status-error { color: var(--danger); background: color-mix(in srgb, var(--danger) 12%, transparent); }
+
+/* dark mode: lift the studio's status colours toward the text colour so chips stay readable */
+[data-theme-mode="dark"] .as-status-ok { color: color-mix(in srgb, var(--success) 55%, var(--text-main)); }
+[data-theme-mode="dark"] .as-status-warn { color: color-mix(in srgb, var(--warning) 65%, var(--text-main)); }
+[data-theme-mode="dark"] .as-status-error { color: color-mix(in srgb, var(--danger) 65%, var(--text-main)); }
+
+
+/* native date picker icon follows the mode */
+[data-theme-mode="dark"] .as-license-form input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Advanced Settings / Backup & Reset actions: an even two-column grid of equal buttons
+   (an odd last button spans the row); every button explains itself on hover (data-tip). */
+.figma-account-settings-container .as-advanced-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.figma-account-settings-container .as-advanced-grid > button {
+  width: 100%;
+  min-width: 0;
+  gap: 6px;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.figma-account-settings-container .as-advanced-grid > :last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.figma-account-settings-container .as-tip {
+  position: relative;
+}
+
+/* the hovered button (and its tooltip) stacks above the neighbouring buttons it overlaps */
+.figma-account-settings-container .as-tip:is(:hover, :focus-visible) {
+  z-index: 70;
+}
+
+.figma-account-settings-container .as-tip[data-tip]::after {
+  white-space: normal;
+  width: max-content;
+  max-width: 240px;
+  text-align: center;
+}
+
+/* License dialog: form fields need breathing room inside the 2FA-style dialog */
+.figma-modal-std .as-license-form {
+  margin-top: 4px;
+}

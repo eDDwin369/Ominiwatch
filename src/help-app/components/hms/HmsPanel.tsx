@@ -62,6 +62,7 @@ import {
 import { trackHmsEvent } from "@help/lib/hms-analytics";
 import { HelpNodeTreeView } from "@help/components/help/HelpNodeTreeView";
 import { getSectionFromContext, calculateNonOverlappingPosition } from "@help/lib/help-nodes";
+import { describeScope } from "@help/lib/help-target";
 
 /** Primary actions / selected controls follow the Theme Studio button colour. */
 const NAVY = "var(--hs-primary)";
@@ -480,11 +481,13 @@ function SvgTeachMe() {
 
 function Header({
   crumb,
+  chip,
   onBack,
   onClose,
   onDragStart,
 }: {
   crumb: string;
+  chip?: string;
   onBack?: () => void;
   onClose: () => void;
   onDragStart?: (e: React.MouseEvent) => void;
@@ -522,6 +525,7 @@ function Header({
         <span className="hms-window-title brand-gradient-text truncate text-sm font-bold">
           {crumb.split(" › ")[0] || "Help"}
         </span>
+        {chip && <span className="hms-type-chip">{chip}</span>}
       </div>
 
       <div className="flex items-center gap-1">
@@ -951,8 +955,13 @@ function BackBtn({ onClick }: { onClick?: () => void }) {
 
 // ---------- LIST VIEW ----------
 
+const GREETING_MS = 2000;
+/** Last greeting shown — module-level so returning to the list view doesn't replay it. */
+let lastGreetedSeq = 0;
+
 function ListView({
   role,
+  greetSeq,
   onOpenArticle,
   onContact,
   onAdd,
@@ -961,6 +970,7 @@ function ListView({
   onContentLibrary,
   goTo,
 }: {
+  greetSeq: number;
   role: UserRole;
   onOpenArticle: (id: string) => void;
   onContact: () => void;
@@ -970,25 +980,43 @@ function ListView({
   onContentLibrary: () => void;
   goTo: (v: View) => void;
 }) {
-  const { state, context } = useHmsStore();
-  const [showMayIHelp, setShowMayIHelp] = useState(true);
+  const { state, context, contextKey } = useHmsStore();
+  // Help filed under the right-clicked element (approved only, for customers)
+  const scopeCount = state.articles.filter(
+    (a) => a.contexts?.includes(contextKey) && (role !== "customer" || a.approvalStatus === "approved"),
+  ).length;
+  // "May i Help You ?" greets once per right-click / panel open (greetSeq), not every time the
+  // user comes back to this screen from Summary, Talk to me, Help me or Teach me.
+  const [showMayIHelp, setShowMayIHelp] = useState(() => greetSeq !== lastGreetedSeq);
+  useEffect(() => {
+    if (greetSeq === lastGreetedSeq) return;
+    lastGreetedSeq = greetSeq;
+    setShowMayIHelp(true);
+  }, [greetSeq]);
 
-  // Automatically hide "May i Help You ?" after 3 seconds and transition to the 4 main icons
+  // Hide the greeting after GREETING_MS and show the four options
   useEffect(() => {
     if (!showMayIHelp) return;
     const timer = setTimeout(() => {
       setShowMayIHelp(false);
-    }, 3000);
+    }, GREETING_MS);
     return () => clearTimeout(timer);
   }, [showMayIHelp]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0 bg-white overflow-hidden">
       {/* Sub-header Breadcrumb Bar */}
-      <div className="flex items-center justify-between px-3 py-2 bg-[var(--color-slate-50)] border-b border-slate-200/80 text-xs font-semibold text-slate-800 shrink-0 select-none">
+      <div className="flex items-center justify-between gap-3 px-3 py-2 bg-[var(--color-slate-50)] border-b border-slate-200/80 text-xs font-semibold text-slate-800 shrink-0 select-none">
         <div className="flex items-center gap-2 min-w-0">
           <Home className="w-3.5 h-3.5 text-slate-600 shrink-0" />
-          <span className="truncate">{context || "Site Recordings"}</span>
+          <span className="hms-crumbs">
+            {(context || "Site Recordings").split(" › ").map((part, i, all) => (
+              <span key={i} className={i === all.length - 1 ? "hms-crumb-current" : "hms-crumb"} title={part}>
+                {i > 0 && <span className="hms-crumb-sep">›</span>}
+                {part}
+              </span>
+            ))}
+          </span>
         </div>
         {!showMayIHelp && (
           <button
@@ -1024,7 +1052,7 @@ function ListView({
               </span>
             </button>
             <p className="text-[11px] text-slate-400 font-medium animate-pulse">
-              Showing options in 3s or tap above...
+              Showing options in {GREETING_MS / 1000}s or tap above...
             </p>
           </div>
         ) : (
@@ -1130,10 +1158,7 @@ function ListView({
       {/* Footer Bar */}
       <div className="shrink-0 px-3.5 py-2 bg-[var(--color-slate-50)] border-t border-slate-200/80 flex items-center justify-between text-[11px] text-slate-500 font-medium select-none">
         <span>
-          {role === "customer"
-            ? state.articles.filter((a) => a.approvalStatus === "approved").length
-            : state.articles.length}{" "}
-          folders / items
+          {scopeCount} help item{scopeCount === 1 ? "" : "s"} for this {describeScope(contextKey || "", context || "").type.toLowerCase()}
         </span>
 
       </div>
@@ -3424,6 +3449,17 @@ export function HmsPanel() {
   /** View to return to when leaving the tickets screen — keeps context continuous. */
   const [returnView, setReturnView] = useState<View>({ name: "list" });
 
+  // Each right-click (and each open) greets the user once; a right-click always lands on the options.
+  const [greetSeq, setGreetSeq] = useState(0);
+  useEffect(() => {
+    if (!lastRightClickPos) return;
+    setView({ name: "list" });
+    setGreetSeq((n) => n + 1);
+  }, [lastRightClickPos]);
+  useEffect(() => {
+    if (isOpen) setGreetSeq((n) => n + 1);
+  }, [isOpen]);
+
   // Reset view when active context changes or panel closes.
   useEffect(() => {
     setView({ name: "list" });
@@ -3457,29 +3493,32 @@ export function HmsPanel() {
   const ticket =
     view.name === "request" ? state.tickets.find((t) => t.id === view.id) : undefined;
 
-  let crumb = context;
+  // The element (or page) the help is about — its name heads the panel, its breadcrumb is the sub-header.
+  const panelScope = describeScope(contextKey || "", context || "");
+  const scopeName = panelScope.name;
+  let crumb = scopeName;
   let onBack: (() => void) | undefined;
 
   if (view.name === "detail" && article) {
-    crumb = `${context.split(" › ")[0]} › ${article.title.length > 12 ? article.title.slice(0, 12) : article.title}`;
+    crumb = `${scopeName} › ${article.title.length > 12 ? article.title.slice(0, 12) : article.title}`;
     onBack = () => setView({ name: "list" });
   } else if (view.name === "contact") {
-    crumb = `${context.split(" › ")[0]} › Contact`;
+    crumb = `${scopeName} › Contact`;
     onBack = () => setView({ name: "list" });
   } else if (view.name === "add") {
-    crumb = `${context.split(" › ")[0]} › ${view.editId ? "Edit Help" : "Add Help"}`;
+    crumb = `${scopeName} › ${view.editId ? "Edit Help" : "Add Help"}`;
     onBack = () => setView({ name: "list" });
   } else if (view.name === "requests") {
-    crumb = `${context.split(" › ")[0]} › ${role === "customer" ? "My Requests" : "Resources"}`;
+    crumb = `${scopeName} › ${role === "customer" ? "My Requests" : "Resources"}`;
     onBack = () => setView({ name: "list" });
   } else if (view.name === "request" && ticket) {
     crumb = `${role === "customer" ? "My Requests" : "Resources"} › ${ticket.id}`;
     onBack = () => setView({ name: "requests" });
   } else if (view.name === "ai-chat") {
-    crumb = `${context.split(" › ")[0]} › HMS AI Chat`;
+    crumb = `${scopeName} › HMS AI Chat`;
     onBack = () => setView({ name: "list" });
   } else if (view.name === "success") {
-    crumb = `${context.split(" › ")[0]} › Submitted`;
+    crumb = `${scopeName} › Submitted`;
   }
 
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
@@ -3708,11 +3747,12 @@ export function HmsPanel() {
         userSelect: isDragging || isResizing ? "none" : undefined,
       }}
     >
-      <Header crumb={crumb} onBack={onBack} onClose={closePanel} onDragStart={handleDragStart} />
+      <Header crumb={crumb} chip={panelScope.type} onBack={onBack} onClose={closePanel} onDragStart={handleDragStart} />
 
       {view.name === "list" && (
         <ListView
           role={role}
+          greetSeq={greetSeq}
           onOpenArticle={(id) => setView({ name: "detail", id })}
           onContact={() => setView({ name: "contact" })}
           onAdd={() => setView({ name: "add" })}

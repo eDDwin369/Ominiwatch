@@ -123,7 +123,7 @@ export function WidgetCard({
           {/* Title & Info Icon */}
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <h3 className="text-xs font-bold tracking-tight text-foreground truncate">
+              <h3 className="hms-card-title brand-gradient-text truncate">
                 {widget.title}
               </h3>
 

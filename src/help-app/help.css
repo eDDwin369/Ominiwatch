@@ -694,3 +694,113 @@
   --color-cyan-500: color-mix(in srgb, var(--info) 70%, var(--text-main));
   --color-cyan-600: color-mix(in srgb, var(--info) 60%, var(--text-main));
 }
+
+/* Heading rule (shell standard): page header = page-title icon + H2 typography,
+   card header = H4 typography — family, size, weight and colour from Theme Studio. */
+.help-scope .hms-page-title,
+.help-scope .hms-card-title {
+  margin: 0;
+  font-family: var(--app-heading-family, var(--app-font-family));
+  line-height: var(--heading-lh, 1.2);
+  letter-spacing: normal;
+  text-transform: none;
+}
+.help-scope .hms-page-title {
+  --h-custom: var(--h2-color-custom);
+  font-size: var(--h2-size, 24px);
+  font-weight: var(--h2-weight, 600);
+}
+.help-scope .hms-card-title {
+  --h-custom: var(--h4-color-custom);
+  font-size: var(--h4-size, 19px);
+  font-weight: var(--h4-weight, 600);
+}
+
+/* Window close (×) — same round control as the Global Settings window and the Account
+   Settings dialogs: danger-tinted circle, solid danger on hover. */
+.help-scope .hms-window-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  background: color-mix(in srgb, var(--danger, #dc2626) 14%, var(--bg-card));
+  color: var(--danger, #dc2626);
+  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 25%, transparent);
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+  z-index: 2;
+}
+.help-scope .hms-window-close:hover {
+  background: var(--danger, #dc2626);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+[data-theme-mode="dark"] .help-scope .hms-window-close:not(:hover) {
+  background: color-mix(in srgb, var(--danger, #dc2626) 22%, var(--bg-card));
+  color: color-mix(in srgb, var(--danger, #dc2626) 55%, var(--text-main));
+  border-color: color-mix(in srgb, var(--danger, #dc2626) 55%, transparent);
+}
+
+/* Element-specific help: the kind of element the help is about (Button, Field, Card, Page…) */
+.help-scope .hms-type-chip {
+  flex-shrink: 0;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-family: var(--app-font-family);
+  font-size: var(--hs-fs-10);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.6;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  white-space: nowrap;
+}
+
+/* The element that was right-clicked is briefly outlined so the help's subject is obvious.
+   (Shell elements sit outside .help-scope, so this rule is global.) */
+.hms-target-flash {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 3px;
+  animation: hms-target-flash 1.6s ease-out forwards;
+}
+
+@keyframes hms-target-flash {
+  0%, 70% { outline-color: var(--primary); box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 18%, transparent); }
+  100% { outline-color: transparent; box-shadow: 0 0 0 0 transparent; }
+}
+
+/* Sub-header breadcrumb (page › card › element): earlier crumbs shrink first, the element
+   the help is about always stays fully visible. */
+.help-scope .hms-crumbs {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+.help-scope .hms-crumb,
+.help-scope .hms-crumb-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.help-scope .hms-crumb {
+  display: inline-block; /* ellipsis needs a block box, not a flex container */
+  min-width: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+.help-scope .hms-crumb-current {
+  flex-shrink: 0;
+  color: var(--text-main);
+}
+.help-scope .hms-crumb-sep {
+  margin: 0 4px;
+  color: var(--text-secondary);
+}

@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   ChevronDown, ChevronUp, SquarePen, Check, X, Shield, 
   Laptop, Monitor, Smartphone, 
-  AlertTriangle, CheckCircle2, Camera, UserCog, ShieldCheck, KeyRound
+  AlertTriangle, CheckCircle2, Camera, Settings2, ShieldCheck, KeyRound
 } from 'lucide-react';
 import johnDoeAvatar from '../../assets/john_doe_avatar.png';
 import { ImageCropperModal } from '../GlobalSettings/ImageCropperModal';
 import { TextField } from '../shared/TextField';
 import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
+import { SettingsBackup } from './SettingsBackup';
+import { LicenseModal, loadLicense, licenseStatus } from './LicenseSection';
 import { isValidPhone } from './phoneValidation';
 import { isValidName } from './nameValidation';
 import { isValidEmail } from './emailValidation';
@@ -238,7 +240,7 @@ export function AccountSettings({
   // ----------------------------------------------------
   // State: Security & Sessions
   // ----------------------------------------------------
-  const [expandedSecurity, setExpandedSecurity] = useState<'sessions' | 'history' | 'advanced' | null>(null);
+  const [expandedSecurity, setExpandedSecurity] = useState<'sessions' | 'history' | 'advanced' | 'backup' | null>(null);
   const [is2faEnabled, setIs2faEnabled] = useState(() => {
     const saved = localStorage.getItem('as_2faEnabled');
     return saved !== null ? JSON.parse(saved) : false;
@@ -246,6 +248,11 @@ export function AccountSettings({
   const [is2faModalOpen, setIs2faModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isLicenseModalOpen, setIsLicenseModalOpen] = useState(false);
+  const [license, setLicense] = useState(loadLicense);
+  const licenseTip = license
+    ? `${license.edition} license · ${licenseStatus(license.expiresOn).label}`
+    : 'Add your product license';
 
   const handleToggle2fa = (enabled?: boolean) => {
     const nextVal = enabled !== undefined ? enabled : !is2faEnabled;
@@ -321,7 +328,7 @@ export function AccountSettings({
     });
   };
 
-  const toggleAccordion = (key: 'sessions' | 'history' | 'advanced') => {
+  const toggleAccordion = (key: 'sessions' | 'history' | 'advanced' | 'backup') => {
     setExpandedSecurity(prev => prev === key ? null : key);
   };
 
@@ -348,7 +355,7 @@ export function AccountSettings({
       <div className="figma-account-settings-container">
         {/* Top Header / Breadcrumb */}
       <div className="figma-settings-header page-title-group">
-        <span className="page-title-icon" aria-hidden="true"><UserCog size={20} /></span>
+        <span className="page-title-icon" aria-hidden="true"><Settings2 size={20} /></span>
         <h1 className="figma-settings-title brand-gradient-text">Account Settings</h1>
       </div>
 
@@ -681,10 +688,11 @@ export function AccountSettings({
 
                   {expandedSecurity === 'advanced' && (
                     <div className="figma-sec-inline-content">
-                      <div className="figma-security-buttons-row">
-                        <button 
-                          type="button" 
-                          className={`figma-btn-outline ${is2faEnabled ? 'active-2fa' : ''}`}
+                      <div className="as-advanced-grid">
+                        <button
+                          type="button"
+                          className={`figma-btn-outline as-tip ${is2faEnabled ? 'active-2fa' : ''}`}
+                          data-tip={is2faEnabled ? '2FA is on. Click to turn it off' : 'Require a code from your authenticator app when signing in'}
                           onClick={() => {
                             if (is2faEnabled) {
                               handleToggle2fa(false);
@@ -695,10 +703,10 @@ export function AccountSettings({
                         >
                           {is2faEnabled ? '2FA Enabled' : 'Enable 2FA'}
                         </button>
-                
-                        <button 
-                          type="button" 
-                          className="figma-btn-outline"
+                        <button
+                          type="button"
+                          className="figma-btn-outline as-tip"
+                          data-tip="Update the password you use to sign in"
                           onClick={() => {
                             setPassForm({ current: '', next: '', confirm: '' });
                             setPassSuccess(false);
@@ -709,7 +717,16 @@ export function AccountSettings({
                         </button>
                         <button
                           type="button"
-                          className="figma-btn-delete-red"
+                          className="figma-btn-outline as-tip"
+                          data-tip={licenseTip}
+                          onClick={() => setIsLicenseModalOpen(true)}
+                        >
+                          {license ? 'License' : 'Add License'}
+                        </button>
+                        <button
+                          type="button"
+                          className="figma-btn-delete-red as-tip"
+                          data-tip="Permanently delete your account and personal data"
                           onClick={() => setIsDeleteModalOpen(true)}
                         >
                           Delete your account
@@ -717,6 +734,20 @@ export function AccountSettings({
                       </div>
                     </div>
                   )}
+                </div>
+
+                {/* Backup & Reset — export / import settings, reset settings or factory reset */}
+                <div className="figma-sec-accordion">
+                  <button
+                    type="button"
+                    className="figma-sec-trigger"
+                    aria-expanded={expandedSecurity === 'backup'}
+                    onClick={() => toggleAccordion('backup')}
+                  >
+                    <span>Backup &amp; Reset</span>
+                    {expandedSecurity === 'backup' ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </button>
+                  {expandedSecurity === 'backup' && <SettingsBackup />}
                 </div>
               </div>
 
@@ -862,6 +893,11 @@ export function AccountSettings({
             </div>
           </div>
         </div>
+      )}
+
+      {/* License Modal */}
+      {isLicenseModalOpen && (
+        <LicenseModal onClose={() => setIsLicenseModalOpen(false)} onSaved={setLicense} />
       )}
 
       {/* Delete Account Modal */}

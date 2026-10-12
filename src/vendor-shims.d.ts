@@ -14,7 +14,10 @@ declare module 'dts-universal-report-module' {
 declare module 'omnieye-theme-studio' {
   import type { ComponentType } from 'react';
   export const ThemeStudio: ComponentType<any>;
-  export const useThemeStore: (<T = any>(selector: (state: any) => T) => T) & { getState: () => any };
+  export const useThemeStore: (<T = any>(selector: (state: any) => T) => T) & {
+    getState: () => any;
+    setState: (partial: any) => void;
+  };
   export const buildMuiTheme: (settings: any) => any;
   export const DEFAULT_SETTINGS: any;
 }

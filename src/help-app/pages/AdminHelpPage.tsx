@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { getSessionRole } from "../../utils/navigation";
 import {
   Area,
   AreaChart,
@@ -31,6 +32,7 @@ import {
   EmptyRow,
 } from "@help/components/dashboard/SectionToolbar";
 import {
+  ShieldCheck,
   AlertTriangle,
   Archive,
   Check,
@@ -99,6 +101,8 @@ export function AdminPage() {
         <div className="flex-1 min-h-0 min-w-0 w-full overflow-hidden">
           {tab === "overview" && (
             <ModernUserDashboard
+              title={getSessionRole() === "sub_admin" ? "Help Admin" : "Superadmin"}
+              icon={<ShieldCheck size={20} />}
               onOpenReview={(reviewId) => {
                 setSelectedReviewId(reviewId || null);
                 setTab("content");

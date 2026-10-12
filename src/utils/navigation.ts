@@ -14,6 +14,8 @@ export interface AppRouteState {
 const AUTH_KEY = 'omnieye_auth_session';
 const AUTH_EMAIL_KEY = 'omnieye_auth_email';
 const AUTH_ROLE_KEY = 'omnieye_auth_role';
+/** Set at login; the dashboard plays the "Welcome to OomniEye" intro once and clears it. */
+export const INTRO_PENDING_KEY = 'omnieye_intro_pending';
 
 /**
  * Check whether an active user session exists in sessionStorage.

@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { helpPortalContainer } from "@help/lib/portal-root";
+import { describeScope, resolveHelpTarget, ELEMENT_KEY_PREFIX } from "@help/lib/help-target";
 import { useAuth } from "@help/lib/auth-context";
 import { useHmsStore, type ContentType } from "@help/components/hms/hmsStore";
 import { Input } from "@help/components/ui/input";
@@ -136,6 +137,20 @@ function getArticleContextAndHierarchy(
     parentFolderName = findParent(nodesList) || "";
   }
 
+  // Element scope (a specific button / field / card …): hierarchy comes from its breadcrumb.
+  if (sectionKey?.startsWith(ELEMENT_KEY_PREFIX) && sectionLabel) {
+    const { trail, name } = describeScope(sectionKey, sectionLabel);
+    return {
+      pageName: trail[0],
+      cardName: trail.length > 2 ? trail[1] : parentFolderName || name,
+      controlName: node.name,
+      relatedContext: `${sectionLabel} › ${node.name}`,
+      contextKey: sectionKey,
+      contexts: [sectionKey],
+      hierarchy: { pageName: trail[0], cardName: trail.length > 2 ? trail[1] : name, controlName: node.name },
+    };
+  }
+
   const pageName =
     node.section ||
     sectionLabel ||
@@ -209,12 +224,15 @@ export function HelpAdminRightClickModal() {
   useEffect(() => {
     const resolved = getSectionFromContext(contextKey, context);
     setActiveSection((prev) => {
-      if (prev.sectionKey === resolved.sectionKey && prev.sectionLabel === resolved.sectionLabel) {
+      if (prev.sectionKey === resolved.sectionKey) {
         return prev;
       }
       return resolved;
     });
   }, [contextKey, context]);
+
+  // The element (or page) the help is about: name, type and breadcrumb
+  const scope = describeScope(activeSection.sectionKey, activeSection.sectionLabel);
 
   // Section-specific root nodes: each section maintains its own separate folders and content hierarchy
   const sectionNodes = useMemo(() => {
@@ -258,7 +276,7 @@ export function HelpAdminRightClickModal() {
 
             // Sync section metadata if article has explicit pageName / context
             const artPage = matchedArticle.hierarchy?.pageName;
-            if (artPage) {
+            if (artPage && !String(updatedNode.sectionKey || "").startsWith(ELEMENT_KEY_PREFIX)) {
               const sec = getSectionFromContext(matchedArticle.contexts?.[0], artPage);
               if (updatedNode.section !== sec.sectionLabel || updatedNode.sectionKey !== sec.sectionKey) {
                 hasChanges = true;
@@ -322,8 +340,12 @@ export function HelpAdminRightClickModal() {
 
   // Compute breadcrumb trail matching the user's attached design (Home Icon › Root Name › Subfolder › File)
   const breadcrumbs = useMemo(() => {
-    const rootName = activeSection.sectionLabel;
-    const trail: { id: string | null; name: string }[] = [{ id: null, name: rootName }];
+    const scopeTrail = describeScope(activeSection.sectionKey, activeSection.sectionLabel).trail;
+    // Where the element lives (page › card) is shown but not clickable; the element is the root.
+    const trail: { id: string | null; name: string; context?: boolean }[] = [
+      ...scopeTrail.slice(0, -1).map((name, i) => ({ id: `__ctx${i}`, name, context: true })),
+      { id: null, name: scopeTrail[scopeTrail.length - 1] || activeSection.sectionLabel },
+    ];
     if (!currentFolderId) return trail;
 
     const findPath = (
@@ -639,51 +661,10 @@ export function HelpAdminRightClickModal() {
 
       e.preventDefault();
 
-      // Resolve the exact tab/section where the user right-clicked
-      let el = target;
-      let detectedContextKey: string | null = null;
-      let detectedLabel: string | null = null;
-
-      while (el && el !== document.body) {
-        const ctx = el.getAttribute?.("data-hms-context");
-        if (ctx) {
-          detectedContextKey = ctx;
-          detectedLabel = el.getAttribute?.("data-hms-label") || labelForContext(ctx);
-          break;
-        }
-        const dashTab = el.getAttribute?.("data-dashboard-tab") || el.getAttribute?.("data-tab-value");
-        if (dashTab) {
-          if (dashTab === "site-recordings") {
-            detectedContextKey = "section-site-recordings";
-            detectedLabel = "Site Recordings";
-            break;
-          }
-          if (dashTab === "patrol") {
-            detectedContextKey = "section-site-patrol";
-            detectedLabel = "My Site Patrol";
-            break;
-          }
-          if (dashTab === "drawings") {
-            detectedContextKey = "section-my-drawings";
-            detectedLabel = "My Drawings";
-            break;
-          }
-          if (dashTab === "videos") {
-            detectedContextKey = "section-drawing-videos";
-            detectedLabel = "Drawing - Videos";
-            break;
-          }
-        }
-        el = el.parentElement;
-      }
-
-      const resolved = getSectionFromContext(
-        detectedContextKey || contextKey,
-        detectedLabel || context
-      );
-
-      setActiveSection(resolved);
-      setContext(detectedContextKey || resolved.sectionKey, detectedLabel || resolved.sectionLabel);
+      // Resolve the exact element right-clicked: button, dropdown, field, tab, card, dialog or page
+      const helpTarget = resolveHelpTarget(target);
+      setActiveSection({ sectionKey: helpTarget.key, sectionLabel: helpTarget.label });
+      setContext(helpTarget.key, helpTarget.label);
       setCurrentFolderId(null);
 
       const modalW = modalSize.width;
@@ -1513,8 +1494,9 @@ export function HelpAdminRightClickModal() {
             </div>
 
             <span className="hms-window-title brand-gradient-text font-bold text-sm tracking-tight truncate">
-              {activeSection.sectionLabel}
+              {scope.name}
             </span>
+            <span className="hms-type-chip">{scope.type}</span>
 
             {/* Info Icon 'i' Tooltip */}
             <Tooltip>
@@ -1666,9 +1648,18 @@ export function HelpAdminRightClickModal() {
         </div>
 
         {/* Breadcrumbs Navigation Bar (Matching Reference Image) */}
-        <div className="px-3.5 py-1.5 bg-slate-100/80 dark:bg-muted/30 border-b border-border/50 flex items-center gap-1.5 text-xs text-muted-foreground overflow-x-auto custom-scrollbar shrink-0 select-none">
+        <div className="px-3.5 py-1.5 bg-slate-100/80 dark:bg-muted/30 border-b border-border/50 flex items-center gap-1.5 text-xs text-muted-foreground overflow-hidden shrink-0 select-none">
           {breadcrumbs.map((item, index) => {
             const isLast = index === breadcrumbs.length - 1;
+            if ("context" in item && item.context) {
+              return (
+                <div key={item.id ?? "root"} className="flex items-center gap-1.5 min-w-0" title={item.name}>
+                  {index > 0 && <span className="text-slate-400 font-medium shrink-0">›</span>}
+                  {index === 0 && <Home className="h-3.5 w-3.5 text-slate-800 dark:text-slate-200 fill-slate-800/10 shrink-0" />}
+                  <span className="text-muted-foreground truncate">{item.name}</span>
+                </div>
+              );
+            }
             return (
               <div key={item.id ?? "root"} className="flex items-center gap-1.5 shrink-0">
                 {index > 0 && <span className="text-slate-400 font-medium">›</span>}
@@ -1705,7 +1696,7 @@ export function HelpAdminRightClickModal() {
                 <Folder className="h-5 w-5 fill-amber-500/20" />
               </div>
               <div className="inline-flex items-center justify-center gap-1.5">
-                <h5 className="text-xs font-bold text-foreground">No Help Folders</h5>
+                <h5 className="text-xs font-bold text-foreground">No help for “{scope.name}” yet</h5>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
@@ -1718,7 +1709,7 @@ export function HelpAdminRightClickModal() {
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="top" className="text-xs max-w-[240px] text-center bg-slate-900 text-white font-medium p-2 shadow-lg">
-                    Initially empty. Click the <span className="font-semibold text-blue-400">+</span> button to create a folder.
+                    Help added here belongs to this {scope.type.toLowerCase()} only. Click the <span className="font-semibold text-blue-400">+</span> button to create a folder.
                   </TooltipContent>
                 </Tooltip>
               </div>

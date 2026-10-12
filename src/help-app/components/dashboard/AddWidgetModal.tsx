@@ -6,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@help/components/ui/dialog";
-import { Button } from "@help/components/ui/button";
 import { Input } from "@help/components/ui/input";
 import {
   Tooltip,
@@ -54,15 +53,13 @@ export function AddWidgetModal({
         {/* Modal Header */}
         <DialogHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 flex items-center justify-center shrink-0">
-              <LayoutGrid className="h-5 w-5" />
-            </div>
+            <span className="page-title-icon" aria-hidden="true"><LayoutGrid size={20} /></span>
             <div>
-              <DialogTitle className="text-base font-semibold text-slate-900 dark:text-white">
+              <DialogTitle className="hms-card-title">
                 {categoryLabel ? `Add Widgets to ${categoryLabel}` : "Add Widgets to Dashboard"}
               </DialogTitle>
               {categoryLabel && (
-                <p className="text-xs text-slate-400 font-normal mt-0.5">
+                <p className="text-xs text-muted-foreground font-normal mt-0.5">
                   Available widgets for {categoryLabel} category
                 </p>
               )}
@@ -103,7 +100,7 @@ export function AddWidgetModal({
                     }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="h-10 w-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
                         <Icon className="h-5 w-5" />
                       </div>
                       <div className="flex items-center gap-1.5 min-w-0">
@@ -135,8 +132,7 @@ export function AddWidgetModal({
                     ) : (
                       <button
                         type="button"
-                        style={{ background: "linear-gradient(90deg, var(--color-blue-600) 0%, var(--color-blue-950) 100%)" }}
-                        className="w-10 h-8 rounded-full text-white flex items-center justify-center shadow-sm hover:opacity-90 transition-all shrink-0 border-0"
+                        className="w-10 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-sm hover:opacity-90 transition-all shrink-0 border-0"
                         onClick={() => onAddWidget(widget.id)}
                         title="Add widget"
                       >
@@ -152,15 +148,10 @@ export function AddWidgetModal({
 
         {/* Modal Footer */}
         <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 text-xs text-slate-400 font-normal">
-          <span>{activeWidgetIds.length} widgets currently visible on your dashboard</span>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="rounded-xl px-5 text-xs text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium"
-          >
+          <span className="text-muted-foreground">{activeWidgetIds.length} widgets currently visible on your dashboard</span>
+          <button type="button" className="shell-btn-primary shell-btn-sm" onClick={() => onOpenChange(false)}>
             Done
-          </Button>
+          </button>
         </div>
       </DialogContent>
     </Dialog>

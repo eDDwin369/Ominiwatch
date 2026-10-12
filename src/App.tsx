@@ -16,7 +16,8 @@ import {
   parseRouteFromUrl, 
   pushAppRoute, 
   replaceAppRoute,
-  roleFromEmail
+  roleFromEmail,
+  INTRO_PENDING_KEY
 } from './utils/navigation';
 
 function App() {
@@ -217,7 +218,6 @@ function App() {
   // Handlers
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login attempt', { email, password });
     
     if (rememberMe) {
       localStorage.setItem('rememberMe', 'true');
@@ -233,6 +233,8 @@ function App() {
     setTimeout(() => {
       setIsLoading(false);
       setSession(true, email, roleFromEmail(email));
+      // the welcome intro plays once, right after login
+      try { sessionStorage.setItem(INTRO_PENDING_KEY, '1'); } catch { /* storage unavailable: skip the intro */ }
       const targetRoute: AppRouteState = { screen: 'dashboard', view: 'overview' };
       replaceAppRoute(targetRoute);
       setCurrentScreen('dashboard');
