@@ -6,7 +6,6 @@ import {
   BarChart2,
   Palette,
   ShieldCheck,
-  UserCheck,
   ChevronRight,
   ChevronLeft
 } from 'lucide-react';
@@ -92,8 +91,6 @@ export function Sidebar({
       setActiveItemId('overview');
     } else if (currentView === 'account') {
       setActiveItemId('account');
-    } else if (currentView === 'customer') {
-      setActiveItemId('customer');
     } else if (currentView === 'admin') {
       setActiveItemId('admin');
     } else {
@@ -332,21 +329,6 @@ export function Sidebar({
             )}
           </a>
 
-          {/* Customer — only visible to the customer role (mirrors Help Management) */}
-          {role === 'customer' && (
-            <a
-              href="#"
-              className={`nav-item ${activeItemId === 'customer' ? 'active' : ''}`}
-              onClick={(e) => handleNavItemClick('customer', e, 'customer')}
-              onMouseEnter={(e) => handleItemMouseEnter("Customer", e)}
-              onMouseLeave={handleItemMouseLeave}
-            >
-              <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <UserCheck size={20} className="nav-icon" color="#06B6D4" />
-              </div>
-              <span className="nav-label">Customer</span>
-            </a>
-          )}
 
           {/* Menu Item 2 */}
           <a
