@@ -107,6 +107,8 @@ const dummyUsers = Array.from({ length: 1000 }, (_, idx) => {
 // Theme comes from the root StudioTheme provider (theme-bridge.tsx).
 export function ReportsPage() {
   const [users, setUsers] = useState(dummyUsers);
+  // Demo: schedules live in memory; creating one asks the demo mail server to email the recipients.
+  const [schedules, setSchedules] = useState<any[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [showUnsavedConfirm, setShowUnsavedConfirm] = useState(false);
 
@@ -365,6 +367,30 @@ export function ReportsPage() {
         config={{
           defaultViewMode: 'list',
           viewOptions: ['list', 'grid']
+        }}
+        scheduler={{
+          mode: 'api',
+          schedules,
+          onScheduleCreate: async (s: any) => {
+            setSchedules((p) => [...p, s]);
+            try {
+              const base = import.meta.env.VITE_MAIL_API_URL ?? 'http://localhost:3200';
+              const res = await fetch(`${base}/api/schedules`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(s),
+              });
+              const body = await res.json().catch(() => ({}));
+              if (!res.ok) console.warn('Schedule email failed:', body.error ?? res.status);
+              else console.info('Schedule email sent', body.previewUrl ?? '');
+            } catch (err) {
+              console.warn('Schedule email server unreachable:', err);
+            }
+          },
+          onScheduleUpdate: (s: any) => setSchedules((p) => p.map((x) => (x.id === s.id ? s : x))),
+          onScheduleDelete: (id: string) => setSchedules((p) => p.filter((x) => x.id !== id)),
+          onScheduleToggle: (id: string, isActive: boolean) =>
+            setSchedules((p) => p.map((x) => (x.id === id ? { ...x, isActive } : x))),
         }}
       >
         <RestoreActiveView />

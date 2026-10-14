@@ -44,7 +44,7 @@
 
 [data-theme-mode="dark"][data-theme="corporate-blue"],
 [data-theme-mode="dark"][data-theme="corporate"] {
-  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #03205F 100%);
+  --dash-canvas-bg: linear-gradient(180deg, #000000 0%, #03205F 100%);
   --account-card-bg: linear-gradient(90deg, #010D27 0%, #03205F 100%);
 }
 
@@ -61,7 +61,7 @@
 }
 
 [data-theme-mode="dark"][data-theme="emerald"] {
-  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #0B4A2F 100%);
+  --dash-canvas-bg: linear-gradient(180deg, #000000 0%, #0B4A2F 100%);
   --account-card-bg: linear-gradient(90deg, #001909 0%, #0A4821 100%);
 }
 
@@ -79,7 +79,7 @@
 
 [data-theme-mode="dark"][data-theme="indigo-violet"],
 [data-theme-mode="dark"][data-theme="indigo"] {
-  --dash-canvas-bg: linear-gradient(90deg, #000000 0%, #31175F 100%);
+  --dash-canvas-bg: linear-gradient(180deg, #000000 0%, #31175F 100%);
   --account-card-bg: linear-gradient(90deg, #010D27 0%, #37107A 100%);
 }
 
@@ -1518,7 +1518,7 @@ h2.brand-gradient-text,
   /* One page wash for Account Settings, Global Settings and Notifications (both modes):
      faint primary → secondary over the theme's page colour. */
   --brand-page-wash:
-    linear-gradient(160deg,
+    linear-gradient(180deg,
       color-mix(in srgb, var(--primary) 12%, transparent) 0%,
       color-mix(in srgb, var(--primary) 6%, transparent) 45%,
       color-mix(in srgb, var(--secondary) 10%, transparent) 100%),
@@ -1595,7 +1595,7 @@ h2.brand-gradient-text,
 [data-theme-mode="dark"] .app-footer {
   /* tint layer over the page colour (which can itself be a gradient, so no color-mix on it) */
   background:
-    linear-gradient(90deg,
+    linear-gradient(180deg,
       color-mix(in srgb, var(--primary) 14%, transparent) 0%,
       color-mix(in srgb, var(--primary) 6%, transparent) 55%,
       color-mix(in srgb, var(--secondary) 9%, transparent) 100%),
