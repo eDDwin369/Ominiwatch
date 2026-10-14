@@ -429,9 +429,9 @@ function App() {
         <div className="form-panel" style={{ background: brand.loginPanelColor || 'var(--brand-page-wash)' }}>
           <div className="auth-logo">
             {brand.logoMode === 'image' && brand.logoUrl ? (
-              // Uploaded logo is cropped to a 3.5:1 box in Theme Studio (LoginPanel) —
-              // match that aspect here instead of forcing it into a 220x220 square.
-              <img src={brand.logoUrl} alt="Logo" style={{ maxWidth: '220px', maxHeight: '63px', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+              // Uploaded logo is cropped to a square in Theme Studio (LoginPanel) —
+              // same size as the bundled default logo.
+              <img src={brand.logoUrl} alt="Logo" className="auth-logo-default" />
             ) : (
               <img src={logo} alt="Logo" className="auth-logo-default" />
             )}
