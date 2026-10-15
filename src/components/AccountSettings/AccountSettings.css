@@ -107,18 +107,11 @@
   box-shadow: var(--card-shadow, var(--shadow-sm)) !important;
 }
 
+/* Personal card: shape, border, shadow and fill all come from the shared .figma-card tokens (radius,
+   --card-border, --card-shadow, --brand-card-surface) so it matches the other cards on the page. */
 .figma-card-personal {
   min-height: 230px;
-  background: var(--account-card-bg, linear-gradient(90deg, #6CA4FF 0%, #C9D8F2 100%)) !important;
-  border-radius: calc(var(--radius-unit, 1px) * 20) !important;
-  border: 1px solid rgba(255, 255, 255, 0.45) !important;
-  box-shadow: 0 8px 32px rgba(37, 99, 235, 0.08) !important;
   padding: var(--ac-pad-y) var(--ac-pad-x) !important;
-}
-
-[data-theme-mode="dark"] .figma-card-personal {
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
 }
 
 .figma-card-personal .figma-card-top-bar {
@@ -297,18 +290,18 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35) !important;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 35%, transparent) !important;
 }
 
 [data-theme-mode="dark"] .figma-card-personal .figma-btn-edit-square {
   background: var(--primary, #4f46e5) !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.5) !important;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 50%, transparent) !important;
 }
 
 .figma-card-personal .figma-btn-edit-square:hover {
   filter: brightness(1.15);
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45) !important;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--primary) 45%, transparent) !important;
 }
 
 .figma-card-preferences {
@@ -1516,17 +1509,9 @@
   padding: 20px 0;
 }
 
-/* Stronger card shadows, each keeping its original colour.
-   Personal card: same blue (light) / black (dark), darker and a bit wider.
-   Token cards: the theme's --card-shadow layered twice = same colours/shape, deeper. */
-.figma-card.figma-card-personal {
-  box-shadow: 0 calc(12px * var(--card-shadow-scale, 1)) calc(40px * var(--card-shadow-scale, 1)) color-mix(in srgb, var(--primary) 18%, transparent) !important;
-}
-
-[data-theme-mode="dark"] .figma-card.figma-card-personal {
-  box-shadow: 0 calc(12px * var(--card-shadow-scale, 1)) calc(40px * var(--card-shadow-scale, 1)) rgba(0, 0, 0, 0.6) !important;
-}
-
+/* Stronger card shadows: every card on the page (Personal, Preferences, Security) uses the theme's
+   --card-shadow layered twice — same colours/shape, deeper, and it follows Theme Studio's Card shadow. */
+.figma-card.figma-card-personal,
 .figma-card.figma-card-preferences,
 .figma-card.figma-card-unified-right {
   box-shadow: var(--card-shadow, var(--shadow-sm)), var(--card-shadow, var(--shadow-sm)) !important;
@@ -1827,6 +1812,26 @@
   font-size: var(--app-font-size, 14px) !important;
   font-weight: var(--app-font-weight, 400) !important;
   color: var(--text-main) !important;
+}
+
+/* Preferences & Privacy: Language / Timezone use the same TextField look as the Personal Information
+   fields — caption legend (secondary colour), body-size value in the main text colour (Theme Studio
+   tokens, not the muted shade a bare <button> can pick up). */
+.figma-account-settings-container .figma-card-preferences .tf-legend {
+  font-size: var(--font-size-caption, 11px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  color: var(--text-secondary) !important;
+}
+
+.figma-account-settings-container .figma-card-preferences .tf-select {
+  font-size: var(--app-font-size, 14px) !important;
+  font-weight: var(--app-font-weight, 400) !important;
+  color: var(--text-main) !important;
+  opacity: 1 !important;
+}
+
+.figma-account-settings-container .figma-card-preferences .tf-wrapper {
+  opacity: 1;
 }
 
 /* Personal Information: name + role (view and edit mode) */
