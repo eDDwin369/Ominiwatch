@@ -269,16 +269,8 @@ function syncCssVars(theme: any, settings: any) {
   set('--dash-nav-hover-bg-light', navHoverBgLight);
   set('--dash-nav-hover-bg-dark', navHoverBgDark);
   set('--dash-nav-hover-bg', isDark ? navHoverBgDark : navHoverBgLight);
-  // Hero video-card fill — differs per colour template in Figma (not theme-neutral #080a09).
-  const figmaVideoBg: Record<string, string> = {
-    corporate: '#0b1024',
-    'corporate-blue': '#0b1024',
-    emerald: '#050505',
-    // Verified against pprc_darkPink / pprc_lightPink (same in both modes).
-    indigo: '#0b1024',
-    'indigo-violet': '#0b1024',
-  };
-  set('--dash-video-bg', figmaVideoBg[settings.presetId] || '#080a09');
+  // Hero video-card fill — per-preset value comes from the Theme Studio package (presetGradients.ts).
+  set('--dash-video-bg', tk.dashVideoBg || '#080a09');
   // Sidebar nav text — Figma tints inactive-item text and section labels per colour template in
   // dark mode rather than using one flat neutral grey. Falls back to the existing neutral CSS
   // default for any preset not yet verified against a Figma export.

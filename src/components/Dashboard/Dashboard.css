@@ -5697,15 +5697,25 @@ html:has(.mode-v6),
   background: var(--dash-canvas-bg, var(--bg-dashboard));
 }
 
+/* Light mode: same page background as Account Settings — the faint primary → secondary wash over
+   the theme's page colour (--brand-page-wash), instead of plain white. The wash is drawn once, on the
+   scrolling content area; the surfaces around it carry just the page colour so gradients don't stack. */
 [data-theme-mode="light"] body:has(.mode-v2),
 [data-theme-mode="light"] html:has(.mode-v2),
 [data-theme-mode="light"] .dashboard-wrapper:has(.mode-v2),
 [data-theme-mode="light"] .dashboard-body:has(.mode-v2),
-[data-theme-mode="light"] .dashboard-main:has(.mode-v2),
-[data-theme-mode="light"] .dashboard-content-scrollable:has(.mode-v2),
-[data-theme-mode="light"] .dashboard-container:has(.mode-v2) {
-  background: #ffffff !important;
+[data-theme-mode="light"] .dashboard-main:has(.mode-v2) {
+  background: var(--account-page-bg, var(--bg-dashboard)) !important;
   transition: background 0.4s ease !important;
+}
+
+[data-theme-mode="light"] .dashboard-content-scrollable:has(.mode-v2) {
+  background: var(--brand-page-wash) !important;
+  transition: background 0.4s ease !important;
+}
+
+[data-theme-mode="light"] .dashboard-container:has(.mode-v2) {
+  background: transparent !important;
 }
 
 /* mode-v2 fills the scroll area exactly — drop the container's 32px bottom
