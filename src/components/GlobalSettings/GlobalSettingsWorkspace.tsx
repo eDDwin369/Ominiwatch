@@ -1134,9 +1134,9 @@ export function GlobalSettingsWorkspace({
                             position: 'absolute',
                             bottom: 'calc(100% + 9px)',
                             right: 0,
-                            background: '#ffffff',
-                            color: '#0f172a',
-                            border: '1px solid rgba(0, 0, 0, 0.12)',
+                            background: 'var(--bg-card, #ffffff)',
+                            color: 'var(--text-main, #0f172a)',
+                            border: '1px solid var(--border-color, rgba(128, 128, 128, 0.25))',
                             boxShadow: '0 8px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08)',
                             borderRadius: 'calc(var(--radius-unit, 1px) * 10)',
                             padding: '6px 12px',
@@ -1151,7 +1151,7 @@ export function GlobalSettingsWorkspace({
                           }}
                         >
                           <AlertCircle size={14} style={{ color: '#ef4444' }} />
-                          <span style={{ color: '#0f172a' }}>You can only add one link</span>
+                          <span style={{ color: 'var(--text-main, #0f172a)' }}>You can only add one link</span>
                           <div
                             style={{
                               position: 'absolute',
@@ -1161,7 +1161,7 @@ export function GlobalSettingsWorkspace({
                               height: 0,
                               borderLeft: '5px solid transparent',
                               borderRight: '5px solid transparent',
-                              borderTop: '5px solid #ffffff'
+                              borderTop: '5px solid var(--bg-card, #ffffff)'
                             }}
                           />
                         </div>
