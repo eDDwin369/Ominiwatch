@@ -211,8 +211,9 @@ export function Header({
         )}
 
         {/* Text/Font in Center */}
-        {showCustomerProfile && (
+        {(showCustomerProfile || showCustomerCaption) && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            {showCustomerProfile && (
             <span
               className="hdr-brand-name"
               style={{
@@ -223,6 +224,7 @@ export function Header({
             >
               {customerName}
             </span>
+            )}
             {showCustomerCaption && (
               <span
                 className="hdr-brand-caption"
