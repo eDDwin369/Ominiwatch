@@ -93,6 +93,10 @@
 }
 
 .tf-select {
+  /* Lift above the absolutely-positioned .tf-outline: where a card/modal fills the outline
+     (--brand-field-fill), a non-positioned button paints UNDER that translucent fill and its
+     value looks washed-out grey, unlike .tf-input which is already position: relative. */
+  position: relative;
   appearance: none;
   cursor: pointer;
   padding-right: 20px;
