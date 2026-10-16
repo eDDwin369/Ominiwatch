@@ -987,6 +987,10 @@
 }
 
 .notification-action-decline-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   color: var(--text-secondary);
@@ -1007,6 +1011,10 @@
 }
 
 .notification-action-accept-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   background: var(--btn-color, var(--primary));
   border: 1px solid transparent;
   color: var(--btn-text, var(--on-accent, #ffffff));
@@ -1174,6 +1182,10 @@
 /* Accept / Decline: same shape and tokens as Global Settings' Cancel / Save buttons */
 .notification-action-decline-btn,
 .notification-action-accept-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
   padding: 6px 16px;
   border-radius: calc(var(--radius-unit, 1px) * 16);
   font-family: inherit;
