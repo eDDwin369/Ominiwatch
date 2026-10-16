@@ -1,10 +1,22 @@
 
 .user-tab-page [aria-label="New User"],
-.user-tab-page [aria-label="New Report"] {
+.user-tab-page [aria-label="New Report"],
+.user-tab-page [aria-label="New schedule" i],
+.user-tab-page [title="New schedule" i],
+[aria-label="New schedule" i],
+[title="New schedule" i],
+.MuiDialog-root [aria-label="New schedule" i],
+.MuiDialog-root [title="New schedule" i] {
   width: 100px !important;          
   height: 38px !important;        
   border-radius: 12px !important;     
   color: #ffffff !important;
+  background: linear-gradient(
+    146.94deg,
+    var(--primary-hover, #1d4ed8) 0%,
+    var(--primary, #2563eb) 45%,
+    var(--primary-light, #60a5fa) 100%
+  ) !important;
   background-image: linear-gradient(
     146.94deg,
     var(--primary-hover, #1d4ed8) 0%,
@@ -12,6 +24,8 @@
     var(--primary-light, #60a5fa) 100%
   ) !important;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary, #2563eb) 35%, transparent) !important;
+  filter: none !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -20,19 +34,50 @@
 }
 
 .user-tab-page [aria-label="New User"]:hover,
-.user-tab-page [aria-label="New Report"]:hover {
+.user-tab-page [aria-label="New Report"]:hover,
+.user-tab-page [aria-label="New schedule" i]:hover,
+.user-tab-page [title="New schedule" i]:hover,
+[aria-label="New schedule" i]:hover,
+[title="New schedule" i]:hover,
+.MuiDialog-root [aria-label="New schedule" i]:hover,
+.MuiDialog-root [title="New schedule" i]:hover {
+  background: linear-gradient(
+    146.94deg,
+    var(--primary-hover, #1d4ed8) 0%,
+    var(--primary, #2563eb) 45%,
+    var(--primary-light, #60a5fa) 100%
+  ) !important;
+  background-image: linear-gradient(
+    146.94deg,
+    var(--primary-hover, #1d4ed8) 0%,
+    var(--primary, #2563eb) 45%,
+    var(--primary-light, #60a5fa) 100%
+  ) !important;
   filter: brightness(1.08) !important;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45) !important;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--primary, #2563eb) 45%, transparent) !important;
 }
 
 .user-tab-page [aria-label="New User"]:active,
-.user-tab-page [aria-label="New Report"]:active {
+.user-tab-page [aria-label="New Report"]:active,
+.user-tab-page [aria-label="New schedule" i]:active,
+.user-tab-page [title="New schedule" i]:active,
+[aria-label="New schedule" i]:active,
+[title="New schedule" i]:active,
+.MuiDialog-root [aria-label="New schedule" i]:active,
+.MuiDialog-root [title="New schedule" i]:active {
   transform: translateY(0);
 }
 
 .user-tab-page [aria-label="New User"] svg,
-.user-tab-page [aria-label="New Report"] svg {
+.user-tab-page [aria-label="New Report"] svg,
+.user-tab-page [aria-label="New schedule" i] svg,
+.user-tab-page [title="New schedule" i] svg,
+[aria-label="New schedule" i] svg,
+[title="New schedule" i] svg,
+.MuiDialog-root [aria-label="New schedule" i] svg,
+.MuiDialog-root [title="New schedule" i] svg {
   font-size: 20px;
   stroke-width: 2.2;
 }

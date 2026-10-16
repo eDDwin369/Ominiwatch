@@ -264,7 +264,7 @@ export function Sidebar({
             href="#"
             className={`nav-item ${activeItemId === 'overview' ? 'active' : ''}`}
             onClick={(e) => handleNavItemClick('overview', e, 'overview')}
-            style={{ display: 'flex', alignItems: 'center', width: '100%', position: 'relative' }}
+            style={{ display: 'flex', alignItems: 'center', width: isSidebarCollapsed ? undefined : '100%', position: 'relative' }}
             onMouseEnter={(e) => handleItemMouseEnter("Dashboard", e)}
             onMouseLeave={handleItemMouseLeave}
           >

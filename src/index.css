@@ -1283,6 +1283,82 @@ input, button, select, textarea, span, p, div, label, a {
   box-sizing: border-box !important;
 }
 
+/* Schedule Report / New schedule button: match the New User button design and tokens */
+.user-tab-page [aria-label="New schedule" i],
+.user-tab-page [title="New schedule" i],
+[aria-label="New schedule" i],
+[title="New schedule" i],
+.MuiDialog-root [aria-label="New schedule" i],
+.MuiDialog-root [title="New schedule" i] {
+  width: 100px !important;          
+  height: 38px !important;        
+  border-radius: 12px !important;     
+  color: #ffffff !important;
+  background: linear-gradient(
+    146.94deg,
+    var(--primary-hover, #1d4ed8) 0%,
+    var(--primary, #2563eb) 45%,
+    var(--primary-light, #60a5fa) 100%
+  ) !important;
+  background-image: linear-gradient(
+    146.94deg,
+    var(--primary-hover, #1d4ed8) 0%,
+    var(--primary, #2563eb) 45%,
+    var(--primary-light, #60a5fa) 100%
+  ) !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary, #2563eb) 35%, transparent) !important;
+  filter: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.user-tab-page [aria-label="New schedule" i]:hover,
+.user-tab-page [title="New schedule" i]:hover,
+[aria-label="New schedule" i]:hover,
+[title="New schedule" i]:hover,
+.MuiDialog-root [aria-label="New schedule" i]:hover,
+.MuiDialog-root [title="New schedule" i]:hover {
+  background: linear-gradient(
+    146.94deg,
+    var(--primary-hover, #1d4ed8) 0%,
+    var(--primary, #2563eb) 45%,
+    var(--primary-light, #60a5fa) 100%
+  ) !important;
+  background-image: linear-gradient(
+    146.94deg,
+    var(--primary-hover, #1d4ed8) 0%,
+    var(--primary, #2563eb) 45%,
+    var(--primary-light, #60a5fa) 100%
+  ) !important;
+  filter: brightness(1.08) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45) !important;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--primary, #2563eb) 45%, transparent) !important;
+}
+
+.user-tab-page [aria-label="New schedule" i]:active,
+.user-tab-page [title="New schedule" i]:active,
+[aria-label="New schedule" i]:active,
+[title="New schedule" i]:active,
+.MuiDialog-root [aria-label="New schedule" i]:active,
+.MuiDialog-root [title="New schedule" i]:active {
+  transform: translateY(0);
+}
+
+.user-tab-page [aria-label="New schedule" i] svg,
+.user-tab-page [title="New schedule" i] svg,
+[aria-label="New schedule" i] svg,
+[title="New schedule" i] svg,
+.MuiDialog-root [aria-label="New schedule" i] svg,
+.MuiDialog-root [title="New schedule" i] svg {
+  font-size: 20px;
+  stroke-width: 2.2;
+}
+
 /* Ensure Users grid cells and inner spans truncate with ellipsis and nowrap */
 .user-tab-grid-container td,
 .user-tab-grid-container th,
@@ -1620,6 +1696,7 @@ h2.brand-gradient-text,
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
+  text-align: center !important;
   gap: 6px;
   min-height: 36px;
   padding: calc(var(--container-pad, 10px) * 0.8) calc(var(--container-pad, 10px) * 1.8) !important;
