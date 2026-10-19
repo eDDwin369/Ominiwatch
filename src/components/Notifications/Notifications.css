@@ -1256,3 +1256,32 @@
   min-height: 0;
   overflow-y: auto;
 }
+
+/* No caret/arrow on top of the notification window */
+.new-notification-dropdown::before,
+[data-theme-mode] .new-notification-dropdown::before {
+  display: none;
+}
+
+/* Decline/Accept: text centred in the pill (fixed height, no stray line-height/padding offset) */
+.notification-action-decline-btn,
+.notification-action-accept-btn {
+  box-sizing: border-box;
+  height: 34px;
+  padding: 0 18px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/* Beat the global button rules in index.css (they use !important): centre the caps in the pill */
+.notification-row-actions .notification-action-decline-btn,
+.notification-row-actions .notification-action-accept-btn {
+  box-sizing: border-box !important;
+  height: 36px;
+  min-height: 36px !important;
+  padding: 0 calc(var(--container-pad, 10px) * 1.8) !important;
+  line-height: 1 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-box: trim-both cap alphabetic;
+}
