@@ -5,12 +5,156 @@ env:
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, closed]
   push:
     branches:
       - main
   workflow_dispatch:
 
 jobs:
+  sonarqube:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java (avoids scanner downloading a JRE from our server over the tunnel - unreliable, see git log)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v6
+        timeout-minutes: 8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarqube.oomnieye.com
+        with:
+          args: -Dsonar.scanner.skipJreProvisioning=true
+
+      - name: SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: true
+
+  # PR-scoped SonarQube scan. Uses a TEMPORARY project key (not the shared
+  # 'base-application' key the push job above uses) so a PR's code never overwrites or
+  # pollutes the real project's quality history on main - this was a real bug in the
+  # original setup (every PR scan ran under the same project key as main, silently
+  # corrupting main's tracked history with PR-branch code). Community Edition has no
+  # paid multi-branch/PR-decoration feature, so results are posted manually as a PR
+  # comment via the GitHub API instead.
+  sonarqube-pr:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      PR_PROJECT_KEY: base-application-pr-${{ github.event.pull_request.number }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java (avoids scanner downloading a JRE from our server over the tunnel - unreliable, see git log)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: SonarQube Scan (PR-scoped, does not touch main's history)
+        uses: sonarsource/sonarqube-scan-action@v6
+        timeout-minutes: 8
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PR }}
+          SONAR_HOST_URL: https://sonarqube.oomnieye.com
+        with:
+          args: >
+            -Dsonar.projectKey=${{ env.PR_PROJECT_KEY }}
+            -Dsonar.projectName=${{ env.PR_PROJECT_KEY }}
+            -Dsonar.scanner.skipJreProvisioning=true
+
+      - name: SonarQube Quality Gate
+        id: qualitygate
+        uses: sonarsource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PR }}
+        continue-on-error: true
+
+      - name: Fetch results and post/update PR comment
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PR }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GATE_STATUS: ${{ steps.qualitygate.outputs.quality-gate-status }}
+        run: |
+          python3 <<'PYEOF'
+          import json, os, base64, urllib.request
+
+          key = os.environ["PR_PROJECT_KEY"]
+          token = os.environ["SONAR_TOKEN"]
+          gate_status = os.environ.get("GATE_STATUS") or "UNKNOWN"
+
+          req = urllib.request.Request(
+              "https://sonarqube.oomnieye.com/api/measures/component?component="
+              + key + "&metricKeys=bugs,vulnerabilities,code_smells,security_hotspots,duplicated_lines_density"
+          )
+          req.add_header("Authorization", "Basic " + base64.b64encode((token + ":").encode()).decode())
+          try:
+              with urllib.request.urlopen(req) as resp:
+                  data = json.load(resp)
+              measures = {m["metric"]: m["value"] for m in data.get("component", {}).get("measures", [])}
+          except Exception as e:
+              measures = {}
+
+          icon = "PASSED" if gate_status == "PASSED" else "FAILED"
+          lines = [
+              "<!-- sonarqube-pr-report -->",
+              "## SonarQube Analysis: " + icon,
+              "",
+              "| Metric | Value |",
+              "|---|---|",
+              "| Quality Gate | **" + gate_status + "** |",
+              "| Bugs | " + measures.get("bugs", "0") + " |",
+              "| Vulnerabilities | " + measures.get("vulnerabilities", "0") + " |",
+              "| Code Smells | " + measures.get("code_smells", "0") + " |",
+              "| Security Hotspots | " + measures.get("security_hotspots", "0") + " |",
+              "| Duplication | " + measures.get("duplicated_lines_density", "0") + "% |",
+              "",
+              "[View full report](https://sonarqube.oomnieye.com/dashboard?id=" + key + ")",
+          ]
+
+          with open("/tmp/comment.md", "w") as f:
+              f.write("\n".join(lines))
+          PYEOF
+
+          EXISTING=$(gh api repos/${{ github.repository }}/issues/$PR_NUMBER/comments --jq '.[] | select(.body | contains("sonarqube-pr-report")) | .id' | head -1)
+          if [ -n "$EXISTING" ]; then
+            gh api repos/${{ github.repository }}/issues/comments/$EXISTING -X PATCH -f body="$(cat /tmp/comment.md)"
+          else
+            gh pr comment $PR_NUMBER --body-file /tmp/comment.md
+          fi
+
+  sonarqube-pr-cleanup:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete temporary PR-scoped SonarQube project
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_PR }}
+        run: |
+          curl -s -u "$SONAR_TOKEN:" -X POST "https://sonarqube.oomnieye.com/api/projects/delete" \
+            -d "project=base-application-pr-${{ github.event.pull_request.number }}"
+
   build-and-push:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
@@ -23,7 +167,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Derive short image tag
-        run: echo "IMAGE_TAG=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
