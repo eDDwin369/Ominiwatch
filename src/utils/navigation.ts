@@ -152,7 +152,7 @@ export function parseRouteFromUrl(): AppRouteState {
  */
 export function buildHashFromRoute(route: AppRouteState): string {
   if (route.screen === 'dashboard') {
-    let hash = `#/dashboard/${route.view || 'overview'}`;
+    let hash = `#/dashboard/${route.view || 'oomni-watch'}`;
     const params = new URLSearchParams();
     if (route.tab) params.set('tab', route.tab);
     if (route.editMode) params.set('editMode', 'true');

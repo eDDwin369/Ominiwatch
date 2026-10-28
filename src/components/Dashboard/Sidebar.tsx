@@ -1,16 +1,40 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  LayoutGrid,
-  Store,
-  BarChart2,
-  Palette,
-  ShieldCheck,
+  Radio,
+  BrainCircuit,
+  History,
+  Settings,
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  User,
+  Palette
 } from 'lucide-react';
-import { getSessionRole } from '../../utils/navigation';
 import './Dashboard.css';
+
+function OomniWatchIcon({ size = 20, className = '', color = '#10b981', style }: { size?: number; className?: string; color?: string; style?: React.CSSProperties }) {
+  const strokeColor = color || (style?.color as string) || '#10b981';
+  return (
+    <svg 
+      width={size} 
+      height={size} 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke={strokeColor} 
+      strokeWidth="2.2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round" 
+      className={className}
+      style={{ color: strokeColor, stroke: strokeColor, ...style }}
+    >
+      <path d="M4 8V5a1 1 0 0 1 1-1h3" />
+      <path d="M16 4h3a1 1 0 0 1 1 1v3" />
+      <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
+      <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
+      <line x1="9" y1="12" x2="15" y2="12" />
+    </svg>
+  );
+}
 
 interface SidebarProps {
   currentView: string;
@@ -45,10 +69,6 @@ export function Sidebar({
   // Evaluate collapsed status
   const isSidebarCollapsed = collapsed;
 
-  // Role gates the Customer and Superadmin/Help Admin items, mirroring the Help
-  // Management app's sidebar. Set at login (see App.tsx / navigation.ts).
-  const role = getSessionRole();
-
   // Hover state specifically for logo in collapsed state
   const [isLogoHovered, setIsLogoHovered] = useState(false);
   // Hovered item for tooltip in collapsed state
@@ -75,26 +95,24 @@ export function Sidebar({
     }
   }, [collapsed]);
 
-  // Keep the highlighted item in sync when navigation happens outside the
-  // sidebar (or when Theme Studio is toggled). Theme Studio always wins while
-  // open; otherwise the current view maps to a single item. For 'reports' —
-  // which is shared by two items — we preserve whichever report item is already
-  // selected so clicking one never highlights the other.
+  // Keep the highlighted item in sync with currentView or isThemeStudioOpen
   useEffect(() => {
     if (isThemeStudioOpen) {
-      setActiveItemId('theme-studio');
+      setActiveItemId('administration');
       return;
     }
-    if (currentView === 'reports') {
-      setActiveItemId('report-builder');
-    } else if (currentView === 'overview') {
-      setActiveItemId('overview');
-    } else if (currentView === 'account') {
-      setActiveItemId('account');
-    } else if (currentView === 'admin') {
-      setActiveItemId('admin');
+    if (currentView === 'overview' || currentView === 'oomni-watch') {
+      setActiveItemId('oomni-watch');
+    } else if (currentView === 'live-monitoring') {
+      setActiveItemId('live-monitoring');
+    } else if (currentView === 'ai-analysis') {
+      setActiveItemId('ai-analysis');
+    } else if (currentView === 'flashback') {
+      setActiveItemId('flashback');
+    } else if (currentView === 'administration' || currentView === 'account') {
+      setActiveItemId('administration');
     } else {
-      setActiveItemId(null);
+      setActiveItemId('oomni-watch');
     }
   }, [currentView, isThemeStudioOpen]);
 
@@ -259,19 +277,19 @@ export function Sidebar({
           className="sidebar-nav"
           style={{ paddingTop: isSidebarCollapsed ? '0' : '12px' }}
         >
-          {/* Dashboard - active */}
+          {/* 1. Oomni Watch */}
           <a
-            href="#"
-            className={`nav-item ${activeItemId === 'overview' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('overview', e, 'overview')}
+            href="#dashboard/oomni-watch"
+            className={`nav-item ${activeItemId === 'oomni-watch' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('oomni-watch', e, 'oomni-watch')}
             style={{ display: 'flex', alignItems: 'center', width: isSidebarCollapsed ? undefined : '100%', position: 'relative' }}
-            onMouseEnter={(e) => handleItemMouseEnter("Dashboard", e)}
+            onMouseEnter={(e) => handleItemMouseEnter("Oomni Watch", e)}
             onMouseLeave={handleItemMouseLeave}
           >
             <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <LayoutGrid size={20} className="nav-icon" color="var(--primary, #2563EB)" />
+              <OomniWatchIcon size={20} color="#10b981" className="nav-icon" style={{ color: '#10b981', stroke: '#10b981' }} />
             </div>
-            <span className="nav-label" style={{ flex: 1 }}>Dashboard</span>
+            <span className="nav-label" style={{ flex: 1 }}>Oomni Watch</span>
             {!isSidebarCollapsed && (
               <div
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingRight: '2px' }}
@@ -329,90 +347,85 @@ export function Sidebar({
             )}
           </a>
 
-
-          {/* Menu Item 2 */}
+          {/* 2. Live Monitoring */}
           <a
-            href="#"
-            className="nav-item"
-            onClick={(e) => handleNavItemClick(null, e)}
-            onMouseEnter={(e) => handleItemMouseEnter("Menu Item 2", e)}
+            href="#dashboard/live-monitoring"
+            className={`nav-item ${activeItemId === 'live-monitoring' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('live-monitoring', e, 'live-monitoring')}
+            onMouseEnter={(e) => handleItemMouseEnter("Live Monitoring", e)}
             onMouseLeave={handleItemMouseLeave}
           >
             <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Store size={20} className="nav-icon" color="#F59E0B" />
+              <Radio size={20} strokeWidth={2.2} color="#f59e0b" className="nav-icon" style={{ color: '#f59e0b', stroke: '#f59e0b' }} />
             </div>
-            <span className="nav-label">Menu Item 2</span>
+            <span className="nav-label">Live Monitoring</span>
           </a>
 
-          {/* Reports section */}
-          <div className="nav-section-title">
-            <span>Reports</span>
-          </div>
-
+          {/* 3. AI Analysis */}
           <a
-            href="#reports"
-            className={`nav-item ${activeItemId === 'report-builder' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('reports', e, 'report-builder')}
-            onMouseEnter={(e) => handleItemMouseEnter("Report Builder", e)}
+            href="#dashboard/ai-analysis"
+            className={`nav-item ${activeItemId === 'ai-analysis' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('ai-analysis', e, 'ai-analysis')}
+            onMouseEnter={(e) => handleItemMouseEnter("AI Analysis", e)}
             onMouseLeave={handleItemMouseLeave}
           >
             <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <BarChart2 size={20} className="nav-icon" color="#8B5CF6" />
+              <BrainCircuit size={20} strokeWidth={2.2} color="#8b5cf6" className="nav-icon" style={{ color: '#8b5cf6', stroke: '#8b5cf6' }} />
             </div>
-            <span className="nav-label">Report Builder</span>
+            <span className="nav-label">AI Analysis</span>
           </a>
 
-          {/* System section */}
-          <div className="nav-section-title">
-            <span>System</span>
-          </div>
+          {/* 4. Flashback */}
+          <a
+            href="#dashboard/flashback"
+            className={`nav-item ${activeItemId === 'flashback' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('flashback', e, 'flashback')}
+            onMouseEnter={(e) => handleItemMouseEnter("Flashback", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <History size={20} strokeWidth={2.2} color="#ec4899" className="nav-icon" style={{ color: '#ec4899', stroke: '#ec4899' }} />
+            </div>
+            <span className="nav-label">Flashback</span>
+          </a>
 
-          {/* Superadmin / Help Admin — admin roles only (mirrors Help Management) */}
-          {(role === 'admin' || role === 'sub_admin') && (
-            <a
-              href="#"
-              className={`nav-item ${activeItemId === 'admin' ? 'active' : ''}`}
-              onClick={(e) => handleNavItemClick('admin', e, 'admin')}
-              onMouseEnter={(e) => handleItemMouseEnter(role === 'sub_admin' ? "Help Admin" : "Superadmin", e)}
-              onMouseLeave={handleItemMouseLeave}
-            >
-              <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ShieldCheck size={20} className="nav-icon" color="#14B8A6" />
-              </div>
-              <span className="nav-label">{role === 'sub_admin' ? "Help Admin" : "Superadmin"}</span>
-            </a>
+          {/* 5. Administration */}
+          <a
+            href="#dashboard/administration"
+            className={`nav-item ${activeItemId === 'administration' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('administration', e, 'administration')}
+            onMouseEnter={(e) => handleItemMouseEnter("Administration", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Settings size={20} strokeWidth={2.2} color="#6366f1" className="nav-icon" style={{ color: '#6366f1', stroke: '#6366f1' }} />
+            </div>
+            <span className="nav-label">Administration</span>
+          </a>
+
+          {/* Sub-navigation under Administration when expanded */}
+          {!isSidebarCollapsed && activeItemId === 'administration' && (
+            <div style={{ paddingLeft: '28px', display: 'flex', flexDirection: 'column', gap: '3px', marginTop: '2px', marginBottom: '4px' }}>
+              <a
+                href="#dashboard/account"
+                className={`nav-item ${currentView === 'account' ? 'active' : ''}`}
+                onClick={(e) => handleNavItemClick('account', e, 'administration')}
+                style={{ fontSize: '13px', padding: '6px 10px', height: 'auto', borderRadius: '8px' }}
+              >
+                <User size={15} strokeWidth={2.2} color="#6366f1" className="nav-icon" style={{ color: '#6366f1', stroke: '#6366f1' }} />
+                <span className="nav-label">Account Settings</span>
+              </a>
+              <a
+                href="#dashboard/theme-studio"
+                className={`nav-item ${isThemeStudioOpen ? 'active' : ''}`}
+                onClick={(e) => handleNavItemClick('theme-studio', e, 'administration')}
+                style={{ fontSize: '13px', padding: '6px 10px', height: 'auto', borderRadius: '8px' }}
+              >
+                <Palette size={15} strokeWidth={2.2} color="#ec4899" className="nav-icon" style={{ color: '#ec4899', stroke: '#ec4899' }} />
+                <span className="nav-label">Theme Studio</span>
+              </a>
+            </div>
           )}
-
-          <a
-            href="#"
-            className={`nav-item ${activeItemId === 'theme-studio' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('theme-studio', e, 'theme-studio')}
-            onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
-            onMouseLeave={handleItemMouseLeave}
-          >
-            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Palette size={20} className="nav-icon" color="#EC4899" />
-            </div>
-            <span className="nav-label">Theme Studio</span>
-          </a>
-
-          <a
-            href="#"
-            className={`nav-item ${activeItemId === 'account' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('account', e, 'account')}
-            onMouseEnter={(e) => handleItemMouseEnter("Account Settings", e)}
-            onMouseLeave={handleItemMouseLeave}
-          >
-            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="nav-icon">
-                <path d="M11.66 14.16H4.16" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M15.82 5.83H8.33" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="14.16" cy="14.16" r="2.5" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="5.83" cy="5.83" r="2.5" stroke="#6366F1" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className="nav-label">Account Settings</span>
-          </a>
         </div>
 
         {/* Collapse button */}

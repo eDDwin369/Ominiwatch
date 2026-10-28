@@ -2,33 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { X, FileText, Download, CheckCircle2 } from 'lucide-react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
-import { TemplateWelcome } from './TemplateWelcome';
 import { AccountSettings } from '../AccountSettings/AccountSettings';
 import { NotificationsPage } from '../Notifications/NotificationsPage';
 import { ThemeStudioEmbed } from './ThemeStudioEmbed';
-import { OrdersView } from './OrdersView';
-import { PlaceholderView } from './PlaceholderView';
-import { PreviewLogin } from './PreviewLogin';
-import { FormView } from './FormView';
-import { ReportsPage } from './ReportsPage';
-import { HelpAdminView } from '../../help-app/HelpFeatureMount';
+import { OomniWatchPage } from '../OomniWatch/OomniWatchPage';
+import { LiveMonitoringPage } from '../LiveMonitoring/LiveMonitoringPage';
+import { AIAnalysisPage } from '../AIAnalysis/AIAnalysisPage';
+import { FlashbackPage } from '../Flashback/FlashbackPage';
+import { AdministrationPage } from '../Administration/AdministrationPage';
 import { mockNotifications } from '../Notifications/mockData';
 import type { NotificationItem } from '../Notifications/types';
 import { GlobalSettingsWorkspace } from '../GlobalSettings/GlobalSettingsWorkspace';
 import { useThemeStore } from 'omnieye-theme-studio';
-import { getSessionRole, parseRouteFromUrl, pushAppRoute } from '../../utils/navigation';
+import { parseRouteFromUrl, pushAppRoute } from '../../utils/navigation';
 import './Dashboard.css';
-
-/**
- * The shell's Dashboard (overview) view.
- *
- * Always opens on the welcome/template intro screen. The ported Help Management
- * "Site Recordings" dashboard (tabs + data table) is intentionally not rendered
- * here, so refreshing keeps the intro on screen.
- */
-function OverviewView({ onNavigate }: { onNavigate: (view: string) => void }) {
-  return <TemplateWelcome onNavigate={onNavigate} />;
-}
 
 interface DashboardProps {
   onLogout?: () => void;
@@ -102,7 +89,7 @@ export function Dashboard({
   });
   const [footerVisible, setFooterVisible] = useState(() => {
     const saved = localStorage.getItem('gs_footerVisible');
-    return saved !== null ? JSON.parse(saved) : false;
+    return saved !== null ? JSON.parse(saved) : true;
   });
   const [copyrightText, setCopyrightText] = useState(() => {
     return localStorage.getItem('gs_copyrightText') || '© {year} OomniEye. All rights reserved.';
@@ -426,14 +413,27 @@ export function Dashboard({
               <ThemeStudioEmbed />
             ) : (
               <div className={`dashboard-container`}>
-                {currentView === 'overview' ? (
-                  <OverviewView onNavigate={handleSetCurrentView} />
-                ) : currentView === 'notifications' ? (
-                  <NotificationsPage 
-                    notifications={notifications}
-                    onMarkAllRead={handleMarkAllRead}
-                    onClearRead={handleClearRead}
-                    onNotificationClick={handleNotificationClick}
+                {currentView === 'overview' || currentView === 'oomni-watch' ? (
+                  <OomniWatchPage onNavigate={handleSetCurrentView} />
+                ) : currentView === 'live-monitoring' ? (
+                  <LiveMonitoringPage />
+                ) : currentView === 'ai-analysis' ? (
+                  <AIAnalysisPage />
+                ) : currentView === 'flashback' ? (
+                  <FlashbackPage />
+                ) : currentView === 'administration' ? (
+                  <AdministrationPage 
+                    hasUnsavedChanges={hasUnsavedChanges}
+                    setHasUnsavedChanges={setHasUnsavedChanges}
+                    editProfileOnLoad={editProfileOnLoad}
+                    setEditProfileOnLoad={setEditProfileOnLoad}
+                    initialTab={accountSettingsInitialTab}
+                    defaultAdminTab="account"
+                    onAdminTabChange={(tab) => {
+                      if (tab === 'theme-studio') {
+                        setIsThemeStudioOpen(true);
+                      }
+                    }}
                   />
                 ) : currentView === 'account' ? (
                   <AccountSettings 
@@ -443,34 +443,15 @@ export function Dashboard({
                     setEditProfileOnLoad={setEditProfileOnLoad}
                     initialTab={accountSettingsInitialTab}
                   />
-                ) : currentView === 'orders' ? (
-                  <OrdersView />
-                ) : currentView === 'login' ? (
-                  <PreviewLogin />
-                ) : currentView === 'form' ? (
-                  <FormView />
-                ) : currentView === 'reports' ? (
-                  <ReportsPage />
-                 ) : currentView === 'customer' ? (
-                   // the old Customer page was removed; stale links land on the dashboard
-                   <OverviewView onNavigate={handleSetCurrentView} />
-                 ) : currentView === 'admin' ? (
-                   // Help management is for Help Managers and Superadmins only; customers just use right-click help
-                   getSessionRole() === 'customer' ? <OverviewView onNavigate={handleSetCurrentView} /> : <HelpAdminView />
-                ) : ['operations', 'cameras', 'settings', 'components'].includes(currentView) ? (
-                  <PlaceholderView title={currentView.charAt(0).toUpperCase() + currentView.slice(1)} />
+                ) : currentView === 'notifications' ? (
+                  <NotificationsPage 
+                    notifications={notifications}
+                    onMarkAllRead={handleMarkAllRead}
+                    onClearRead={handleClearRead}
+                    onNotificationClick={handleNotificationClick}
+                  />
                 ) : (
-                  <div style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                    <h2>{currentView.replace('-', ' ').toUpperCase()}</h2>
-                    <p style={{ marginTop: '16px' }}>This page is under construction. Navigated from notification.</p>
-                    <button 
-                      onClick={() => handleSetCurrentView('overview')}
-                      className="btn btn-primary"
-                      style={{ marginTop: '24px' }}
-                    >
-                      Return to Dashboard
-                    </button>
-                  </div>
+                  <OomniWatchPage onNavigate={handleSetCurrentView} />
                 )}
               </div>
             )}

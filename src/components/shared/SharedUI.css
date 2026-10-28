@@ -1,0 +1,881 @@
+/* Shared UI Design System - Account Settings Visual Source of Truth */
+
+.app-screen-wrapper {
+  width: 100%;
+  min-height: 100%;
+  flex: 1;
+  padding: calc(24px + var(--edge-pad, 0px)) calc(32px + var(--edge-pad, 0px)) 60px;
+  box-sizing: border-box;
+  background: var(--brand-page-wash, var(--bg-dashboard)) !important;
+  transition: background 0.3s ease;
+}
+
+.app-screen-container {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0;
+  animation: figmaFadeIn 0.35s ease-out;
+  font-family: var(--app-font-family);
+  color: var(--text-main);
+}
+
+.figma-card-nested {
+  background: var(--nested-bg, color-mix(in srgb, var(--text-main) 4%, transparent)) !important;
+  border: var(--nested-border, 1px solid var(--border-light)) !important;
+  box-shadow: var(--nested-shadow, none) !important;
+  padding: var(--nested-pad, 16px) !important;
+}
+
+.figma-card-compact {
+  padding: 16px 20px !important;
+}
+
+.figma-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.figma-card-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.figma-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.figma-settings-subtitle {
+  font-size: var(--font-size-body-sm, 13px);
+  color: var(--text-muted);
+  margin: 4px 0 0 0;
+}
+
+/* Page title group & circular icon badge matching Account Settings */
+.page-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.page-title-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+}
+
+[data-theme-mode="dark"] .page-title-icon {
+  background: color-mix(in srgb, var(--primary) 26%, transparent);
+  color: color-mix(in srgb, var(--primary) 55%, #ffffff);
+}
+
+
+/* Button variants */
+.app-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 13.5px);
+  font-weight: 500;
+  border-radius: var(--radius-md, 8px);
+  padding: 8px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  outline: none;
+  text-decoration: none;
+}
+
+.app-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.app-btn.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.app-btn.btn-lg {
+  padding: 12px 24px;
+  font-size: 15px;
+}
+
+.app-btn.figma-btn-danger {
+  background: color-mix(in srgb, var(--danger, #ef4444) 14%, transparent);
+  color: var(--danger, #ef4444);
+  border-color: color-mix(in srgb, var(--danger, #ef4444) 35%, transparent);
+}
+
+.app-btn.figma-btn-danger:hover:not(:disabled) {
+  background: var(--danger, #ef4444);
+  color: var(--on-accent, #ffffff);
+}
+
+.app-btn.figma-btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+}
+
+.app-btn.figma-btn-ghost:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--text-main) 6%, transparent);
+  color: var(--text-main);
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btnSpin 0.7s linear infinite;
+}
+
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Toggle container */
+.figma-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.figma-toggle-container.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.figma-toggle-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.figma-toggle-label {
+  font-size: var(--font-size-body-sm, 13.5px);
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.figma-toggle-desc {
+  font-size: var(--font-size-caption, 12px);
+  color: var(--text-muted);
+}
+
+/* Badges */
+.figma-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.figma-badge-primary {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent);
+}
+
+.figma-badge-success {
+  background: color-mix(in srgb, var(--success, #10b981) 14%, transparent);
+  color: var(--success, #10b981);
+  border: 1px solid color-mix(in srgb, var(--success, #10b981) 28%, transparent);
+}
+
+.figma-badge-warning {
+  background: color-mix(in srgb, var(--warning, #f59e0b) 14%, transparent);
+  color: var(--warning, #f59e0b);
+  border: 1px solid color-mix(in srgb, var(--warning, #f59e0b) 28%, transparent);
+}
+
+.figma-badge-danger {
+  background: color-mix(in srgb, var(--danger, #ef4444) 14%, transparent);
+  color: var(--danger, #ef4444);
+  border: 1px solid color-mix(in srgb, var(--danger, #ef4444) 28%, transparent);
+}
+
+.figma-badge-info {
+  background: color-mix(in srgb, var(--info, #0ea5e9) 14%, transparent);
+  color: var(--info, #0ea5e9);
+  border: 1px solid color-mix(in srgb, var(--info, #0ea5e9) 28%, transparent);
+}
+
+.figma-badge-neutral {
+  background: color-mix(in srgb, var(--text-main) 8%, transparent);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+/* Modals */
+.figma-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  animation: figmaFadeIn 0.2s ease-out;
+}
+
+.figma-modal-surface {
+  background: var(--bg-card);
+  border: var(--card-border, 1px solid var(--border-light));
+  border-radius: var(--radius-lg, 16px);
+  width: 90%;
+  padding: 24px;
+  box-shadow: var(--card-shadow, 0 20px 25px -5px rgba(0, 0, 0, 0.1));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.figma-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 14px;
+}
+
+.figma-modal-title {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h3-size, 18px);
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-main);
+}
+
+.figma-modal-close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.figma-modal-close-btn:hover {
+  background: color-mix(in srgb, var(--text-main) 8%, transparent);
+  color: var(--text-main);
+}
+
+.figma-modal-body {
+  font-size: var(--font-size-body-sm, 14px);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.figma-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--border-light);
+  padding-top: 16px;
+}
+
+/* Search Field */
+.figma-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--input-bg, var(--bg-dashboard));
+  border: 1px solid var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 12);
+  padding: 0 14px;
+  height: 42px;
+  min-width: 240px;
+  max-width: 360px;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.figma-search-wrapper:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.figma-search-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.figma-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: var(--text-main);
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 13.5px);
+}
+
+.figma-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.figma-search-clear {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  margin-left: 6px;
+  transition: color 0.15s ease;
+}
+
+.figma-search-clear:hover {
+  color: var(--text-main);
+}
+
+/* Expandable Search Button & Pill (Matching User Reference) */
+.figma-search-expandable {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Collapsed circular search trigger (matching Image 1) */
+.figma-search-btn-trigger {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.figma-search-btn-trigger:hover {
+  background: color-mix(in srgb, var(--primary) 24%, transparent);
+  color: var(--primary);
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+[data-theme-mode="dark"] .figma-search-btn-trigger {
+  background: color-mix(in srgb, var(--primary) 24%, transparent);
+  color: color-mix(in srgb, var(--primary) 65%, white);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+/* Expanded pill search container (matching Image 2) */
+.figma-search-pill-expanded {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: var(--bg-card, #ffffff);
+  border: 1.5px solid var(--primary);
+  border-radius: 9999px;
+  padding: 0 14px;
+  height: 38px;
+  width: 250px;
+  box-sizing: border-box;
+  animation: searchPillExpand 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+@keyframes searchPillExpand {
+  from {
+    width: 38px;
+    opacity: 0.6;
+    border-radius: 50%;
+  }
+  to {
+    width: 250px;
+    opacity: 1;
+    border-radius: 9999px;
+  }
+}
+
+.figma-search-pill-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.figma-search-pill-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: var(--text-main);
+  font-family: var(--app-font-family);
+  font-size: 13.5px;
+  padding: 0;
+}
+
+.figma-search-pill-input::placeholder {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.figma-search-pill-clear {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border-radius: 50%;
+  margin-left: 6px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.figma-search-pill-clear:hover {
+  background: color-mix(in srgb, var(--text-main) 10%, transparent);
+  color: var(--text-main);
+}
+
+
+/* Camera Card & Grid */
+.camera-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .camera-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+.camera-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 !important;
+  background: var(--brand-card-surface) !important;
+  border: var(--card-border, 1px solid var(--border-light)) !important;
+  border-radius: var(--card-radius, var(--radius-lg, 12px)) !important;
+  box-shadow: var(--card-shadow, var(--shadow-sm)) !important;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.camera-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--primary) 45%, transparent) !important;
+  box-shadow: var(--card-shadow, 0 8px 20px -4px rgba(0, 0, 0, 0.16)) !important;
+}
+
+.camera-preview-box {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: radial-gradient(circle at 50% 50%, #fdfdfd 0%, #e2e8f0 55%, #cbd5e1 100%);
+  border-bottom: 1px solid var(--border-light);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+[data-theme-mode="dark"] .camera-preview-box {
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, rgba(30, 41, 59, 0.6) 55%, rgba(15, 23, 42, 0.95) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.camera-preview-box.is-live {
+  background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0b1120 100%);
+}
+
+[data-theme-mode="dark"] .camera-preview-box.is-live {
+  background: radial-gradient(circle at 50% 50%, #111827 0%, #030712 100%);
+}
+
+.camera-preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 45%, rgba(0, 0, 0, 0.35) 100%);
+  pointer-events: none;
+}
+
+/* Status Badge matching Figma offline and live UI */
+.camera-stream-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3.5px 12px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.camera-stream-badge.offline {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  color: #dc2626;
+}
+
+.camera-stream-badge.live {
+  background: #ecfdf5;
+  border: 1.5px solid #6ee7b7;
+  color: #059669;
+}
+
+[data-theme-mode="dark"] .camera-stream-badge.offline {
+  background: rgba(239, 68, 68, 0.16);
+  border: 1.5px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
+[data-theme-mode="dark"] .camera-stream-badge.live {
+  background: rgba(16, 185, 129, 0.16);
+  border: 1.5px solid rgba(16, 185, 129, 0.5);
+  color: #34d399;
+}
+
+.camera-stream-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.camera-stream-badge.offline .camera-stream-dot {
+  background-color: #dc2626;
+}
+
+[data-theme-mode="dark"] .camera-stream-badge.offline .camera-stream-dot {
+  background-color: #f87171;
+}
+
+.camera-stream-badge.live .camera-stream-dot {
+  background-color: #059669;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+}
+
+[data-theme-mode="dark"] .camera-stream-badge.live .camera-stream-dot {
+  background-color: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.7);
+}
+
+/* Camera Type Pill */
+.camera-type-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(38, 38, 38, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #ffffff;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Camera Info Section utilizing Theme Studio card surface */
+.camera-card-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: transparent !important;
+}
+
+.camera-name-text {
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.2px;
+  line-height: 1.3;
+}
+
+.camera-sub-text {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.camera-menu-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm, 6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.camera-menu-btn:hover {
+  background: color-mix(in srgb, var(--text-main) 8%, transparent);
+  color: var(--text-main);
+}
+
+/* Camera 3-dot Action Popover Menu */
+.camera-actions-popover {
+  position: fixed;
+  width: 170px !important;
+  min-width: 170px !important;
+  max-width: 170px !important;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md, 10px);
+  padding: 6px;
+  z-index: 10050;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: var(--card-shadow, 0 10px 25px rgba(0, 0, 0, 0.18));
+  animation: smoothDropdownPop 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme-mode="dark"] .camera-actions-popover {
+  background: color-mix(in srgb, var(--primary) 8%, var(--bg-card));
+  border-color: var(--border-light);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme-mode="light"] .camera-actions-popover {
+  background: #ffffff;
+  border-color: var(--border-light);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.camera-action-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.camera-action-item:hover {
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+}
+
+.camera-action-item.danger {
+  color: var(--danger, #ef4444);
+}
+
+.camera-action-item.danger:hover {
+  background: color-mix(in srgb, var(--danger, #ef4444) 10%, transparent);
+  color: var(--danger, #ef4444);
+}
+
+
+.camera-action-item svg {
+  flex-shrink: 0;
+}
+
+/* Flashback Tab Bar matching Base Application & Image 2 */
+.flashback-tabs-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 24px;
+  padding: 0 4px;
+}
+
+.flashback-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: var(--radius-md, 8px) var(--radius-md, 8px) 0 0;
+  margin-bottom: -1px;
+}
+
+.flashback-tab-btn:hover:not(.active) {
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--text-main) 4%, transparent);
+}
+
+.flashback-tab-btn.active {
+  color: var(--primary);
+  font-weight: 600;
+  background: var(--highlight-soft, color-mix(in srgb, var(--primary) 12%, transparent));
+  border-bottom: 2.5px solid var(--primary);
+}
+
+.flashback-tab-icon-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: var(--text-muted);
+}
+
+.flashback-tab-btn:hover:not(.active) .flashback-tab-icon-badge {
+  color: var(--text-main);
+}
+
+.flashback-tab-btn.active .flashback-tab-icon-badge {
+  background: var(--primary);
+  color: var(--on-accent, #ffffff);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+/* Flashback Grid Control Segmented Pill */
+.flashback-grid-selector {
+  display: inline-flex;
+  align-items: center;
+  background: var(--nested-bg, color-mix(in srgb, var(--text-main) 4%, transparent));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md, 8px);
+  padding: 3px;
+  gap: 2px;
+}
+
+.flashback-grid-btn {
+  border: none;
+  background: transparent;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.flashback-grid-btn:hover:not(.active) {
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--text-main) 6%, transparent);
+}
+
+.flashback-grid-btn.active {
+  background: var(--primary);
+  color: var(--on-accent, #ffffff);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+/* Flashback Error State Box */
+.flashback-error-box {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--danger, #ef4444) 35%, transparent);
+  background: color-mix(in srgb, var(--danger, #ef4444) 5%, transparent);
+  border-radius: var(--radius-md, 12px);
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+[data-theme-mode="dark"] .flashback-error-box {
+  background: color-mix(in srgb, var(--danger, #ef4444) 10%, transparent);
+  border-color: color-mix(in srgb, var(--danger, #ef4444) 45%, transparent);
+}
+
+.flashback-error-title {
+  color: var(--danger, #ef4444);
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 6px 0;
+}
+
+.flashback-error-desc {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 16px 0;
+  font-family: monospace;
+}
+
+

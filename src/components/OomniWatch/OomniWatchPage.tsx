@@ -1,0 +1,499 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { 
+  MoreVertical, 
+  Video, 
+  Camera, 
+  Radio, 
+  Eye, 
+  Settings, 
+  Trash2 
+} from 'lucide-react';
+import { Card } from '../shared/Card';
+import { PageHeader } from '../shared/PageHeader';
+import { SearchField } from '../shared/SearchField';
+import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
+import { Modal } from '../shared/Modal';
+import '../AccountSettings/AccountSettings.css';
+import '../shared/SharedUI.css';
+
+export interface CameraItem {
+  id: string;
+  name: string;
+  type: '360°' | 'PTZ' | 'Fixed';
+  location: 'Indoor' | 'Outdoor';
+  hasStream: boolean;
+  streamText?: string;
+  resolution: string;
+  fps: number;
+}
+
+const INITIAL_CAMERAS: CameraItem[] = [
+  {
+    id: 'cam-1',
+    name: 'Cafeteria Counter',
+    type: 'Fixed',
+    location: 'Indoor',
+    hasStream: false,
+    streamText: 'No 360° stream',
+    resolution: '1080p FHD',
+    fps: 30
+  },
+  {
+    id: 'cam-2',
+    name: 'Chennai Rooftop 360',
+    type: '360°',
+    location: 'Outdoor',
+    hasStream: true,
+    resolution: '4K UHD',
+    fps: 30
+  },
+  {
+    id: 'cam-3',
+    name: 'Loading Dock',
+    type: 'Fixed',
+    location: 'Outdoor',
+    hasStream: false,
+    streamText: 'No 360° stream',
+    resolution: '1080p FHD',
+    fps: 30
+  },
+  {
+    id: 'cam-4',
+    name: 'Main Gate PTZ',
+    type: 'PTZ',
+    location: 'Outdoor',
+    hasStream: false,
+    streamText: 'No 360° stream',
+    resolution: '4K UHD',
+    fps: 60
+  },
+  {
+    id: 'cam-5',
+    name: 'Perimeter East',
+    type: 'Fixed',
+    location: 'Outdoor',
+    hasStream: false,
+    streamText: 'No 360° stream',
+    resolution: '1080p FHD',
+    fps: 30
+  },
+  {
+    id: 'cam-6',
+    name: 'Server Room',
+    type: 'Fixed',
+    location: 'Indoor',
+    hasStream: false,
+    streamText: 'No 360° stream',
+    resolution: '4K UHD',
+    fps: 60
+  },
+  {
+    id: 'cam-7',
+    name: 'Street PTZ',
+    type: 'PTZ',
+    location: 'Outdoor',
+    hasStream: true,
+    resolution: '4K UHD',
+    fps: 30
+  },
+  {
+    id: 'cam-8',
+    name: 'Warehouse Aisle',
+    type: 'Fixed',
+    location: 'Indoor',
+    hasStream: false,
+    streamText: 'No 360° stream',
+    resolution: '1080p FHD',
+    fps: 30
+  }
+];
+
+const FILTER_OPTIONS = [
+  { label: 'All Cameras', value: 'all' },
+  { label: 'Chennai Rooftop 360', value: 'Chennai Rooftop 360' },
+  { label: 'Street PTZ', value: 'Street PTZ' },
+  { label: 'Server Room', value: 'Server Room' },
+  { label: 'Warehouse Aisle', value: 'Warehouse Aisle' },
+  { label: 'Main Gate PTZ', value: 'Main Gate PTZ' },
+  { label: 'Cafeteria Counter', value: 'Cafeteria Counter' },
+  { label: 'Loading Dock', value: 'Loading Dock' },
+  { label: 'Perimeter East', value: 'Perimeter East' }
+];
+
+interface OomniWatchPageProps {
+  onNavigate?: (view: string, options?: any) => void;
+}
+
+export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps = {}) {
+  const [cameras, setCameras] = useState<CameraItem[]>(INITIAL_CAMERAS);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+
+  const handleDeleteCamera = (id: string) => {
+    setCameras(prev => prev.filter(c => c.id !== id));
+    setActiveMenu(null);
+    if (selectedCameraForModal?.id === id) {
+      setSelectedCameraForModal(null);
+    }
+  };
+  
+  // Action Menu Portal State
+  const [activeMenu, setActiveMenu] = useState<{ id: string; top: number; left: number } | null>(null);
+  const [selectedCameraForModal, setSelectedCameraForModal] = useState<CameraItem | null>(null);
+  const [modalMode, setModalMode] = useState<'stream' | 'details' | null>(null);
+
+  // Filter cameras based on search query and dropdown selection
+  const filteredCameras = useMemo(() => {
+    return cameras.filter(cam => {
+      // Search matching
+      const matchesSearch = !searchQuery || cam.name.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Camera filter matching
+      const matchesFilter = filterType === 'all' || cam.name.toLowerCase() === filterType.toLowerCase();
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [cameras, searchQuery, filterType]);
+
+  // Close action menu on click outside or scroll
+  useEffect(() => {
+    const handleClose = () => setActiveMenu(null);
+    if (activeMenu) {
+      document.addEventListener('click', handleClose);
+      window.addEventListener('resize', handleClose);
+      window.addEventListener('scroll', handleClose, true);
+    }
+    return () => {
+      document.removeEventListener('click', handleClose);
+      window.removeEventListener('resize', handleClose);
+      window.removeEventListener('scroll', handleClose, true);
+    };
+  }, [activeMenu]);
+
+  const handleOpenMenu = (camId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const menuWidth = 170;
+    const menuHeight = 125;
+    const openUpwards = rect.bottom + menuHeight > window.innerHeight;
+
+    setActiveMenu({
+      id: camId,
+      top: openUpwards ? Math.max(10, rect.top - menuHeight - 6) : rect.bottom + 6,
+      left: Math.max(12, Math.min(window.innerWidth - menuWidth - 12, rect.right - menuWidth))
+    });
+  };
+
+  return (
+    <div className="figma-account-settings-page-wrapper" style={{ paddingBottom: '24px' }}>
+      <div className="figma-account-settings-container">
+        {/* Page Header conforming to Account Settings */}
+        <PageHeader 
+          title="Cameras" 
+          icon={<Camera size={20} />}
+          actions={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            </div>
+          }
+        />
+
+        {/* Filter & Search Bar matching Account Settings controls */}
+        <div 
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '14px',
+            marginBottom: '16px'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+            {/* Search Input */}
+            <SearchField 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search camera..."
+            />
+
+            {/* Camera Filter Dropdown */}
+            <div style={{ minWidth: '200px' }}>
+              <CustomSmoothDropdown
+                label="Camera Filter"
+                value={filterType}
+                onChange={(val) => setFilterType(val)}
+                options={FILTER_OPTIONS}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Camera Cards Grid */}
+        {filteredCameras.length > 0 ? (
+          <div className="camera-grid">
+            {filteredCameras.map((cam) => (
+              <Card 
+                key={cam.id} 
+                className="camera-card"
+                onClick={() => {
+                  setSelectedCameraForModal(cam);
+                  setModalMode('stream');
+                }}
+              >
+                {/* Camera Preview Area */}
+                <div className={`camera-preview-box ${cam.hasStream ? 'is-live' : 'is-offline'}`}>
+                  {/* Subtle Vignette Gradient Overlay */}
+                  <div className="camera-preview-overlay" />
+
+                  {/* Status Badge */}
+                  <div className={`camera-stream-badge ${cam.hasStream ? 'live' : 'offline'}`}>
+                    <span className="camera-stream-dot" />
+                    <span>{cam.hasStream ? 'LIVE' : 'OFFLINE'}</span>
+                  </div>
+
+                  {/* Camera Profile Badge (Right Top) */}
+                  <div className="camera-type-badge">
+                    {cam.type}
+                  </div>
+
+                  {/* Center Content Placeholder */}
+                  {cam.hasStream ? (
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '8px',
+                      zIndex: 1
+                    }}>
+                      <div style={{
+                        width: '44px',
+                        height: '44px',
+                        borderRadius: '50%',
+                        background: 'color-mix(in srgb, var(--primary) 18%, transparent)',
+                        border: '1.5px solid var(--primary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--primary)',
+                        boxShadow: '0 0 16px color-mix(in srgb, var(--primary) 25%, transparent)'
+                      }}>
+                        <Video size={20} style={{ color: 'var(--primary)' }} />
+                      </div>
+                      <span style={{ fontSize: '11.5px', color: 'color-mix(in srgb, var(--primary) 85%, white)', fontWeight: 600, letterSpacing: '0.3px' }}>
+                        {cam.resolution} • {cam.fps} FPS
+                      </span>
+                    </div>
+                  ) : (
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '6px',
+                      color: 'var(--text-muted)',
+                      zIndex: 1
+                    }}>
+                      <Camera size={34} style={{ opacity: 0.35, strokeWidth: 1.5 }} />
+                      <span style={{ fontSize: '12px', fontWeight: 500, letterSpacing: '0.2px' }}>
+                        {cam.streamText || 'No 360° stream'}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Card Info Section */}
+                <div className="camera-card-info">
+                  <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
+                    <div className="camera-name-text" title={cam.name}>
+                      {cam.name}
+                    </div>
+                    <div className="camera-sub-text">
+                      <span>{cam.location}</span>
+                      <span>•</span>
+                      <span>{cam.type}</span>
+                    </div>
+                  </div>
+
+                  <button
+                    className="camera-menu-btn"
+                    title="Camera options"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOpenMenu(cam.id, e);
+                    }}
+                  >
+                    <MoreVertical size={16} />
+                  </button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card style={{ padding: '64px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: '50%',
+              background: 'color-mix(in srgb, var(--text-main) 6%, transparent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--text-muted)',
+              marginBottom: '16px'
+            }}>
+              <Camera size={24} />
+            </div>
+            <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '6px' }}>
+              No cameras found
+            </div>
+            <div style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '360px', marginBottom: '20px' }}>
+              No cameras matched your search query "{searchQuery}". Try searching with a different name or clearing filters.
+            </div>
+            <button
+              className="figma-btn-cancel"
+              onClick={() => {
+                setSearchQuery('');
+                setFilterType('all');
+              }}
+            >
+              Reset Filters
+            </button>
+          </Card>
+        )}
+      </div>
+
+      {/* Floating Action Menu Portal */}
+      {activeMenu &&
+        createPortal(
+          <div
+            className="camera-actions-popover"
+            style={{
+              top: activeMenu.top,
+              left: activeMenu.left
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {(() => {
+              const cam = cameras.find(c => c.id === activeMenu.id);
+              if (!cam) return null;
+              return (
+                <>
+                  <button
+                    type="button"
+                    className="camera-action-item"
+                    onClick={() => {
+                      setSelectedCameraForModal(cam);
+                      setModalMode('stream');
+                      setActiveMenu(null);
+                    }}
+                  >
+                    <Eye size={15} style={{ color: 'var(--primary)' }} />
+                    <span>View</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="camera-action-item"
+                    onClick={() => {
+                      setSelectedCameraForModal(cam);
+                      setModalMode('details');
+                      setActiveMenu(null);
+                    }}
+                  >
+                    <Settings size={15} style={{ color: 'var(--text-muted)' }} />
+                    <span>Edit</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="camera-action-item danger"
+                    onClick={() => handleDeleteCamera(cam.id)}
+                  >
+                    <Trash2 size={15} style={{ color: 'var(--danger, #ef4444)' }} />
+                    <span>Delete</span>
+                  </button>
+                </>
+              );
+            })()}
+          </div>,
+          document.body
+        )}
+
+      {/* Camera Live Stream / Detail Modal */}
+      {selectedCameraForModal && (
+        <Modal
+          isOpen={Boolean(selectedCameraForModal)}
+          onClose={() => setSelectedCameraForModal(null)}
+          title={modalMode === 'stream' ? `Live View: ${selectedCameraForModal.name}` : `Node Info: ${selectedCameraForModal.name}`}
+          maxWidth="640px"
+        >
+          {modalMode === 'stream' ? (
+            <div>
+              <div
+                style={{
+                  width: '100%',
+                  aspectRatio: '16 / 9',
+                  background: 'color-mix(in srgb, var(--bg-dashboard) 90%, black)',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  marginBottom: '16px'
+                }}
+              >
+                <div className="camera-preview-overlay" />
+                {selectedCameraForModal.hasStream ? (
+                  <div style={{ textAlign: 'center', color: '#10b981' }}>
+                    <Radio size={40} style={{ marginBottom: '8px', animation: 'btnSpin 4s linear infinite' }} />
+                    <div style={{ fontSize: '14px', fontWeight: 600 }}>Active Low-Latency Stream</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      {selectedCameraForModal.resolution} • {selectedCameraForModal.fps} FPS • Protocol: WebRTC/RTSP
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                    <Camera size={36} style={{ opacity: 0.4, marginBottom: '8px' }} />
+                    <div style={{ fontSize: '14px', fontWeight: 500 }}>
+                      {selectedCameraForModal.streamText || 'Stream currently unavailable'}
+                    </div>
+                    <div style={{ fontSize: '12px', opacity: 0.7 }}>
+                      Node offline or recording schedule inactive
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+                <div style={{ padding: '10px', borderRadius: '8px', background: 'var(--nested-bg)', border: '1px solid var(--border-light)' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Camera Node ID</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{selectedCameraForModal.id.toUpperCase()}</div>
+                </div>
+                <div style={{ padding: '10px', borderRadius: '8px', background: 'var(--nested-bg)', border: '1px solid var(--border-light)' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Mount Profile</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{selectedCameraForModal.type} • {selectedCameraForModal.location}</div>
+                </div>
+                <div style={{ padding: '10px', borderRadius: '8px', background: 'var(--nested-bg)', border: '1px solid var(--border-light)' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Feed Status</div>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: selectedCameraForModal.hasStream ? '#10b981' : 'var(--text-muted)' }}>
+                    {selectedCameraForModal.hasStream ? 'Active Signal' : 'Standby'}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ fontSize: '13.5px', color: 'var(--text-secondary)' }}>
+                Hardware model configuration, RTSP edge endpoint settings, and analytics triggers for <strong>{selectedCameraForModal.name}</strong>.
+              </div>
+              <div style={{ padding: '12px', borderRadius: '8px', background: 'var(--nested-bg)', border: '1px solid var(--border-light)', fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                rtsp://stream.oomniwatch.internal:554/live/{selectedCameraForModal.id}
+              </div>
+            </div>
+          )}
+        </Modal>
+      )}
+    </div>
+  );
+}
