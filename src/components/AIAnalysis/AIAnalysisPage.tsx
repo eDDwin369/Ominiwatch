@@ -647,7 +647,7 @@ export function AIAnalysisPage() {
                   </span>
 
                   {/* Time Range */}
-                  <div style={{ width: '135px' }}>
+                  <div style={{ minWidth: '135px' }}>
                     <CustomSmoothDropdown 
                       label="Time Range"
                       value={timeRange}
@@ -657,7 +657,7 @@ export function AIAnalysisPage() {
                   </div>
 
                   {/* Sub-sources */}
-                  <div style={{ width: '150px' }}>
+                  <div style={{ minWidth: '180px' }}>
                     <CustomSmoothDropdown 
                       label="Sub-sources"
                       value={sourceFilter}
@@ -667,7 +667,7 @@ export function AIAnalysisPage() {
                   </div>
 
                   {/* Zones */}
-                  <div style={{ width: '145px' }}>
+                  <div style={{ minWidth: '145px' }}>
                     <CustomSmoothDropdown 
                       label="Zones"
                       value={zoneFilter}
@@ -677,7 +677,7 @@ export function AIAnalysisPage() {
                   </div>
 
                   {/* Alert types */}
-                  <div style={{ width: '150px' }}>
+                  <div style={{ minWidth: '175px' }}>
                     <CustomSmoothDropdown 
                       label="Alert types"
                       value={typeFilter}
@@ -870,7 +870,7 @@ export function AIAnalysisPage() {
                               <Badge 
                                 variant={
                                   alert.status === 'resolved' ? 'success' :
-                                  alert.status === 'acknowledged' ? 'neutral' : 'outline'
+                                  alert.status === 'acknowledged' ? 'neutral' : 'info'
                                 }
                               >
                                 {alert.status}

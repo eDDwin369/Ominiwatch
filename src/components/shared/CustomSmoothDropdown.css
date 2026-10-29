@@ -102,3 +102,14 @@
   color: var(--primary, #60a5fa);
   flex-shrink: 0;
 }
+
+/* Ensure single line for dropdown values and fieldset legends */
+.tf-select {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.tf-legend {
+  white-space: nowrap !important;
+}
