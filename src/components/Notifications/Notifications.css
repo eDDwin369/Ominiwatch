@@ -277,9 +277,11 @@
 
 /* Notifications Page Styles */
 .notifications-page-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: var(--spacing-6);
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: var(--spacing-6) var(--page-pad-x, 16px);
+  box-sizing: border-box;
   animation: dashboardFadeIn 0.3s ease-out;
 }
 

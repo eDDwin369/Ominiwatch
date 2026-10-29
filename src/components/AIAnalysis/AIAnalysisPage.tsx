@@ -11,8 +11,6 @@ import {
   Video, 
   CheckCircle2, 
   Eye, 
-  ChevronLeft, 
-  ChevronRight, 
   Filter,
   MapPin,
   Radio,
@@ -416,7 +414,7 @@ export function AIAnalysisPage() {
   }, [alerts]);
 
   return (
-    <div className="figma-account-settings-page-wrapper" style={{ padding: '16px 24px 20px', minHeight: 'auto' }}>
+    <div className="figma-account-settings-page-wrapper" style={{ padding: '16px var(--page-pad-x, 16px) 20px', minHeight: 'auto' }}>
       <div className="figma-account-settings-container">
         
         {/* Top Header conforming to Base Application */}
@@ -779,8 +777,7 @@ export function AIAnalysisPage() {
                 padding: '14px 20px',
                 borderTop: '1px solid var(--border-light)',
                 fontSize: '13px',
-                color: 'var(--text-secondary)',
-                gap: '24px'
+                color: 'var(--text-secondary)'
               }}>
                 <RowsPerPageSelector
                   value={rowsPerPage}
@@ -790,35 +787,6 @@ export function AIAnalysisPage() {
                   }}
                   options={[6, 12, 18, 24]}
                 />
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <span>
-                    {!hasAlertRules
-                      ? '1–10 of 25'
-                      : `${totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1}–${Math.min(currentPage * rowsPerPage, totalItems)} of ${Math.max(totalItems, 25)}`}
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <button
-                      type="button"
-                      className="ai-viewmode-segmented-btn"
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={!hasAlertRules || currentPage <= 1}
-                      style={{ width: '28px', height: '28px', opacity: (!hasAlertRules || currentPage <= 1) ? 0.4 : 1 }}
-                      title="Previous Page"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button
-                      type="button"
-                      className="ai-viewmode-segmented-btn"
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      disabled={!hasAlertRules || currentPage >= totalPages}
-                      style={{ width: '28px', height: '28px', opacity: (!hasAlertRules || currentPage >= totalPages) ? 0.4 : 1 }}
-                      title="Next Page"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
-                </div>
               </div>
             </Card>
           )}
@@ -1263,7 +1231,7 @@ export function AIAnalysisPage() {
 
               {/* PAGINATION BAR */}
               {totalItems > 0 && (
-                <div className="ai-pagination" style={{ borderTop: '1px solid var(--border-light)', marginTop: '16px', paddingTop: '12px' }}>
+                <div className="ai-pagination" style={{ borderTop: '1px solid var(--border-light)', marginTop: '16px', paddingTop: '12px', justifyContent: 'flex-end' }}>
                   <RowsPerPageSelector
                     value={rowsPerPage}
                     onChange={(val) => {
@@ -1272,31 +1240,6 @@ export function AIAnalysisPage() {
                     }}
                     options={[6, 12, 18, 24]}
                   />
-
-                  <div>
-                    {Math.min((currentPage - 1) * rowsPerPage + 1, totalItems)}–{Math.min(currentPage * rowsPerPage, totalItems)} of {totalItems}
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <button
-                      type="button"
-                      className="ai-pagination-btn"
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                      disabled={currentPage <= 1}
-                      title="Previous Page"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button
-                      type="button"
-                      className="ai-pagination-btn"
-                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                      disabled={currentPage >= totalPages}
-                      title="Next Page"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
                 </div>
               )}
 

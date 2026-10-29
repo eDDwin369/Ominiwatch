@@ -160,6 +160,7 @@
   --card-hdr-border: 1px solid var(--border-light);
   --container-pad: var(--spacing-5);
   --edge-pad: 0px;
+  --page-pad-x: 16px;
   --card-gap: var(--spacing-5);
   --btn-case: none;
   --status-weight: 600;

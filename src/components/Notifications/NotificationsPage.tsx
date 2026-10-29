@@ -89,7 +89,7 @@ export function NotificationsPage({
   const hasNotifications = filteredNotifications.length > 0;
 
   return (
-    <div className="notifications-page-container dashboard-fade-in" data-hms-context="notifications-list" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+    <div className="notifications-page-container dashboard-fade-in" data-hms-context="notifications-list" style={{ display: 'flex', width: '100%' }}>
       <div 
         className="tw-parent-card" 
         style={{ 
@@ -97,8 +97,8 @@ export function NotificationsPage({
           display: 'flex', 
           flexDirection: 'column', 
           gap: '20px',
-          width: itemsPerPage === 20 ? '96%' : '100%',
-          maxWidth: itemsPerPage === 20 ? '96vw' : '100%',
+          width: '100%',
+          maxWidth: '100%',
           transition: 'all 0.05s ease'
         }}
       >

@@ -249,12 +249,20 @@ export function Dashboard({
     return route.tab;
   });
 
+  const [adminTab, setAdminTab] = useState<string>(() => {
+    const route = parseRouteFromUrl();
+    return (route.view === 'administration' && route.tab) ? route.tab : 'camera';
+  });
+
   // Listen to browser Back and Forward navigation inside Dashboard
   useEffect(() => {
     const handlePopState = () => {
       const route = parseRouteFromUrl();
       if (route.screen === 'dashboard' && route.view) {
         setCurrentView(route.view);
+        if (route.view === 'administration') {
+          setAdminTab(route.tab || 'camera');
+        }
         setAccountSettingsInitialTab(route.tab);
         setEditProfileOnLoad(Boolean(route.editMode));
         setIsThemeStudioOpen(Boolean(route.themeStudioOpen));
@@ -275,7 +283,7 @@ export function Dashboard({
       pushAppRoute({
         screen: 'dashboard',
         view: currentView,
-        tab: accountSettingsInitialTab,
+        tab: currentView === 'administration' ? adminTab : accountSettingsInitialTab,
         editMode: editProfileOnLoad,
         themeStudioOpen: true
       });
@@ -306,6 +314,20 @@ export function Dashboard({
         setEditProfileOnLoad(false);
       }
       setAccountSettingsInitialTab(options?.tab);
+    }
+
+    if (view === 'administration') {
+      const selectedTab = options?.tab || adminTab || 'camera';
+      setAdminTab(selectedTab);
+      setCurrentView(view);
+      pushAppRoute({
+        screen: 'dashboard',
+        view,
+        tab: selectedTab,
+        editMode: false,
+        themeStudioOpen: false
+      });
+      return;
     }
 
     setCurrentView(view);
@@ -389,6 +411,7 @@ export function Dashboard({
         <Sidebar 
           currentView={currentView} 
           setCurrentView={handleSetCurrentView} 
+          adminTab={adminTab}
           isThemeStudioOpen={isThemeStudioOpen}
           isLocked={isLocked}
           setIsLocked={handleSetIsLocked}
@@ -427,11 +450,19 @@ export function Dashboard({
                     setHasUnsavedChanges={setHasUnsavedChanges}
                     editProfileOnLoad={editProfileOnLoad}
                     setEditProfileOnLoad={setEditProfileOnLoad}
-                    initialTab={accountSettingsInitialTab}
-                    defaultAdminTab="account"
+                    initialTab={adminTab}
+                    defaultAdminTab="camera"
                     onAdminTabChange={(tab) => {
                       if (tab === 'theme-studio') {
                         setIsThemeStudioOpen(true);
+                      } else {
+                        setAdminTab(tab);
+                        pushAppRoute({
+                          screen: 'dashboard',
+                          view: 'administration',
+                          tab,
+                          themeStudioOpen: false
+                        });
                       }
                     }}
                   />

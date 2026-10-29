@@ -4,16 +4,18 @@
   width: 100%;
   min-height: 100%;
   flex: 1;
-  padding: calc(24px + var(--edge-pad, 0px)) calc(32px + var(--edge-pad, 0px)) 60px;
+  padding: calc(24px + var(--edge-pad, 0px)) var(--page-pad-x, 16px) 60px;
   box-sizing: border-box;
   background: var(--brand-page-wash, var(--bg-dashboard)) !important;
   transition: background 0.3s ease;
 }
 
 .app-screen-container {
-  max-width: 1380px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 0;
+  box-sizing: border-box;
   animation: figmaFadeIn 0.35s ease-out;
   font-family: var(--app-font-family);
   color: var(--text-main);

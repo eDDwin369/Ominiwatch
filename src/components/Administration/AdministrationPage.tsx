@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Settings, 
   Video, 
@@ -16,8 +16,6 @@ import {
   Check, 
   Eye, 
   Pencil, 
-  ChevronLeft, 
-  ChevronRight, 
   Calendar, 
   Filter,
   Play,
@@ -354,7 +352,8 @@ interface AdministrationPageProps {
 }
 
 export function AdministrationPage({
-  initialTab
+  initialTab,
+  onAdminTabChange
 }: AdministrationPageProps) {
   // Tabs
   const [activeTab, setActiveTab] = useState<AdminTab>(() => {
@@ -363,6 +362,13 @@ export function AdministrationPage({
     }
     return 'camera';
   });
+
+  // Keep activeTab in sync whenever initialTab prop changes (e.g., from sidebar navigation)
+  useEffect(() => {
+    if (initialTab && ['camera', 'zone', 'ai', 'recycle', 'nvr', 'user'].includes(initialTab)) {
+      setActiveTab(initialTab as AdminTab);
+    }
+  }, [initialTab]);
 
   // Camera Management State
   const [cameras, setCameras] = useState<CameraItem[]>(INITIAL_CAMERAS);
@@ -744,117 +750,42 @@ export function AdministrationPage({
     setUsersList(prev => prev.filter(u => u.id !== id));
   };
 
+  const currentSubTabConfig = useMemo(() => {
+    switch (activeTab) {
+      case 'camera':
+        return { label: 'Camera Management', icon: <Video size={20} /> };
+      case 'zone':
+        return { label: 'Zone Management', icon: <MapPin size={20} /> };
+      case 'ai':
+        return { label: 'AI Management', icon: <BrainCircuit size={20} /> };
+      case 'recycle':
+        return { label: 'Recycle Bin', icon: <Trash2 size={20} /> };
+      case 'nvr':
+        return { label: 'NVR Management', icon: <HardDrive size={20} /> };
+      case 'user':
+        return { label: 'User Management', icon: <Users size={20} /> };
+      default:
+        return { label: 'Camera Management', icon: <Video size={20} /> };
+    }
+  }, [activeTab]);
+
   return (
     <div className="admin-wrapper figma-account-settings-page-wrapper">
       <div className="admin-container figma-account-settings-container">
         
-        {/* Top Header conforming to Base Application */}
+        {/* Top Header conforming to Base Application with subtabs displaying next to it */}
         <PageHeader 
           title="Administration" 
           icon={<Settings size={20} />}
+          subItem={{
+            label: currentSubTabConfig.label,
+            icon: currentSubTabConfig.icon
+          }}
         />
 
-        {/* 6 Tab Items conforming to Application UI Standards */}
-        <div className="flashback-tabs-container" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'camera'}
-            className={`flashback-tab-btn ${activeTab === 'camera' ? 'active' : ''}`}
-            onClick={() => setActiveTab('camera')}
-          >
-            <span className="flashback-tab-icon-badge">
-              <Video size={16} />
-            </span>
-            <span>Camera Management</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'zone'}
-            className={`flashback-tab-btn ${activeTab === 'zone' ? 'active' : ''}`}
-            onClick={() => setActiveTab('zone')}
-          >
-            <span className="flashback-tab-icon-badge">
-              <MapPin size={16} />
-            </span>
-            <span>Zone Management</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'ai'}
-            className={`flashback-tab-btn ${activeTab === 'ai' ? 'active' : ''}`}
-            onClick={() => setActiveTab('ai')}
-          >
-            <span className="flashback-tab-icon-badge">
-              <BrainCircuit size={16} />
-            </span>
-            <span>AI Management</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'recycle'}
-            className={`flashback-tab-btn ${activeTab === 'recycle' ? 'active' : ''}`}
-            onClick={() => setActiveTab('recycle')}
-          >
-            <span className="flashback-tab-icon-badge">
-              <Trash2 size={16} />
-            </span>
-            <span>Recycle Bin</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'nvr'}
-            className={`flashback-tab-btn ${activeTab === 'nvr' ? 'active' : ''}`}
-            onClick={() => setActiveTab('nvr')}
-          >
-            <span className="flashback-tab-icon-badge">
-              <HardDrive size={16} />
-            </span>
-            <span>NVR Management</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            aria-selected={activeTab === 'user'}
-            className={`flashback-tab-btn ${activeTab === 'user' ? 'active' : ''}`}
-            onClick={() => setActiveTab('user')}
-          >
-            <span className="flashback-tab-icon-badge">
-              <Users size={16} />
-            </span>
-            <span>User Management</span>
-          </button>
-        </div>
-
-        {/* TAB 1: CAMERA MANAGEMENT (MATCHING REFERENCE IMAGE) */}
+        {/* TAB 1: CAMERA MANAGEMENT */}
         {activeTab === 'camera' && (
-          <div className="admin-content-card">
-            
-            {/* Header: Title + Info Icon */}
-            <div className="admin-card-header">
-              <div className="admin-card-title-group">
-                <h2 className="admin-card-title">Camera Management</h2>
-                <span 
-                  className="admin-info-icon" 
-                  title="Configure and manage RTSP endpoints, 360° panos, PTZ controls, and ONVIF streams"
-                >
-                  <Info size={16} />
-                </span>
-              </div>
-              <Badge variant="neutral">
-                {cameras.length} Total Cameras
-              </Badge>
-            </div>
-
+          <div className="admin-tab-pane">
             {/* Toolbar Row: Search, Favorites Filter, View Toggle, Date & ONVIF Dropdowns, + Add Camera */}
             <div className="admin-toolbar">
               
@@ -1172,56 +1103,14 @@ export function AdministrationPage({
                 }}
                 options={[5, 10, 15, 25]}
               />
-
-              <div>
-                {totalItems > 0 ? (
-                  <span>
-                    {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, totalItems)} of {totalItems}
-                  </span>
-                ) : (
-                  <span>0 of 0</span>
-                )}
-              </div>
-
-              <div className="admin-pagination-actions">
-                <button
-                  type="button"
-                  className="ai-pagination-btn"
-                  disabled={currentPage <= 1}
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  title="Previous Page"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  type="button"
-                  className="ai-pagination-btn"
-                  disabled={currentPage >= totalPages}
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  title="Next Page"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
             </div>
 
           </div>
         )}
 
-        {/* TAB 2: ZONE MANAGEMENT (MATCHING REFERENCE SCREENSHOT 1) */}
+        {/* TAB 2: ZONE MANAGEMENT */}
         {activeTab === 'zone' && (
-          <div className="admin-content-card">
-            
-            {/* Header: Coral Title + Info Icon */}
-            <div className="admin-card-header">
-              <div className="admin-card-title-coral">
-                <span>Manage Zones</span>
-                <span className="admin-info-icon" title="Partition facilities into monitored security zones and assign cameras">
-                  <Info size={16} />
-                </span>
-              </div>
-            </div>
-
+          <div className="admin-tab-pane">
             {/* Toolbar */}
             <div className="admin-toolbar">
               <div className="admin-toolbar-left">
@@ -1398,92 +1287,57 @@ export function AdministrationPage({
                 }}
                 options={[5, 10, 15, 25]}
               />
-
-              <div>
-                <span>
-                  {filteredZoneRecords.length > 0 
-                    ? `${(zoneCurrentPage - 1) * zonePageSize + 1}–${Math.min(zoneCurrentPage * zonePageSize, filteredZoneRecords.length)} of ${filteredZoneRecords.length}`
-                    : '0 of 0'
-                  }
-                </span>
-              </div>
-
-              <div className="admin-pagination-actions">
-                <button
-                  type="button"
-                  className="ai-pagination-btn"
-                  disabled={zoneCurrentPage <= 1}
-                  onClick={() => setZoneCurrentPage(prev => Math.max(1, prev - 1))}
-                  title="Previous Page"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  type="button"
-                  className="ai-pagination-btn"
-                  disabled={zoneCurrentPage >= totalZonePages}
-                  onClick={() => setZoneCurrentPage(prev => Math.min(totalZonePages, prev + 1))}
-                  title="Next Page"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
             </div>
 
           </div>
         )}
 
-        {/* TAB 3: AI MANAGEMENT (MATCHING REFERENCE SCREENSHOT 2) */}
+        {/* TAB 3: AI MANAGEMENT */}
         {activeTab === 'ai' && (
-          <div className="admin-content-card">
-            
-            {/* Header: Coral Title + Info Icon */}
-            <div className="admin-card-header" style={{ marginBottom: '-4px' }}>
-              <div className="admin-card-title-coral">
-                <span>AI Management</span>
-                <span className="admin-info-icon" title="Configure deep learning vision models, alert triggers, and detection sensitivity">
-                  <Info size={16} />
-                </span>
-              </div>
-            </div>
-
+          <div className="admin-tab-pane">
             {/* Sub-tabs: AI Models | Configure Use Case | Alert Rules */}
             <div className="admin-subtabs-bar" role="tablist">
               <button
                 type="button"
+                role="tab"
+                aria-selected={aiSubTab === 'models'}
                 className={`admin-subtab-btn ${aiSubTab === 'models' ? 'active' : ''}`}
                 onClick={() => setAiSubTab('models')}
               >
-                AI Models
+                <span className="admin-subtab-icon-badge">
+                  <BrainCircuit size={16} />
+                </span>
+                <span>AI Models</span>
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={aiSubTab === 'usecase'}
                 className={`admin-subtab-btn ${aiSubTab === 'usecase' ? 'active' : ''}`}
                 onClick={() => setAiSubTab('usecase')}
               >
-                Configure Use Case
+                <span className="admin-subtab-icon-badge">
+                  <Boxes size={16} />
+                </span>
+                <span>Configure Use Case</span>
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={aiSubTab === 'rules'}
                 className={`admin-subtab-btn ${aiSubTab === 'rules' ? 'active' : ''}`}
                 onClick={() => setAiSubTab('rules')}
               >
-                Alert Rules
+                <span className="admin-subtab-icon-badge">
+                  <AlertTriangle size={16} />
+                </span>
+                <span>Alert Rules</span>
               </button>
             </div>
 
-            {/* SUBTAB: Configure Use Case (Screenshot 2) */}
+            {/* SUBTAB: Configure Use Case */}
             {aiSubTab === 'usecase' && (
               <>
-                <div className="admin-card-header" style={{ marginTop: '2px' }}>
-                  <div className="admin-card-title-coral" style={{ fontSize: '15px' }}>
-                    <span>Manage Use Case</span>
-                    <span className="admin-info-icon" title="Manage AI analytical tasks and detection rules">
-                      <Info size={15} />
-                    </span>
-                  </div>
-                </div>
-
                 {/* Toolbar */}
                 <div className="admin-toolbar">
                   <div className="admin-toolbar-left">
@@ -1682,42 +1536,14 @@ export function AdministrationPage({
                 onChange={() => {}}
                 options={[5, 10, 15, 25]}
               />
-              <div>
-                <span>
-                  {aiSubTab === 'models' 
-                    ? `1–${aiModels.length} of ${aiModels.length}`
-                    : aiSubTab === 'usecase' && useCases.length > 0
-                    ? `1–${useCases.length} of ${useCases.length}`
-                    : '0 of 0'}
-                </span>
-              </div>
-              <div className="admin-pagination-actions">
-                <button type="button" className="ai-pagination-btn" disabled title="Previous Page">
-                  <ChevronLeft size={16} />
-                </button>
-                <button type="button" className="ai-pagination-btn" disabled title="Next Page">
-                  <ChevronRight size={16} />
-                </button>
-              </div>
             </div>
 
           </div>
         )}
 
-        {/* TAB 4: RECYCLE BIN (MATCHING REFERENCE SCREENSHOT 3) */}
+        {/* TAB 4: RECYCLE BIN */}
         {activeTab === 'recycle' && (
-          <div className="admin-content-card">
-            
-            {/* Header: Coral Title + Info Icon */}
-            <div className="admin-card-header">
-              <div className="admin-card-title-coral">
-                <span>Recycle Bin</span>
-                <span className="admin-info-icon" title="View, restore, or permanently remove previously deleted entities">
-                  <Info size={16} />
-                </span>
-              </div>
-            </div>
-
+          <div className="admin-tab-pane">
             {/* Toolbar */}
             <div className="admin-toolbar">
               <div className="admin-toolbar-left">
@@ -1843,35 +1669,6 @@ export function AdministrationPage({
                 }}
                 options={[5, 10, 15, 25]}
               />
-
-              <div>
-                <span>
-                  {filteredRecycleItems.length > 0 
-                    ? `${(recycleCurrentPage - 1) * recyclePageSize + 1}–${Math.min(recycleCurrentPage * recyclePageSize, filteredRecycleItems.length)} of ${filteredRecycleItems.length}` 
-                    : '0 of 0'}
-                </span>
-              </div>
-
-              <div className="admin-pagination-actions">
-                <button 
-                  type="button" 
-                  className="ai-pagination-btn" 
-                  disabled={recycleCurrentPage <= 1} 
-                  onClick={() => setRecycleCurrentPage(p => Math.max(1, p - 1))}
-                  title="Previous"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button 
-                  type="button" 
-                  className="ai-pagination-btn" 
-                  disabled={recycleCurrentPage >= totalRecyclePages} 
-                  onClick={() => setRecycleCurrentPage(p => Math.min(totalRecyclePages, p + 1))}
-                  title="Next"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
             </div>
 
           </div>
@@ -1879,17 +1676,7 @@ export function AdministrationPage({
 
         {/* TAB 5: NVR MANAGEMENT */}
         {activeTab === 'nvr' && (
-          <div className="admin-content-card">
-            <div className="admin-card-header">
-              <div className="admin-card-title-coral">
-                <span>NVR & Storage Management</span>
-                <span className="admin-info-icon" title="Network Video Recorders, local disk allocation, and channel utilization">
-                  <Info size={16} />
-                </span>
-              </div>
-              <Badge variant="primary">{nvrs.length} Connected Units</Badge>
-            </div>
-
+          <div className="admin-tab-pane">
             <div className="admin-table-wrapper">
               <table className="admin-table">
                 <thead>
@@ -1948,52 +1735,38 @@ export function AdministrationPage({
                 onChange={() => {}}
                 options={[5, 10, 15, 25]}
               />
-
-              <div>
-                <span>{nvrs.length > 0 ? `1–${nvrs.length} of ${nvrs.length}` : '0 of 0'}</span>
-              </div>
-
-              <div className="admin-pagination-actions">
-                <button type="button" className="ai-pagination-btn" disabled title="Previous">
-                  <ChevronLeft size={16} />
-                </button>
-                <button type="button" className="ai-pagination-btn" disabled title="Next">
-                  <ChevronRight size={16} />
-                </button>
-              </div>
             </div>
           </div>
         )}
 
-        {/* TAB 6: USER MANAGEMENT (MATCHING REFERENCE SCREENSHOT 4) */}
+        {/* TAB 6: USER MANAGEMENT */}
         {activeTab === 'user' && (
-          <div className="admin-content-card">
-            
-            {/* Header: Coral Title + Info Icon */}
-            <div className="admin-card-header" style={{ marginBottom: '-4px' }}>
-              <div className="admin-card-title-coral">
-                <span>User Management</span>
-                <span className="admin-info-icon" title="Manage security personnel access, operator permissions, and audit logs">
-                  <Info size={16} />
-                </span>
-              </div>
-            </div>
-
+          <div className="admin-tab-pane">
             {/* Sub-tabs: Users | Roles & Permissions */}
             <div className="admin-subtabs-bar" role="tablist">
               <button
                 type="button"
+                role="tab"
+                aria-selected={userSubTab === 'users'}
                 className={`admin-subtab-btn ${userSubTab === 'users' ? 'active' : ''}`}
                 onClick={() => setUserSubTab('users')}
               >
-                Users
+                <span className="admin-subtab-icon-badge">
+                  <Users size={16} />
+                </span>
+                <span>Users</span>
               </button>
               <button
                 type="button"
+                role="tab"
+                aria-selected={userSubTab === 'roles'}
                 className={`admin-subtab-btn ${userSubTab === 'roles' ? 'active' : ''}`}
                 onClick={() => setUserSubTab('roles')}
               >
-                Roles & Permissions
+                <span className="admin-subtab-icon-badge">
+                  <Shield size={16} />
+                </span>
+                <span>Roles & Permissions</span>
               </button>
             </div>
 
@@ -2142,35 +1915,6 @@ export function AdministrationPage({
                     }}
                     options={[5, 10, 15, 25]}
                   />
-
-                  <div>
-                    <span>
-                      {filteredUsers.length > 0 
-                        ? `${(userCurrentPage - 1) * userPageSize + 1}–${Math.min(userCurrentPage * userPageSize, filteredUsers.length)} of ${filteredUsers.length}` 
-                        : '0 of 0'}
-                    </span>
-                  </div>
-
-                  <div className="admin-pagination-actions">
-                    <button 
-                      type="button" 
-                      className="ai-pagination-btn" 
-                      disabled={userCurrentPage <= 1} 
-                      onClick={() => setUserCurrentPage(p => Math.max(1, p - 1))}
-                      title="Previous"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button 
-                      type="button" 
-                      className="ai-pagination-btn" 
-                      disabled={userCurrentPage >= totalUserPages} 
-                      onClick={() => setUserCurrentPage(p => Math.min(totalUserPages, p + 1))}
-                      title="Next"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
                 </div>
               </>
             )}
@@ -2221,17 +1965,6 @@ export function AdministrationPage({
                     onChange={() => {}}
                     options={[5, 10, 15, 25]}
                   />
-                  <div>
-                    <span>1–3 of 3 Roles</span>
-                  </div>
-                  <div className="admin-pagination-actions">
-                    <button type="button" className="ai-pagination-btn" disabled title="Previous">
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button type="button" className="ai-pagination-btn" disabled title="Next">
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
                 </div>
               </>
             )}

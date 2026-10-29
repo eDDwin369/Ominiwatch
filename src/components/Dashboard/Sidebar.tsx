@@ -8,7 +8,12 @@ import {
   ChevronRight,
   ChevronLeft,
   User,
-  Palette
+  Palette,
+  Video,
+  MapPin,
+  Trash2,
+  HardDrive,
+  Users
 } from 'lucide-react';
 import './Dashboard.css';
 
@@ -38,7 +43,8 @@ function OomniWatchIcon({ size = 20, className = '', color = '#10b981', style }:
 
 interface SidebarProps {
   currentView: string;
-  setCurrentView: (view: string) => void;
+  setCurrentView: (view: string, options?: any) => void;
+  adminTab?: string;
   isThemeStudioOpen?: boolean;
   isLocked: boolean;
   setIsLocked: (locked: boolean) => void;
@@ -51,9 +57,19 @@ interface SidebarProps {
   isEditing?: boolean;
 }
 
+const ADMIN_SUBTABS = [
+  { id: 'camera', label: 'Camera Management', icon: Video, color: '#10b981' },
+  { id: 'zone', label: 'Zone Management', icon: MapPin, color: '#3b82f6' },
+  { id: 'ai', label: 'AI Management', icon: BrainCircuit, color: '#8b5cf6' },
+  { id: 'recycle', label: 'Recycle Bin', icon: Trash2, color: '#ef4444' },
+  { id: 'nvr', label: 'NVR Management', icon: HardDrive, color: '#0ea5e9' },
+  { id: 'user', label: 'User Management', icon: Users, color: '#f59e0b' }
+];
+
 export function Sidebar({
   currentView,
   setCurrentView,
+  adminTab = 'camera',
   isThemeStudioOpen,
   isLocked,
   setIsLocked,
@@ -68,6 +84,18 @@ export function Sidebar({
 
   // Evaluate collapsed status
   const isSidebarCollapsed = collapsed;
+
+  // Administration expandable state
+  const [isAdminExpanded, setIsAdminExpanded] = useState<boolean>(() => {
+    return currentView === 'administration';
+  });
+
+  // Keep Administration expanded whenever navigation lands on administration
+  useEffect(() => {
+    if (currentView === 'administration') {
+      setIsAdminExpanded(true);
+    }
+  }, [currentView]);
 
   // Hover state specifically for logo in collapsed state
   const [isLogoHovered, setIsLogoHovered] = useState(false);
@@ -394,18 +422,82 @@ export function Sidebar({
           </a>
 
           {/* 5. Administration */}
-          <a
-            href="#dashboard/administration"
-            className={`nav-item ${activeItemId === 'administration' ? 'active' : ''}`}
-            onClick={(e) => handleNavItemClick('administration', e, 'administration')}
-            onMouseEnter={(e) => handleItemMouseEnter("Administration", e)}
-            onMouseLeave={handleItemMouseLeave}
-          >
-            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Settings size={20} strokeWidth={2.2} color="#6366f1" className="nav-icon" style={{ color: '#6366f1', stroke: '#6366f1' }} />
-            </div>
-            <span className="nav-label">Administration</span>
-          </a>
+          <div className="nav-item-group" style={{ display: 'flex', flexDirection: 'column' }}>
+            <a
+              href="#dashboard/administration"
+              className={`nav-item ${activeItemId === 'administration' || currentView === 'administration' ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isSidebarCollapsed) {
+                  setCollapsed(false);
+                  setIsLocked(true);
+                  setIsAdminExpanded(true);
+                  setCurrentView('administration', { tab: adminTab || 'camera' });
+                  return;
+                }
+                if (currentView === 'administration') {
+                  setIsAdminExpanded(prev => !prev);
+                } else {
+                  setIsAdminExpanded(true);
+                  setCurrentView('administration', { tab: adminTab || 'camera' });
+                }
+              }}
+              onMouseEnter={(e) => handleItemMouseEnter("Administration", e)}
+              onMouseLeave={handleItemMouseLeave}
+              style={{ display: 'flex', alignItems: 'center', width: isSidebarCollapsed ? undefined : '100%', position: 'relative' }}
+            >
+              <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Settings size={20} strokeWidth={2.2} color="#6366f1" className="nav-icon" style={{ color: '#6366f1', stroke: '#6366f1' }} />
+              </div>
+              <span className="nav-label">Administration</span>
+              {!isSidebarCollapsed && (
+                <span
+                  className={`nav-expand-chevron ${isAdminExpanded ? 'expanded' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsAdminExpanded(prev => !prev);
+                  }}
+                  title={isAdminExpanded ? "Collapse Administration" : "Expand Administration"}
+                >
+                  <ChevronRight size={16} />
+                </span>
+              )}
+            </a>
+
+            {/* Expandable Sub-items under Administration */}
+            {!isSidebarCollapsed && isAdminExpanded && (
+              <div className="sidebar-subnav">
+                {ADMIN_SUBTABS.map(sub => {
+                  const IconComp = sub.icon;
+                  const isSubActive = currentView === 'administration' && (adminTab || 'camera') === sub.id;
+                  return (
+                    <a
+                      key={sub.id}
+                      href={`#dashboard/administration?tab=${sub.id}`}
+                      className={`nav-subitem ${isSubActive ? 'active' : ''}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setCurrentView('administration', { tab: sub.id });
+                        if (!isLocked) {
+                          setIsVisible(false);
+                          setCollapsed(true);
+                        }
+                      }}
+                      title={sub.label}
+                    >
+                      <span className="nav-subitem-icon" style={{ color: isSubActive ? 'var(--highlight, var(--primary))' : sub.color }}>
+                        <IconComp size={15} strokeWidth={2.2} />
+                      </span>
+                      <span className="nav-subitem-label">{sub.label}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* 6. Account Settings */}
           <a
