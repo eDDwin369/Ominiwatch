@@ -84,7 +84,15 @@
 }
 
 
-/* Button variants */
+/* ==========================================================================
+   GLOBAL BUTTON & CONTROL SYSTEM (Cancel, Primary Save, and Settings Controls)
+   Adhering to UI Standards:
+   - Cancel buttons: subtle light background, thin neutral border, 8px radius, standard text
+   - Primary Save buttons: green background, white text, centered icon, 0 20px padding, 38px height, 8px radius
+   - Settings controls: gear icon without text label, reusing .figma-btn-icon
+   ========================================================================== */
+
+/* Button base styling */
 .app-btn {
   display: inline-flex;
   align-items: center;
@@ -92,29 +100,261 @@
   gap: 8px;
   font-family: var(--app-font-family);
   font-size: var(--font-size-body-sm, 13.5px);
-  font-weight: 500;
+  font-weight: 600;
   border-radius: var(--radius-md, 8px);
-  padding: 8px 18px;
+  padding: 0 20px;
+  height: 38px;
+  min-height: 38px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid transparent;
   outline: none;
   text-decoration: none;
+  box-sizing: border-box;
+  white-space: nowrap;
 }
 
 .app-btn:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .app-btn.btn-sm {
-  padding: 6px 12px;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 14px;
   font-size: 12px;
 }
 
 .app-btn.btn-lg {
-  padding: 12px 24px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 28px;
   font-size: 15px;
+}
+
+/* 1. Primary Save Buttons (Green Save Changes reference) */
+.figma-btn-save,
+.btn-save,
+.app-btn.figma-btn-save,
+.camera-btn-primary-blue,
+.admin-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 20px;
+  border-radius: var(--radius-md, 8px) !important;
+  border: none !important;
+  background: var(--btn-color, var(--primary, #10b981)) !important;
+  color: var(--btn-text, #ffffff) !important;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: var(--btn-case, none);
+  cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 32%, transparent);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.figma-btn-save:hover:not(:disabled),
+.btn-save:hover:not(:disabled),
+.app-btn.figma-btn-save:hover:not(:disabled),
+.camera-btn-primary-blue:hover:not(:disabled),
+.admin-primary-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary, #10b981) 42%, transparent);
+}
+
+.figma-btn-save:active:not(:disabled),
+.btn-save:active:not(:disabled),
+.app-btn.figma-btn-save:active:not(:disabled),
+.camera-btn-primary-blue:active:not(:disabled),
+.admin-primary-btn:active:not(:disabled) {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+.figma-btn-save:disabled,
+.btn-save:disabled,
+.app-btn.figma-btn-save:disabled,
+.camera-btn-primary-blue:disabled,
+.admin-primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.figma-btn-save:focus-visible,
+.btn-save:focus-visible,
+.app-btn.figma-btn-save:focus-visible,
+.camera-btn-primary-blue:focus-visible,
+.admin-primary-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary, #10b981) 60%, transparent);
+  outline-offset: 2px;
+}
+
+/* 2. Cancel Buttons (Subtle light background, thin neutral border reference) */
+.figma-btn-cancel,
+.btn-cancel,
+.app-btn.figma-btn-cancel,
+.camera-btn-outline-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 20px;
+  border-radius: var(--radius-md, 8px) !important;
+  border: 1px solid var(--border-medium, #d1d5db) !important;
+  background: var(--bg-card, #ffffff) !important;
+  color: var(--text-main, #374151) !important;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: var(--btn-case, none);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.figma-btn-cancel:hover:not(:disabled),
+.btn-cancel:hover:not(:disabled),
+.app-btn.figma-btn-cancel:hover:not(:disabled),
+.camera-btn-outline-back:hover:not(:disabled) {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.04)) !important;
+  border-color: #9ca3af !important;
+  color: var(--text-main, #111827) !important;
+  transform: translateY(-0.5px);
+}
+
+.figma-btn-cancel:active:not(:disabled),
+.btn-cancel:active:not(:disabled),
+.app-btn.figma-btn-cancel:active:not(:disabled),
+.camera-btn-outline-back:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.figma-btn-cancel:disabled,
+.btn-cancel:disabled,
+.app-btn.figma-btn-cancel:disabled,
+.camera-btn-outline-back:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.figma-btn-cancel:focus-visible,
+.btn-cancel:focus-visible,
+.app-btn.figma-btn-cancel:focus-visible,
+.camera-btn-outline-back:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary, #10b981) 50%, transparent);
+  outline-offset: 2px;
+}
+
+/* Dark mode Cancel button styling */
+[data-theme-mode="dark"] .figma-btn-cancel,
+[data-theme-mode="dark"] .btn-cancel,
+[data-theme-mode="dark"] .app-btn.figma-btn-cancel,
+[data-theme-mode="dark"] .camera-btn-outline-back {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: var(--text-main, #f1f5f9) !important;
+  box-shadow: none;
+}
+
+[data-theme-mode="dark"] .figma-btn-cancel:hover:not(:disabled),
+[data-theme-mode="dark"] .btn-cancel:hover:not(:disabled),
+[data-theme-mode="dark"] .app-btn.figma-btn-cancel:hover:not(:disabled),
+[data-theme-mode="dark"] .camera-btn-outline-back:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  color: #ffffff !important;
+}
+
+/* 3. Settings Controls & Icon-only Action Button Component */
+.figma-btn-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 !important;
+  border-radius: var(--radius-md, 8px) !important;
+  border: 1px solid var(--border-light, #e2e8f0);
+  background: var(--bg-card, #ffffff);
+  color: var(--text-secondary, #475569);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.figma-btn-icon:hover:not(:disabled) {
+  color: var(--primary, #10b981);
+  border-color: color-mix(in srgb, var(--primary, #10b981) 40%, transparent);
+  background: color-mix(in srgb, var(--primary, #10b981) 8%, var(--bg-card, #ffffff));
+  transform: translateY(-0.5px);
+}
+
+.figma-btn-icon:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.figma-btn-icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.figma-btn-icon:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary, #10b981) 60%, transparent);
+  outline-offset: 2px;
+}
+
+[data-theme-mode="dark"] .figma-btn-icon {
+  background: var(--bg-card, #1e293b);
+  border-color: var(--border-light, rgba(255, 255, 255, 0.12));
+  color: var(--text-secondary, #94a3b8);
+  box-shadow: none;
+}
+
+[data-theme-mode="dark"] .figma-btn-icon:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--primary, #10b981) 16%, var(--bg-card, #1e293b));
+  border-color: color-mix(in srgb, var(--primary, #10b981) 60%, transparent);
+  color: #ffffff;
+}
+
+/* Icon button modifiers when paired with save or cancel */
+.figma-btn-icon.figma-btn-save {
+  padding: 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+}
+
+.figma-btn-icon.figma-btn-cancel {
+  padding: 0 !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
 }
 
 .app-btn.figma-btn-danger {
@@ -191,23 +431,29 @@
   border-radius: 9999px;
   border: none;
   cursor: pointer;
-  transition: all 0.25s ease;
-  padding: 2px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 3px;
   display: inline-flex;
   align-items: center;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme-mode="dark"] .figma-switch {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .figma-switch.checked {
-  background: var(--primary);
+  background: var(--toggle-active-bg, var(--dash-brand-gradient, linear-gradient(90deg, #d97706 0%, #16a34a 100%))) !important;
+  box-shadow: var(--toggle-active-shadow, 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 25%, transparent));
 }
 
 .figma-switch-thumb {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   background: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.25s ease;
+  box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   transform: translateX(0);
 }
 
@@ -934,7 +1180,7 @@
   background: var(--brand-card-surface, var(--bg-card));
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg, 14px);
-  padding: 26px 20px 22px;
+  padding: 16px 18px 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -952,13 +1198,13 @@
 }
 
 .ai-kpi-icon-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   transition: transform 0.2s ease;
 }
 
@@ -998,19 +1244,19 @@
 
 .ai-kpi-value {
   font-family: var(--app-heading-family, var(--app-font-family));
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   line-height: 1.1;
   color: var(--text-main);
   letter-spacing: -0.5px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .ai-kpi-label {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .ai-kpi-footer {
@@ -1027,7 +1273,7 @@
   gap: 4px;
   padding: 3px 10px;
   border-radius: 9999px;
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -1066,8 +1312,9 @@
 .ai-alert-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
   width: 100%;
+  overflow: visible;
 }
 
 @media (max-width: 1440px) {
@@ -1303,10 +1550,10 @@
   height: 32px;
   border-radius: 9999px;
   border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
-  background: var(--primary);
+  background: var(--toggle-active-bg, var(--dash-brand-gradient, linear-gradient(90deg, #d97706 0%, #16a34a 100%)));
   cursor: pointer;
   padding: 3px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--toggle-active-shadow, 0 1px 3px rgba(0, 0, 0, 0.12));
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
 }
@@ -1316,12 +1563,15 @@
 }
 
 .ai-viewmode-toggle.grid {
-  background: color-mix(in srgb, var(--primary) 65%, #0f172a);
+  background: color-mix(in srgb, var(--text-main) 20%, #475569);
+  border-color: var(--border-light);
 }
 
 [data-theme-mode="light"] .ai-viewmode-toggle.grid {
-  background: color-mix(in srgb, var(--primary) 50%, #475569);
+  background: #cbd5e1;
+  border-color: #94a3b8;
 }
+
 
 .ai-viewmode-thumb {
   position: absolute;
@@ -1906,3 +2156,398 @@
 .ai-reset-filters-btn:hover {
   color: #2563eb;
 }
+
+/* ========================================================
+   CARD & MODAL UI STANDARDS (Matching User Reference Image 4)
+   ======================================================== */
+.modal-standard-surface {
+  background: var(--brand-card-surface, var(--bg-card, #ffffff));
+  border: 1px solid var(--border-light);
+  border-radius: 20px !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.16) !important;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-standard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--brand-card-surface, var(--bg-card, #ffffff));
+}
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.modal-header-icon-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-header-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-header-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1.25;
+}
+
+.modal-header-subtitle {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.modal-red-close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #fee2e2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modal-red-close-btn:hover {
+  background: #fecaca;
+  color: #b91c1c;
+  transform: scale(1.06);
+}
+
+/* Modal Internal Tabs Bar (View Camera - Image 3) */
+.modal-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
+
+.modal-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 8px 4px 10px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: -1px;
+}
+
+.modal-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.modal-tab-btn.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+/* Camera Modal Form Elements (View, Edit, Delete) */
+.camera-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.camera-modal-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-secondary, #4b5563);
+}
+
+.camera-modal-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text-main, #111827);
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-medium, #d1d5db);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.camera-modal-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.camera-modal-input::placeholder {
+  color: var(--text-muted, #9ca3af);
+}
+
+.camera-modal-hint {
+  font-size: 12px;
+  color: var(--text-muted, #6b7280);
+  margin-top: 2px;
+}
+
+.camera-modal-readvalue {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--text-main, #1f2937);
+  padding: 4px 0 10px 0;
+}
+
+.camera-delete-box {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 8px 0;
+}
+
+[data-theme="dark"] .camera-delete-box {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.25);
+}
+
+.camera-delete-name {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text-main, #111827);
+}
+
+.camera-btn-cancel-blue {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-medium, #d1d5db);
+  color: var(--text-main, #374151);
+  font-size: 13.5px;
+  font-weight: 600;
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-btn-cancel-blue:hover {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.04));
+  border-color: #9ca3af;
+  color: var(--text-main, #111827);
+}
+
+.camera-btn-delete-red {
+  background: var(--danger, #dc2626);
+  border: none;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 30%, transparent);
+}
+
+.camera-btn-delete-red:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.camera-btn-primary-blue {
+  background: var(--btn-color, var(--primary, #10b981)) !important;
+  border: none !important;
+  color: var(--btn-text, #ffffff) !important;
+  font-size: 13.5px;
+  font-weight: 600;
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 8px !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 32%, transparent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.camera-btn-primary-blue:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary, #10b981) 42%, transparent);
+}
+
+.camera-btn-outline-back {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-medium, #d1d5db);
+  color: var(--text-main, #374151);
+  font-size: 13.5px;
+  font-weight: 600;
+  height: 38px;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.camera-btn-outline-back:hover:not(:disabled) {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.04));
+  border-color: #9ca3af;
+  color: var(--text-main, #111827);
+}
+
+.camera-btn-outline-back:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ========================================================
+   ROWS PER PAGE SELECTOR (Matching User Reference Image)
+   ======================================================== */
+.rows-per-page-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.rows-per-page-label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary, #475569);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.rows-per-page-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 56px;
+  height: 32px;
+  padding: 4px 10px 4px 12px;
+  background: var(--bg-card, #ffffff);
+  border: 1.5px solid var(--border-medium, #e2e8f0);
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-main, #1e293b);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  outline: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.rows-per-page-trigger:hover {
+  border-color: color-mix(in srgb, var(--primary, #2563eb) 45%, var(--border-medium, #cbd5e1));
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+}
+
+.rows-per-page-trigger.open {
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary, #2563eb) 15%, transparent);
+}
+
+.rows-per-page-chevron {
+  color: var(--text-muted, #64748b);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.rows-per-page-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Floating Portal Menu */
+.rows-per-page-menu {
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-light, #e2e8f0);
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.12), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 4px;
+  min-width: 68px;
+  z-index: 10050;
+  overflow: hidden;
+  animation: rowsMenuFade 0.15s ease-out;
+}
+
+@keyframes rowsMenuFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rows-per-page-option {
+  padding: 6px 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-main, #1e293b);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-align: center;
+}
+
+.rows-per-page-option:hover {
+  background: color-mix(in srgb, var(--primary, #2563eb) 10%, transparent);
+  color: var(--primary, #2563eb);
+}
+
+.rows-per-page-option.selected {
+  background: color-mix(in srgb, var(--primary, #2563eb) 15%, transparent);
+  color: var(--primary, #2563eb);
+  font-weight: 700;
+}
+
+

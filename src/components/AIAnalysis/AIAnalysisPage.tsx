@@ -28,6 +28,7 @@ import { PageHeader } from '../shared/PageHeader';
 import { Badge } from '../shared/Badge';
 import { SearchField } from '../shared/SearchField';
 import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
+import { RowsPerPageSelector } from '../shared/RowsPerPageSelector';
 import { Modal } from '../shared/Modal';
 import '../AccountSettings/AccountSettings.css';
 import '../shared/SharedUI.css';
@@ -301,7 +302,7 @@ const ROWS_PER_PAGE_OPTIONS = [
 ];
 
 export function AIAnalysisPage() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'history'>('history');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'history'>('dashboard');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [alerts, setAlerts] = useState<AlertItem[]>(INITIAL_ALERTS);
 
@@ -312,9 +313,9 @@ export function AIAnalysisPage() {
   const [zoneFilter, setZoneFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
 
-  // Pagination
+  // Pagination (Default 6 items per page matching 1 full row of 6-column grid)
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(6);
 
   // Modal inspection
   const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null);
@@ -408,14 +409,14 @@ export function AIAnalysisPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, sourceFilter, zoneFilter, typeFilter, timeRange, rowsPerPage]);
+  }, [searchQuery, sourceFilter, zoneFilter, typeFilter, timeRange, rowsPerPage, activeTab]);
 
   const criticalCount = useMemo(() => {
     return alerts.filter(a => a.severity === 'critical' && a.status === 'new').length;
   }, [alerts]);
 
   return (
-    <div className="figma-account-settings-page-wrapper" style={{ paddingBottom: '32px' }}>
+    <div className="figma-account-settings-page-wrapper" style={{ padding: '16px 24px 20px', minHeight: 'auto' }}>
       <div className="figma-account-settings-container">
         
         {/* Top Header conforming to Base Application */}
@@ -453,7 +454,7 @@ export function AIAnalysisPage() {
         </div>
 
         {/* TAB CONTENT: DASHBOARD & HISTORY */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           
           {/* TAB 1: ALERT HISTORY (MATCHING REFERENCE UI) */}
           {activeTab === 'history' && (
@@ -466,7 +467,7 @@ export function AIAnalysisPage() {
                       type="button" 
                       className="figma-btn-icon" 
                       title="Alert Settings"
-                      style={{ border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
+                      aria-label="Alert Settings"
                     >
                       <Settings size={18} />
                     </button>
@@ -474,8 +475,8 @@ export function AIAnalysisPage() {
                       type="button" 
                       className="figma-btn-icon" 
                       title="Refresh alerts"
+                      aria-label="Refresh alerts"
                       onClick={handleRefresh}
-                      style={{ border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
                     >
                       <RefreshCw size={18} className={isRefreshing ? 'spin-animation' : ''} />
                     </button>
@@ -781,22 +782,14 @@ export function AIAnalysisPage() {
                 color: 'var(--text-secondary)',
                 gap: '24px'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>Rows per page:</span>
-                  <select
-                    value={rowsPerPage}
-                    onChange={(e) => {
-                      setRowsPerPage(Number(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    className="ai-toolbar-select"
-                    style={{ height: '30px', padding: '0 8px', fontSize: '12.5px' }}
-                  >
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                  </select>
-                </div>
+                <RowsPerPageSelector
+                  value={rowsPerPage}
+                  onChange={(val) => {
+                    setRowsPerPage(val);
+                    setCurrentPage(1);
+                  }}
+                  options={[6, 12, 18, 24]}
+                />
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <span>
                     {!hasAlertRules
@@ -834,7 +827,7 @@ export function AIAnalysisPage() {
           {activeTab === 'dashboard' && (
             <>
               {/* SECTION 1: ALERT OVERVIEW (NO PARENT CARD) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {/* Header row: Heading "Alert Overview" + Time Badge + View Mode Toggle */}
             <div 
               style={{ 
@@ -994,7 +987,7 @@ export function AIAnalysisPage() {
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
                   gap: '12px',
-                  marginBottom: '20px'
+                  marginBottom: '14px'
                 }}
               >
                 {/* Left Controls: Search, Quick Tooltip, Dropdown Filters */}
@@ -1270,27 +1263,15 @@ export function AIAnalysisPage() {
 
               {/* PAGINATION BAR */}
               {totalItems > 0 && (
-                <div className="ai-pagination">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span>Rows per page:</span>
-                    <select
-                      value={rowsPerPage}
-                      onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                      style={{
-                        background: 'var(--nested-bg, var(--bg-card))',
-                        border: '1px solid var(--border-light)',
-                        borderRadius: '6px',
-                        padding: '3px 8px',
-                        fontSize: '12px',
-                        color: 'var(--text-main)',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <option value={10}>10</option>
-                      <option value={25}>25</option>
-                      <option value={50}>50</option>
-                    </select>
-                  </div>
+                <div className="ai-pagination" style={{ borderTop: '1px solid var(--border-light)', marginTop: '16px', paddingTop: '12px' }}>
+                  <RowsPerPageSelector
+                    value={rowsPerPage}
+                    onChange={(val) => {
+                      setRowsPerPage(val);
+                      setCurrentPage(1);
+                    }}
+                    options={[6, 12, 18, 24]}
+                  />
 
                   <div>
                     {Math.min((currentPage - 1) * rowsPerPage + 1, totalItems)}–{Math.min(currentPage * rowsPerPage, totalItems)} of {totalItems}

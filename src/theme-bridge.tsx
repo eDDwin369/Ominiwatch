@@ -321,6 +321,31 @@ function syncCssVars(theme: any, settings: any) {
   set('--dash-brand-gradient', tk.brandGradient);
   set('--dash-aura-color', primaryHex);
   set('--gs-accent-gradient', tk.gsAccentGradient);
+
+  // Toggle Switch Active Gradient (Theme Studio responsive, matching Reference Image 4)
+  const toggleGradientMap: Record<string, string> = {
+    emerald: 'linear-gradient(90deg, #d97706 0%, #16a34a 100%)',
+    corporate: 'linear-gradient(90deg, #0284c7 0%, #2563eb 100%)',
+    'corporate-blue': 'linear-gradient(90deg, #0284c7 0%, #2563eb 100%)',
+    indigo: 'linear-gradient(90deg, #c026d3 0%, #6366f1 100%)',
+    'indigo-violet': 'linear-gradient(90deg, #c026d3 0%, #6366f1 100%)',
+  };
+  const activeToggleGradient = toggleGradientMap[settings.presetId] || tk.brandGradient || `linear-gradient(90deg, ${secondaryHex || '#d97706'} 0%, ${primaryHex || '#16a34a'} 100%)`;
+  set('--toggle-active-bg', activeToggleGradient);
+  set('--toggle-active-shadow', `0 2px 8px color-mix(in srgb, ${primaryHex} 35%, transparent)`);
+
+  // Rectangle Pill Button Token - Rectangle with Corner Radius & No Label (Matching Reference Image 1)
+  const pillBtnMap: Record<string, string> = {
+    emerald: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    corporate: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+    'corporate-blue': 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+    indigo: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+    'indigo-violet': 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+  };
+  const activePillBtnBg = pillBtnMap[settings.presetId] || `linear-gradient(135deg, ${primaryHex} 0%, color-mix(in srgb, ${primaryHex} 80%, #000) 100%)`;
+  set('--pill-btn-bg', activePillBtnBg);
+  set('--pill-btn-shadow', `0 2px 8px color-mix(in srgb, ${primaryHex} 35%, transparent)`);
+
   set('--gs-save-bg', secondaryHex);
   const figmaGsSaveShadow: Record<string, string> = {
     corporate: 'rgba(29, 78, 216, 0.6)',

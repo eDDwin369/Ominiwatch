@@ -30,6 +30,7 @@ import {
 import { PageHeader } from '../shared/PageHeader';
 import { SearchField } from '../shared/SearchField';
 import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
+import { RowsPerPageSelector } from '../shared/RowsPerPageSelector';
 import { Modal } from '../shared/Modal';
 import { Badge } from '../shared/Badge';
 import './AdministrationPage.css';
@@ -370,7 +371,7 @@ export function AdministrationPage({
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [dateFilter, setDateFilter] = useState('all');
   const [onvifFilter, setOnvifFilter] = useState('all');
-  const [rowsPerPage, setRowsPerPage] = useState('10');
+  const [rowsPerPage, setRowsPerPage] = useState('5');
   const [currentPage, setCurrentPage] = useState(1);
 
   // Modals & Preview State
@@ -423,7 +424,7 @@ export function AdministrationPage({
 
   // Pagination calculation
   const totalItems = filteredCameras.length;
-  const pageSize = parseInt(rowsPerPage, 10) || 10;
+  const pageSize = parseInt(rowsPerPage, 10) || 5;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
   const paginatedCameras = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -552,7 +553,7 @@ export function AdministrationPage({
   const [zoneViewMode, setZoneViewMode] = useState<'table' | 'grid'>('table');
   const [zoneDateFilter, setZoneDateFilter] = useState('all');
   const [zoneUseCaseFilter, setZoneUseCaseFilter] = useState('all');
-  const [zoneRowsPerPage, setZoneRowsPerPage] = useState('10');
+  const [zoneRowsPerPage, setZoneRowsPerPage] = useState('5');
   const [zoneCurrentPage, setZoneCurrentPage] = useState(1);
 
   const toggleZoneDetection = (id: string) => {
@@ -583,7 +584,7 @@ export function AdministrationPage({
     });
   }, [zoneRecords, zoneFavOnly, zoneSearch]);
 
-  const zonePageSize = parseInt(zoneRowsPerPage, 10) || 10;
+  const zonePageSize = parseInt(zoneRowsPerPage, 10) || 5;
   const totalZonePages = Math.ceil(filteredZoneRecords.length / zonePageSize) || 1;
   const paginatedZoneRecords = useMemo(() => {
     const start = (zoneCurrentPage - 1) * zonePageSize;
@@ -627,14 +628,35 @@ export function AdministrationPage({
   const [recycleTypeFilter, setRecycleTypeFilter] = useState('all');
   const [recycleExpiryFilter, setRecycleExpiryFilter] = useState('all');
   const [recycleDateFilter, setRecycleDateFilter] = useState('all');
-  const [recycleItems, setRecycleItems] = useState<DeletedItem[]>([]);
+  const [recycleItems, setRecycleItems] = useState<DeletedItem[]>(INITIAL_RECYCLE_BIN);
+  const [recycleRowsPerPage, setRecycleRowsPerPage] = useState('5');
+  const [recycleCurrentPage, setRecycleCurrentPage] = useState(1);
 
   const resetRecycleFilters = () => {
     setRecycleSearch('');
     setRecycleTypeFilter('all');
     setRecycleExpiryFilter('all');
     setRecycleDateFilter('all');
+    setRecycleCurrentPage(1);
   };
+
+  const filteredRecycleItems = useMemo(() => {
+    return recycleItems.filter(item => {
+      if (recycleTypeFilter !== 'all' && item.type !== recycleTypeFilter) return false;
+      if (recycleSearch.trim()) {
+        const q = recycleSearch.toLowerCase();
+        return item.name.toLowerCase().includes(q) || item.originalLocation.toLowerCase().includes(q);
+      }
+      return true;
+    });
+  }, [recycleItems, recycleTypeFilter, recycleSearch]);
+
+  const recyclePageSize = parseInt(recycleRowsPerPage, 10) || 5;
+  const totalRecyclePages = Math.ceil(filteredRecycleItems.length / recyclePageSize) || 1;
+  const paginatedRecycleItems = useMemo(() => {
+    const start = (recycleCurrentPage - 1) * recyclePageSize;
+    return filteredRecycleItems.slice(start, start + recyclePageSize);
+  }, [filteredRecycleItems, recycleCurrentPage, recyclePageSize]);
 
   const handleEmptyBinAction = () => {
     if (recycleItems.length === 0) return;
@@ -672,7 +694,9 @@ export function AdministrationPage({
   const [userDateFilter, setUserDateFilter] = useState('all');
   const [userRoleFilter, setUserRoleFilter] = useState('all');
   const [userStatusFilter, setUserStatusFilter] = useState('all');
-  const [usersList, setUsersList] = useState<UserItem[]>([]);
+  const [usersList, setUsersList] = useState<UserItem[]>(INITIAL_USERS);
+  const [userRowsPerPage, setUserRowsPerPage] = useState('5');
+  const [userCurrentPage, setUserCurrentPage] = useState(1);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [newUserName, setNewUserName] = useState('');
   const [newUserEmail, setNewUserEmail] = useState('');
@@ -689,6 +713,13 @@ export function AdministrationPage({
       return true;
     });
   }, [usersList, userRoleFilter, userStatusFilter, userSearch]);
+
+  const userPageSize = parseInt(userRowsPerPage, 10) || 5;
+  const totalUserPages = Math.ceil(filteredUsers.length / userPageSize) || 1;
+  const paginatedUsers = useMemo(() => {
+    const start = (userCurrentPage - 1) * userPageSize;
+    return filteredUsers.slice(start, start + userPageSize);
+  }, [filteredUsers, userCurrentPage, userPageSize]);
 
   const handleAddUser = () => {
     if (!newUserName.trim() || !newUserEmail.trim()) {
@@ -1133,20 +1164,14 @@ export function AdministrationPage({
 
             {/* Pagination Row */}
             <div className="admin-pagination">
-              <div className="admin-pagination-selector">
-                <span>Rows per page:</span>
-                <div style={{ width: '70px' }}>
-                  <CustomSmoothDropdown
-                    label={rowsPerPage}
-                    value={rowsPerPage}
-                    onChange={(val) => {
-                      setRowsPerPage(val);
-                      setCurrentPage(1);
-                    }}
-                    options={ROWS_PER_PAGE_OPTIONS}
-                  />
-                </div>
-              </div>
+              <RowsPerPageSelector
+                value={parseInt(rowsPerPage, 10) || 5}
+                onChange={(val) => {
+                  setRowsPerPage(String(val));
+                  setCurrentPage(1);
+                }}
+                options={[5, 10, 15, 25]}
+              />
 
               <div>
                 {totalItems > 0 ? (
@@ -1365,25 +1390,19 @@ export function AdministrationPage({
 
             {/* Pagination Row */}
             <div className="admin-pagination">
-              <div className="admin-pagination-selector">
-                <span>Rows per page:</span>
-                <div style={{ width: '70px' }}>
-                  <CustomSmoothDropdown
-                    label={zoneRowsPerPage}
-                    value={zoneRowsPerPage}
-                    onChange={(val) => {
-                      setZoneRowsPerPage(val);
-                      setZoneCurrentPage(1);
-                    }}
-                    options={ROWS_PER_PAGE_OPTIONS}
-                  />
-                </div>
-              </div>
+              <RowsPerPageSelector
+                value={parseInt(zoneRowsPerPage, 10) || 5}
+                onChange={(val) => {
+                  setZoneRowsPerPage(String(val));
+                  setZoneCurrentPage(1);
+                }}
+                options={[5, 10, 15, 25]}
+              />
 
               <div>
                 <span>
                   {filteredZoneRecords.length > 0 
-                    ? `1–${filteredZoneRecords.length} of ${filteredZoneRecords.length}`
+                    ? `${(zoneCurrentPage - 1) * zonePageSize + 1}–${Math.min(zoneCurrentPage * zonePageSize, filteredZoneRecords.length)} of ${filteredZoneRecords.length}`
                     : '0 of 0'
                   }
                 </span>
@@ -1522,11 +1541,12 @@ export function AdministrationPage({
                   <div className="admin-toolbar-right">
                     <button
                       type="button"
-                      className="admin-blue-btn"
+                      className="admin-add-pill-btn"
                       onClick={() => setIsAddUseCaseOpen(true)}
+                      title="New Use Case"
+                      aria-label="New Use Case"
                     >
-                      <Plus size={16} strokeWidth={2.5} />
-                      <span>New Use Case</span>
+                      <Plus size={20} strokeWidth={2.6} />
                     </button>
                   </div>
                 </div>
@@ -1626,16 +1646,16 @@ export function AdministrationPage({
                           </Badge>
                         </td>
                         <td style={{ textAlign: 'right' }}>
-                          <button
-                            type="button"
-                            className="figma-btn-cancel"
-                            style={{ padding: '4px 12px', fontSize: '12px' }}
-                            onClick={() => {
-                              setAiModels(prev => prev.map(m => m.id === model.id ? { ...m, isEnabled: !m.isEnabled } : m));
-                            }}
-                          >
-                            {model.isEnabled ? 'Pause' : 'Activate'}
-                          </button>
+                          <label className="admin-toggle-switch" style={{ display: 'inline-block' }}>
+                            <input
+                              type="checkbox"
+                              checked={model.isEnabled}
+                              onChange={() => {
+                                setAiModels(prev => prev.map(m => m.id === model.id ? { ...m, isEnabled: !m.isEnabled } : m));
+                              }}
+                            />
+                            <span className="admin-toggle-slider" />
+                          </label>
                         </td>
                       </tr>
                     ))}
@@ -1646,7 +1666,7 @@ export function AdministrationPage({
 
             {/* SUBTAB: Alert Rules */}
             {aiSubTab === 'rules' && (
-              <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+              <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                 <Activity size={36} color="var(--primary)" style={{ opacity: 0.7, marginBottom: '8px' }} />
                 <h4 style={{ margin: '0 0 6px 0', fontSize: '15px' }}>Automated Detection Rules</h4>
                 <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -1654,6 +1674,32 @@ export function AdministrationPage({
                 </p>
               </div>
             )}
+
+            {/* Consistent Pagination Footer across all tabs */}
+            <div className="admin-pagination">
+              <RowsPerPageSelector
+                value={5}
+                onChange={() => {}}
+                options={[5, 10, 15, 25]}
+              />
+              <div>
+                <span>
+                  {aiSubTab === 'models' 
+                    ? `1–${aiModels.length} of ${aiModels.length}`
+                    : aiSubTab === 'usecase' && useCases.length > 0
+                    ? `1–${useCases.length} of ${useCases.length}`
+                    : '0 of 0'}
+                </span>
+              </div>
+              <div className="admin-pagination-actions">
+                <button type="button" className="ai-pagination-btn" disabled title="Previous Page">
+                  <ChevronLeft size={16} />
+                </button>
+                <button type="button" className="ai-pagination-btn" disabled title="Next Page">
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
 
           </div>
         )}
@@ -1762,7 +1808,7 @@ export function AdministrationPage({
                       </td>
                     </tr>
                   ) : (
-                    recycleItems.map(item => (
+                    paginatedRecycleItems.map(item => (
                       <tr key={item.id}>
                         <td style={{ fontWeight: 600 }}>{item.name}</td>
                         <td><Badge variant="neutral">{item.type}</Badge></td>
@@ -1789,27 +1835,40 @@ export function AdministrationPage({
 
             {/* Pagination footer */}
             <div className="admin-pagination">
-              <div className="admin-pagination-selector">
-                <span>Rows per page:</span>
-                <div style={{ width: '70px' }}>
-                  <CustomSmoothDropdown
-                    label="10"
-                    value="10"
-                    onChange={() => {}}
-                    options={ROWS_PER_PAGE_OPTIONS}
-                  />
-                </div>
-              </div>
+              <RowsPerPageSelector
+                value={parseInt(recycleRowsPerPage, 10) || 5}
+                onChange={(val) => {
+                  setRecycleRowsPerPage(String(val));
+                  setRecycleCurrentPage(1);
+                }}
+                options={[5, 10, 15, 25]}
+              />
 
               <div>
-                <span>{recycleItems.length > 0 ? `1–${recycleItems.length} of ${recycleItems.length}` : '0–0 of 0'}</span>
+                <span>
+                  {filteredRecycleItems.length > 0 
+                    ? `${(recycleCurrentPage - 1) * recyclePageSize + 1}–${Math.min(recycleCurrentPage * recyclePageSize, filteredRecycleItems.length)} of ${filteredRecycleItems.length}` 
+                    : '0 of 0'}
+                </span>
               </div>
 
               <div className="admin-pagination-actions">
-                <button type="button" className="ai-pagination-btn" disabled title="Previous">
+                <button 
+                  type="button" 
+                  className="ai-pagination-btn" 
+                  disabled={recycleCurrentPage <= 1} 
+                  onClick={() => setRecycleCurrentPage(p => Math.max(1, p - 1))}
+                  title="Previous"
+                >
                   <ChevronLeft size={16} />
                 </button>
-                <button type="button" className="ai-pagination-btn" disabled title="Next">
+                <button 
+                  type="button" 
+                  className="ai-pagination-btn" 
+                  disabled={recycleCurrentPage >= totalRecyclePages} 
+                  onClick={() => setRecycleCurrentPage(p => Math.min(totalRecyclePages, p + 1))}
+                  title="Next"
+                >
                   <ChevronRight size={16} />
                 </button>
               </div>
@@ -1880,6 +1939,28 @@ export function AdministrationPage({
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Pagination footer */}
+            <div className="admin-pagination">
+              <RowsPerPageSelector
+                value={5}
+                onChange={() => {}}
+                options={[5, 10, 15, 25]}
+              />
+
+              <div>
+                <span>{nvrs.length > 0 ? `1–${nvrs.length} of ${nvrs.length}` : '0 of 0'}</span>
+              </div>
+
+              <div className="admin-pagination-actions">
+                <button type="button" className="ai-pagination-btn" disabled title="Previous">
+                  <ChevronLeft size={16} />
+                </button>
+                <button type="button" className="ai-pagination-btn" disabled title="Next">
+                  <ChevronRight size={16} />
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1985,11 +2066,12 @@ export function AdministrationPage({
                   <div className="admin-toolbar-right">
                     <button
                       type="button"
-                      className="admin-blue-btn"
+                      className="admin-add-pill-btn"
                       onClick={() => setIsAddUserOpen(true)}
+                      title="Add User"
+                      aria-label="Add User"
                     >
-                      <Plus size={16} strokeWidth={2.5} />
-                      <span>Add User</span>
+                      <Plus size={20} strokeWidth={2.6} />
                     </button>
                   </div>
                 </div>
@@ -2013,7 +2095,7 @@ export function AdministrationPage({
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredUsers.map(u => (
+                        {paginatedUsers.map(u => (
                           <tr key={u.id}>
                             <td style={{ fontWeight: 600 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -2052,22 +2134,96 @@ export function AdministrationPage({
 
                 {/* Pagination footer */}
                 <div className="admin-pagination">
-                  <div className="admin-pagination-selector">
-                    <span>Rows per page:</span>
-                    <div style={{ width: '70px' }}>
-                      <CustomSmoothDropdown
-                        label="10"
-                        value="10"
-                        onChange={() => {}}
-                        options={ROWS_PER_PAGE_OPTIONS}
-                      />
-                    </div>
-                  </div>
+                  <RowsPerPageSelector
+                    value={parseInt(userRowsPerPage, 10) || 5}
+                    onChange={(val) => {
+                      setUserRowsPerPage(String(val));
+                      setUserCurrentPage(1);
+                    }}
+                    options={[5, 10, 15, 25]}
+                  />
 
                   <div>
-                    <span>{filteredUsers.length > 0 ? `1–${filteredUsers.length} of ${filteredUsers.length}` : '0–0 of 0'}</span>
+                    <span>
+                      {filteredUsers.length > 0 
+                        ? `${(userCurrentPage - 1) * userPageSize + 1}–${Math.min(userCurrentPage * userPageSize, filteredUsers.length)} of ${filteredUsers.length}` 
+                        : '0 of 0'}
+                    </span>
                   </div>
 
+                  <div className="admin-pagination-actions">
+                    <button 
+                      type="button" 
+                      className="ai-pagination-btn" 
+                      disabled={userCurrentPage <= 1} 
+                      onClick={() => setUserCurrentPage(p => Math.max(1, p - 1))}
+                      title="Previous"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button 
+                      type="button" 
+                      className="ai-pagination-btn" 
+                      disabled={userCurrentPage >= totalUserPages} 
+                      onClick={() => setUserCurrentPage(p => Math.min(totalUserPages, p + 1))}
+                      title="Next"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* SUBTAB: Roles & Permissions */}
+            {userSubTab === 'roles' && (
+              <>
+                <div style={{ padding: '24px 0', display: 'flex', flexDirection: 'column', gap: '16px', flex: 1 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                    <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <Shield size={18} color="var(--primary)" />
+                        <strong style={{ fontSize: '14px' }}>Superadmin</strong>
+                      </div>
+                      <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+                        Full organizational governance, configuration management, user provisioning, and audit logs.
+                      </p>
+                      <Badge variant="primary">Full Permissions</Badge>
+                    </div>
+
+                    <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <Shield size={18} color="#2563eb" />
+                        <strong style={{ fontSize: '14px' }}>Security Operator</strong>
+                      </div>
+                      <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+                        Live monitoring, PTZ joystick operations, alert incident triage, and playback verification.
+                      </p>
+                      <Badge variant="info">Operator Level</Badge>
+                    </div>
+
+                    <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <Shield size={18} color="#6b7280" />
+                        <strong style={{ fontSize: '14px' }}>Viewer</strong>
+                      </div>
+                      <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+                        Read-only live video stream inspection and general facility dashboard reporting.
+                      </p>
+                      <Badge variant="neutral">Read Only</Badge>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="admin-pagination">
+                  <RowsPerPageSelector
+                    value={5}
+                    onChange={() => {}}
+                    options={[5, 10, 15, 25]}
+                  />
+                  <div>
+                    <span>1–3 of 3 Roles</span>
+                  </div>
                   <div className="admin-pagination-actions">
                     <button type="button" className="ai-pagination-btn" disabled title="Previous">
                       <ChevronLeft size={16} />
@@ -2078,46 +2234,6 @@ export function AdministrationPage({
                   </div>
                 </div>
               </>
-            )}
-
-            {/* SUBTAB: Roles & Permissions */}
-            {userSubTab === 'roles' && (
-              <div style={{ padding: '24px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
-                  <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <Shield size={18} color="var(--primary)" />
-                      <strong style={{ fontSize: '14px' }}>Superadmin</strong>
-                    </div>
-                    <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
-                      Full organizational governance, configuration management, user provisioning, and audit logs.
-                    </p>
-                    <Badge variant="primary">Full Permissions</Badge>
-                  </div>
-
-                  <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <Shield size={18} color="#2563eb" />
-                      <strong style={{ fontSize: '14px' }}>Security Operator</strong>
-                    </div>
-                    <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
-                      Live monitoring, PTZ joystick operations, alert incident triage, and playback verification.
-                    </p>
-                    <Badge variant="info">Operator Level</Badge>
-                  </div>
-
-                  <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <Shield size={18} color="#6b7280" />
-                      <strong style={{ fontSize: '14px' }}>Viewer</strong>
-                    </div>
-                    <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
-                      Read-only live video stream inspection and general facility dashboard reporting.
-                    </p>
-                    <Badge variant="neutral">Read Only</Badge>
-                  </div>
-                </div>
-              </div>
             )}
 
           </div>

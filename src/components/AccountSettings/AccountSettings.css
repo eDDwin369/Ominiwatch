@@ -621,29 +621,16 @@
   transition: all 0.2s;
 }
 
-/* Matches Global Settings' .gs-top-btn-save / .gs-top-btn-cancel colors */
+/* Button styles are centrally maintained in SharedUI.css adhering to global UI standards */
 .figma-btn-save {
-  background: var(--primary) !important;
+  background: var(--btn-color, var(--primary, #10b981)) !important;
   color: var(--btn-text, #ffffff) !important;
-  box-shadow: 0 4px 14px var(--accent-glow);
-}
-
-[data-theme-mode="dark"] .figma-btn-save {
-  background: var(--secondary) !important;
-  box-shadow: 0px 4px 7px var(--gs-save-shadow, var(--accent-glow));
-}
-
-.figma-btn-save:hover {
-  filter: brightness(1.1);
 }
 
 .figma-btn-cancel {
-  background: rgba(38, 40, 48, 0.95) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.figma-btn-cancel:hover {
-  filter: brightness(1.1);
+  background: var(--bg-card, #ffffff) !important;
+  border: 1px solid var(--border-medium, #d1d5db) !important;
+  color: var(--text-main, #374151) !important;
 }
 
 /* Preferences & Privacy Card Links */
@@ -1624,18 +1611,18 @@
 .figma-card-personal .figma-btn-icon {
   width: 36px !important;
   height: 36px !important;
-  border-radius: 50% !important;
+  border-radius: var(--radius-md, 8px) !important;
 }
 
 .figma-card-personal .figma-btn-save {
-  background: var(--primary) !important;
+  background: var(--btn-color, var(--primary, #10b981)) !important;
   color: var(--btn-text, #ffffff) !important;
-  border: none;
-  box-shadow: 0 4px 12px var(--accent-glow) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 32%, transparent) !important;
 }
 
 .figma-card-personal .figma-btn-save:hover:not(:disabled) {
-  filter: brightness(1.1);
+  filter: brightness(1.08);
   transform: translateY(-1px);
 }
 
@@ -1646,26 +1633,26 @@
 }
 
 [data-theme-mode="dark"] .figma-card-personal .figma-btn-save {
-  background: var(--secondary) !important;
+  background: var(--btn-color, var(--primary, #10b981)) !important;
 }
 
 .figma-card-personal .figma-btn-cancel {
-  background: color-mix(in srgb, var(--danger, #dc2626) 14%, #ffffff) !important;
-  color: var(--danger, #dc2626) !important;
-  border: 1px solid color-mix(in srgb, var(--danger, #dc2626) 35%, transparent) !important;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--danger, #dc2626) 25%, transparent);
+  background: var(--bg-card, #ffffff) !important;
+  color: var(--text-main, #374151) !important;
+  border: 1px solid var(--border-medium, #d1d5db) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .figma-card-personal .figma-btn-cancel:hover {
-  background: var(--danger, #dc2626) !important;
-  color: #ffffff !important;
-  filter: none;
+  background: var(--hover-bg, rgba(0, 0, 0, 0.04)) !important;
+  border-color: #9ca3af !important;
+  color: var(--text-main, #111827) !important;
 }
 
 [data-theme-mode="dark"] .figma-card-personal .figma-btn-cancel:not(:hover) {
-  background: color-mix(in srgb, var(--danger, #dc2626) 22%, var(--bg-card)) !important;
-  color: color-mix(in srgb, var(--danger, #dc2626) 55%, var(--text-main)) !important;
-  border-color: color-mix(in srgb, var(--danger, #dc2626) 55%, transparent) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: var(--text-main, #f1f5f9) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
 }
 
 .figma-card-personal .figma-btn-icon:focus-visible,

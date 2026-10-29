@@ -359,12 +359,13 @@ export function FlashbackPage() {
             <CardHeader
               action={
                 <button 
-                  className="figma-btn-edit-square" 
+                  type="button"
+                  className="figma-btn-icon" 
                   title="Live Grid Settings"
+                  aria-label="Live Grid Settings"
                   onClick={() => setIsSettingsOpen(true)}
-                  style={{ width: '34px', height: '34px' }}
                 >
-                  <Settings size={17} />
+                  <Settings size={18} />
                 </button>
               }
             >
@@ -903,9 +904,14 @@ export function FlashbackPage() {
             title="Live Grid & Surveillance Settings"
             maxWidth="520px"
             footer={
-              <button className="figma-btn-save" onClick={() => setIsSettingsOpen(false)}>
-                Save Settings
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', width: '100%' }}>
+                <button type="button" className="figma-btn-cancel" onClick={() => setIsSettingsOpen(false)}>
+                  Cancel
+                </button>
+                <button type="button" className="figma-btn-save" onClick={() => setIsSettingsOpen(false)}>
+                  Save Settings
+                </button>
+              </div>
             }
           >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

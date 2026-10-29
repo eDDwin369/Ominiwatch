@@ -601,44 +601,88 @@
 }
 
 .btn-save {
-  background: var(--btn-color, var(--primary));
+  background: var(--btn-color, var(--primary, #10b981));
   color: var(--btn-text, #ffffff);
   border: none;
-  border-radius: var(--radius-md);
-  padding: 10px 20px;
-  font-size: 14px;
+  border-radius: var(--radius-md, 8px);
+  height: 38px;
+  min-height: 38px;
+  padding: 0 20px;
+  font-size: var(--font-size-body-sm, 13.5px);
   font-weight: 600;
+  letter-spacing: 0.01em;
   text-transform: var(--btn-case, none);
   cursor: pointer;
-  transition: all 0.05s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: var(--app-font-family);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 32%, transparent);
+  box-sizing: border-box;
 }
 
-.btn-save:hover {
+.btn-save:hover:not(:disabled) {
   filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary, #10b981) 42%, transparent);
+}
+
+.btn-save:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-save:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  box-shadow: none !important;
 }
 
 .btn-cancel {
-  background: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
+  background: var(--bg-card, #ffffff);
+  color: var(--text-main, #374151);
+  border: 1px solid var(--border-medium, #d1d5db);
+  border-radius: var(--radius-md, 8px);
+  height: 38px;
+  min-height: 38px;
+  padding: 0 20px;
+  font-size: var(--font-size-body-sm, 13.5px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
   text-transform: var(--btn-case, none);
   cursor: pointer;
-  transition: all 0.05s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: var(--app-font-family);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
 }
 
-.btn-cancel:hover {
-  background: var(--bg-dashboard);
+.btn-cancel:hover:not(:disabled) {
+  background: var(--hover-bg, rgba(0, 0, 0, 0.04));
+  border-color: #9ca3af;
+  color: var(--text-main, #111827);
+  transform: translateY(-0.5px);
+}
+
+.btn-cancel:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+[data-theme-mode="dark"] .btn-cancel {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: var(--text-main, #f1f5f9);
+}
+
+[data-theme-mode="dark"] .btn-cancel:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #ffffff;
 }
 
 /* Security & Sessions Page Layout */

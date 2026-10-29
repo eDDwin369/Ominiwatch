@@ -2,9 +2,22 @@
    ADMINISTRATION MODULE STYLES (Aligned with Base Application)
    ======================================================== */
 
+/* Container rules to eliminate all outer scrolling and stretch neatly above footer */
+.dashboard-content-scrollable:has(.admin-wrapper) {
+  overflow-y: hidden !important;
+}
+
 .admin-wrapper {
-  padding-bottom: 32px;
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  padding: 12px 28px 10px !important;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden !important;
 }
 
 .admin-container {
@@ -13,7 +26,15 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 8px;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.admin-container > *:not(.admin-content-card) {
+  flex-shrink: 0;
 }
 
 /* Tab Bar */
@@ -74,16 +95,20 @@
   gap: 8px;
 }
 
-/* Card Container */
+/* Card Container (Exact identical height and width across all 6 tabs, ending just above the footer) */
 .admin-content-card {
   background: var(--brand-card-surface, var(--bg-card, #ffffff));
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg, 14px);
-  padding: 24px;
+  padding: 14px 20px 12px;
   box-shadow: var(--card-shadow, 0 2px 10px rgba(0, 0, 0, 0.04));
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
@@ -225,19 +250,19 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }
 
-/* Add Camera Primary Pill Button - Capsule Gradient (Matching Reference Image 3) */
+/* Add Primary Rectangle Pill Button - Rectangle with Corner Radius & No Label (Matching Reference Image 1) */
 .admin-add-pill-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 58px;
   height: 34px;
-  border-radius: 9999px;
+  border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, var(--primary, #10b981) 0%, color-mix(in srgb, var(--primary, #10b981) 75%, #047857) 100%);
+  background: var(--pill-btn-bg, var(--btn-color, var(--dash-brand-gradient, linear-gradient(135deg, var(--primary, #10b981) 0%, color-mix(in srgb, var(--primary, #10b981) 75%, #047857) 100%))));
   color: #ffffff;
   cursor: pointer;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 35%, transparent);
+  box-shadow: var(--pill-btn-shadow, 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 30%, transparent));
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   flex-shrink: 0;
   outline: none;
@@ -246,12 +271,13 @@
 .admin-add-pill-btn:hover {
   filter: brightness(1.1);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary, #10b981) 45%, transparent);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary, #10b981) 40%, transparent);
 }
 
 .admin-add-pill-btn:active {
   transform: translateY(0);
 }
+
 
 .admin-primary-btn {
   display: inline-flex;
@@ -259,22 +285,24 @@
   justify-content: center;
   gap: 8px;
   height: 38px;
-  padding: 0 18px;
-  border-radius: 8px;
+  padding: 0 20px;
+  border-radius: var(--radius-md, 8px);
   border: none;
-  background: var(--primary);
-  color: #ffffff;
-  font-size: 13.5px;
+  background: var(--btn-color, var(--primary, #10b981));
+  color: var(--btn-text, #ffffff);
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 13.5px);
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 35%, transparent);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 32%, transparent);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
 .admin-primary-btn:hover {
   filter: brightness(1.08);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 45%, transparent);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--primary, #10b981) 42%, transparent);
 }
 
 .admin-primary-btn:active {
@@ -284,34 +312,40 @@
 /* Table Design */
 .admin-table-wrapper {
   width: 100%;
+  flex: 1;
+  min-height: 0;
   overflow-x: auto;
+  overflow-y: hidden;
   border-radius: 10px;
   border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 13.5px;
+  font-size: 13px;
 }
 
 .admin-table th {
   background: var(--nested-bg, color-mix(in srgb, var(--text-main) 3%, transparent));
   color: var(--primary);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.2px;
-  padding: 12px 16px;
+  padding: 9px 14px;
   border-bottom: 1px solid var(--border-light);
   white-space: nowrap;
 }
 
 .admin-table td {
-  padding: 13px 16px;
+  padding: 8px 14px;
   border-bottom: 1px solid var(--border-light);
   color: var(--text-main);
   vertical-align: middle;
+  font-size: 13px;
 }
 
 .admin-table tr:last-child td {
@@ -441,10 +475,13 @@
   align-items: center;
   justify-content: flex-end;
   gap: 18px;
-  padding-top: 8px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-light);
   color: var(--text-muted);
   font-size: 13px;
   flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
 .admin-pagination-selector {
@@ -465,6 +502,10 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 @media (max-width: 1200px) {
@@ -670,9 +711,10 @@
 .admin-toggle-switch {
   position: relative;
   display: inline-block;
-  width: 38px;
-  height: 20px;
+  width: 44px;
+  height: 24px;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .admin-toggle-switch input {
@@ -688,29 +730,35 @@
   right: 0;
   bottom: 0;
   background-color: #cbd5e1;
-  transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  border-radius: 20px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 9999px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme-mode="dark"] .admin-toggle-slider {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .admin-toggle-slider:before {
   position: absolute;
   content: "";
-  height: 14px;
-  width: 14px;
+  height: 18px;
+  width: 18px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
-  transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: #ffffff;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.25);
 }
 
 .admin-toggle-switch input:checked + .admin-toggle-slider {
-  background-color: #3b82f6;
+  background: var(--toggle-active-bg, var(--dash-brand-gradient, linear-gradient(90deg, #d97706 0%, #16a34a 100%))) !important;
+  box-shadow: var(--toggle-active-shadow, 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 25%, transparent));
 }
 
 .admin-toggle-switch input:checked + .admin-toggle-slider:before {
-  transform: translateX(18px);
+  transform: translateX(20px);
 }
 
 /* Empty Bin Button */
@@ -745,10 +793,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 20px;
-  gap: 16px;
+  padding: 30px 20px;
+  gap: 14px;
   text-align: center;
-  min-height: 290px;
+  flex: 1;
+  min-height: 0;
 }
 
 .admin-empty-icon-wrap {

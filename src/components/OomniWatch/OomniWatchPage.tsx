@@ -14,7 +14,11 @@ import {
   Tv,
   ArrowLeftRight,
   Bell,
-  Maximize
+  Maximize,
+  Info,
+  Check,
+  CheckCircle2,
+  SlidersHorizontal
 } from 'lucide-react';
 import { Card } from '../shared/Card';
 import { PageHeader } from '../shared/PageHeader';
@@ -33,6 +37,11 @@ export interface CameraItem {
   streamText?: string;
   resolution: string;
   fps: number;
+  description?: string;
+  rtspUrl?: string;
+  defaultPan?: number;
+  defaultTilt?: number;
+  zoomLevel?: string;
 }
 
 const INITIAL_CAMERAS: CameraItem[] = [
@@ -44,7 +53,8 @@ const INITIAL_CAMERAS: CameraItem[] = [
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
-    fps: 30
+    fps: 30,
+    description: 'Indoor coverage of the cafeteria checkout counter and staff transit line.'
   },
   {
     id: 'cam-2',
@@ -53,7 +63,12 @@ const INITIAL_CAMERAS: CameraItem[] = [
     location: 'Outdoor',
     hasStream: true,
     resolution: '4K UHD',
-    fps: 30
+    fps: 30,
+    description: '',
+    rtspUrl: 'rtsp://allcad-chennai.selfip.com:8554/RTMP_CAM23',
+    defaultPan: 0,
+    defaultTilt: 0,
+    zoomLevel: '1x Optical'
   },
   {
     id: 'cam-3',
@@ -63,7 +78,8 @@ const INITIAL_CAMERAS: CameraItem[] = [
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
-    fps: 30
+    fps: 30,
+    description: ''
   },
   {
     id: 'cam-4',
@@ -73,7 +89,8 @@ const INITIAL_CAMERAS: CameraItem[] = [
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '4K UHD',
-    fps: 60
+    fps: 60,
+    description: 'Primary vehicular entry and security turnstile pan-tilt tracking node.'
   },
   {
     id: 'cam-5',
@@ -83,7 +100,8 @@ const INITIAL_CAMERAS: CameraItem[] = [
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
-    fps: 30
+    fps: 30,
+    description: 'Eastern facility boundary surveillance fence and intrusion monitoring.'
   },
   {
     id: 'cam-6',
@@ -93,7 +111,8 @@ const INITIAL_CAMERAS: CameraItem[] = [
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '4K UHD',
-    fps: 60
+    fps: 60,
+    description: 'High-security data center and server vault biometric entrance.'
   },
   {
     id: 'cam-7',
@@ -102,7 +121,8 @@ const INITIAL_CAMERAS: CameraItem[] = [
     location: 'Outdoor',
     hasStream: true,
     resolution: '4K UHD',
-    fps: 30
+    fps: 30,
+    description: 'Street-facing PTZ camera with active highway license plate optical tracking.'
   },
   {
     id: 'cam-8',
@@ -112,7 +132,8 @@ const INITIAL_CAMERAS: CameraItem[] = [
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
-    fps: 30
+    fps: 30,
+    description: 'Aisle B3 high-bay pallet racking and forklift operations surveillance.'
   }
 ];
 
@@ -137,12 +158,52 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
 
-  const handleDeleteCamera = (id: string) => {
-    setCameras(prev => prev.filter(c => c.id !== id));
-    setActiveMenu(null);
-    if (selectedCameraForModal?.id === id) {
-      setSelectedCameraForModal(null);
+  // Modal states for View, Edit, and Delete (Matching Reference Images 1, 2, 3)
+  const [viewCamera, setViewCamera] = useState<CameraItem | null>(null);
+  const [viewTab, setViewTab] = useState<'basic' | 'config' | 'ptz'>('basic');
+
+  const [editCamera, setEditCamera] = useState<CameraItem | null>(null);
+  const [editStep, setEditStep] = useState<1 | 2 | 3>(1);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editType, setEditType] = useState<'360°' | 'PTZ' | 'Fixed'>('Fixed');
+  const [editLocation, setEditLocation] = useState<'Indoor' | 'Outdoor'>('Outdoor');
+  const [editResolution, setEditResolution] = useState('1080p FHD');
+  const [editFps, setEditFps] = useState(30);
+  const [editPan, setEditPan] = useState(0);
+  const [editTilt, setEditTilt] = useState(0);
+
+  const [deleteCamera, setDeleteCamera] = useState<CameraItem | null>(null);
+
+  const handleConfirmDelete = () => {
+    if (deleteCamera) {
+      setCameras(prev => prev.filter(c => c.id !== deleteCamera.id));
+      if (selectedCameraForModal?.id === deleteCamera.id) {
+        setSelectedCameraForModal(null);
+      }
+      setDeleteCamera(null);
     }
+  };
+
+  const handleSaveEdit = () => {
+    if (!editCamera) return;
+    setCameras(prev => prev.map(c => {
+      if (c.id === editCamera.id) {
+        return {
+          ...c,
+          name: editName.trim() || c.name,
+          description: editDescription.trim(),
+          type: editType,
+          location: editLocation,
+          resolution: editResolution,
+          fps: editFps,
+          defaultPan: editPan,
+          defaultTilt: editTilt
+        };
+      }
+      return c;
+    }));
+    setEditCamera(null);
   };
   
   // Action Menu Portal State
@@ -409,8 +470,8 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
                     type="button"
                     className="camera-action-item"
                     onClick={() => {
-                      setSelectedCameraForModal(cam);
-                      setModalMode('stream');
+                      setViewCamera(cam);
+                      setViewTab('basic');
                       setActiveMenu(null);
                     }}
                   >
@@ -422,8 +483,16 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
                     type="button"
                     className="camera-action-item"
                     onClick={() => {
-                      setSelectedCameraForModal(cam);
-                      setModalMode('details');
+                      setEditCamera(cam);
+                      setEditStep(1);
+                      setEditName(cam.name);
+                      setEditDescription(cam.description || '');
+                      setEditType(cam.type);
+                      setEditLocation(cam.location);
+                      setEditResolution(cam.resolution);
+                      setEditFps(cam.fps);
+                      setEditPan(cam.defaultPan || 0);
+                      setEditTilt(cam.defaultTilt || 0);
                       setActiveMenu(null);
                     }}
                   >
@@ -434,7 +503,10 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
                   <button
                     type="button"
                     className="camera-action-item danger"
-                    onClick={() => handleDeleteCamera(cam.id)}
+                    onClick={() => {
+                      setDeleteCamera(cam);
+                      setActiveMenu(null);
+                    }}
                   >
                     <Trash2 size={15} style={{ color: 'var(--danger, #ef4444)' }} />
                     <span>Delete</span>
@@ -454,7 +526,15 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
             setSelectedCameraForModal(null);
             setIsCameraDropdownOpen(false);
           }}
-          title={modalMode === 'stream' ? "Live View" : `Node Info: ${selectedCameraForModal.name}`}
+          icon={<Video size={18} />}
+          title={modalMode === 'stream' ? selectedCameraForModal.name : `Node Info: ${selectedCameraForModal.name}`}
+          subtitle={
+            modalMode === 'stream' ? (
+              <>Live 360° Stream & PTZ Controls · <span style={{ color: '#16a34a', fontWeight: 600 }}>Active</span></>
+            ) : (
+              <>Hardware & Edge Configuration</>
+            )
+          }
           maxWidth={modalMode === 'stream' ? "980px" : "640px"}
         >
           {modalMode === 'stream' ? (
@@ -652,6 +732,397 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
           )}
         </Modal>
       )}
+
+      {/* 1. View Camera Modal (Matching Reference Image 3 & Card UI Standard Image 4) */}
+      {viewCamera && (
+        <Modal
+          isOpen={Boolean(viewCamera)}
+          onClose={() => setViewCamera(null)}
+          maxWidth="560px"
+          icon={<Eye size={18} />}
+          title={<span style={{ color: '#ea580c', fontWeight: 700, fontSize: '18px' }}>View Camera</span>}
+          subtitle={<>Read-only camera details</>}
+          footer={
+            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+              <button
+                type="button"
+                className="camera-btn-primary-blue"
+                onClick={() => setViewCamera(null)}
+              >
+                Close
+              </button>
+            </div>
+          }
+        >
+          <div>
+            {/* Modal Internal Tabs (Basic | Configuration | PTZ Calibration) */}
+            <div className="modal-tabs-bar">
+              <button
+                type="button"
+                className={`modal-tab-btn ${viewTab === 'basic' ? 'active' : ''}`}
+                onClick={() => setViewTab('basic')}
+              >
+                Basic
+              </button>
+              <button
+                type="button"
+                className={`modal-tab-btn ${viewTab === 'config' ? 'active' : ''}`}
+                onClick={() => setViewTab('config')}
+              >
+                Configuration
+              </button>
+              <button
+                type="button"
+                className={`modal-tab-btn ${viewTab === 'ptz' ? 'active' : ''}`}
+                onClick={() => setViewTab('ptz')}
+              >
+                PTZ Calibration
+              </button>
+            </div>
+
+            {/* Tab 1: Basic Camera Details */}
+            {viewTab === 'basic' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div>
+                  <div className="camera-modal-label">Camera name</div>
+                  <div className="camera-modal-readvalue">{viewCamera.name}</div>
+                </div>
+                <div style={{ borderTop: '1px solid var(--border-light)', paddingTop: '16px' }}>
+                  <div className="camera-modal-label">Description</div>
+                  <div className="camera-modal-readvalue" style={{ fontWeight: 400, color: viewCamera.description ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                    {viewCamera.description || '—'}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 2: Hardware Configuration */}
+            {viewTab === 'config' && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 24px' }}>
+                <div>
+                  <div className="camera-modal-label">Camera Type</div>
+                  <div className="camera-modal-readvalue">{viewCamera.type}</div>
+                </div>
+                <div>
+                  <div className="camera-modal-label">Location</div>
+                  <div className="camera-modal-readvalue">{viewCamera.location}</div>
+                </div>
+                <div>
+                  <div className="camera-modal-label">Stream Status</div>
+                  <div className="camera-modal-readvalue" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#16a34a' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} />
+                    {viewCamera.hasStream ? 'Online & Streaming' : 'Standby'}
+                  </div>
+                </div>
+                <div>
+                  <div className="camera-modal-label">Resolution & FPS</div>
+                  <div className="camera-modal-readvalue">{viewCamera.resolution} • {viewCamera.fps} FPS</div>
+                </div>
+                <div style={{ gridColumn: 'span 2', borderTop: '1px solid var(--border-light)', paddingTop: '14px' }}>
+                  <div className="camera-modal-label">RTSP Stream URL</div>
+                  <div style={{ fontSize: '12.5px', fontFamily: 'monospace', padding: '10px 12px', background: 'var(--nested-bg)', borderRadius: '8px', border: '1px solid var(--border-light)', color: 'var(--text-secondary)', marginTop: '4px', wordBreak: 'break-all' }}>
+                    {viewCamera.rtspUrl || `rtsp://edge-01.omnieye.internal:554/live/${viewCamera.id}`}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Tab 3: PTZ Calibration */}
+            {viewTab === 'ptz' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px 24px' }}>
+                  <div>
+                    <div className="camera-modal-label">Pan Range</div>
+                    <div className="camera-modal-readvalue">-180° to +180° (Default: {viewCamera.defaultPan || 0}°)</div>
+                  </div>
+                  <div>
+                    <div className="camera-modal-label">Tilt Range</div>
+                    <div className="camera-modal-readvalue">-90° to +90° (Default: {viewCamera.defaultTilt || 0}°)</div>
+                  </div>
+                  <div>
+                    <div className="camera-modal-label">Zoom Range</div>
+                    <div className="camera-modal-readvalue">1.0x to 10.0x (Default: {viewCamera.zoomLevel || 1.0}x)</div>
+                  </div>
+                  <div>
+                    <div className="camera-modal-label">Calibration Status</div>
+                    <div className="camera-modal-readvalue" style={{ color: '#16a34a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <CheckCircle2 size={16} /> Calibrated & Centered
+                    </div>
+                  </div>
+                </div>
+                <div style={{ marginTop: '8px', padding: '14px', background: 'color-mix(in srgb, var(--primary) 8%, transparent)', borderRadius: '12px', border: '1px solid color-mix(in srgb, var(--primary) 20%, transparent)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-main)' }}>Live PTZ Controller Ready</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Calibrated against optical center point.</div>
+                  </div>
+                  <button
+                    type="button"
+                    className="camera-btn-cancel-blue"
+                    style={{ fontSize: '12.5px', padding: '6px 14px' }}
+                    onClick={() => {
+                      const target = viewCamera;
+                      setViewCamera(null);
+                      setSelectedCameraForModal(target);
+                      setModalMode('stream');
+                    }}
+                  >
+                    Open Live PTZ Feed
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+
+      {/* 2. Edit Camera Modal (Matching Reference Image 2 & Card UI Standard Image 4) */}
+      {editCamera && (
+        <Modal
+          isOpen={Boolean(editCamera)}
+          onClose={() => setEditCamera(null)}
+          maxWidth="560px"
+          icon={<Settings size={18} />}
+          title={<span style={{ color: '#ea580c', fontWeight: 700, fontSize: '18px' }}>Edit Camera</span>}
+          subtitle={
+            <>
+              Step {editStep} of 3 · {editStep === 1 ? 'Basic Camera Details' : editStep === 2 ? 'Configuration' : 'PTZ Calibration'}
+            </>
+          }
+          footer={
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+              <button
+                type="button"
+                className="camera-btn-outline-back"
+                disabled={editStep === 1}
+                onClick={() => setEditStep(prev => (prev > 1 ? ((prev - 1) as any) : 1))}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                className="camera-btn-primary-blue"
+                onClick={() => {
+                  if (editStep < 3) {
+                    setEditStep(prev => ((prev + 1) as any));
+                  } else {
+                    handleSaveEdit();
+                  }
+                }}
+              >
+                {editStep < 3 ? 'Next' : 'Save Changes'}
+              </button>
+            </div>
+          }
+        >
+          <div>
+            {/* Step 1: Basic Camera Details */}
+            {editStep === 1 && (
+              <div>
+                <div className="camera-modal-field">
+                  <label className="camera-modal-label" htmlFor="edit-cam-name">Camera name</label>
+                  <input
+                    id="edit-cam-name"
+                    type="text"
+                    className="camera-modal-input"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    placeholder="e.g. Loading Dock"
+                  />
+                </div>
+
+                <div className="camera-modal-field">
+                  <label className="camera-modal-label" htmlFor="edit-cam-desc">Description (optional)</label>
+                  <textarea
+                    id="edit-cam-desc"
+                    className="camera-modal-input"
+                    rows={3}
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                    placeholder="Short description for this camera"
+                  />
+                  <div className="camera-modal-hint">Optional note for administrators.</div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Camera Configuration */}
+            {editStep === 2 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="camera-modal-field">
+                  <label className="camera-modal-label">Camera Type</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                    {(['360°', 'PTZ', 'Fixed'] as const).map(type => (
+                      <button
+                        key={type}
+                        type="button"
+                        onClick={() => setEditType(type)}
+                        style={{
+                          padding: '9px 12px',
+                          borderRadius: '8px',
+                          border: editType === type ? '2px solid #2563eb' : '1px solid var(--border-medium, #d1d5db)',
+                          background: editType === type ? 'color-mix(in srgb, #2563eb 8%, transparent)' : 'var(--bg-card)',
+                          color: editType === type ? '#2563eb' : 'var(--text-main)',
+                          fontWeight: editType === type ? 700 : 500,
+                          cursor: 'pointer',
+                          fontSize: '13.5px'
+                        }}
+                      >
+                        {type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="camera-modal-field">
+                  <label className="camera-modal-label">Location Profile</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    {(['Outdoor', 'Indoor'] as const).map(loc => (
+                      <button
+                        key={loc}
+                        type="button"
+                        onClick={() => setEditLocation(loc)}
+                        style={{
+                          padding: '9px 12px',
+                          borderRadius: '8px',
+                          border: editLocation === loc ? '2px solid #2563eb' : '1px solid var(--border-medium, #d1d5db)',
+                          background: editLocation === loc ? 'color-mix(in srgb, #2563eb 8%, transparent)' : 'var(--bg-card)',
+                          color: editLocation === loc ? '#2563eb' : 'var(--text-main)',
+                          fontWeight: editLocation === loc ? 700 : 500,
+                          cursor: 'pointer',
+                          fontSize: '13.5px'
+                        }}
+                      >
+                        {loc}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div className="camera-modal-field">
+                    <label className="camera-modal-label">Resolution</label>
+                    <select
+                      className="camera-modal-input"
+                      value={editResolution}
+                      onChange={(e) => setEditResolution(e.target.value)}
+                    >
+                      <option value="4K UHD (3840×2160)">4K UHD (3840×2160)</option>
+                      <option value="1080p FHD">1080p FHD</option>
+                      <option value="720p HD">720p HD</option>
+                    </select>
+                  </div>
+                  <div className="camera-modal-field">
+                    <label className="camera-modal-label">Target FPS</label>
+                    <select
+                      className="camera-modal-input"
+                      value={editFps}
+                      onChange={(e) => setEditFps(Number(e.target.value))}
+                    >
+                      <option value={15}>15 FPS (Eco)</option>
+                      <option value={24}>24 FPS (Cinema)</option>
+                      <option value={30}>30 FPS (Standard)</option>
+                      <option value={60}>60 FPS (High Performance)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: PTZ Calibration */}
+            {editStep === 3 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <label className="camera-modal-label">Pan Offset Angle</label>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#2563eb' }}>{editPan}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={-180}
+                    max={180}
+                    value={editPan}
+                    onChange={(e) => setEditPan(Number(e.target.value))}
+                    style={{ width: '100%', accentColor: '#2563eb', cursor: 'pointer' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
+                    <span>-180° Left</span>
+                    <span>0° Center</span>
+                    <span>+180° Right</span>
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <label className="camera-modal-label">Tilt Offset Angle</label>
+                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#2563eb' }}>{editTilt}°</span>
+                  </div>
+                  <input
+                    type="range"
+                    min={-90}
+                    max={90}
+                    value={editTilt}
+                    onChange={(e) => setEditTilt(Number(e.target.value))}
+                    style={{ width: '100%', accentColor: '#2563eb', cursor: 'pointer' }}
+                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
+                    <span>-90° Down</span>
+                    <span>0° Level</span>
+                    <span>+90° Up</span>
+                  </div>
+                </div>
+
+                <div style={{ padding: '12px 16px', background: 'var(--nested-bg)', borderRadius: '10px', border: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <CheckCircle2 size={18} color="#16a34a" />
+                  <div style={{ fontSize: '12.5px', color: 'var(--text-secondary)' }}>
+                    Motorized gimbal calibration routine passes optical benchmarks.
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+
+      {/* 3. Delete Camera Modal (Matching Reference Image 1 & Card UI Standard Image 4) */}
+      {deleteCamera && (
+        <Modal
+          isOpen={Boolean(deleteCamera)}
+          onClose={() => setDeleteCamera(null)}
+          maxWidth="480px"
+          icon={<Trash2 size={18} color="#dc2626" />}
+          title={<span style={{ color: '#dc2626', fontWeight: 700, fontSize: '18px' }}>Delete Camera</span>}
+          redCloseBtn={true}
+          footer={
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', width: '100%' }}>
+              <button
+                type="button"
+                className="camera-btn-cancel-blue"
+                onClick={() => setDeleteCamera(null)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="camera-btn-delete-red"
+                onClick={handleConfirmDelete}
+              >
+                <Trash2 size={16} /> Delete
+              </button>
+            </div>
+          }
+        >
+          <div>
+            <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '16px' }}>
+              Are you sure you want to delete this camera? This action cannot be undone.
+            </div>
+            <div className="camera-delete-box">
+              <Trash2 size={18} style={{ color: '#dc2626', flexShrink: 0 }} />
+              <span className="camera-delete-name">{deleteCamera.name}</span>
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }
+
