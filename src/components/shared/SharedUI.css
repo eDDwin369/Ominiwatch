@@ -882,11 +882,11 @@
    AI ANALYSIS MODULE DESIGN SYSTEM
    ======================================================== */
 
-/* Summary Overview Cards */
+/* Theme Studio Centered KPI Cards (matching Reference Image 2) */
 .ai-summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 18px;
   margin-bottom: 24px;
 }
 
@@ -897,72 +897,137 @@
   }
 }
 
-.ai-summary-card {
+.ai-kpi-card {
   position: relative;
   background: var(--brand-card-surface, var(--bg-card));
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg, 12px);
-  padding: 18px 22px;
+  border-radius: var(--radius-lg, 14px);
+  padding: 26px 20px 22px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 110px;
-  box-shadow: var(--card-shadow, var(--shadow-sm));
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: var(--card-shadow, 0 4px 14px rgba(0, 0, 0, 0.04));
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
-.ai-summary-card:hover {
+.ai-kpi-card:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--primary) 40%, transparent);
-  box-shadow: var(--card-shadow, 0 8px 20px -4px rgba(0, 0, 0, 0.12));
+  box-shadow: var(--card-shadow, 0 10px 24px -4px rgba(0, 0, 0, 0.1));
 }
 
-.ai-summary-card.ai-card-active {
-  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, var(--bg-card)) 0%, var(--bg-card) 100%);
-  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
-}
-
-.ai-summary-card.ai-card-iot {
-  background: linear-gradient(135deg, color-mix(in srgb, #f59e0b 10%, var(--bg-card)) 0%, var(--bg-card) 100%);
-  border-color: color-mix(in srgb, #f59e0b 25%, transparent);
-}
-
-.ai-summary-card.ai-card-system {
-  background: linear-gradient(135deg, color-mix(in srgb, #10b981 10%, var(--bg-card)) 0%, var(--bg-card) 100%);
-  border-color: color-mix(in srgb, #10b981 25%, transparent);
-}
-
-.ai-summary-header {
+.ai-kpi-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  transition: transform 0.2s ease;
 }
 
-.ai-summary-value {
+.ai-kpi-card:hover .ai-kpi-icon-badge {
+  transform: scale(1.08);
+}
+
+.ai-kpi-icon-badge.blue {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+[data-theme-mode="dark"] .ai-kpi-icon-badge.blue {
+  background: rgba(2, 132, 199, 0.18);
+  color: #38bdf8;
+}
+
+.ai-kpi-icon-badge.amber {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+[data-theme-mode="dark"] .ai-kpi-icon-badge.amber {
+  background: rgba(217, 119, 6, 0.18);
+  color: #fbbf24;
+}
+
+.ai-kpi-icon-badge.emerald {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+[data-theme-mode="dark"] .ai-kpi-icon-badge.emerald {
+  background: rgba(5, 150, 105, 0.18);
+  color: #34d399;
+}
+
+.ai-kpi-value {
   font-family: var(--app-heading-family, var(--app-font-family));
   font-size: 32px;
   font-weight: 700;
   line-height: 1.1;
   color: var(--text-main);
   letter-spacing: -0.5px;
+  margin-bottom: 4px;
 }
 
-.ai-summary-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-main);
-  margin-top: 4px;
+.ai-kpi-label {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
 }
 
-.ai-summary-trend {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-  display: flex;
+.ai-kpi-footer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ai-kpi-trend-pill {
+  display: inline-flex;
   align-items: center;
   gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.ai-kpi-trend-pill.positive {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid rgba(21, 128, 61, 0.15);
+}
+
+[data-theme-mode="dark"] .ai-kpi-trend-pill.positive {
+  background: rgba(16, 185, 129, 0.16);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.25);
+}
+
+.ai-kpi-trend-pill.neutral {
+  background: color-mix(in srgb, var(--text-main) 6%, transparent);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+}
+
+.ai-kpi-trend-pill.critical {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+[data-theme-mode="dark"] .ai-kpi-trend-pill.critical {
+  background: rgba(239, 68, 68, 0.16);
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.25);
 }
 
 /* AI Alert Grid & Cards */

@@ -15,7 +15,8 @@ import {
   ChevronRight, 
   Filter,
   MapPin,
-  Sparkles
+  Radio,
+  Activity
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardBody } from '../shared/Card';
 import { PageHeader } from '../shared/PageHeader';
@@ -399,18 +400,7 @@ export function AIAnalysisPage() {
         {/* Top Header conforming to Base Application */}
         <PageHeader 
           title="AI Analysis" 
-          subtitle="Real-time edge neural inference, computer vision analytics, and event classifications"
           icon={<BrainCircuit size={20} />}
-          actions={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Badge variant="primary">
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                  <Sparkles size={13} />
-                  <span>Neural Inference Active</span>
-                </span>
-              </Badge>
-            </div>
-          }
         />
 
         {/* Navigation Tabs conforming to Base Application */}
@@ -551,50 +541,53 @@ export function AIAnalysisPage() {
               </CardTitle>
             </CardHeader>
             <CardBody>
-              {/* 3 Summary Cards */}
+              {/* 3 Summary KPI Cards — Styled like Theme Studio Dashboard KPI Cards (Reference Image 2) */}
               <div className="ai-summary-grid">
                 
                 {/* 1. AI Alerts */}
-                <div className="ai-summary-card ai-card-active">
-                  <div className="ai-summary-header">
-                    <div className="ai-summary-value">{filteredAlerts.length}</div>
-                    <Badge variant={criticalCount > 0 ? "danger" : "primary"}>
-                      {criticalCount} critical
-                    </Badge>
+                <div className="ai-kpi-card">
+                  <div className="ai-kpi-icon-badge blue">
+                    <BrainCircuit size={20} />
                   </div>
-                  <div>
-                    <div className="ai-summary-label">AI Alerts</div>
-                    <div className="ai-summary-trend">
-                      <span>↑ 12% vs prior</span>
-                    </div>
+                  <div className="ai-kpi-value">{filteredAlerts.length}</div>
+                  <div className="ai-kpi-label">AI Alerts</div>
+                  <div className="ai-kpi-footer">
+                    <span className="ai-kpi-trend-pill positive">
+                      ▲ +12% vs prior
+                    </span>
+                    {criticalCount > 0 && (
+                      <span className="ai-kpi-trend-pill critical">
+                        {criticalCount} critical
+                      </span>
+                    )}
                   </div>
                 </div>
 
                 {/* 2. IoT Alerts */}
-                <div className="ai-summary-card ai-card-iot">
-                  <div className="ai-summary-header">
-                    <div className="ai-summary-value">0</div>
-                    <Badge variant="neutral">Upcoming Feature</Badge>
+                <div className="ai-kpi-card">
+                  <div className="ai-kpi-icon-badge amber">
+                    <Radio size={20} />
                   </div>
-                  <div>
-                    <div className="ai-summary-label">IoT Alerts</div>
-                    <div className="ai-summary-trend">
-                      <span>↑ 0% vs prior</span>
-                    </div>
+                  <div className="ai-kpi-value">0</div>
+                  <div className="ai-kpi-label">IoT Alerts</div>
+                  <div className="ai-kpi-footer">
+                    <span className="ai-kpi-trend-pill neutral">
+                      Upcoming Feature
+                    </span>
                   </div>
                 </div>
 
                 {/* 3. System Alerts */}
-                <div className="ai-summary-card ai-card-system">
-                  <div className="ai-summary-header">
-                    <div className="ai-summary-value">0</div>
-                    <Badge variant="neutral">Upcoming Feature</Badge>
+                <div className="ai-kpi-card">
+                  <div className="ai-kpi-icon-badge emerald">
+                    <Activity size={20} />
                   </div>
-                  <div>
-                    <div className="ai-summary-label">System Alerts</div>
-                    <div className="ai-summary-trend">
-                      <span>↑ 0% vs prior</span>
-                    </div>
+                  <div className="ai-kpi-value">0</div>
+                  <div className="ai-kpi-label">System Alerts</div>
+                  <div className="ai-kpi-footer">
+                    <span className="ai-kpi-trend-pill neutral">
+                      Upcoming Feature
+                    </span>
                   </div>
                 </div>
 
