@@ -7,7 +7,14 @@ import {
   Radio, 
   Eye, 
   Settings, 
-  Trash2 
+  Trash2,
+  Play,
+  Pause,
+  ChevronDown,
+  Tv,
+  ArrowLeftRight,
+  Bell,
+  Maximize
 } from 'lucide-react';
 import { Card } from '../shared/Card';
 import { PageHeader } from '../shared/PageHeader';
@@ -142,6 +149,26 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
   const [activeMenu, setActiveMenu] = useState<{ id: string; top: number; left: number } | null>(null);
   const [selectedCameraForModal, setSelectedCameraForModal] = useState<CameraItem | null>(null);
   const [modalMode, setModalMode] = useState<'stream' | 'details' | null>(null);
+
+  // Live View Modal Enhanced State (Matching Reference Screenshot)
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [projectionMode, setProjectionMode] = useState<'flat' | '360'>('360');
+  const [isCameraDropdownOpen, setIsCameraDropdownOpen] = useState<boolean>(false);
+  const [targetPos, setTargetPos] = useState<{ x: number; y: number }>({ x: 50, y: 78 });
+  const [ptzCoords, setPtzCoords] = useState<{ pan: number; tilt: number }>({ pan: 0, tilt: 0 });
+  const [isAlertActive, setIsAlertActive] = useState<boolean>(false);
+  const [isSubStream, setIsSubStream] = useState<boolean>(false);
+
+  const handleViewportClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const xPct = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    const yPct = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+    setTargetPos({ x: xPct, y: yPct });
+    setPtzCoords({
+      pan: Math.round((xPct - 50) * 3.6),
+      tilt: Math.round((yPct - 50) * 1.8)
+    });
+  };
 
   // Filter cameras based on search query and dropdown selection
   const filteredCameras = useMemo(() => {
@@ -419,68 +446,199 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
           document.body
         )}
 
-      {/* Camera Live Stream / Detail Modal */}
+      {/* Camera Live Stream / Detail Modal (Matching User Reference Image) */}
       {selectedCameraForModal && (
         <Modal
           isOpen={Boolean(selectedCameraForModal)}
-          onClose={() => setSelectedCameraForModal(null)}
-          title={modalMode === 'stream' ? `Live View: ${selectedCameraForModal.name}` : `Node Info: ${selectedCameraForModal.name}`}
-          maxWidth="640px"
+          onClose={() => {
+            setSelectedCameraForModal(null);
+            setIsCameraDropdownOpen(false);
+          }}
+          title={modalMode === 'stream' ? "Live View" : `Node Info: ${selectedCameraForModal.name}`}
+          maxWidth={modalMode === 'stream' ? "980px" : "640px"}
         >
           {modalMode === 'stream' ? (
-            <div>
-              <div
-                style={{
-                  width: '100%',
-                  aspectRatio: '16 / 9',
-                  background: 'color-mix(in srgb, var(--bg-dashboard) 90%, black)',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  marginBottom: '16px'
-                }}
+            <div className="liveview-card">
+              
+              {/* Panoramic Viewport Area */}
+              <div 
+                className="liveview-viewport"
+                onClick={handleViewportClick}
               >
+                {/* Simulated / Real Camera Live Feed */}
+                <img
+                  src={selectedCameraForModal.name === 'Chennai Rooftop 360' ? '/images/chennai-rooftop-360.png' : (
+                    selectedCameraForModal.hasStream 
+                      ? '/images/chennai-rooftop-360.png' 
+                      : '/images/live-digital-twin.png'
+                  )}
+                  alt={selectedCameraForModal.name}
+                  className={`liveview-feed-img ${projectionMode === '360' ? 'panoramic' : 'flat'}`}
+                  style={{
+                    filter: isPlaying ? 'none' : 'grayscale(35%) brightness(0.85)',
+                    transform: projectionMode === '360' ? 'scale(1.06)' : 'none'
+                  }}
+                />
+
+                {/* Vignette Overlay */}
                 <div className="camera-preview-overlay" />
-                {selectedCameraForModal.hasStream ? (
-                  <div style={{ textAlign: 'center', color: '#10b981' }}>
-                    <Radio size={40} style={{ marginBottom: '8px', animation: 'btnSpin 4s linear infinite' }} />
-                    <div style={{ fontSize: '14px', fontWeight: 600 }}>Active Low-Latency Stream</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                      {selectedCameraForModal.resolution} • {selectedCameraForModal.fps} FPS • Protocol: WebRTC/RTSP
-                    </div>
+
+                {/* Top-Left PTZ Status Badge */}
+                <div className="liveview-ptz-badge">
+                  <div className="liveview-ptz-badge-title">
+                    <span>PTZ</span>
+                    <span className="liveview-ptz-badge-indicator" />
                   </div>
-                ) : (
-                  <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-                    <Camera size={36} style={{ opacity: 0.4, marginBottom: '8px' }} />
-                    <div style={{ fontSize: '14px', fontWeight: 500 }}>
-                      {selectedCameraForModal.streamText || 'Stream currently unavailable'}
-                    </div>
-                    <div style={{ fontSize: '12px', opacity: 0.7 }}>
-                      Node offline or recording schedule inactive
-                    </div>
+                  <div className="liveview-ptz-badge-coords">
+                    Pan: {ptzCoords.pan}° &nbsp;Tilt: {ptzCoords.tilt}°
                   </div>
-                )}
+                </div>
+
+                {/* Top-Right Floating Control Bar (Glassmorphism) */}
+                <div 
+                  className="liveview-controls-bar"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Camera Name Selector Dropdown */}
+                  <div style={{ position: 'relative' }}>
+                    <button
+                      type="button"
+                      className="liveview-camera-select-trigger"
+                      onClick={() => setIsCameraDropdownOpen(prev => !prev)}
+                      title="Switch Camera Node"
+                    >
+                      <span style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {selectedCameraForModal.name}
+                      </span>
+                      <ChevronDown size={14} style={{ transform: isCameraDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s ease' }} />
+                    </button>
+
+                    {isCameraDropdownOpen && (
+                      <div className="liveview-camera-dropdown">
+                        {cameras.map(cam => (
+                          <button
+                            key={cam.id}
+                            type="button"
+                            className={`liveview-camera-item ${cam.id === selectedCameraForModal.id ? 'active' : ''}`}
+                            onClick={() => {
+                              setSelectedCameraForModal(cam);
+                              setIsCameraDropdownOpen(false);
+                            }}
+                          >
+                            <Video size={14} />
+                            <span>{cam.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ width: '1px', height: '18px', background: 'rgba(255, 255, 255, 0.2)' }} />
+
+                  {/* Flat / 360 View Mode Toggle */}
+                  <div
+                    className={`liveview-projection-toggle ${projectionMode === '360' ? 'is-360' : 'is-flat'}`}
+                    onClick={() => setProjectionMode(prev => prev === '360' ? 'flat' : '360')}
+                    title="Toggle Panoramic Projection Mode"
+                  >
+                    <span style={{ opacity: projectionMode === 'flat' ? 1 : 0.6, fontWeight: projectionMode === 'flat' ? 700 : 500 }}>
+                      Flat
+                    </span>
+                    <span className="liveview-toggle-knob" />
+                    <span style={{ opacity: projectionMode === '360' ? 1 : 0.6, fontWeight: projectionMode === '360' ? 700 : 500 }}>
+                      360°
+                    </span>
+                  </div>
+
+                  {/* Picture-in-Picture / Multi-feed button */}
+                  <button
+                    type="button"
+                    className="liveview-icon-btn"
+                    onClick={() => alert(`Picture-in-picture mode initiated for ${selectedCameraForModal.name}`)}
+                    title="Picture in Picture"
+                  >
+                    <Tv size={16} />
+                  </button>
+
+                  {/* Switch Stream / Secondary stream */}
+                  <button
+                    type="button"
+                    className="liveview-icon-btn"
+                    onClick={() => setIsSubStream(prev => !prev)}
+                    title={isSubStream ? "Switch to 360° Main Stream" : "Switch to PTZ Sub-Stream"}
+                    style={{ color: isSubStream ? '#3b82f6' : 'rgba(255, 255, 255, 0.85)' }}
+                  >
+                    <ArrowLeftRight size={16} />
+                  </button>
+
+                  {/* Alert notification bell */}
+                  <button
+                    type="button"
+                    className="liveview-icon-btn"
+                    onClick={() => setIsAlertActive(prev => !prev)}
+                    title={isAlertActive ? "Mute Camera Alerts" : "Camera Alert Monitoring Active"}
+                    style={{ color: isAlertActive ? '#ef4444' : 'rgba(255, 255, 255, 0.85)' }}
+                  >
+                    <Bell size={16} />
+                    {isAlertActive && (
+                      <span style={{ position: 'absolute', top: '5px', right: '5px', width: '6px', height: '6px', borderRadius: '50%', background: '#ef4444' }} />
+                    )}
+                  </button>
+
+                  {/* Stream Settings / More options */}
+                  <button
+                    type="button"
+                    className="liveview-icon-btn"
+                    onClick={() => alert(`RTSP Stream Settings:\nCamera: ${selectedCameraForModal.name}\nResolution: ${selectedCameraForModal.resolution}\nFPS: ${selectedCameraForModal.fps}`)}
+                    title="Stream Settings"
+                  >
+                    <MoreVertical size={16} />
+                  </button>
+
+                  {/* Fullscreen button */}
+                  <button
+                    type="button"
+                    className="liveview-icon-btn"
+                    onClick={() => {
+                      if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(() => {});
+                      } else {
+                        document.exitFullscreen().catch(() => {});
+                      }
+                    }}
+                    title="Toggle Fullscreen"
+                  >
+                    <Maximize size={16} />
+                  </button>
+                </div>
+
+                {/* Center Bottom Play / Pause Button */}
+                <button
+                  type="button"
+                  className="liveview-play-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPlaying(prev => !prev);
+                  }}
+                  title={isPlaying ? "Pause Stream" : "Play Stream"}
+                >
+                  {isPlaying ? (
+                    <Pause size={20} fill="currentColor" />
+                  ) : (
+                    <Play size={20} fill="currentColor" style={{ marginLeft: '2px' }} />
+                  )}
+                </button>
+
+                {/* Interactive Blue PTZ Focal Target Ring on Ground */}
+                <div 
+                  className="liveview-focal-target"
+                  style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%` }}
+                >
+                  <span className="liveview-focal-dot" />
+                </div>
+
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
-                <div style={{ padding: '10px', borderRadius: '8px', background: 'var(--nested-bg)', border: '1px solid var(--border-light)' }}>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Camera Node ID</div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{selectedCameraForModal.id.toUpperCase()}</div>
-                </div>
-                <div style={{ padding: '10px', borderRadius: '8px', background: 'var(--nested-bg)', border: '1px solid var(--border-light)' }}>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Mount Profile</div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>{selectedCameraForModal.type} • {selectedCameraForModal.location}</div>
-                </div>
-                <div style={{ padding: '10px', borderRadius: '8px', background: 'var(--nested-bg)', border: '1px solid var(--border-light)' }}>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Feed Status</div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: selectedCameraForModal.hasStream ? '#10b981' : 'var(--text-muted)' }}>
-                    {selectedCameraForModal.hasStream ? 'Active Signal' : 'Standby'}
-                  </div>
-                </div>
-              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
