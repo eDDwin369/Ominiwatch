@@ -24,7 +24,8 @@ import {
   RotateCcw,
   Shield,
   Activity,
-  AlertTriangle
+  AlertTriangle,
+  Boxes
 } from 'lucide-react';
 import { PageHeader } from '../shared/PageHeader';
 import { SearchField } from '../shared/SearchField';
@@ -242,6 +243,80 @@ const INITIAL_USERS: UserItem[] = [
 const INITIAL_RECYCLE_BIN: DeletedItem[] = [
   { id: 'del-1', name: 'Old Gate Cam-09', type: 'Camera', deletedDate: '1/4/2026, 11:20 AM', originalLocation: 'South Perimeter' },
   { id: 'del-2', name: 'Cafeteria Patio Zone', type: 'Zone', deletedDate: '1/3/2026, 02:40 PM', originalLocation: 'Outdoor Annex' }
+];
+
+export interface ZoneRecord {
+  id: string;
+  cameraName: string;
+  isFavorite: boolean;
+  streamingUrl: string;
+  zone: string;
+  useCase: string;
+  detectionActive: boolean;
+}
+
+const INITIAL_ZONE_RECORDS: ZoneRecord[] = [
+  { id: 'ZN-001', cameraName: 'Cafeteria Counter', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
+  { id: 'ZN-002', cameraName: 'Chennai Rooftop 360', isFavorite: true, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: true },
+  { id: 'ZN-003', cameraName: 'Loading Dock', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
+  { id: 'ZN-004', cameraName: 'Main Gate PTZ', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
+  { id: 'ZN-005', cameraName: 'Perimeter East', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
+  { id: 'ZN-006', cameraName: 'Server Room', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
+  { id: 'ZN-007', cameraName: 'Street PTZ', isFavorite: true, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: true },
+  { id: 'ZN-008', cameraName: 'Warehouse Aisle', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false }
+];
+
+export interface AIUseCaseItem {
+  id: string;
+  name: string;
+  cameraName: string;
+  model: string;
+  sensitivity: number;
+  status: 'active' | 'inactive';
+  createdDate: string;
+}
+
+const USE_CASE_OPTIONS = [
+  { label: 'All Use Cases', value: 'all' },
+  { label: 'Perimeter Defense', value: 'Perimeter Defense' },
+  { label: 'Identity & Access', value: 'Identity & Access' },
+  { label: 'Gate Automation', value: 'Gate Automation' },
+  { label: 'Workplace Safety', value: 'Workplace Safety' },
+  { label: 'Behavioral Analysis', value: 'Behavioral Analysis' }
+];
+
+const RECYCLE_TYPE_OPTIONS = [
+  { label: 'All Types', value: 'all' },
+  { label: 'Camera', value: 'Camera' },
+  { label: 'Zone', value: 'Zone' },
+  { label: 'AI Rule', value: 'AI Rule' }
+];
+
+const RECYCLE_EXPIRY_OPTIONS = [
+  { label: 'All Expiry', value: 'all' },
+  { label: '< 7 Days', value: '7' },
+  { label: '< 14 Days', value: '14' },
+  { label: '< 30 Days', value: '30' }
+];
+
+const RECYCLE_DATE_OPTIONS = [
+  { label: 'All deleted items', value: 'all' },
+  { label: 'Today', value: 'today' },
+  { label: 'Last 7 Days', value: '7days' },
+  { label: 'Last 30 Days', value: '30days' }
+];
+
+const USER_ROLE_OPTIONS = [
+  { label: 'All Roles', value: 'all' },
+  { label: 'Superadmin', value: 'Superadmin' },
+  { label: 'Security Operator', value: 'Security Operator' },
+  { label: 'Viewer', value: 'Viewer' }
+];
+
+const USER_STATUS_OPTIONS = [
+  { label: 'All Status', value: 'all' },
+  { label: 'Active', value: 'active' },
+  { label: 'Suspended', value: 'suspended' }
 ];
 
 const DATE_OPTIONS = [
@@ -470,11 +545,172 @@ export function AdministrationPage({
     }
   };
 
-  const handleEmptyRecycleBin = () => {
-    if (recycleBin.length === 0) return;
-    if (window.confirm('Permanently delete all items in the Recycle Bin? This action cannot be undone.')) {
-      setRecycleBin([]);
+  // ZONE MANAGEMENT STATE (Matching Reference Screenshot 1)
+  const [zoneRecords, setZoneRecords] = useState<ZoneRecord[]>(INITIAL_ZONE_RECORDS);
+  const [zoneSearch, setZoneSearch] = useState('');
+  const [zoneFavOnly, setZoneFavOnly] = useState(false);
+  const [zoneViewMode, setZoneViewMode] = useState<'table' | 'grid'>('table');
+  const [zoneDateFilter, setZoneDateFilter] = useState('all');
+  const [zoneUseCaseFilter, setZoneUseCaseFilter] = useState('all');
+  const [zoneRowsPerPage, setZoneRowsPerPage] = useState('10');
+  const [zoneCurrentPage, setZoneCurrentPage] = useState(1);
+
+  const toggleZoneDetection = (id: string) => {
+    setZoneRecords(prev => prev.map(item => item.id === id ? { ...item, detectionActive: !item.detectionActive } : item));
+  };
+
+  const resetZoneFilters = () => {
+    setZoneSearch('');
+    setZoneFavOnly(false);
+    setZoneDateFilter('all');
+    setZoneUseCaseFilter('all');
+    setZoneCurrentPage(1);
+  };
+
+  const filteredZoneRecords = useMemo(() => {
+    return zoneRecords.filter(item => {
+      if (zoneFavOnly && !item.isFavorite) return false;
+      if (zoneSearch.trim()) {
+        const q = zoneSearch.toLowerCase();
+        const match = 
+          item.cameraName.toLowerCase().includes(q) || 
+          item.id.toLowerCase().includes(q) || 
+          item.zone.toLowerCase().includes(q) || 
+          item.useCase.toLowerCase().includes(q);
+        if (!match) return false;
+      }
+      return true;
+    });
+  }, [zoneRecords, zoneFavOnly, zoneSearch]);
+
+  const zonePageSize = parseInt(zoneRowsPerPage, 10) || 10;
+  const totalZonePages = Math.ceil(filteredZoneRecords.length / zonePageSize) || 1;
+  const paginatedZoneRecords = useMemo(() => {
+    const start = (zoneCurrentPage - 1) * zonePageSize;
+    return filteredZoneRecords.slice(start, start + zonePageSize);
+  }, [filteredZoneRecords, zoneCurrentPage, zonePageSize]);
+
+  // AI MANAGEMENT STATE (Matching Reference Screenshot 2)
+  const [aiSubTab, setAiSubTab] = useState<'models' | 'usecase' | 'rules'>('usecase');
+  const [aiSearch, setAiSearch] = useState('');
+  const [aiFavOnly, setAiFavOnly] = useState(false);
+  const [aiViewMode, setAiViewMode] = useState<'table' | 'grid'>('table');
+  const [aiDateFilter, setAiDateFilter] = useState('all');
+  const [aiUseCaseFilter, setAiUseCaseFilter] = useState('all');
+  const [useCases, setUseCases] = useState<AIUseCaseItem[]>([]);
+  const [isAddUseCaseOpen, setIsAddUseCaseOpen] = useState(false);
+  const [newUseCaseName, setNewUseCaseName] = useState('');
+  const [newUseCaseCamera, setNewUseCaseCamera] = useState('Chennai Rooftop 360');
+  const [newUseCaseModel, setNewUseCaseModel] = useState('Intrusion & Line Crossing Detection');
+
+  const handleCreateUseCase = () => {
+    if (!newUseCaseName.trim()) {
+      alert('Please enter a Use Case Name');
+      return;
     }
+    const newCase: AIUseCaseItem = {
+      id: `UC-${Date.now().toString().slice(-4)}`,
+      name: newUseCaseName.trim(),
+      cameraName: newUseCaseCamera,
+      model: newUseCaseModel,
+      sensitivity: 85,
+      status: 'active',
+      createdDate: new Date().toLocaleDateString()
+    };
+    setUseCases(prev => [newCase, ...prev]);
+    setNewUseCaseName('');
+    setIsAddUseCaseOpen(false);
+  };
+
+  // RECYCLE BIN STATE (Matching Reference Screenshot 3)
+  const [recycleSearch, setRecycleSearch] = useState('');
+  const [recycleTypeFilter, setRecycleTypeFilter] = useState('all');
+  const [recycleExpiryFilter, setRecycleExpiryFilter] = useState('all');
+  const [recycleDateFilter, setRecycleDateFilter] = useState('all');
+  const [recycleItems, setRecycleItems] = useState<DeletedItem[]>([]);
+
+  const resetRecycleFilters = () => {
+    setRecycleSearch('');
+    setRecycleTypeFilter('all');
+    setRecycleExpiryFilter('all');
+    setRecycleDateFilter('all');
+  };
+
+  const handleEmptyBinAction = () => {
+    if (recycleItems.length === 0) return;
+    if (window.confirm('Permanently delete all items from Recycle Bin?')) {
+      setRecycleItems([]);
+    }
+  };
+
+  const handleRestoreRecycleItem = (item: DeletedItem) => {
+    setRecycleItems(prev => prev.filter(i => i.id !== item.id));
+    if (item.type === 'Camera') {
+      const restoredCam: CameraItem = {
+        id: `cam-${Date.now()}`,
+        name: item.name,
+        isFavorite: false,
+        stream360Url: null,
+        streamPtzUrl: null,
+        onvifStatus: 'unsupported',
+        createdDate: new Date().toLocaleString(),
+        type: 'Fixed',
+        location: item.originalLocation,
+        status: 'active',
+        fps: 30,
+        resolution: '1080p FHD'
+      };
+      setCameras(prev => [restoredCam, ...prev]);
+    }
+  };
+
+  // USER MANAGEMENT STATE (Matching Reference Screenshot 4)
+  const [userSubTab, setUserSubTab] = useState<'users' | 'roles'>('users');
+  const [userSearch, setUserSearch] = useState('');
+  const [userFavOnly, setUserFavOnly] = useState(false);
+  const [userViewMode, setUserViewMode] = useState<'table' | 'grid'>('table');
+  const [userDateFilter, setUserDateFilter] = useState('all');
+  const [userRoleFilter, setUserRoleFilter] = useState('all');
+  const [userStatusFilter, setUserStatusFilter] = useState('all');
+  const [usersList, setUsersList] = useState<UserItem[]>([]);
+  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserEmail, setNewUserEmail] = useState('');
+  const [newUserRole, setNewUserRole] = useState<'Superadmin' | 'Security Operator' | 'Viewer'>('Security Operator');
+
+  const filteredUsers = useMemo(() => {
+    return usersList.filter(u => {
+      if (userRoleFilter !== 'all' && u.role !== userRoleFilter) return false;
+      if (userStatusFilter !== 'all' && u.status !== userStatusFilter) return false;
+      if (userSearch.trim()) {
+        const q = userSearch.toLowerCase();
+        return u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q) || u.role.toLowerCase().includes(q);
+      }
+      return true;
+    });
+  }, [usersList, userRoleFilter, userStatusFilter, userSearch]);
+
+  const handleAddUser = () => {
+    if (!newUserName.trim() || !newUserEmail.trim()) {
+      alert('Please fill in user name and email');
+      return;
+    }
+    const newUser: UserItem = {
+      id: `usr-${Date.now().toString().slice(-4)}`,
+      name: newUserName.trim(),
+      email: newUserEmail.trim(),
+      role: newUserRole,
+      status: 'active',
+      lastLogin: 'Just now'
+    };
+    setUsersList(prev => [newUser, ...prev]);
+    setNewUserName('');
+    setNewUserEmail('');
+    setIsAddUserOpen(false);
+  };
+
+  const handleDeleteUser = (id: string) => {
+    setUsersList(prev => prev.filter(u => u.id !== id));
   };
 
   return (
@@ -487,64 +723,83 @@ export function AdministrationPage({
           icon={<Settings size={20} />}
         />
 
-        {/* 6 Tab Items conforming to Reference Image */}
-        <div className="admin-tabs-bar" role="tablist">
+        {/* 6 Tab Items conforming to Application UI Standards */}
+        <div className="flashback-tabs-container" role="tablist">
           <button
             type="button"
-            className={`admin-tab-item ${activeTab === 'camera' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'camera'}
+            className={`flashback-tab-btn ${activeTab === 'camera' ? 'active' : ''}`}
             onClick={() => setActiveTab('camera')}
           >
-            <Video size={16} />
+            <span className="flashback-tab-icon-badge">
+              <Video size={16} />
+            </span>
             <span>Camera Management</span>
           </button>
 
           <button
             type="button"
-            className={`admin-tab-item ${activeTab === 'zone' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'zone'}
+            className={`flashback-tab-btn ${activeTab === 'zone' ? 'active' : ''}`}
             onClick={() => setActiveTab('zone')}
           >
-            <MapPin size={16} />
+            <span className="flashback-tab-icon-badge">
+              <MapPin size={16} />
+            </span>
             <span>Zone Management</span>
           </button>
 
           <button
             type="button"
-            className={`admin-tab-item ${activeTab === 'ai' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'ai'}
+            className={`flashback-tab-btn ${activeTab === 'ai' ? 'active' : ''}`}
             onClick={() => setActiveTab('ai')}
           >
-            <BrainCircuit size={16} />
+            <span className="flashback-tab-icon-badge">
+              <BrainCircuit size={16} />
+            </span>
             <span>AI Management</span>
           </button>
 
           <button
             type="button"
-            className={`admin-tab-item ${activeTab === 'recycle' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'recycle'}
+            className={`flashback-tab-btn ${activeTab === 'recycle' ? 'active' : ''}`}
             onClick={() => setActiveTab('recycle')}
           >
-            <Trash2 size={16} />
+            <span className="flashback-tab-icon-badge">
+              <Trash2 size={16} />
+            </span>
             <span>Recycle Bin</span>
-            {recycleBin.length > 0 && (
-              <span style={{ fontSize: '11px', background: 'var(--nested-bg)', padding: '1px 6px', borderRadius: '10px' }}>
-                {recycleBin.length}
-              </span>
-            )}
           </button>
 
           <button
             type="button"
-            className={`admin-tab-item ${activeTab === 'nvr' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'nvr'}
+            className={`flashback-tab-btn ${activeTab === 'nvr' ? 'active' : ''}`}
             onClick={() => setActiveTab('nvr')}
           >
-            <HardDrive size={16} />
+            <span className="flashback-tab-icon-badge">
+              <HardDrive size={16} />
+            </span>
             <span>NVR Management</span>
           </button>
 
           <button
             type="button"
-            className={`admin-tab-item ${activeTab === 'user' ? 'active' : ''}`}
+            role="tab"
+            aria-selected={activeTab === 'user'}
+            className={`flashback-tab-btn ${activeTab === 'user' ? 'active' : ''}`}
             onClick={() => setActiveTab('user')}
           >
-            <Users size={16} />
+            <span className="flashback-tab-icon-badge">
+              <Users size={16} />
+            </span>
             <span>User Management</span>
           </button>
         </div>
@@ -928,187 +1183,598 @@ export function AdministrationPage({
           </div>
         )}
 
-        {/* TAB 2: ZONE MANAGEMENT */}
+        {/* TAB 2: ZONE MANAGEMENT (MATCHING REFERENCE SCREENSHOT 1) */}
         {activeTab === 'zone' && (
           <div className="admin-content-card">
+            
+            {/* Header: Coral Title + Info Icon */}
             <div className="admin-card-header">
-              <div className="admin-card-title-group">
-                <h2 className="admin-card-title">Zone Management</h2>
+              <div className="admin-card-title-coral">
+                <span>Manage Zones</span>
                 <span className="admin-info-icon" title="Partition facilities into monitored security zones and assign cameras">
                   <Info size={16} />
                 </span>
               </div>
-              <Badge variant="primary">{zones.length} Active Zones</Badge>
             </div>
 
-            <div className="admin-table-wrapper">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Zone Name</th>
-                    <th>Security Tier</th>
-                    <th>Assigned Cameras</th>
-                    <th>Camera Feeds</th>
-                    <th>Status</th>
-                    <th>Created</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {zones.map(zone => (
-                    <tr key={zone.id}>
-                      <td style={{ fontWeight: 600 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <MapPin size={16} color="var(--primary)" />
-                          <span>{zone.name}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <Badge variant="info">{zone.type}</Badge>
-                      </td>
-                      <td>
-                        <strong>{zone.camerasCount}</strong> cameras
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          {zone.cameras.map((cam, idx) => (
-                            <span key={idx} style={{ fontSize: '11.5px', background: 'var(--nested-bg)', padding: '2px 8px', borderRadius: '4px' }}>
-                              {cam}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td>
-                        <Badge variant={zone.status === 'active' ? 'success' : 'warning'}>
-                          {zone.status.toUpperCase()}
-                        </Badge>
-                      </td>
-                      <td style={{ color: 'var(--text-muted)', fontSize: '12.5px' }}>{zone.createdDate}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* Toolbar */}
+            <div className="admin-toolbar">
+              <div className="admin-toolbar-left">
+                <SearchField
+                  value={zoneSearch}
+                  onChange={(e) => setZoneSearch(e.target.value)}
+                  placeholder="Search zones..."
+                />
+
+                {/* Favorites filter with Badge count */}
+                <button
+                  type="button"
+                  className={`admin-fav-filter-btn ${zoneFavOnly ? 'active' : ''}`}
+                  onClick={() => setZoneFavOnly(prev => !prev)}
+                  title={zoneFavOnly ? "Show all zones" : "Filter favorite cameras"}
+                >
+                  <Star size={16} fill={zoneFavOnly ? "#f59e0b" : "none"} color={zoneFavOnly ? "#f59e0b" : "currentColor"} />
+                  <span className="admin-fav-badge">{zoneRecords.filter(r => r.isFavorite).length}</span>
+                </button>
+
+                {/* View Mode Toggle */}
+                <div className="admin-view-toggle">
+                  <button
+                    type="button"
+                    className={`admin-view-btn ${zoneViewMode === 'table' ? 'active' : ''}`}
+                    onClick={() => setZoneViewMode('table')}
+                    title="List View"
+                  >
+                    <LayoutList size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    className={`admin-view-btn ${zoneViewMode === 'grid' ? 'active' : ''}`}
+                    onClick={() => setZoneViewMode('grid')}
+                    title="Grid View"
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                </div>
+
+                {/* Date Dropdown */}
+                <div style={{ minWidth: '135px' }}>
+                  <CustomSmoothDropdown
+                    label="All Dates"
+                    value={zoneDateFilter}
+                    onChange={setZoneDateFilter}
+                    options={DATE_OPTIONS}
+                  />
+                </div>
+
+                {/* All Use Cases Dropdown */}
+                <div style={{ minWidth: '160px' }}>
+                  <CustomSmoothDropdown
+                    label="All Use Cases"
+                    value={zoneUseCaseFilter}
+                    onChange={setZoneUseCaseFilter}
+                    options={USE_CASE_OPTIONS}
+                  />
+                </div>
+              </div>
+
+              {/* Reset Filters on Right */}
+              <div className="admin-toolbar-right">
+                <button
+                  type="button"
+                  className="admin-reset-btn"
+                  onClick={resetZoneFilters}
+                  title="Reset Filters"
+                >
+                  <RotateCcw size={14} />
+                  <span>Reset Filters</span>
+                </button>
+              </div>
             </div>
+
+            {/* Table or Grid */}
+            {zoneViewMode === 'table' ? (
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>ID</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <span>Camera Name</span>
+                          <span>↑</span>
+                        </div>
+                      </th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Streaming URL</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Zone</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Use Case</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Detection Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedZoneRecords.map(item => (
+                      <tr key={item.id}>
+                        <td style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '13px' }}>
+                          {item.id}
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Video size={16} color="var(--text-muted)" />
+                            <span style={{ fontWeight: 500 }}>{item.cameraName}</span>
+                            {item.isFavorite && (
+                              <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                            )}
+                          </div>
+                        </td>
+                        <td style={{ color: 'var(--text-muted)' }}>{item.streamingUrl}</td>
+                        <td style={{ color: 'var(--text-muted)' }}>{item.zone}</td>
+                        <td style={{ color: 'var(--text-muted)' }}>{item.useCase}</td>
+                        <td>
+                          <div className="admin-detection-cell">
+                            <span className={`admin-status-pill ${item.detectionActive ? 'active' : 'inactive'}`}>
+                              {item.detectionActive ? 'Active' : 'Inactive'}
+                            </span>
+                            <label className="admin-toggle-switch">
+                              <input
+                                type="checkbox"
+                                checked={item.detectionActive}
+                                onChange={() => toggleZoneDetection(item.id)}
+                              />
+                              <span className="admin-toggle-slider" />
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="admin-camera-grid">
+                {paginatedZoneRecords.map(item => (
+                  <div key={item.id} className="admin-grid-card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#4338ca' }}>{item.id}</span>
+                      <div className="admin-detection-cell">
+                        <span className={`admin-status-pill ${item.detectionActive ? 'active' : 'inactive'}`}>
+                          {item.detectionActive ? 'Active' : 'Inactive'}
+                        </span>
+                        <label className="admin-toggle-switch">
+                          <input
+                            type="checkbox"
+                            checked={item.detectionActive}
+                            onChange={() => toggleZoneDetection(item.id)}
+                          />
+                          <span className="admin-toggle-slider" />
+                        </label>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Video size={16} color="var(--primary)" />
+                      <strong style={{ fontSize: '14px' }}>{item.cameraName}</strong>
+                      {item.isFavorite && <Star size={14} fill="#f59e0b" color="#f59e0b" />}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div>Zone: {item.zone}</div>
+                      <div>Use Case: {item.useCase}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Pagination Row */}
+            <div className="admin-pagination">
+              <div className="admin-pagination-selector">
+                <span>Rows per page:</span>
+                <div style={{ width: '70px' }}>
+                  <CustomSmoothDropdown
+                    label={zoneRowsPerPage}
+                    value={zoneRowsPerPage}
+                    onChange={(val) => {
+                      setZoneRowsPerPage(val);
+                      setZoneCurrentPage(1);
+                    }}
+                    options={ROWS_PER_PAGE_OPTIONS}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <span>
+                  {filteredZoneRecords.length > 0 
+                    ? `1–${filteredZoneRecords.length} of ${filteredZoneRecords.length}`
+                    : '0 of 0'
+                  }
+                </span>
+              </div>
+
+              <div className="admin-pagination-actions">
+                <button
+                  type="button"
+                  className="ai-pagination-btn"
+                  disabled={zoneCurrentPage <= 1}
+                  onClick={() => setZoneCurrentPage(prev => Math.max(1, prev - 1))}
+                  title="Previous Page"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <button
+                  type="button"
+                  className="ai-pagination-btn"
+                  disabled={zoneCurrentPage >= totalZonePages}
+                  onClick={() => setZoneCurrentPage(prev => Math.min(totalZonePages, prev + 1))}
+                  title="Next Page"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+
           </div>
         )}
 
-        {/* TAB 3: AI MANAGEMENT */}
+        {/* TAB 3: AI MANAGEMENT (MATCHING REFERENCE SCREENSHOT 2) */}
         {activeTab === 'ai' && (
           <div className="admin-content-card">
-            <div className="admin-card-header">
-              <div className="admin-card-title-group">
-                <h2 className="admin-card-title">AI Analytics & Model Management</h2>
+            
+            {/* Header: Coral Title + Info Icon */}
+            <div className="admin-card-header" style={{ marginBottom: '-4px' }}>
+              <div className="admin-card-title-coral">
+                <span>AI Management</span>
                 <span className="admin-info-icon" title="Configure deep learning vision models, alert triggers, and detection sensitivity">
                   <Info size={16} />
                 </span>
               </div>
-              <Badge variant="success">All Models Operational</Badge>
             </div>
 
-            <div className="admin-table-wrapper">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>AI Model</th>
-                    <th>Category</th>
-                    <th>Sensitivity</th>
-                    <th>Monitored Feeds</th>
-                    <th>State</th>
-                    <th style={{ textAlign: 'right' }}>Toggle</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {aiModels.map(model => (
-                    <tr key={model.id}>
-                      <td style={{ fontWeight: 600 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <BrainCircuit size={16} color="var(--primary)" />
-                          <span>{model.name}</span>
-                        </div>
-                      </td>
-                      <td>
-                        <Badge variant="neutral">{model.category}</Badge>
-                      </td>
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div style={{ flex: 1, minWidth: '80px', height: '6px', background: 'var(--border-light)', borderRadius: '3px', overflow: 'hidden' }}>
-                            <div style={{ width: `${model.sensitivity}%`, height: '100%', background: 'var(--primary)', borderRadius: '3px' }} />
-                          </div>
-                          <span style={{ fontSize: '12px', fontWeight: 600 }}>{model.sensitivity}%</span>
-                        </div>
-                      </td>
-                      <td>{model.assignedCameras} Streams</td>
-                      <td>
-                        <Badge variant={model.isEnabled ? 'success' : 'neutral'}>
-                          {model.isEnabled ? 'ENABLED' : 'PAUSED'}
-                        </Badge>
-                      </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <button
-                          type="button"
-                          className="figma-btn-cancel"
-                          style={{ padding: '4px 12px', fontSize: '12px' }}
-                          onClick={() => {
-                            setAiModels(prev => prev.map(m => m.id === model.id ? { ...m, isEnabled: !m.isEnabled } : m));
-                          }}
-                        >
-                          {model.isEnabled ? 'Pause' : 'Activate'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* Sub-tabs: AI Models | Configure Use Case | Alert Rules */}
+            <div className="admin-subtabs-bar" role="tablist">
+              <button
+                type="button"
+                className={`admin-subtab-btn ${aiSubTab === 'models' ? 'active' : ''}`}
+                onClick={() => setAiSubTab('models')}
+              >
+                AI Models
+              </button>
+              <button
+                type="button"
+                className={`admin-subtab-btn ${aiSubTab === 'usecase' ? 'active' : ''}`}
+                onClick={() => setAiSubTab('usecase')}
+              >
+                Configure Use Case
+              </button>
+              <button
+                type="button"
+                className={`admin-subtab-btn ${aiSubTab === 'rules' ? 'active' : ''}`}
+                onClick={() => setAiSubTab('rules')}
+              >
+                Alert Rules
+              </button>
             </div>
+
+            {/* SUBTAB: Configure Use Case (Screenshot 2) */}
+            {aiSubTab === 'usecase' && (
+              <>
+                <div className="admin-card-header" style={{ marginTop: '2px' }}>
+                  <div className="admin-card-title-coral" style={{ fontSize: '15px' }}>
+                    <span>Manage Use Case</span>
+                    <span className="admin-info-icon" title="Manage AI analytical tasks and detection rules">
+                      <Info size={15} />
+                    </span>
+                  </div>
+                </div>
+
+                {/* Toolbar */}
+                <div className="admin-toolbar">
+                  <div className="admin-toolbar-left">
+                    <SearchField
+                      value={aiSearch}
+                      onChange={(e) => setAiSearch(e.target.value)}
+                      placeholder="Search use case..."
+                    />
+
+                    <button
+                      type="button"
+                      className={`admin-fav-filter-btn ${aiFavOnly ? 'active' : ''}`}
+                      onClick={() => setAiFavOnly(prev => !prev)}
+                      title="Filter favorites"
+                    >
+                      <Star size={16} fill={aiFavOnly ? "#f59e0b" : "none"} color={aiFavOnly ? "#f59e0b" : "currentColor"} />
+                    </button>
+
+                    <div className="admin-view-toggle">
+                      <button
+                        type="button"
+                        className={`admin-view-btn ${aiViewMode === 'table' ? 'active' : ''}`}
+                        onClick={() => setAiViewMode('table')}
+                      >
+                        <LayoutList size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className={`admin-view-btn ${aiViewMode === 'grid' ? 'active' : ''}`}
+                        onClick={() => setAiViewMode('grid')}
+                      >
+                        <LayoutGrid size={16} />
+                      </button>
+                    </div>
+
+                    <div style={{ minWidth: '135px' }}>
+                      <CustomSmoothDropdown
+                        label="All Dates"
+                        value={aiDateFilter}
+                        onChange={setAiDateFilter}
+                        options={DATE_OPTIONS}
+                      />
+                    </div>
+
+                    <div style={{ minWidth: '160px' }}>
+                      <CustomSmoothDropdown
+                        label="All Use Cases"
+                        value={aiUseCaseFilter}
+                        onChange={setAiUseCaseFilter}
+                        options={USE_CASE_OPTIONS}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="admin-toolbar-right">
+                    <button
+                      type="button"
+                      className="admin-blue-btn"
+                      onClick={() => setIsAddUseCaseOpen(true)}
+                    >
+                      <Plus size={16} strokeWidth={2.5} />
+                      <span>New Use Case</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Empty State matching Screenshot 2 */}
+                {useCases.length === 0 ? (
+                  <div className="admin-empty-state-box">
+                    <div className="admin-empty-icon-wrap">
+                      <Boxes size={68} strokeWidth={1.3} />
+                    </div>
+                    <p className="admin-empty-title">No use cases available.</p>
+                  </div>
+                ) : (
+                  <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Use Case ID</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Use Case Name</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Assigned Camera</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>AI Vision Model</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Sensitivity</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Status</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {useCases.map(uc => (
+                          <tr key={uc.id}>
+                            <td style={{ fontWeight: 600, color: 'var(--text-secondary)' }}>{uc.id}</td>
+                            <td style={{ fontWeight: 600 }}>{uc.name}</td>
+                            <td>{uc.cameraName}</td>
+                            <td><Badge variant="neutral">{uc.model}</Badge></td>
+                            <td>{uc.sensitivity}%</td>
+                            <td>
+                              <Badge variant={uc.status === 'active' ? 'success' : 'neutral'}>
+                                {uc.status.toUpperCase()}
+                              </Badge>
+                            </td>
+                            <td style={{ textAlign: 'right' }}>
+                              <button
+                                type="button"
+                                className="admin-action-btn delete"
+                                onClick={() => setUseCases(prev => prev.filter(c => c.id !== uc.id))}
+                                title="Delete Use Case"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* SUBTAB: AI Models */}
+            {aiSubTab === 'models' && (
+              <div className="admin-table-wrapper" style={{ marginTop: '12px' }}>
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>AI Model</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Category</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Sensitivity</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Monitored Feeds</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600 }}>State</th>
+                      <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Toggle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {aiModels.map(model => (
+                      <tr key={model.id}>
+                        <td style={{ fontWeight: 600 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <BrainCircuit size={16} color="var(--primary)" />
+                            <span>{model.name}</span>
+                          </div>
+                        </td>
+                        <td>
+                          <Badge variant="neutral">{model.category}</Badge>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ flex: 1, minWidth: '80px', height: '6px', background: 'var(--border-light)', borderRadius: '3px', overflow: 'hidden' }}>
+                              <div style={{ width: `${model.sensitivity}%`, height: '100%', background: 'var(--primary)', borderRadius: '3px' }} />
+                            </div>
+                            <span style={{ fontSize: '12px', fontWeight: 600 }}>{model.sensitivity}%</span>
+                          </div>
+                        </td>
+                        <td>{model.assignedCameras} Streams</td>
+                        <td>
+                          <Badge variant={model.isEnabled ? 'success' : 'neutral'}>
+                            {model.isEnabled ? 'ENABLED' : 'PAUSED'}
+                          </Badge>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <button
+                            type="button"
+                            className="figma-btn-cancel"
+                            style={{ padding: '4px 12px', fontSize: '12px' }}
+                            onClick={() => {
+                              setAiModels(prev => prev.map(m => m.id === model.id ? { ...m, isEnabled: !m.isEnabled } : m));
+                            }}
+                          >
+                            {model.isEnabled ? 'Pause' : 'Activate'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            {/* SUBTAB: Alert Rules */}
+            {aiSubTab === 'rules' && (
+              <div style={{ padding: '32px 16px', textAlign: 'center', color: 'var(--text-secondary)' }}>
+                <Activity size={36} color="var(--primary)" style={{ opacity: 0.7, marginBottom: '8px' }} />
+                <h4 style={{ margin: '0 0 6px 0', fontSize: '15px' }}>Automated Detection Rules</h4>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
+                  All AI notification pipelines and alert webhook triggers are actively syncing.
+                </p>
+              </div>
+            )}
+
           </div>
         )}
 
-        {/* TAB 4: RECYCLE BIN */}
+        {/* TAB 4: RECYCLE BIN (MATCHING REFERENCE SCREENSHOT 3) */}
         {activeTab === 'recycle' && (
           <div className="admin-content-card">
+            
+            {/* Header: Coral Title + Info Icon */}
             <div className="admin-card-header">
-              <div className="admin-card-title-group">
-                <h2 className="admin-card-title">Recycle Bin</h2>
+              <div className="admin-card-title-coral">
+                <span>Recycle Bin</span>
                 <span className="admin-info-icon" title="View, restore, or permanently remove previously deleted entities">
                   <Info size={16} />
                 </span>
               </div>
-              {recycleBin.length > 0 && (
-                <button
-                  type="button"
-                  className="figma-btn-cancel"
-                  style={{ color: 'var(--danger)', borderColor: 'var(--danger)' }}
-                  onClick={handleEmptyRecycleBin}
-                >
-                  Empty Recycle Bin
-                </button>
-              )}
             </div>
 
+            {/* Toolbar */}
+            <div className="admin-toolbar">
+              <div className="admin-toolbar-left">
+                <SearchField
+                  value={recycleSearch}
+                  onChange={(e) => setRecycleSearch(e.target.value)}
+                  placeholder="Search recycle bin..."
+                />
+
+                <div style={{ minWidth: '135px' }}>
+                  <CustomSmoothDropdown
+                    label="All Types"
+                    value={recycleTypeFilter}
+                    onChange={setRecycleTypeFilter}
+                    options={RECYCLE_TYPE_OPTIONS}
+                  />
+                </div>
+
+                <div style={{ minWidth: '135px' }}>
+                  <CustomSmoothDropdown
+                    label="All Expiry"
+                    value={recycleExpiryFilter}
+                    onChange={setRecycleExpiryFilter}
+                    options={RECYCLE_EXPIRY_OPTIONS}
+                  />
+                </div>
+
+                <div style={{ minWidth: '175px' }}>
+                  <CustomSmoothDropdown
+                    label="All deleted items"
+                    value={recycleDateFilter}
+                    onChange={setRecycleDateFilter}
+                    options={RECYCLE_DATE_OPTIONS}
+                  />
+                </div>
+              </div>
+
+              <div className="admin-toolbar-right">
+                <button
+                  type="button"
+                  className={`admin-empty-bin-btn ${recycleItems.length > 0 ? 'active' : ''}`}
+                  disabled={recycleItems.length === 0}
+                  onClick={handleEmptyBinAction}
+                >
+                  <Trash2 size={14} />
+                  <span>Empty Bin</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="admin-reset-btn"
+                  onClick={resetRecycleFilters}
+                >
+                  <RotateCcw size={14} />
+                  <span>Reset Filters</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Table or Empty State (Screenshot 3) */}
             <div className="admin-table-wrapper">
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>Item Name</th>
-                    <th>Type</th>
-                    <th>Original Location</th>
-                    <th>Deletion Timestamp</th>
-                    <th style={{ textAlign: 'right' }}>Actions</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Item Name</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Type</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <span>Deleted Date</span>
+                        <span>↓</span>
+                      </div>
+                    </th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Days Remaining</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Original Location</th>
+                    {recycleItems.length > 0 && <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {recycleBin.length > 0 ? (
-                    recycleBin.map(item => (
+                  {recycleItems.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} style={{ padding: 0 }}>
+                        <div className="admin-empty-state-box" style={{ padding: '60px 20px', minHeight: '230px' }}>
+                          <div className="admin-empty-icon-wrap">
+                            <Trash2 size={46} strokeWidth={1.4} />
+                          </div>
+                          <p className="admin-empty-title">No data is present.</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    recycleItems.map(item => (
                       <tr key={item.id}>
                         <td style={{ fontWeight: 600 }}>{item.name}</td>
                         <td><Badge variant="neutral">{item.type}</Badge></td>
-                        <td style={{ color: 'var(--text-secondary)' }}>{item.originalLocation}</td>
                         <td style={{ color: 'var(--text-muted)', fontSize: '12.5px' }}>{item.deletedDate}</td>
+                        <td style={{ color: 'var(--text-secondary)' }}>30 days</td>
+                        <td style={{ color: 'var(--text-secondary)' }}>{item.originalLocation}</td>
                         <td style={{ textAlign: 'right' }}>
                           <button
                             type="button"
                             className="figma-btn-cancel"
                             style={{ padding: '4px 12px', fontSize: '12px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                            onClick={() => handleRestoreItem(item)}
+                            onClick={() => handleRestoreRecycleItem(item)}
                           >
                             <RotateCcw size={12} />
                             <span>Restore</span>
@@ -1116,16 +1782,39 @@ export function AdministrationPage({
                         </td>
                       </tr>
                     ))
-                  ) : (
-                    <tr>
-                      <td colSpan={5} style={{ textAlign: 'center', padding: '40px 16px', color: 'var(--text-muted)' }}>
-                        Recycle Bin is empty.
-                      </td>
-                    </tr>
                   )}
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination footer */}
+            <div className="admin-pagination">
+              <div className="admin-pagination-selector">
+                <span>Rows per page:</span>
+                <div style={{ width: '70px' }}>
+                  <CustomSmoothDropdown
+                    label="10"
+                    value="10"
+                    onChange={() => {}}
+                    options={ROWS_PER_PAGE_OPTIONS}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <span>{recycleItems.length > 0 ? `1–${recycleItems.length} of ${recycleItems.length}` : '0–0 of 0'}</span>
+              </div>
+
+              <div className="admin-pagination-actions">
+                <button type="button" className="ai-pagination-btn" disabled title="Previous">
+                  <ChevronLeft size={16} />
+                </button>
+                <button type="button" className="ai-pagination-btn" disabled title="Next">
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+
           </div>
         )}
 
@@ -1133,8 +1822,8 @@ export function AdministrationPage({
         {activeTab === 'nvr' && (
           <div className="admin-content-card">
             <div className="admin-card-header">
-              <div className="admin-card-title-group">
-                <h2 className="admin-card-title">NVR & Storage Management</h2>
+              <div className="admin-card-title-coral">
+                <span>NVR & Storage Management</span>
                 <span className="admin-info-icon" title="Network Video Recorders, local disk allocation, and channel utilization">
                   <Info size={16} />
                 </span>
@@ -1146,11 +1835,11 @@ export function AdministrationPage({
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>NVR Device</th>
-                    <th>IP Address</th>
-                    <th>Channels Active</th>
-                    <th>Storage Utilization</th>
-                    <th>State</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>NVR Device</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>IP Address</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Channels Active</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Storage Utilization</th>
+                    <th style={{ color: '#4338ca', fontWeight: 600 }}>State</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1195,54 +1884,242 @@ export function AdministrationPage({
           </div>
         )}
 
-        {/* TAB 6: USER MANAGEMENT */}
+        {/* TAB 6: USER MANAGEMENT (MATCHING REFERENCE SCREENSHOT 4) */}
         {activeTab === 'user' && (
           <div className="admin-content-card">
-            <div className="admin-card-header">
-              <div className="admin-card-title-group">
-                <h2 className="admin-card-title">User & Role Management</h2>
+            
+            {/* Header: Coral Title + Info Icon */}
+            <div className="admin-card-header" style={{ marginBottom: '-4px' }}>
+              <div className="admin-card-title-coral">
+                <span>User Management</span>
                 <span className="admin-info-icon" title="Manage security personnel access, operator permissions, and audit logs">
                   <Info size={16} />
                 </span>
               </div>
-              <Badge variant="primary">{users.length} Users Enrolled</Badge>
             </div>
 
-            <div className="admin-table-wrapper">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>System Role</th>
-                    <th>Account Status</th>
-                    <th>Last Active</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map(u => (
-                    <tr key={u.id}>
-                      <td style={{ fontWeight: 600 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Users size={16} color="var(--primary)" />
-                          <span>{u.name}</span>
-                        </div>
-                      </td>
-                      <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
-                      <td>
-                        <Badge variant={u.role === 'Superadmin' ? 'primary' : 'info'}>
-                          {u.role}
-                        </Badge>
-                      </td>
-                      <td>
-                        <Badge variant="success">ACTIVE</Badge>
-                      </td>
-                      <td style={{ color: 'var(--text-muted)', fontSize: '12.5px' }}>{u.lastLogin}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* Sub-tabs: Users | Roles & Permissions */}
+            <div className="admin-subtabs-bar" role="tablist">
+              <button
+                type="button"
+                className={`admin-subtab-btn ${userSubTab === 'users' ? 'active' : ''}`}
+                onClick={() => setUserSubTab('users')}
+              >
+                Users
+              </button>
+              <button
+                type="button"
+                className={`admin-subtab-btn ${userSubTab === 'roles' ? 'active' : ''}`}
+                onClick={() => setUserSubTab('roles')}
+              >
+                Roles & Permissions
+              </button>
             </div>
+
+            {/* SUBTAB: Users */}
+            {userSubTab === 'users' && (
+              <>
+                {/* Toolbar */}
+                <div className="admin-toolbar">
+                  <div className="admin-toolbar-left">
+                    <SearchField
+                      value={userSearch}
+                      onChange={(e) => setUserSearch(e.target.value)}
+                      placeholder="Search users..."
+                    />
+
+                    <button
+                      type="button"
+                      className={`admin-fav-filter-btn ${userFavOnly ? 'active' : ''}`}
+                      onClick={() => setUserFavOnly(prev => !prev)}
+                      title="Filter favorites"
+                    >
+                      <Star size={16} fill={userFavOnly ? "#f59e0b" : "none"} color={userFavOnly ? "#f59e0b" : "currentColor"} />
+                    </button>
+
+                    <div className="admin-view-toggle">
+                      <button
+                        type="button"
+                        className={`admin-view-btn ${userViewMode === 'table' ? 'active' : ''}`}
+                        onClick={() => setUserViewMode('table')}
+                      >
+                        <LayoutList size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className={`admin-view-btn ${userViewMode === 'grid' ? 'active' : ''}`}
+                        onClick={() => setUserViewMode('grid')}
+                      >
+                        <LayoutGrid size={16} />
+                      </button>
+                    </div>
+
+                    <div style={{ minWidth: '135px' }}>
+                      <CustomSmoothDropdown
+                        label="All Dates"
+                        value={userDateFilter}
+                        onChange={setUserDateFilter}
+                        options={DATE_OPTIONS}
+                      />
+                    </div>
+
+                    <div style={{ minWidth: '135px' }}>
+                      <CustomSmoothDropdown
+                        label="All Roles"
+                        value={userRoleFilter}
+                        onChange={setUserRoleFilter}
+                        options={USER_ROLE_OPTIONS}
+                      />
+                    </div>
+
+                    <div style={{ minWidth: '135px' }}>
+                      <CustomSmoothDropdown
+                        label="All Status"
+                        value={userStatusFilter}
+                        onChange={setUserStatusFilter}
+                        options={USER_STATUS_OPTIONS}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="admin-toolbar-right">
+                    <button
+                      type="button"
+                      className="admin-blue-btn"
+                      onClick={() => setIsAddUserOpen(true)}
+                    >
+                      <Plus size={16} strokeWidth={2.5} />
+                      <span>Add User</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Content: Empty state or Table matching Screenshot 4 */}
+                {filteredUsers.length === 0 ? (
+                  <div className="admin-empty-state-box" style={{ border: '1px solid var(--border-light)', borderRadius: '10px' }}>
+                    <p className="admin-empty-title">No users found.</p>
+                  </div>
+                ) : (
+                  <div className="admin-table-wrapper">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>User</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Email</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>System Role</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Account Status</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Last Active</th>
+                          <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredUsers.map(u => (
+                          <tr key={u.id}>
+                            <td style={{ fontWeight: 600 }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Users size={16} color="var(--primary)" />
+                                <span>{u.name}</span>
+                              </div>
+                            </td>
+                            <td style={{ color: 'var(--text-secondary)' }}>{u.email}</td>
+                            <td>
+                              <Badge variant={u.role === 'Superadmin' ? 'primary' : 'info'}>
+                                {u.role}
+                              </Badge>
+                            </td>
+                            <td>
+                              <span className={`admin-status-pill ${u.status === 'active' ? 'active' : 'inactive'}`}>
+                                {u.status === 'active' ? 'Active' : 'Suspended'}
+                              </span>
+                            </td>
+                            <td style={{ color: 'var(--text-muted)', fontSize: '12.5px' }}>{u.lastLogin}</td>
+                            <td style={{ textAlign: 'right' }}>
+                              <button
+                                type="button"
+                                className="admin-action-btn delete"
+                                onClick={() => handleDeleteUser(u.id)}
+                                title="Remove User"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Pagination footer */}
+                <div className="admin-pagination">
+                  <div className="admin-pagination-selector">
+                    <span>Rows per page:</span>
+                    <div style={{ width: '70px' }}>
+                      <CustomSmoothDropdown
+                        label="10"
+                        value="10"
+                        onChange={() => {}}
+                        options={ROWS_PER_PAGE_OPTIONS}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <span>{filteredUsers.length > 0 ? `1–${filteredUsers.length} of ${filteredUsers.length}` : '0–0 of 0'}</span>
+                  </div>
+
+                  <div className="admin-pagination-actions">
+                    <button type="button" className="ai-pagination-btn" disabled title="Previous">
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button type="button" className="ai-pagination-btn" disabled title="Next">
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* SUBTAB: Roles & Permissions */}
+            {userSubTab === 'roles' && (
+              <div style={{ padding: '24px 0', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                  <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <Shield size={18} color="var(--primary)" />
+                      <strong style={{ fontSize: '14px' }}>Superadmin</strong>
+                    </div>
+                    <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+                      Full organizational governance, configuration management, user provisioning, and audit logs.
+                    </p>
+                    <Badge variant="primary">Full Permissions</Badge>
+                  </div>
+
+                  <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <Shield size={18} color="#2563eb" />
+                      <strong style={{ fontSize: '14px' }}>Security Operator</strong>
+                    </div>
+                    <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+                      Live monitoring, PTZ joystick operations, alert incident triage, and playback verification.
+                    </p>
+                    <Badge variant="info">Operator Level</Badge>
+                  </div>
+
+                  <div style={{ background: 'var(--nested-bg)', padding: '16px', borderRadius: '10px', border: '1px solid var(--border-light)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                      <Shield size={18} color="#6b7280" />
+                      <strong style={{ fontSize: '14px' }}>Viewer</strong>
+                    </div>
+                    <p style={{ fontSize: '12.5px', color: 'var(--text-muted)', margin: '0 0 12px 0' }}>
+                      Read-only live video stream inspection and general facility dashboard reporting.
+                    </p>
+                    <Badge variant="neutral">Read Only</Badge>
+                  </div>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
 
@@ -1406,6 +2283,134 @@ export function AdministrationPage({
 
           </div>
         )}
+      </Modal>
+
+      {/* ADD NEW USE CASE MODAL (FOR SCREENSHOT 2) */}
+      <Modal
+        isOpen={isAddUseCaseOpen}
+        onClose={() => setIsAddUseCaseOpen(false)}
+        title="Configure New AI Use Case"
+        maxWidth="520px"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '12px 0' }}>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Use Case Name *</label>
+            <input
+              type="text"
+              className="admin-form-input"
+              value={newUseCaseName}
+              onChange={(e) => setNewUseCaseName(e.target.value)}
+              placeholder="e.g. Roof Perimeter Breach Alert"
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-label">Target Camera Feed</label>
+            <select
+              className="admin-form-input"
+              value={newUseCaseCamera}
+              onChange={(e) => setNewUseCaseCamera(e.target.value)}
+            >
+              {cameras.map(c => (
+                <option key={c.id} value={c.name}>{c.name} ({c.type})</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-label">AI Analytical Model</label>
+            <select
+              className="admin-form-input"
+              value={newUseCaseModel}
+              onChange={(e) => setNewUseCaseModel(e.target.value)}
+            >
+              <option value="Intrusion & Line Crossing Detection">Intrusion & Line Crossing Detection</option>
+              <option value="Facial Recognition & Access Verification">Facial Recognition & Access Verification</option>
+              <option value="Vehicle License Plate Recognition (LPR)">Vehicle License Plate Recognition (LPR)</option>
+              <option value="PPE Helmet & Vest Compliance Detection">PPE Helmet & Vest Compliance Detection</option>
+              <option value="Loitering & Abandoned Object Alert">Loitering & Abandoned Object Alert</option>
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
+            <button
+              type="button"
+              className="figma-btn-cancel"
+              onClick={() => setIsAddUseCaseOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="admin-blue-btn"
+              onClick={handleCreateUseCase}
+            >
+              Create Use Case
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* ADD USER MODAL (FOR SCREENSHOT 4) */}
+      <Modal
+        isOpen={isAddUserOpen}
+        onClose={() => setIsAddUserOpen(false)}
+        title="Add New System User"
+        maxWidth="500px"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '12px 0' }}>
+          <div className="admin-form-group">
+            <label className="admin-form-label">Full Name *</label>
+            <input
+              type="text"
+              className="admin-form-input"
+              value={newUserName}
+              onChange={(e) => setNewUserName(e.target.value)}
+              placeholder="e.g. Johnathan Miller"
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-label">Email Address *</label>
+            <input
+              type="email"
+              className="admin-form-input"
+              value={newUserEmail}
+              onChange={(e) => setNewUserEmail(e.target.value)}
+              placeholder="e.g. j.miller@oomniwatch.ai"
+            />
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-label">Assigned Role</label>
+            <select
+              className="admin-form-input"
+              value={newUserRole}
+              onChange={(e) => setNewUserRole(e.target.value as any)}
+            >
+              <option value="Security Operator">Security Operator (Monitoring & Alerts)</option>
+              <option value="Viewer">Viewer (Read-Only)</option>
+              <option value="Superadmin">Superadmin (Full Control)</option>
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px' }}>
+            <button
+              type="button"
+              className="figma-btn-cancel"
+              onClick={() => setIsAddUserOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="admin-blue-btn"
+              onClick={handleAddUser}
+            >
+              Add User
+            </button>
+          </div>
+        </div>
       </Modal>
 
     </div>

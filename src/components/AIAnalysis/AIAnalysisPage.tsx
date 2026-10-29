@@ -16,7 +16,12 @@ import {
   Filter,
   MapPin,
   Radio,
-  Activity
+  Activity,
+  Bell,
+  SlidersHorizontal,
+  Settings,
+  Check,
+  Search
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardBody } from '../shared/Card';
 import { PageHeader } from '../shared/PageHeader';
@@ -289,8 +294,14 @@ const TYPE_OPTIONS = [
   { label: 'Fire & Smoke Hazard', value: 'hazard' }
 ];
 
+const ROWS_PER_PAGE_OPTIONS = [
+  { label: '10', value: '10' },
+  { label: '25', value: '25' },
+  { label: '50', value: '50' }
+];
+
 export function AIAnalysisPage() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'history'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'history'>('history');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [alerts, setAlerts] = useState<AlertItem[]>(INITIAL_ALERTS);
 
@@ -308,6 +319,10 @@ export function AIAnalysisPage() {
   // Modal inspection
   const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  // Media filter for Alert History: ALL | VIDEO | PHOTO (Matching Screenshot)
+  const [mediaFilter, setMediaFilter] = useState<'ALL' | 'VIDEO' | 'PHOTO'>('ALL');
+  const [hasAlertRules, setHasAlertRules] = useState(false);
 
   // Current timestamp & refresh animation
   const [currentTime, setCurrentTime] = useState('Thu, Oct 29, 2026, 08:34:10 AM');
@@ -335,10 +350,11 @@ export function AIAnalysisPage() {
     setSourceFilter('all');
     setZoneFilter('all');
     setTypeFilter('all');
+    setMediaFilter('ALL');
     setCurrentPage(1);
   };
 
-  const isFilterActive = searchQuery.trim() !== '' || timeRange !== 'all' || sourceFilter !== 'all' || zoneFilter !== 'all' || typeFilter !== 'all';
+  const isFilterActive = searchQuery.trim() !== '' || timeRange !== 'all' || sourceFilter !== 'all' || zoneFilter !== 'all' || typeFilter !== 'all' || mediaFilter !== 'ALL';
 
   const handleAcknowledgeAlert = (id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: 'acknowledged' } : a));
@@ -350,9 +366,12 @@ export function AIAnalysisPage() {
   // Filtered list
   const filteredAlerts = useMemo(() => {
     return alerts.filter(alert => {
-      // Tab filter: Alert History tab shows all past & resolved/acknowledged items; Dashboard focuses on active/recent
-      if (activeTab === 'history' && alert.status === 'new') {
-        // Can show all in history or filter as appropriate
+      // Media type filter: ALL, VIDEO, PHOTO
+      if (mediaFilter === 'VIDEO' && alert.mediaType !== 'video') {
+        return false;
+      }
+      if (mediaFilter === 'PHOTO' && alert.mediaType !== 'image') {
+        return false;
       }
 
       if (sourceFilter !== 'all' && alert.source !== sourceFilter) {
@@ -377,7 +396,7 @@ export function AIAnalysisPage() {
       }
       return true;
     });
-  }, [alerts, activeTab, sourceFilter, zoneFilter, typeFilter, searchQuery]);
+  }, [alerts, mediaFilter, sourceFilter, zoneFilter, typeFilter, searchQuery]);
 
   // Pagination calculation
   const totalItems = filteredAlerts.length;
@@ -405,26 +424,30 @@ export function AIAnalysisPage() {
           icon={<BrainCircuit size={20} />}
         />
 
-        {/* Navigation Tabs conforming to Base Application */}
-        <div className="flashback-tabs-container">
+        {/* Navigation Tabs conforming to Application UI Standards */}
+        <div className="flashback-tabs-container" role="tablist">
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'dashboard'}
             className={`flashback-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
             onClick={() => setActiveTab('dashboard')}
           >
-            <div className="flashback-tab-icon-badge">
+            <span className="flashback-tab-icon-badge">
               <LayoutGrid size={16} />
-            </div>
+            </span>
             <span>Dashboard</span>
           </button>
           <button
             type="button"
+            role="tab"
+            aria-selected={activeTab === 'history'}
             className={`flashback-tab-btn ${activeTab === 'history' ? 'active' : ''}`}
             onClick={() => setActiveTab('history')}
           >
-            <div className="flashback-tab-icon-badge">
+            <span className="flashback-tab-icon-badge">
               <History size={16} />
-            </div>
+            </span>
             <span>Alert History</span>
           </button>
         </div>
@@ -432,8 +455,386 @@ export function AIAnalysisPage() {
         {/* TAB CONTENT: DASHBOARD & HISTORY */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* SECTION 1: ALERT OVERVIEW (NO PARENT CARD) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {/* TAB 1: ALERT HISTORY (MATCHING REFERENCE UI) */}
+          {activeTab === 'history' && (
+            <Card>
+              {/* Card Header matching screenshot */}
+              <CardHeader
+                action={
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <button 
+                      type="button" 
+                      className="figma-btn-icon" 
+                      title="Alert Settings"
+                      style={{ border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
+                    >
+                      <Settings size={18} />
+                    </button>
+                    <button 
+                      type="button" 
+                      className="figma-btn-icon" 
+                      title="Refresh alerts"
+                      onClick={handleRefresh}
+                      style={{ border: 'none', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
+                    >
+                      <RefreshCw size={18} className={isRefreshing ? 'spin-animation' : ''} />
+                    </button>
+                  </div>
+                }
+              >
+                <CardTitle gradient={false}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', fontWeight: 600, fontSize: '15px' }}>
+                    <History size={17} style={{ color: '#2563eb' }} />
+                    <span>Alert History</span>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+
+              <CardBody style={{ padding: '16px 20px 0 20px' }}>
+                {/* Filter Toolbar matching UI Standards (SearchField & CustomSmoothDropdown) */}
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap', 
+                    gap: '12px',
+                    paddingBottom: '16px',
+                    borderBottom: '1px solid var(--border-light)'
+                  }}
+                >
+                  {/* Left Controls: SearchField & CustomSmoothDropdowns */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    {/* 1. SearchField (Standard Expandable Circular Search Icon) */}
+                    <SearchField 
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search ID, Alert Name, Source, Zone..."
+                    />
+
+                    {/* 2. Dates Dropdown */}
+                    <div style={{ width: '135px' }}>
+                      <CustomSmoothDropdown 
+                        label="Dates"
+                        value={timeRange}
+                        onChange={setTimeRange}
+                        options={TIME_OPTIONS}
+                      />
+                    </div>
+
+                    {/* 3. Sub-sources Dropdown */}
+                    <div style={{ width: '180px' }}>
+                      <CustomSmoothDropdown 
+                        label="Sub-sources"
+                        value={sourceFilter}
+                        onChange={setSourceFilter}
+                        options={SOURCE_OPTIONS}
+                      />
+                    </div>
+
+                    {/* 4. Zones Dropdown */}
+                    <div style={{ width: '145px' }}>
+                      <CustomSmoothDropdown 
+                        label="Zones"
+                        value={zoneFilter}
+                        onChange={setZoneFilter}
+                        options={ZONE_OPTIONS}
+                      />
+                    </div>
+
+                    {/* 5. Alert types Dropdown */}
+                    <div style={{ width: '175px' }}>
+                      <CustomSmoothDropdown 
+                        label="Alert types"
+                        value={typeFilter}
+                        onChange={setTypeFilter}
+                        options={TYPE_OPTIONS}
+                      />
+                    </div>
+
+                    {/* 6. ALL | VIDEO | PHOTO media toggle */}
+                    <div className="ai-media-filter-group">
+                      <button
+                        type="button"
+                        className={`ai-media-filter-btn ${mediaFilter === 'ALL' ? 'active' : ''}`}
+                        onClick={() => setMediaFilter('ALL')}
+                      >
+                        ALL
+                      </button>
+                      <button
+                        type="button"
+                        className={`ai-media-filter-btn ${mediaFilter === 'VIDEO' ? 'active' : ''}`}
+                        onClick={() => setMediaFilter('VIDEO')}
+                      >
+                        VIDEO
+                      </button>
+                      <button
+                        type="button"
+                        className={`ai-media-filter-btn ${mediaFilter === 'PHOTO' ? 'active' : ''}`}
+                        onClick={() => setMediaFilter('PHOTO')}
+                      >
+                        PHOTO
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right Controls: View Mode Toggle, Filter Button, Reset */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {/* 7. View Mode Toggle: [ ≡ | ▦ ] */}
+                    <div className="ai-viewmode-segmented">
+                      <button
+                        type="button"
+                        className={`ai-viewmode-segmented-btn ${viewMode === 'table' ? 'active' : ''}`}
+                        onClick={() => setViewMode('table')}
+                        title="List View"
+                      >
+                        <LayoutList size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className={`ai-viewmode-segmented-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                        onClick={() => setViewMode('grid')}
+                        title="Grid View"
+                      >
+                        <LayoutGrid size={16} />
+                      </button>
+                    </div>
+
+                    {/* 8. Filter Options Icon Button */}
+                    <button
+                      type="button"
+                      className="ai-icon-action-btn"
+                      onClick={() => setIsFilterModalOpen(true)}
+                      title="Filter options"
+                    >
+                      <SlidersHorizontal size={15} />
+                    </button>
+
+                    {/* 9. Reset Filters */}
+                    <button
+                      type="button"
+                      className="ai-reset-filters-btn"
+                      onClick={handleResetFilters}
+                    >
+                      <RotateCcw size={13} />
+                      <span>Reset Filters</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* BODY: EMPTY STATE (Matching Screenshot) OR POPULATED RECORDS */}
+                {!hasAlertRules ? (
+                  <div className="ai-empty-bell-wrapper">
+                    <div className="ai-empty-bell-circle">
+                      <Bell size={58} color="#2563EB" fill="#2563EB" />
+                      <div className="ai-empty-bell-badge">
+                        <Check size={13} strokeWidth={3.5} color="#ffffff" />
+                      </div>
+                    </div>
+                    <h3 className="ai-empty-title-bold">No Alert Rules Yet</h3>
+                    <p className="ai-empty-desc">
+                      Get started by creating your first alert rule to monitor your cameras, IoT devices, or system events.
+                    </p>
+                    <div style={{ marginTop: '24px', display: 'flex', gap: '10px' }}>
+                      <button
+                        type="button"
+                        className="figma-btn-save"
+                        style={{ fontSize: '12.5px', padding: '6px 16px' }}
+                        onClick={() => setHasAlertRules(true)}
+                      >
+                        + Create Alert Rule / Populate Records
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ padding: '20px 0 10px 0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                      <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                        Displaying {filteredAlerts.length} historical alerts
+                      </span>
+                      <button
+                        type="button"
+                        className="ai-reset-filters-btn"
+                        onClick={() => setHasAlertRules(false)}
+                        style={{ color: '#2563eb' }}
+                      >
+                        ← View Reference Empty State
+                      </button>
+                    </div>
+
+                    {viewMode === 'grid' ? (
+                      filteredAlerts.length > 0 ? (
+                        <div className="ai-alert-grid">
+                          {paginatedAlerts.map(alert => (
+                            <div 
+                              key={alert.id}
+                              className="ai-alert-card"
+                              onClick={() => setSelectedAlert(alert)}
+                              title={`Click to inspect ${alert.name}`}
+                            >
+                              <div className="ai-alert-preview">
+                                <div className="ai-alert-media-badge">
+                                  {alert.mediaType === 'video' ? <Video size={14} /> : <ImageIcon size={14} />}
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: 0.35 }}>
+                                  <ImageIcon size={36} color="var(--text-muted)" strokeWidth={1.5} />
+                                </div>
+                                <div className={`ai-alert-severity-dot ${alert.severity}`}>
+                                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#ffffff', display: 'inline-block' }} />
+                                  <span>{alert.severity.toUpperCase()}</span>
+                                </div>
+                              </div>
+                              <div className="ai-alert-body">
+                                <div className="ai-alert-title" style={{ color: alert.severity === 'critical' ? 'var(--danger, #ef4444)' : 'var(--text-main)' }}>
+                                  {alert.name}
+                                </div>
+                                <div className="ai-alert-time">{alert.timestamp}</div>
+                                <div className="ai-alert-meta">
+                                  <MapPin size={11} style={{ flexShrink: 0 }} />
+                                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{alert.source}</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
+                          <p>No matching alerts found</p>
+                        </div>
+                      )
+                    ) : (
+                      <div className="ai-table-container">
+                        <table className="ai-table">
+                          <thead>
+                            <tr>
+                              <th>Media</th>
+                              <th>Alert ID</th>
+                              <th>Event Name</th>
+                              <th>Camera Source</th>
+                              <th>Zone</th>
+                              <th>Timestamp</th>
+                              <th>Severity</th>
+                              <th>Status</th>
+                              <th style={{ textAlign: 'right' }}>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {paginatedAlerts.map(alert => (
+                              <tr key={alert.id}>
+                                <td>
+                                  <div 
+                                    style={{ width: '40px', height: '28px', borderRadius: '4px', background: 'radial-gradient(circle, #1e293b 0%, #030712 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer' }}
+                                    onClick={() => setSelectedAlert(alert)}
+                                  >
+                                    {alert.mediaType === 'video' ? <Video size={13} /> : <ImageIcon size={13} />}
+                                  </div>
+                                </td>
+                                <td style={{ fontFamily: 'monospace', fontWeight: 600 }}>{alert.id}</td>
+                                <td>
+                                  <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{alert.name}</div>
+                                  <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>{alert.typeLabel}</div>
+                                </td>
+                                <td>{alert.source}</td>
+                                <td>{alert.zone}</td>
+                                <td style={{ color: 'var(--text-secondary)', fontSize: '12.5px' }}>{alert.timestamp}</td>
+                                <td>
+                                  <Badge variant={alert.severity === 'critical' ? 'danger' : alert.severity === 'warning' ? 'warning' : 'primary'}>
+                                    {alert.severity}
+                                  </Badge>
+                                </td>
+                                <td>
+                                  <Badge variant={alert.status === 'resolved' ? 'success' : alert.status === 'acknowledged' ? 'neutral' : 'info'}>
+                                    {alert.status}
+                                  </Badge>
+                                </td>
+                                <td style={{ textAlign: 'right' }}>
+                                  <div style={{ display: 'inline-flex', gap: '6px' }}>
+                                    <button
+                                      type="button"
+                                      className="figma-btn-cancel"
+                                      style={{ padding: '4px 8px', height: '28px' }}
+                                      onClick={() => setSelectedAlert(alert)}
+                                      title="View alert snapshot & diagnostics"
+                                    >
+                                      <Eye size={13} />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardBody>
+
+              {/* Card Footer matching screenshot */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                padding: '14px 20px',
+                borderTop: '1px solid var(--border-light)',
+                fontSize: '13px',
+                color: 'var(--text-secondary)',
+                gap: '24px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>Rows per page:</span>
+                  <select
+                    value={rowsPerPage}
+                    onChange={(e) => {
+                      setRowsPerPage(Number(e.target.value));
+                      setCurrentPage(1);
+                    }}
+                    className="ai-toolbar-select"
+                    style={{ height: '30px', padding: '0 8px', fontSize: '12.5px' }}
+                  >
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                  </select>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <span>
+                    {!hasAlertRules
+                      ? '1–10 of 25'
+                      : `${totalItems === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1}–${Math.min(currentPage * rowsPerPage, totalItems)} of ${Math.max(totalItems, 25)}`}
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <button
+                      type="button"
+                      className="ai-viewmode-segmented-btn"
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={!hasAlertRules || currentPage <= 1}
+                      style={{ width: '28px', height: '28px', opacity: (!hasAlertRules || currentPage <= 1) ? 0.4 : 1 }}
+                      title="Previous Page"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      className="ai-viewmode-segmented-btn"
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={!hasAlertRules || currentPage >= totalPages}
+                      style={{ width: '28px', height: '28px', opacity: (!hasAlertRules || currentPage >= totalPages) ? 0.4 : 1 }}
+                      title="Next Page"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* TAB 2: DASHBOARD VIEW (ALERT OVERVIEW KPI CARDS + LIVE ALERTS) */}
+          {activeTab === 'dashboard' && (
+            <>
+              {/* SECTION 1: ALERT OVERVIEW (NO PARENT CARD) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {/* Header row: Heading "Alert Overview" + Time Badge + View Mode Toggle */}
             <div 
               style={{ 
@@ -920,7 +1321,9 @@ export function AIAnalysisPage() {
 
             </CardBody>
           </Card>
-        </div>
+          </>
+        )}
+      </div>
 
         {/* MODAL 1: ALERT SNAPSHOT & DETAIL INSPECTION */}
         {selectedAlert && (

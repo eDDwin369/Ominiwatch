@@ -1686,4 +1686,223 @@
   background: #3b82f6;
 }
 
+/* ========================================================
+   ALERT HISTORY REFERENCE UI (Matching User Screenshot)
+   ======================================================== */
+.ai-media-filter-group {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--nested-bg, #f8fafc);
+  padding: 3px;
+  gap: 2px;
+}
 
+.ai-media-filter-btn {
+  padding: 4px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.4px;
+}
+
+.ai-media-filter-btn:hover:not(.active) {
+  color: var(--text-main);
+}
+
+.ai-media-filter-btn.active {
+  background: var(--brand-card-surface, #ffffff);
+  color: var(--text-main);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Bell Empty State (No Alert Rules Yet) */
+.ai-empty-bell-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 20px;
+  text-align: center;
+}
+
+.ai-empty-bell-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text-main) 4%, #f1f5f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 auto;
+}
+
+.ai-empty-bell-badge {
+  position: absolute;
+  top: 34px;
+  right: 36px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ff5722;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(255, 87, 34, 0.3);
+}
+
+.ai-empty-title-bold {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main, #111827);
+  margin: 24px 0 8px 0;
+  letter-spacing: -0.2px;
+}
+
+.ai-empty-desc {
+  font-size: 13.5px;
+  color: var(--text-secondary, #6b7280);
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Sub-tabs bar matching screenshot: Dashboard / Alert History */
+.ai-sub-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 20px;
+  padding: 0 6px;
+}
+
+.ai-sub-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-bottom: -1px;
+}
+
+.ai-sub-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.ai-sub-tab-btn.active {
+  color: #2563eb;
+  font-weight: 600;
+  border-bottom-color: #2563eb;
+}
+
+.ai-sub-tab-btn.active svg {
+  color: #2563eb;
+}
+
+/* Toolbar Selects & Controls */
+.ai-toolbar-select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  background: var(--brand-card-surface, #ffffff);
+  color: var(--text-main);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.15s ease;
+}
+
+.ai-toolbar-select:focus {
+  border-color: #2563eb;
+}
+
+.ai-viewmode-segmented {
+  display: inline-flex;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--nested-bg, #f8fafc);
+  padding: 2px;
+  gap: 2px;
+}
+
+.ai-viewmode-segmented-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 30px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ai-viewmode-segmented-btn:hover:not(.active) {
+  color: var(--text-main);
+}
+
+.ai-viewmode-segmented-btn.active {
+  background: #eef2ff;
+  color: #2563eb;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.12);
+}
+
+.ai-icon-action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--brand-card-surface, #ffffff);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ai-icon-action-btn:hover {
+  color: var(--text-main);
+  border-color: var(--border);
+}
+
+.ai-reset-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.ai-reset-filters-btn:hover {
+  color: #2563eb;
+}

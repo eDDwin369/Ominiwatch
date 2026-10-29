@@ -56,10 +56,22 @@
 }
 
 .admin-tab-item.active {
-  color: var(--primary);
+  color: #2563eb;
   font-weight: 600;
-  background: var(--highlight-soft, color-mix(in srgb, var(--primary) 10%, transparent));
-  border-bottom: 2.5px solid var(--primary);
+  background: transparent;
+  border-bottom: 2.5px solid #2563eb;
+}
+
+/* Coral Card Section Title (Matching Reference Screenshots) */
+.admin-card-title-coral {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ff5722;
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Card Container */
@@ -534,3 +546,223 @@
   border-color: var(--primary);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
 }
+
+/* Sub-tabs Navigation (Under AI Management & User Management) */
+.admin-subtabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 4px;
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+.admin-subtab-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 2px 10px 2px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.admin-subtab-btn:hover {
+  color: var(--text-main);
+}
+
+.admin-subtab-btn.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.admin-subtab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: #2563eb;
+  border-radius: 2px;
+}
+
+/* Reset Button */
+.admin-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.admin-reset-btn:hover {
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--text-main) 4%, transparent);
+}
+
+/* Blue Primary Button (+ New Use Case, + Add User) */
+.admin-blue-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1d4ed8;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 1px 2px rgba(29, 78, 216, 0.2);
+  white-space: nowrap;
+}
+
+.admin-blue-btn:hover {
+  background: #1e40af;
+  transform: translateY(-1px);
+}
+
+.admin-blue-btn:active {
+  transform: translateY(0);
+}
+
+/* Detection Status Cell & Toggle Switch */
+.admin-detection-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  min-width: 58px;
+  justify-content: center;
+}
+
+.admin-status-pill.active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+}
+
+.admin-status-pill.inactive {
+  background: rgba(156, 163, 175, 0.15);
+  color: #6b7280;
+}
+
+.admin-toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.admin-toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.admin-toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 20px;
+}
+
+.admin-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.admin-toggle-switch input:checked + .admin-toggle-slider {
+  background-color: #3b82f6;
+}
+
+.admin-toggle-switch input:checked + .admin-toggle-slider:before {
+  transform: translateX(18px);
+}
+
+/* Empty Bin Button */
+.admin-empty-bin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #e2e8f0;
+  color: #94a3b8;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: not-allowed;
+  transition: all 0.15s ease;
+}
+
+.admin-empty-bin-btn.active {
+  background: #fee2e2;
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.admin-empty-bin-btn.active:hover {
+  background: #fecaca;
+}
+
+/* Empty State Container (Matching Screenshots 2, 3, 4) */
+.admin-empty-state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  gap: 16px;
+  text-align: center;
+  min-height: 290px;
+}
+
+.admin-empty-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  opacity: 0.6;
+}
+
+.admin-empty-title {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
