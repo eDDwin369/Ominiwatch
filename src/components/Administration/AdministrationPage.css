@@ -1,0 +1,536 @@
+/* ========================================================
+   ADMINISTRATION MODULE STYLES (Aligned with Base Application)
+   ======================================================== */
+
+.admin-wrapper {
+  padding-bottom: 32px;
+  width: 100%;
+}
+
+.admin-container {
+  width: 100%;
+  max-width: 1540px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Tab Bar */
+.admin-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.admin-tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-tab-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 14px);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: var(--radius-md, 8px) var(--radius-md, 8px) 0 0;
+  margin-bottom: -1px;
+  white-space: nowrap;
+}
+
+.admin-tab-item:hover:not(.active) {
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--text-main) 4%, transparent);
+}
+
+.admin-tab-item.active {
+  color: var(--primary);
+  font-weight: 600;
+  background: var(--highlight-soft, color-mix(in srgb, var(--primary) 10%, transparent));
+  border-bottom: 2.5px solid var(--primary);
+}
+
+/* Card Container */
+.admin-content-card {
+  background: var(--brand-card-surface, var(--bg-card, #ffffff));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg, 14px);
+  padding: 24px;
+  box-shadow: var(--card-shadow, 0 2px 10px rgba(0, 0, 0, 0.04));
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Header inside Card */
+.admin-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--primary);
+  letter-spacing: -0.2px;
+}
+
+.admin-info-icon {
+  color: var(--text-muted);
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.admin-info-icon:hover {
+  color: var(--primary);
+}
+
+/* Toolbar & Filters Bar */
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Favorite Star Filter Button */
+.admin-fav-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--nested-bg, color-mix(in srgb, var(--text-main) 4%, transparent));
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.admin-fav-filter-btn:hover {
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+}
+
+.admin-fav-filter-btn.active {
+  background: color-mix(in srgb, var(--warning, #f59e0b) 14%, transparent);
+  border-color: var(--warning, #f59e0b);
+  color: var(--warning, #f59e0b);
+}
+
+.admin-fav-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9999px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* Segmented View Mode Toggle (Table / Grid) */
+.admin-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: var(--nested-bg, color-mix(in srgb, var(--text-main) 4%, transparent));
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.admin-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-view-btn:hover:not(.active) {
+  color: var(--text-main);
+}
+
+.admin-view-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* Add Camera Primary Pill Button - Capsule Gradient (Matching Reference Image 3) */
+.admin-add-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 34px;
+  border-radius: 9999px;
+  border: none;
+  background: linear-gradient(135deg, var(--primary, #10b981) 0%, color-mix(in srgb, var(--primary, #10b981) 75%, #047857) 100%);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 35%, transparent);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+  outline: none;
+}
+
+.admin-add-pill-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary, #10b981) 45%, transparent);
+}
+
+.admin-add-pill-btn:active {
+  transform: translateY(0);
+}
+
+.admin-primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: none;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--primary) 35%, transparent);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.admin-primary-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 45%, transparent);
+}
+
+.admin-primary-btn:active {
+  transform: translateY(0);
+}
+
+/* Table Design */
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+.admin-table th {
+  background: var(--nested-bg, color-mix(in srgb, var(--text-main) 3%, transparent));
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-light);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: color-mix(in srgb, var(--primary) 4%, transparent);
+}
+
+/* Camera Name Cell */
+.admin-camera-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.admin-camera-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.admin-star-icon {
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.admin-star-icon:hover {
+  transform: scale(1.18);
+}
+
+.admin-star-icon.starred {
+  color: var(--warning, #f59e0b);
+  fill: var(--warning, #f59e0b);
+}
+
+.admin-star-icon.unstarred {
+  color: var(--text-muted);
+  opacity: 0.45;
+}
+
+.admin-star-icon.unstarred:hover {
+  opacity: 1;
+  color: var(--warning, #f59e0b);
+}
+
+/* URL Cell & Copy Button */
+.admin-url-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 280px;
+}
+
+.admin-url-text {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.admin-copy-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+/* Action Buttons */
+.admin-actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-action-btn:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.admin-action-btn.delete:hover {
+  color: var(--danger, #ef4444);
+  border-color: var(--danger, #ef4444);
+  background: color-mix(in srgb, var(--danger, #ef4444) 10%, transparent);
+}
+
+/* Pagination Bar */
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+  padding-top: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.admin-pagination-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Grid View Mode */
+.admin-camera-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .admin-camera-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-camera-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-camera-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-grid-card {
+  background: var(--brand-card-surface, var(--bg-card));
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md, 10px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--card-shadow, 0 1px 4px rgba(0, 0, 0, 0.04));
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-grid-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.admin-grid-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0b1120 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+/* Form Styles for Modals */
+.admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.admin-form-input {
+  width: 100%;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--card-bg, #ffffff);
+  color: var(--text-main);
+  padding: 0 12px;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 15%, transparent);
+}

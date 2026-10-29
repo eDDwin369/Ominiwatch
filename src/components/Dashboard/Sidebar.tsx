@@ -98,7 +98,7 @@ export function Sidebar({
   // Keep the highlighted item in sync with currentView or isThemeStudioOpen
   useEffect(() => {
     if (isThemeStudioOpen) {
-      setActiveItemId('administration');
+      setActiveItemId('theme-studio');
       return;
     }
     if (currentView === 'overview' || currentView === 'oomni-watch') {
@@ -109,8 +109,12 @@ export function Sidebar({
       setActiveItemId('ai-analysis');
     } else if (currentView === 'flashback') {
       setActiveItemId('flashback');
-    } else if (currentView === 'administration' || currentView === 'account') {
+    } else if (currentView === 'administration') {
       setActiveItemId('administration');
+    } else if (currentView === 'account') {
+      setActiveItemId('account');
+    } else if (currentView === 'theme-studio') {
+      setActiveItemId('theme-studio');
     } else {
       setActiveItemId('oomni-watch');
     }
@@ -403,29 +407,33 @@ export function Sidebar({
             <span className="nav-label">Administration</span>
           </a>
 
-          {/* Sub-navigation under Administration when expanded */}
-          {!isSidebarCollapsed && activeItemId === 'administration' && (
-            <div style={{ paddingLeft: '28px', display: 'flex', flexDirection: 'column', gap: '3px', marginTop: '2px', marginBottom: '4px' }}>
-              <a
-                href="#dashboard/account"
-                className={`nav-item ${currentView === 'account' ? 'active' : ''}`}
-                onClick={(e) => handleNavItemClick('account', e, 'administration')}
-                style={{ fontSize: '13px', padding: '6px 10px', height: 'auto', borderRadius: '8px' }}
-              >
-                <User size={15} strokeWidth={2.2} color="#6366f1" className="nav-icon" style={{ color: '#6366f1', stroke: '#6366f1' }} />
-                <span className="nav-label">Account Settings</span>
-              </a>
-              <a
-                href="#dashboard/theme-studio"
-                className={`nav-item ${isThemeStudioOpen ? 'active' : ''}`}
-                onClick={(e) => handleNavItemClick('theme-studio', e, 'administration')}
-                style={{ fontSize: '13px', padding: '6px 10px', height: 'auto', borderRadius: '8px' }}
-              >
-                <Palette size={15} strokeWidth={2.2} color="#ec4899" className="nav-icon" style={{ color: '#ec4899', stroke: '#ec4899' }} />
-                <span className="nav-label">Theme Studio</span>
-              </a>
+          {/* 6. Account Settings */}
+          <a
+            href="#dashboard/account"
+            className={`nav-item ${activeItemId === 'account' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('account', e, 'account')}
+            onMouseEnter={(e) => handleItemMouseEnter("Account Settings", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <User size={20} strokeWidth={2.2} color="#0ea5e9" className="nav-icon" style={{ color: '#0ea5e9', stroke: '#0ea5e9' }} />
             </div>
-          )}
+            <span className="nav-label">Account Settings</span>
+          </a>
+
+          {/* 7. Theme Studio */}
+          <a
+            href="#dashboard/theme-studio"
+            className={`nav-item ${activeItemId === 'theme-studio' ? 'active' : ''}`}
+            onClick={(e) => handleNavItemClick('theme-studio', e, 'theme-studio')}
+            onMouseEnter={(e) => handleItemMouseEnter("Theme Studio", e)}
+            onMouseLeave={handleItemMouseLeave}
+          >
+            <div className="shrink-0" style={{ width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Palette size={20} strokeWidth={2.2} color="#f43f5e" className="nav-icon" style={{ color: '#f43f5e', stroke: '#f43f5e' }} />
+            </div>
+            <span className="nav-label">Theme Studio</span>
+          </a>
         </div>
 
         {/* Collapse button */}

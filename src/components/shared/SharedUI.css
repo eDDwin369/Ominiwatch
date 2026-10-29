@@ -183,6 +183,38 @@
   color: var(--text-muted);
 }
 
+.figma-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--border-medium, #cbd5e1);
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.figma-switch.checked {
+  background: var(--primary);
+}
+
+.figma-switch-thumb {
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s ease;
+  transform: translateX(0);
+}
+
+.figma-switch.checked .figma-switch-thumb {
+  transform: translateX(20px);
+}
+
 /* Badges */
 .figma-badge {
   display: inline-flex;
@@ -1258,6 +1290,124 @@
 .ai-pagination-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+/* ========================================================
+   VIEW MODE TOGGLE (Grid / Table) - Theme Token Driven
+   ======================================================== */
+.ai-viewmode-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 86px;
+  height: 32px;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  background: var(--primary);
+  cursor: pointer;
+  padding: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+}
+
+.ai-viewmode-toggle:hover {
+  filter: brightness(1.08);
+}
+
+.ai-viewmode-toggle.grid {
+  background: color-mix(in srgb, var(--primary) 65%, #0f172a);
+}
+
+[data-theme-mode="light"] .ai-viewmode-toggle.grid {
+  background: color-mix(in srgb, var(--primary) 50%, #475569);
+}
+
+.ai-viewmode-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ai-viewmode-toggle.table .ai-viewmode-thumb {
+  transform: translateX(54px);
+}
+
+.ai-viewmode-toggle.grid .ai-viewmode-thumb {
+  transform: translateX(0);
+}
+
+.ai-viewmode-label {
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  user-select: none;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+}
+
+.ai-viewmode-toggle.table .ai-viewmode-label {
+  text-align: left;
+  padding-left: 10px;
+}
+
+.ai-viewmode-toggle.grid .ai-viewmode-label {
+  text-align: right;
+  padding-right: 10px;
+}
+
+/* ========================================================
+   AI ANALYSIS ICON BUTTONS (Filter & Reset) - Matching Screenshot 2
+   ======================================================== */
+.ai-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ai-icon-btn:hover {
+  background: color-mix(in srgb, var(--primary) 20%, transparent);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.ai-icon-btn:active {
+  transform: translateY(0);
+}
+
+.ai-icon-btn.active {
+  background: color-mix(in srgb, var(--primary) 22%, transparent);
+  border-color: var(--primary);
+}
+
+.ai-icon-btn-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 2px var(--brand-card-surface, var(--bg-card, #ffffff));
 }
 
 

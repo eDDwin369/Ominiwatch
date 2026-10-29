@@ -317,11 +317,10 @@ export function FlashbackPage() {
         {/* Page Header conforming to Base Application */}
         <PageHeader 
           title="Flashback" 
-          subtitle="Forensic time-travel, multi-channel live surveillance, and recorded video archives"
+          subtitle=""
           icon={<History size={20} />}
           actions={
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Badge variant="success">Surveillance Engine Online</Badge>
             </div>
           }
         />

@@ -338,6 +338,8 @@ export function AIAnalysisPage() {
     setCurrentPage(1);
   };
 
+  const isFilterActive = searchQuery.trim() !== '' || timeRange !== 'all' || sourceFilter !== 'all' || zoneFilter !== 'all' || typeFilter !== 'all';
+
   const handleAcknowledgeAlert = (id: string) => {
     setAlerts(prev => prev.map(a => a.id === id ? { ...a, status: 'acknowledged' } : a));
     if (selectedAlert && selectedAlert.id === id) {
@@ -430,170 +432,136 @@ export function AIAnalysisPage() {
         {/* TAB CONTENT: DASHBOARD & HISTORY */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
-          {/* SECTION 1: ALERT OVERVIEW */}
-          <Card>
-            <CardHeader
-              action={
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                  {/* Time Badge with Refresh Button */}
-                  <div 
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      background: 'var(--nested-bg, color-mix(in srgb, var(--text-main) 4%, transparent))',
-                      border: '1px solid var(--border-light)',
-                      borderRadius: '8px',
-                      padding: '5px 12px',
-                      fontSize: '12.5px',
-                      color: 'var(--text-secondary)'
-                    }}
-                  >
-                    <span>{currentTime}</span>
-                    <button
-                      type="button"
-                      onClick={handleRefresh}
-                      title="Refresh alert counts"
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: 'var(--primary)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: '2px',
-                        transition: 'transform 0.4s ease'
-                      }}
-                    >
-                      <RefreshCw size={14} className={isRefreshing ? 'spin' : ''} />
-                    </button>
-                  </div>
-
-                  {/* Table/Grid Switch */}
-                  <div 
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      background: 'var(--nested-bg, color-mix(in srgb, var(--text-main) 4%, transparent))',
-                      border: '1px solid var(--border-light)',
-                      borderRadius: '8px',
-                      padding: '3px'
-                    }}
-                  >
-                    <button
-                      type="button"
-                      className={`figma-btn-cancel ${viewMode === 'grid' ? 'active' : ''}`}
-                      onClick={() => setViewMode('grid')}
-                      title="Grid View"
-                      style={{
-                        padding: '4px 10px',
-                        height: '28px',
-                        borderRadius: '6px',
-                        background: viewMode === 'grid' ? 'var(--primary)' : 'transparent',
-                        color: viewMode === 'grid' ? '#ffffff' : 'var(--text-muted)',
-                        border: 'none',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        fontSize: '12px',
-                        fontWeight: 600
-                      }}
-                    >
-                      <LayoutGrid size={14} />
-                      <span>Grid</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`figma-btn-cancel ${viewMode === 'table' ? 'active' : ''}`}
-                      onClick={() => setViewMode('table')}
-                      title="Table View"
-                      style={{
-                        padding: '4px 10px',
-                        height: '28px',
-                        borderRadius: '6px',
-                        background: viewMode === 'table' ? 'var(--primary)' : 'transparent',
-                        color: viewMode === 'table' ? '#ffffff' : 'var(--text-muted)',
-                        border: 'none',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        fontSize: '12px',
-                        fontWeight: 600
-                      }}
-                    >
-                      <LayoutList size={14} />
-                      <span>Table</span>
-                    </button>
-                  </div>
-                </div>
-              }
+          {/* SECTION 1: ALERT OVERVIEW (NO PARENT CARD) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {/* Header row: Heading "Alert Overview" + Time Badge + View Mode Toggle */}
+            <div 
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                flexWrap: 'wrap', 
+                gap: '12px' 
+              }}
             >
-              <CardTitle gradient={false}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '16px' }}>
-                    Alert Overview
+              <h2 
+                style={{ 
+                  margin: 0, 
+                  color: 'var(--primary)', 
+                  fontWeight: 600, 
+                  fontSize: '18px',
+                  letterSpacing: '-0.2px'
+                }}
+              >
+                Alert Overview
+              </h2>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                {/* Time Badge with Refresh Button */}
+                <div 
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    background: 'var(--brand-card-surface, var(--bg-card, #ffffff))',
+                    border: '1px solid var(--border-light)',
+                    borderRadius: '8px',
+                    padding: '5px 12px',
+                    fontSize: '12.5px',
+                    color: 'var(--text-secondary)',
+                    boxShadow: 'var(--card-shadow, 0 1px 3px rgba(0, 0, 0, 0.04))'
+                  }}
+                >
+                  <span>{currentTime}</span>
+                  <button
+                    type="button"
+                    onClick={handleRefresh}
+                    title="Refresh alert counts"
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: 'var(--primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '2px',
+                      transition: 'transform 0.4s ease'
+                    }}
+                  >
+                    <RefreshCw size={14} className={isRefreshing ? 'spin' : ''} />
+                  </button>
+                </div>
+
+                {/* Table/Grid Toggle (Theme Token) */}
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={viewMode === 'table'}
+                  onClick={() => setViewMode(prev => prev === 'grid' ? 'table' : 'grid')}
+                  className={`ai-viewmode-toggle ${viewMode}`}
+                  title={`Switch to ${viewMode === 'grid' ? 'Table' : 'Grid'} view`}
+                >
+                  <span className="ai-viewmode-label">
+                    {viewMode === 'table' ? 'Table' : 'Grid'}
+                  </span>
+                  <span className="ai-viewmode-thumb" />
+                </button>
+              </div>
+            </div>
+
+            {/* 3 Summary KPI Cards — Placed directly with heading "Alert Overview" */}
+            <div className="ai-summary-grid" style={{ marginBottom: '6px' }}>
+              
+              {/* 1. AI Alerts */}
+              <div className="ai-kpi-card">
+                <div className="ai-kpi-icon-badge blue">
+                  <BrainCircuit size={20} />
+                </div>
+                <div className="ai-kpi-value">{filteredAlerts.length}</div>
+                <div className="ai-kpi-label">AI Alerts</div>
+                <div className="ai-kpi-footer">
+                  <span className="ai-kpi-trend-pill positive">
+                    ▲ +12% vs prior
+                  </span>
+                  {criticalCount > 0 && (
+                    <span className="ai-kpi-trend-pill critical">
+                      {criticalCount} critical
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* 2. IoT Alerts */}
+              <div className="ai-kpi-card">
+                <div className="ai-kpi-icon-badge amber">
+                  <Radio size={20} />
+                </div>
+                <div className="ai-kpi-value">0</div>
+                <div className="ai-kpi-label">IoT Alerts</div>
+                <div className="ai-kpi-footer">
+                  <span className="ai-kpi-trend-pill neutral">
+                    Upcoming Feature
                   </span>
                 </div>
-              </CardTitle>
-            </CardHeader>
-            <CardBody>
-              {/* 3 Summary KPI Cards — Styled like Theme Studio Dashboard KPI Cards (Reference Image 2) */}
-              <div className="ai-summary-grid">
-                
-                {/* 1. AI Alerts */}
-                <div className="ai-kpi-card">
-                  <div className="ai-kpi-icon-badge blue">
-                    <BrainCircuit size={20} />
-                  </div>
-                  <div className="ai-kpi-value">{filteredAlerts.length}</div>
-                  <div className="ai-kpi-label">AI Alerts</div>
-                  <div className="ai-kpi-footer">
-                    <span className="ai-kpi-trend-pill positive">
-                      ▲ +12% vs prior
-                    </span>
-                    {criticalCount > 0 && (
-                      <span className="ai-kpi-trend-pill critical">
-                        {criticalCount} critical
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* 2. IoT Alerts */}
-                <div className="ai-kpi-card">
-                  <div className="ai-kpi-icon-badge amber">
-                    <Radio size={20} />
-                  </div>
-                  <div className="ai-kpi-value">0</div>
-                  <div className="ai-kpi-label">IoT Alerts</div>
-                  <div className="ai-kpi-footer">
-                    <span className="ai-kpi-trend-pill neutral">
-                      Upcoming Feature
-                    </span>
-                  </div>
-                </div>
-
-                {/* 3. System Alerts */}
-                <div className="ai-kpi-card">
-                  <div className="ai-kpi-icon-badge emerald">
-                    <Activity size={20} />
-                  </div>
-                  <div className="ai-kpi-value">0</div>
-                  <div className="ai-kpi-label">System Alerts</div>
-                  <div className="ai-kpi-footer">
-                    <span className="ai-kpi-trend-pill neutral">
-                      Upcoming Feature
-                    </span>
-                  </div>
-                </div>
-
               </div>
-            </CardBody>
-          </Card>
+
+              {/* 3. System Alerts */}
+              <div className="ai-kpi-card">
+                <div className="ai-kpi-icon-badge emerald">
+                  <Activity size={20} />
+                </div>
+                <div className="ai-kpi-value">0</div>
+                <div className="ai-kpi-label">System Alerts</div>
+                <div className="ai-kpi-footer">
+                  <span className="ai-kpi-trend-pill neutral">
+                    Upcoming Feature
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          </div>
 
           {/* SECTION 2: AI ALERTS LIST / GRID & CONTROLS */}
           <Card>
@@ -687,40 +655,27 @@ export function AIAnalysisPage() {
                   </div>
                 </div>
 
-                {/* Right Controls: Filter Action & Reset Filters */}
+                {/* Right Controls: Filter Action & Reset Filters (Icon-only matching Screenshot 2) */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <button
                     type="button"
-                    className="figma-btn-cancel"
+                    className={`ai-icon-btn ${isFilterActive ? 'active' : ''}`}
                     onClick={() => setIsFilterModalOpen(true)}
-                    title="Open Advanced Filter Modal"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '7px 14px',
-                      fontSize: '13px'
-                    }}
+                    title={isFilterActive ? "Advanced Filters (Active)" : "Advanced Filters"}
+                    aria-label="Filter"
                   >
-                    <Filter size={14} />
-                    <span>Filter</span>
+                    <Filter size={18} />
+                    {isFilterActive && <span className="ai-icon-btn-dot" />}
                   </button>
 
                   <button
                     type="button"
-                    className="figma-btn-cancel"
+                    className="ai-icon-btn"
                     onClick={handleResetFilters}
-                    title="Reset all search queries and dropdown filters"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '7px 14px',
-                      fontSize: '13px'
-                    }}
+                    title="Reset Filters"
+                    aria-label="Reset Filters"
                   >
-                    <RotateCcw size={14} />
-                    <span>Reset Filters</span>
+                    <RotateCcw size={18} />
                   </button>
                 </div>
               </div>
