@@ -100,6 +100,45 @@ export function ThemeStudio({ onClose, currentView, onNavigate }: ThemeStudioPro
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', activeTheme);
     document.documentElement.setAttribute('data-theme-mode', mode);
+
+    const toggleGradients: Record<string, { bg: string; shadow: string }> = {
+      emerald: {
+        bg: 'linear-gradient(90deg, #d97706 0%, #16a34a 100%)',
+        shadow: '0 2px 8px rgba(16, 185, 129, 0.35)',
+      },
+      'corporate-blue': {
+        bg: 'linear-gradient(90deg, #0284c7 0%, #2563eb 100%)',
+        shadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
+      },
+      corporate: {
+        bg: 'linear-gradient(90deg, #0284c7 0%, #2563eb 100%)',
+        shadow: '0 2px 8px rgba(37, 99, 235, 0.35)',
+      },
+      'indigo-violet': {
+        bg: 'linear-gradient(90deg, #ec4899 0%, #6366f1 100%)',
+        shadow: '0 2px 8px rgba(99, 102, 241, 0.35)',
+      },
+      indigo: {
+        bg: 'linear-gradient(90deg, #ec4899 0%, #6366f1 100%)',
+        shadow: '0 2px 8px rgba(99, 102, 241, 0.35)',
+      },
+      'ocean-teal': {
+        bg: 'linear-gradient(90deg, #06b6d4 0%, #14b8a6 100%)',
+        shadow: '0 2px 8px rgba(20, 184, 166, 0.35)',
+      },
+      amber: {
+        bg: 'linear-gradient(90deg, #ea580c 0%, #f59e0b 100%)',
+        shadow: '0 2px 8px rgba(245, 158, 11, 0.35)',
+      },
+      graphite: {
+        bg: 'linear-gradient(90deg, #64748b 0%, #334155 100%)',
+        shadow: '0 2px 8px rgba(75, 85, 99, 0.35)',
+      },
+    };
+
+    const currentToggle = toggleGradients[activeTheme] || toggleGradients['corporate-blue'];
+    document.documentElement.style.setProperty('--toggle-active-bg', currentToggle.bg);
+    document.documentElement.style.setProperty('--toggle-active-shadow', currentToggle.shadow);
   }, [activeTheme, mode]);
 
   return (

@@ -40,6 +40,8 @@
   --primary: #2563EB;
   --primary-hover: #1E40AF;
   --primary-light: #DBEAFE;
+  --toggle-active-bg: linear-gradient(90deg, #0284c7 0%, #2563eb 100%);
+  --toggle-active-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
 }
 
 [data-theme-mode="dark"][data-theme="corporate-blue"],
@@ -58,6 +60,8 @@
   --primary: #10B981;
   --primary-hover: #047857;
   --primary-light: #D1FAE5;
+  --toggle-active-bg: linear-gradient(90deg, #d97706 0%, #16a34a 100%);
+  --toggle-active-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
 }
 
 [data-theme-mode="dark"][data-theme="emerald"] {
@@ -75,6 +79,8 @@
   --primary: #6366F1;
   --primary-hover: #4F46E5;
   --primary-light: #E0E7FF;
+  --toggle-active-bg: linear-gradient(90deg, #ec4899 0%, #6366f1 100%);
+  --toggle-active-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
 }
 
 [data-theme-mode="dark"][data-theme="indigo-violet"],
@@ -93,18 +99,24 @@
   --primary: #4B5563;
   --primary-hover: #374151;
   --primary-light: #F3F4F6;
+  --toggle-active-bg: linear-gradient(90deg, #64748b 0%, #334155 100%);
+  --toggle-active-shadow: 0 2px 8px rgba(75, 85, 99, 0.35);
 }
 
 [data-theme="ocean-teal"] {
   --primary: #14B8A6;
   --primary-hover: #0F766E;
   --primary-light: #CCFBF1;
+  --toggle-active-bg: linear-gradient(90deg, #06b6d4 0%, #14b8a6 100%);
+  --toggle-active-shadow: 0 2px 8px rgba(20, 184, 166, 0.35);
 }
 
 [data-theme="amber"] {
   --primary: #F59E0B;
   --primary-hover: #D97706;
   --primary-light: #FEF3C7;
+  --toggle-active-bg: linear-gradient(90deg, #ea580c 0%, #f59e0b 100%);
+  --toggle-active-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
 }
 
 :root {
@@ -184,6 +196,17 @@
   --h4-size: 19px; --h4-weight: 600;  --h4-color: var(--text-main);
   --h5-size: 16px; --h5-weight: 600;  --h5-color: var(--text-main);
   --h6-size: 14px; --h6-weight: 600;  --h6-color: var(--text-main);
+  /* Table Design Tokens (cardless modern tables aligned with Theme Studio) */
+  --table-header-bg: color-mix(in srgb, var(--primary, #2563eb) 18%, var(--page-bg, #ffffff));
+  --table-header-text: color-mix(in srgb, var(--primary, #2563eb) 70%, #0f172a);
+  --table-row-hover: color-mix(in srgb, var(--primary, #2563eb) 4%, transparent);
+  --table-row-divider: 1px solid var(--border-light, rgba(0, 0, 0, 0.08));
+  --status-active-bg: color-mix(in srgb, var(--success, #10b981) 12%, transparent);
+  --status-active-text: var(--success, #059669);
+  --status-inactive-bg: color-mix(in srgb, var(--text-muted, #94a3b8) 14%, transparent);
+  --status-inactive-text: var(--text-muted, #64748b);
+  --toggle-track-bg: color-mix(in srgb, var(--text-main, #0f172a) 16%, transparent);
+  --toggle-active-bg: var(--primary, #2563eb);
 }
 
 * {
@@ -2209,4 +2232,43 @@ h2.brand-gradient-text,
 
 [data-theme-mode] .figma-account-settings-container .figma-status-warn {
   color: var(--danger) !important;
+}
+
+
+/* Universal Table Header UI (Reports reference banner design adapting per theme) */
+table thead tr,
+.MuiTableHead-root tr {
+  background: var(--table-header-bg, color-mix(in srgb, var(--primary, #2563eb) 18%, var(--page-bg, #ffffff))) !important;
+  transition: background-color 0.2s ease;
+}
+
+table thead th,
+.MuiTableHead-root .MuiTableCell-head {
+  background: transparent !important;
+  color: var(--table-header-text, color-mix(in srgb, var(--primary, #2563eb) 70%, #0f172a)) !important;
+  font-family: var(--app-font-family);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.1px;
+  border-top: none;
+  border-bottom: 1px solid var(--border-light, rgba(0, 0, 0, 0.08));
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+table thead tr th:first-child,
+.MuiTableHead-root tr .MuiTableCell-head:first-child {
+  border-top-left-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
+}
+
+table thead tr th:last-child,
+.MuiTableHead-root tr .MuiTableCell-head:last-child {
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+[data-theme-mode="dark"] {
+  --table-header-bg: color-mix(in srgb, var(--primary, #2563eb) 22%, var(--page-bg, #090e24));
+  --table-header-text: color-mix(in srgb, var(--primary, #2563eb) 40%, #ffffff);
 }

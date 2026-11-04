@@ -102,6 +102,21 @@ function syncCssVars(theme: any, settings: any) {
   set('--table-stripe', settings.tableStripe ? 'color-mix(in srgb, var(--text-main) 4%, transparent)' : 'transparent');
   set('--status-weight', tk.statusBold ? '700' : '500');
 
+  // Table Design Tokens (cardless modern tables aligned with Theme Studio)
+  set('--table-header-bg', isDark
+    ? `color-mix(in srgb, ${p.primary.main} 22%, ${pageBg || '#0f172a'})`
+    : `color-mix(in srgb, ${p.primary.main} 18%, ${pageBg || '#ffffff'})`);
+  set('--table-header-text', isDark
+    ? `color-mix(in srgb, ${p.primary.main} 40%, #ffffff)`
+    : `color-mix(in srgb, ${p.primary.main} 70%, #0f172a)`);
+  set('--table-row-hover', alpha(p.primary.main, isDark ? 0.08 : 0.04));
+  set('--status-active-bg', alpha(p.success.main, isDark ? 0.22 : 0.12));
+  set('--status-active-text', p.success.main);
+  set('--status-inactive-bg', alpha(p.text.disabled || '#94a3b8', isDark ? 0.22 : 0.14));
+  set('--status-inactive-text', p.text.secondary);
+  set('--toggle-track-bg', alpha(p.text.primary, isDark ? 0.25 : 0.16));
+  set('--toggle-active-bg', p.primary.main);
+
   // Card Alignment
   const cardAlign = (settings as any).cardAlign || 'left';
   set('--card-align', cardAlign);
@@ -322,15 +337,19 @@ function syncCssVars(theme: any, settings: any) {
   set('--dash-aura-color', primaryHex);
   set('--gs-accent-gradient', tk.gsAccentGradient);
 
-  // Toggle Switch Active Gradient (Theme Studio responsive, matching Reference Image 4)
+  // Toggle Switch Active Gradient (Theme Studio responsive, different for each theme)
+  const effectiveThemeId = (root.getAttribute('data-theme') || settings.presetId || 'corporate-blue').toLowerCase();
   const toggleGradientMap: Record<string, string> = {
     emerald: 'linear-gradient(90deg, #d97706 0%, #16a34a 100%)',
     corporate: 'linear-gradient(90deg, #0284c7 0%, #2563eb 100%)',
     'corporate-blue': 'linear-gradient(90deg, #0284c7 0%, #2563eb 100%)',
-    indigo: 'linear-gradient(90deg, #c026d3 0%, #6366f1 100%)',
-    'indigo-violet': 'linear-gradient(90deg, #c026d3 0%, #6366f1 100%)',
+    indigo: 'linear-gradient(90deg, #ec4899 0%, #6366f1 100%)',
+    'indigo-violet': 'linear-gradient(90deg, #ec4899 0%, #6366f1 100%)',
+    'ocean-teal': 'linear-gradient(90deg, #06b6d4 0%, #14b8a6 100%)',
+    amber: 'linear-gradient(90deg, #ea580c 0%, #f59e0b 100%)',
+    graphite: 'linear-gradient(90deg, #64748b 0%, #334155 100%)',
   };
-  const activeToggleGradient = toggleGradientMap[settings.presetId] || tk.brandGradient || `linear-gradient(90deg, ${secondaryHex || '#d97706'} 0%, ${primaryHex || '#16a34a'} 100%)`;
+  const activeToggleGradient = toggleGradientMap[effectiveThemeId] || toggleGradientMap[settings.presetId] || tk.brandGradient || `linear-gradient(90deg, ${secondaryHex || '#d97706'} 0%, ${primaryHex || '#16a34a'} 100%)`;
   set('--toggle-active-bg', activeToggleGradient);
   set('--toggle-active-shadow', `0 2px 8px color-mix(in srgb, ${primaryHex} 35%, transparent)`);
 

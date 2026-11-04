@@ -23,7 +23,8 @@ import {
   Shield,
   Activity,
   AlertTriangle,
-  Boxes
+  Boxes,
+  MoreVertical
 } from 'lucide-react';
 import { PageHeader } from '../shared/PageHeader';
 import { SearchField } from '../shared/SearchField';
@@ -31,6 +32,8 @@ import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
 import { RowsPerPageSelector } from '../shared/RowsPerPageSelector';
 import { Modal } from '../shared/Modal';
 import { Badge } from '../shared/Badge';
+import { TextField } from '../shared/TextField';
+import { Button } from '../shared/Button';
 import './AdministrationPage.css';
 import '../AccountSettings/AccountSettings.css';
 import '../shared/SharedUI.css';
@@ -63,21 +66,46 @@ export interface ZoneItem {
 export interface AIModelItem {
   id: string;
   name: string;
-  category: string;
-  isEnabled: boolean;
-  sensitivity: number;
-  assignedCameras: number;
-  status: 'active' | 'paused';
+  isFavorite: boolean;
+  hasStar?: boolean;
+  modelFile: string;
+  accuracy: number;
+  description: string;
+  uploadedOn: string;
+  category?: string;
+  isEnabled?: boolean;
+  sensitivity?: number;
+  assignedCameras?: number;
+  status?: 'active' | 'paused';
+}
+
+export interface NVRChannelItem {
+  id: string;
+  nvrId: string;
+  channelNo: string;
+  cameraName: string;
+  ipAddress: string;
+  resolution: string;
+  fps: number;
+  bitrate: string;
+  status: 'online' | 'recording' | 'standby' | 'offline';
+  storageUsed: string;
 }
 
 export interface NVRItem {
   id: string;
   name: string;
   ip: string;
+  brand?: string;
   channelsUsed: number;
   totalChannels: number;
   storageUsedTB: number;
   totalStorageTB: number;
+  storageUsedGB: number;
+  totalStorageGB: number;
+  retentionDays: number;
+  storageThreshold: number;
+  fifoDelete: number;
   status: 'online' | 'offline';
 }
 
@@ -221,16 +249,235 @@ const INITIAL_ZONES: ZoneItem[] = [
 ];
 
 const INITIAL_AI_MODELS: AIModelItem[] = [
-  { id: 'ai-1', name: 'Intrusion & Line Crossing Detection', category: 'Perimeter Defense', isEnabled: true, sensitivity: 85, assignedCameras: 4, status: 'active' },
-  { id: 'ai-2', name: 'Facial Recognition & Access Verification', category: 'Identity & Access', isEnabled: true, sensitivity: 90, assignedCameras: 2, status: 'active' },
-  { id: 'ai-3', name: 'Vehicle License Plate Recognition (LPR)', category: 'Gate Automation', isEnabled: true, sensitivity: 80, assignedCameras: 2, status: 'active' },
-  { id: 'ai-4', name: 'PPE Helmet & Vest Compliance Detection', category: 'Workplace Safety', isEnabled: true, sensitivity: 75, assignedCameras: 3, status: 'active' },
-  { id: 'ai-5', name: 'Loitering & Abandoned Object Alert', category: 'Behavioral Analysis', isEnabled: false, sensitivity: 60, assignedCameras: 1, status: 'paused' }
+  {
+    id: 'UC-1004',
+    name: 'ANPR',
+    isFavorite: false,
+    hasStar: true,
+    modelFile: 'anpr_v1.pt',
+    accuracy: 88,
+    description: 'Reads license plates at gates and checkpoints.',
+    uploadedOn: '26Aug26',
+    isEnabled: true,
+    status: 'active'
+  },
+  {
+    id: 'UC-1002',
+    name: 'Face Recognition',
+    isFavorite: true,
+    hasStar: true,
+    modelFile: 'face_recognition_v2.onnx',
+    accuracy: 96,
+    description: 'Matches detected faces against enrolled identities.',
+    uploadedOn: '7Jul26',
+    isEnabled: true,
+    status: 'active'
+  },
+  {
+    id: 'UC-1005',
+    name: 'Intrusion Detection',
+    isFavorite: false,
+    hasStar: false,
+    modelFile: 'intrusion_v1.pt',
+    accuracy: 90,
+    description: 'Raises alerts when movement crosses a tripwire.',
+    uploadedOn: '24Sep26',
+    isEnabled: true,
+    status: 'active'
+  },
+  {
+    id: 'UC-1006',
+    name: 'PPE Compliance',
+    isFavorite: false,
+    hasStar: false,
+    modelFile: 'ppe_compliance_v1.pt',
+    accuracy: 86,
+    description: 'Checks helmets and vests in the loading bay.',
+    uploadedOn: '23Oct26',
+    isEnabled: true,
+    status: 'active'
+  },
+  {
+    id: 'UC-1001',
+    name: 'Person Detection',
+    isFavorite: true,
+    hasStar: true,
+    modelFile: 'person_detection_v3.pt',
+    accuracy: 94,
+    description: 'Detects people in restricted and public zones.',
+    uploadedOn: '7Jun26',
+    isEnabled: true,
+    status: 'active'
+  },
+  {
+    id: 'UC-1003',
+    name: 'Vehicle Detection',
+    isFavorite: false,
+    hasStar: false,
+    modelFile: 'vehicle_detection_v2.pt',
+    accuracy: 91,
+    description: 'Detects cars, vans and trucks in parking areas.',
+    uploadedOn: '1Aug26',
+    isEnabled: true,
+    status: 'active'
+  }
 ];
 
 const INITIAL_NVRS: NVRItem[] = [
-  { id: 'nvr-01', name: 'NVR-Master-Chennai-01', ip: '192.168.1.101', channelsUsed: 8, totalChannels: 16, storageUsedTB: 10.8, totalStorageTB: 16, status: 'online' },
-  { id: 'nvr-02', name: 'NVR-Secondary-Vault-02', ip: '192.168.1.102', channelsUsed: 4, totalChannels: 8, storageUsedTB: 4.2, totalStorageTB: 8, status: 'online' }
+  { 
+    id: 'nvr-01', 
+    name: 'NVR-Master-Chennai-01', 
+    ip: '192.168.1.101', 
+    brand: 'Hikvision',
+    channelsUsed: 8, 
+    totalChannels: 16, 
+    storageUsedTB: 10.8, 
+    totalStorageTB: 16, 
+    storageUsedGB: 150, 
+    totalStorageGB: 500,
+    retentionDays: 30,
+    storageThreshold: 90,
+    fifoDelete: 10,
+    status: 'online' 
+  },
+  { 
+    id: 'nvr-02', 
+    name: 'NVR-Secondary-Vault-02', 
+    ip: '192.168.1.102', 
+    brand: 'Dahua Technology',
+    channelsUsed: 4, 
+    totalChannels: 8, 
+    storageUsedTB: 4.2, 
+    totalStorageTB: 8, 
+    storageUsedGB: 85, 
+    totalStorageGB: 250,
+    retentionDays: 14,
+    storageThreshold: 85,
+    fifoDelete: 10,
+    status: 'online' 
+  },
+  { 
+    id: 'nvr-03', 
+    name: 'NVR-Warehouse-Bay-03', 
+    ip: '192.168.1.103', 
+    brand: 'Uniview',
+    channelsUsed: 12, 
+    totalChannels: 16, 
+    storageUsedTB: 8.4, 
+    totalStorageTB: 12, 
+    storageUsedGB: 320, 
+    totalStorageGB: 500,
+    retentionDays: 45,
+    storageThreshold: 90,
+    fifoDelete: 10,
+    status: 'online' 
+  },
+  { 
+    id: 'nvr-04', 
+    name: 'NVR-Perimeter-Gate-04', 
+    ip: '192.168.1.104', 
+    brand: 'Axis Communications',
+    channelsUsed: 6, 
+    totalChannels: 8, 
+    storageUsedTB: 6.1, 
+    totalStorageTB: 8, 
+    storageUsedGB: 210, 
+    totalStorageGB: 300,
+    retentionDays: 60,
+    storageThreshold: 80,
+    fifoDelete: 15,
+    status: 'online' 
+  },
+  { 
+    id: 'nvr-05', 
+    name: 'NVR-Logistics-Hub-05', 
+    ip: '192.168.1.105', 
+    brand: 'Hanwha Vision',
+    channelsUsed: 14, 
+    totalChannels: 32, 
+    storageUsedTB: 14.5, 
+    totalStorageTB: 24, 
+    storageUsedGB: 410, 
+    totalStorageGB: 600,
+    retentionDays: 90,
+    storageThreshold: 85,
+    fifoDelete: 10,
+    status: 'online' 
+  },
+  { 
+    id: 'nvr-06', 
+    name: 'NVR-Cafeteria-Public-06', 
+    ip: '192.168.1.106', 
+    brand: 'Hikvision',
+    channelsUsed: 5, 
+    totalChannels: 8, 
+    storageUsedTB: 3.8, 
+    totalStorageTB: 6, 
+    storageUsedGB: 115, 
+    totalStorageGB: 200,
+    retentionDays: 21,
+    storageThreshold: 85,
+    fifoDelete: 10,
+    status: 'online' 
+  },
+  { 
+    id: 'nvr-07', 
+    name: 'NVR-Rooftop-PTZ-07', 
+    ip: '192.168.1.107', 
+    brand: 'Bosch Security',
+    channelsUsed: 8, 
+    totalChannels: 16, 
+    storageUsedTB: 7.2, 
+    totalStorageTB: 10, 
+    storageUsedGB: 275, 
+    totalStorageGB: 400,
+    retentionDays: 30,
+    storageThreshold: 90,
+    fifoDelete: 10,
+    status: 'online' 
+  },
+  { 
+    id: 'nvr-08', 
+    name: 'NVR-Backup-Server-08', 
+    ip: '192.168.1.108', 
+    brand: 'Dahua Technology',
+    channelsUsed: 16, 
+    totalChannels: 32, 
+    storageUsedTB: 18.0, 
+    totalStorageTB: 32, 
+    storageUsedGB: 450, 
+    totalStorageGB: 800,
+    retentionDays: 120,
+    storageThreshold: 95,
+    fifoDelete: 5,
+    status: 'online' 
+  }
+];
+
+const INITIAL_NVR_CHANNELS: NVRChannelItem[] = [
+  { id: 'ch-01', nvrId: 'nvr-01', channelNo: 'CH-01', cameraName: 'Chennai Rooftop 360', ipAddress: '192.168.1.201', resolution: '4K UHD', fps: 30, bitrate: '4096 kbps', status: 'recording', storageUsed: '24.5 GB' },
+  { id: 'ch-02', nvrId: 'nvr-01', channelNo: 'CH-02', cameraName: 'Street PTZ', ipAddress: '192.168.1.202', resolution: '4K UHD', fps: 30, bitrate: '4096 kbps', status: 'recording', storageUsed: '21.8 GB' },
+  { id: 'ch-03', nvrId: 'nvr-01', channelNo: 'CH-03', cameraName: 'Server Room', ipAddress: '192.168.1.203', resolution: '1080p', fps: 60, bitrate: '2048 kbps', status: 'online', storageUsed: '18.2 GB' },
+  { id: 'ch-04', nvrId: 'nvr-01', channelNo: 'CH-04', cameraName: 'Warehouse Aisle', ipAddress: '192.168.1.204', resolution: '1080p', fps: 30, bitrate: '2048 kbps', status: 'online', storageUsed: '15.4 GB' },
+  { id: 'ch-05', nvrId: 'nvr-01', channelNo: 'CH-05', cameraName: 'Loading Bay Gate', ipAddress: '192.168.1.205', resolution: '1080p', fps: 30, bitrate: '2048 kbps', status: 'online', storageUsed: '19.1 GB' },
+  { id: 'ch-06', nvrId: 'nvr-01', channelNo: 'CH-06', cameraName: 'Reception Lobby', ipAddress: '192.168.1.206', resolution: '1080p', fps: 25, bitrate: '1536 kbps', status: 'recording', storageUsed: '14.2 GB' },
+  { id: 'ch-07', nvrId: 'nvr-01', channelNo: 'CH-07', cameraName: 'Perimeter Fence North', ipAddress: '192.168.1.207', resolution: '2K QHD', fps: 30, bitrate: '3072 kbps', status: 'standby', storageUsed: '22.0 GB' },
+  { id: 'ch-08', nvrId: 'nvr-01', channelNo: 'CH-08', cameraName: 'East Parking Lot', ipAddress: '192.168.1.208', resolution: '1080p', fps: 30, bitrate: '2048 kbps', status: 'online', storageUsed: '14.8 GB' },
+  { id: 'ch-09', nvrId: 'nvr-02', channelNo: 'CH-01', cameraName: 'Vault Entry', ipAddress: '192.168.1.211', resolution: '4K UHD', fps: 30, bitrate: '4096 kbps', status: 'recording', storageUsed: '28.0 GB' },
+  { id: 'ch-10', nvrId: 'nvr-02', channelNo: 'CH-02', cameraName: 'Vault Interior', ipAddress: '192.168.1.212', resolution: '4K UHD', fps: 30, bitrate: '4096 kbps', status: 'recording', storageUsed: '25.5 GB' },
+  { id: 'ch-11', nvrId: 'nvr-02', channelNo: 'CH-03', cameraName: 'Safe Deposit Corridor', ipAddress: '192.168.1.213', resolution: '1080p', fps: 30, bitrate: '2048 kbps', status: 'online', storageUsed: '16.2 GB' },
+  { id: 'ch-12', nvrId: 'nvr-02', channelNo: 'CH-04', cameraName: 'Emergency Exit West', ipAddress: '192.168.1.214', resolution: '1080p', fps: 25, bitrate: '1536 kbps', status: 'standby', storageUsed: '15.3 GB' }
+];
+
+const NVR_BRAND_OPTIONS = [
+  { label: 'Hikvision', value: 'Hikvision' },
+  { label: 'Dahua Technology', value: 'Dahua Technology' },
+  { label: 'Axis Communications', value: 'Axis Communications' },
+  { label: 'Hanwha Vision', value: 'Hanwha Vision' },
+  { label: 'Uniview (UNV)', value: 'Uniview (UNV)' },
+  { label: 'Bosch Security', value: 'Bosch Security' },
+  { label: 'Honeywell', value: 'Honeywell' },
+  { label: 'Generic ONVIF', value: 'Generic ONVIF' }
 ];
 
 const INITIAL_USERS: UserItem[] = [
@@ -255,14 +502,14 @@ export interface ZoneRecord {
 }
 
 const INITIAL_ZONE_RECORDS: ZoneRecord[] = [
-  { id: 'ZN-001', cameraName: 'Cafeteria Counter', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
-  { id: 'ZN-002', cameraName: 'Chennai Rooftop 360', isFavorite: true, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: true },
-  { id: 'ZN-003', cameraName: 'Loading Dock', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
-  { id: 'ZN-004', cameraName: 'Main Gate PTZ', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
-  { id: 'ZN-005', cameraName: 'Perimeter East', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
-  { id: 'ZN-006', cameraName: 'Server Room', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false },
-  { id: 'ZN-007', cameraName: 'Street PTZ', isFavorite: true, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: true },
-  { id: 'ZN-008', cameraName: 'Warehouse Aisle', isFavorite: false, streamingUrl: '--', zone: '--', useCase: '--', detectionActive: false }
+  { id: 'ZN-001', cameraName: 'Cafeteria Counter', isFavorite: false, streamingUrl: 'rtsp://192.168.1.101:554/ch1/main', zone: 'Cafeteria & Dining', useCase: 'Person Detection', detectionActive: false },
+  { id: 'ZN-002', cameraName: 'Chennai Rooftop 360', isFavorite: true, streamingUrl: 'rtsp://allcad-chennai.selfip.com:8554/RTMP_CAM23', zone: 'Rooftop Perimeter', useCase: 'Intrusion Detection', detectionActive: true },
+  { id: 'ZN-003', cameraName: 'Loading Dock', isFavorite: false, streamingUrl: 'rtsp://192.168.1.103:554/ch3/stream', zone: 'Logistics Bay North', useCase: 'PPE Compliance', detectionActive: false },
+  { id: 'ZN-004', cameraName: 'Main Gate PTZ', isFavorite: false, streamingUrl: 'rtsp://allcad-chennai.selfip.com:8554/0b2a40cc-9406-4074-9549-cbe113b10b0e', zone: 'Main Entrance Gate', useCase: 'ANPR', detectionActive: false },
+  { id: 'ZN-005', cameraName: 'Perimeter East', isFavorite: false, streamingUrl: 'rtsp://192.168.1.105:554/ch5/live', zone: 'East Boundary Fence', useCase: 'Intrusion Detection', detectionActive: false },
+  { id: 'ZN-006', cameraName: 'Server Room Vault', isFavorite: true, streamingUrl: 'rtsp://192.168.1.106:554/ch6/vault', zone: 'Data Center Vault', useCase: 'Face Recognition', detectionActive: true },
+  { id: 'ZN-007', cameraName: 'Street PTZ', isFavorite: true, streamingUrl: 'rtsp://allcad-chennai.selfip.com:8554/0b2a40cc-9406-4074-9549-cbe113b10b0e', zone: 'West Crossroad', useCase: 'Vehicle Detection', detectionActive: true },
+  { id: 'ZN-008', cameraName: 'Warehouse Aisle', isFavorite: false, streamingUrl: 'rtsp://192.168.1.108:554/ch8/safety', zone: 'Central Warehouse', useCase: 'PPE Compliance', detectionActive: false }
 ];
 
 export interface AIUseCaseItem {
@@ -277,11 +524,12 @@ export interface AIUseCaseItem {
 
 const USE_CASE_OPTIONS = [
   { label: 'All Use Cases', value: 'all' },
-  { label: 'Perimeter Defense', value: 'Perimeter Defense' },
-  { label: 'Identity & Access', value: 'Identity & Access' },
-  { label: 'Gate Automation', value: 'Gate Automation' },
-  { label: 'Workplace Safety', value: 'Workplace Safety' },
-  { label: 'Behavioral Analysis', value: 'Behavioral Analysis' }
+  { label: 'Person Detection', value: 'Person Detection' },
+  { label: 'Intrusion Detection', value: 'Intrusion Detection' },
+  { label: 'PPE Compliance', value: 'PPE Compliance' },
+  { label: 'ANPR', value: 'ANPR' },
+  { label: 'Face Recognition', value: 'Face Recognition' },
+  { label: 'Vehicle Detection', value: 'Vehicle Detection' }
 ];
 
 const RECYCLE_TYPE_OPTIONS = [
@@ -379,6 +627,7 @@ export function AdministrationPage({
   const [onvifFilter, setOnvifFilter] = useState('all');
   const [rowsPerPage, setRowsPerPage] = useState('5');
   const [currentPage, setCurrentPage] = useState(1);
+  const [cameraSortOrder, setCameraSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // Modals & Preview State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -396,7 +645,173 @@ export function AdministrationPage({
   // Other Tabs State
   const [zones, setZones] = useState<ZoneItem[]>(INITIAL_ZONES);
   const [aiModels, setAiModels] = useState<AIModelItem[]>(INITIAL_AI_MODELS);
-  const [nvrs] = useState<NVRItem[]>(INITIAL_NVRS);
+  const [nvrs, setNvrs] = useState<NVRItem[]>(INITIAL_NVRS);
+  const [selectedNvrId, setSelectedNvrId] = useState<string>('nvr-01');
+  const selectedNvr = useMemo(() => {
+    return nvrs.find(n => n.id === selectedNvrId) || nvrs[0];
+  }, [nvrs, selectedNvrId]);
+
+  const [nvrName, setNvrName] = useState(selectedNvr.name);
+  const [nvrIp, setNvrIp] = useState(selectedNvr.ip);
+  const [nvrBrand, setNvrBrand] = useState(selectedNvr.brand || 'Hikvision');
+  const [retentionDays, setRetentionDays] = useState(String(selectedNvr.retentionDays || 30));
+  const [storageThreshold, setStorageThreshold] = useState(String(selectedNvr.storageThreshold || 90));
+  const [fifoDelete, setFifoDelete] = useState(String(selectedNvr.fifoDelete ?? 10));
+  const [nvrFeedback, setNvrFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [nvrErrors, setNvrErrors] = useState<Record<string, string | undefined>>({});
+  const [selectedNvrIds, setSelectedNvrIds] = useState<string[]>([]);
+
+  // Add NVR Modal State
+  const [isAddNvrModalOpen, setIsAddNvrModalOpen] = useState(false);
+  const [newNvrName, setNewNvrName] = useState('');
+  const [newNvrIp, setNewNvrIp] = useState('');
+  const [newNvrBrand, setNewNvrBrand] = useState('Hikvision');
+  const [newNvrError, setNewNvrError] = useState('');
+
+  // Delete Single NVR Modal State
+  const [nvrToDelete, setNvrToDelete] = useState<NVRItem | null>(null);
+
+  const areAllNvrsSelected = nvrs.length > 0 && nvrs.every(n => selectedNvrIds.includes(n.id));
+
+  const handleToggleAllNvrs = () => {
+    if (areAllNvrsSelected) {
+      setSelectedNvrIds([]);
+    } else {
+      setSelectedNvrIds(nvrs.map(n => n.id));
+    }
+  };
+
+  const handleToggleNvr = (id: string) => {
+    setSelectedNvrIds(prev => 
+      prev.includes(id) ? prev.filter(nId => nId !== id) : [...prev, id]
+    );
+  };
+
+  const handleAddNvr = () => {
+    if (!newNvrName.trim()) {
+      setNewNvrError('NVR Name is required');
+      return;
+    }
+    const ipPattern = /^(\d{1,3}\.){3}\d{1,3}$/;
+    if (!newNvrIp.trim() || !ipPattern.test(newNvrIp.trim())) {
+      setNewNvrError('Please enter a valid IP address (e.g. 192.168.1.100)');
+      return;
+    }
+    const newId = `nvr-0${nvrs.length + 1}`;
+    const createdNvr: NVRItem = {
+      id: newId,
+      name: newNvrName.trim(),
+      ip: newNvrIp.trim(),
+      brand: newNvrBrand,
+      channelsUsed: 0,
+      totalChannels: 16,
+      storageUsedTB: 0,
+      totalStorageTB: 16,
+      storageUsedGB: 0,
+      totalStorageGB: 500,
+      retentionDays: 30,
+      storageThreshold: 90,
+      fifoDelete: 10,
+      status: 'online'
+    };
+    setNvrs(prev => [...prev, createdNvr]);
+    setSelectedNvrId(newId);
+    setIsAddNvrModalOpen(false);
+    setNewNvrName('');
+    setNewNvrIp('');
+    setNewNvrBrand('Hikvision');
+    setNewNvrError('');
+    setNvrFeedback({ type: 'success', message: `NVR "${createdNvr.name}" added successfully.` });
+    setTimeout(() => setNvrFeedback(null), 4000);
+  };
+
+  const handleConfirmDeleteSingleNvr = () => {
+    if (!nvrToDelete) return;
+    const remaining = nvrs.filter(n => n.id !== nvrToDelete.id);
+    setNvrs(remaining);
+    if (selectedNvrId === nvrToDelete.id && remaining.length > 0) {
+      setSelectedNvrId(remaining[0].id);
+    }
+    setNvrFeedback({ type: 'success', message: `NVR "${nvrToDelete.name}" deleted successfully.` });
+    setNvrToDelete(null);
+    setTimeout(() => setNvrFeedback(null), 4000);
+  };
+
+  useEffect(() => {
+    setNvrName(selectedNvr.name);
+    setNvrIp(selectedNvr.ip);
+    setNvrBrand(selectedNvr.brand || 'Hikvision');
+    setRetentionDays(String(selectedNvr.retentionDays || 30));
+    setStorageThreshold(String(selectedNvr.storageThreshold || 90));
+    setFifoDelete(String(selectedNvr.fifoDelete ?? 10));
+    setNvrErrors({});
+  }, [selectedNvrId]);
+
+  const handleSaveNvrSettings = () => {
+    const errors: Record<string, string> = {};
+    const days = parseInt(retentionDays, 10);
+    if (isNaN(days) || days <= 0) {
+      errors.retention = 'Retention period must be greater than 0';
+    }
+    const threshold = parseInt(storageThreshold, 10);
+    if (isNaN(threshold) || threshold < 1 || threshold > 100) {
+      errors.threshold = 'Threshold must be between 1% and 100%';
+    }
+    const fifoVal = parseInt(fifoDelete, 10);
+    if (isNaN(fifoVal) || fifoVal < 1 || fifoVal > 100) {
+      errors.fifo = 'FIFO threshold must be between 1% and 100%';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setNvrErrors(errors);
+      return;
+    }
+
+    setNvrs(prev => prev.map(item => {
+      if (item.id === selectedNvrId) {
+        return {
+          ...item,
+          name: nvrName.trim(),
+          ip: nvrIp.trim(),
+          brand: nvrBrand,
+          retentionDays: days,
+          storageThreshold: threshold,
+          fifoDelete: fifoVal
+        };
+      }
+      return item;
+    }));
+
+    setNvrFeedback({
+      type: 'success',
+      message: 'NVR configuration and storage settings saved successfully.'
+    });
+    setTimeout(() => {
+      setNvrFeedback(null);
+    }, 4000);
+  };
+
+  const handleConfirmDeleteRecordings = () => {
+    setNvrs(prev => prev.map(item => {
+      if (item.id === selectedNvrId) {
+        return {
+          ...item,
+          storageUsedGB: 0,
+          storageUsedTB: 0
+        };
+      }
+      return item;
+    }));
+    setIsDeleteModalOpen(false);
+    setNvrFeedback({
+      type: 'success',
+      message: `All recordings for ${selectedNvr.name} have been permanently deleted.`
+    });
+    setTimeout(() => {
+      setNvrFeedback(null);
+    }, 4000);
+  };
   const [users] = useState<UserItem[]>(INITIAL_USERS);
   const [recycleBin, setRecycleBin] = useState<DeletedItem[]>(INITIAL_RECYCLE_BIN);
 
@@ -407,7 +822,7 @@ export function AdministrationPage({
 
   // Filtered cameras
   const filteredCameras = useMemo(() => {
-    return cameras.filter(cam => {
+    const list = cameras.filter(cam => {
       if (filterFavoritesOnly && !cam.isFavorite) {
         return false;
       }
@@ -426,7 +841,12 @@ export function AdministrationPage({
       }
       return true;
     });
-  }, [cameras, filterFavoritesOnly, onvifFilter, searchQuery]);
+
+    return [...list].sort((a, b) => {
+      const cmp = a.name.localeCompare(b.name);
+      return cameraSortOrder === 'asc' ? cmp : -cmp;
+    });
+  }, [cameras, filterFavoritesOnly, onvifFilter, searchQuery, cameraSortOrder]);
 
   // Pagination calculation
   const totalItems = filteredCameras.length;
@@ -561,9 +981,15 @@ export function AdministrationPage({
   const [zoneUseCaseFilter, setZoneUseCaseFilter] = useState('all');
   const [zoneRowsPerPage, setZoneRowsPerPage] = useState('5');
   const [zoneCurrentPage, setZoneCurrentPage] = useState(1);
+  const [zoneSortOrder, setZoneSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const toggleZoneDetection = (id: string) => {
     setZoneRecords(prev => prev.map(item => item.id === id ? { ...item, detectionActive: !item.detectionActive } : item));
+  };
+
+  const toggleZoneFavorite = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setZoneRecords(prev => prev.map(item => item.id === id ? { ...item, isFavorite: !item.isFavorite } : item));
   };
 
   const resetZoneFilters = () => {
@@ -571,12 +997,14 @@ export function AdministrationPage({
     setZoneFavOnly(false);
     setZoneDateFilter('all');
     setZoneUseCaseFilter('all');
+    setZoneSortOrder('asc');
     setZoneCurrentPage(1);
   };
 
   const filteredZoneRecords = useMemo(() => {
-    return zoneRecords.filter(item => {
+    const list = zoneRecords.filter(item => {
       if (zoneFavOnly && !item.isFavorite) return false;
+      if (zoneUseCaseFilter !== 'all' && item.useCase !== zoneUseCaseFilter) return false;
       if (zoneSearch.trim()) {
         const q = zoneSearch.toLowerCase();
         const match = 
@@ -588,7 +1016,12 @@ export function AdministrationPage({
       }
       return true;
     });
-  }, [zoneRecords, zoneFavOnly, zoneSearch]);
+
+    return [...list].sort((a, b) => {
+      const cmp = a.cameraName.localeCompare(b.cameraName);
+      return zoneSortOrder === 'asc' ? cmp : -cmp;
+    });
+  }, [zoneRecords, zoneFavOnly, zoneSearch, zoneUseCaseFilter, zoneSortOrder]);
 
   const zonePageSize = parseInt(zoneRowsPerPage, 10) || 5;
   const totalZonePages = Math.ceil(filteredZoneRecords.length / zonePageSize) || 1;
@@ -598,7 +1031,21 @@ export function AdministrationPage({
   }, [filteredZoneRecords, zoneCurrentPage, zonePageSize]);
 
   // AI MANAGEMENT STATE (Matching Reference Screenshot 2)
-  const [aiSubTab, setAiSubTab] = useState<'models' | 'usecase' | 'rules'>('usecase');
+  const [aiSubTab, setAiSubTab] = useState<'models' | 'usecase' | 'rules'>('models');
+  const [aiModelSortOrder, setAiModelSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const toggleAiModelFavorite = (id: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setAiModels(prev => prev.map(m => m.id === id ? { ...m, isFavorite: !m.isFavorite } : m));
+  };
+
+  const sortedAiModels = useMemo(() => {
+    return [...aiModels].sort((a, b) => {
+      return aiModelSortOrder === 'asc'
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name);
+    });
+  }, [aiModels, aiModelSortOrder]);
   const [aiSearch, setAiSearch] = useState('');
   const [aiFavOnly, setAiFavOnly] = useState(false);
   const [aiViewMode, setAiViewMode] = useState<'table' | 'grid'>('table');
@@ -870,12 +1317,22 @@ export function AdministrationPage({
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th style={{ width: '22%' }}>Camera Name</th>
-                      <th style={{ width: '28%' }}>360° Streaming URL</th>
-                      <th style={{ width: '28%' }}>PTZ Streaming URL</th>
-                      <th style={{ width: '8%', textAlign: 'center' }}>ONVIF</th>
-                      <th style={{ width: '14%' }}>Created Date</th>
-                      <th style={{ width: '8%', textAlign: 'right' }}>Actions</th>
+                      <th 
+                        className="admin-th admin-th-sortable" 
+                        style={{ width: '22%' }}
+                        onClick={() => setCameraSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                        title={`Sort by Camera Name (${cameraSortOrder === 'asc' ? 'Descending' : 'Ascending'})`}
+                      >
+                        <div className="admin-th-content">
+                          <span>Camera Name</span>
+                          <span className="admin-sort-indicator">{cameraSortOrder === 'asc' ? '↑' : '↓'}</span>
+                        </div>
+                      </th>
+                      <th className="admin-th" style={{ width: '28%' }}>360° Streaming URL</th>
+                      <th className="admin-th" style={{ width: '28%' }}>PTZ Streaming URL</th>
+                      <th className="admin-th" style={{ width: '8%', textAlign: 'center' }}>ONVIF</th>
+                      <th className="admin-th" style={{ width: '14%' }}>Created Date</th>
+                      <th className="admin-th" style={{ width: '8%', textAlign: 'right' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1192,37 +1649,58 @@ export function AdministrationPage({
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>ID</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <th className="admin-th">ID</th>
+                      <th 
+                        className="admin-th admin-th-sortable"
+                        onClick={() => setZoneSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                        title={`Sort by Camera Name (${zoneSortOrder === 'asc' ? 'Descending' : 'Ascending'})`}
+                      >
+                        <div className="admin-th-content">
                           <span>Camera Name</span>
-                          <span>↑</span>
+                          <span className="admin-sort-indicator">{zoneSortOrder === 'asc' ? '↑' : '↓'}</span>
                         </div>
                       </th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Streaming URL</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Zone</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Use Case</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Detection Status</th>
+                      <th className="admin-th">Streaming URL</th>
+                      <th className="admin-th">Zone</th>
+                      <th className="admin-th">Use Case</th>
+                      <th className="admin-th">Detection Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedZoneRecords.map(item => (
                       <tr key={item.id}>
-                        <td style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '13px' }}>
+                        <td className="admin-cell-id">
                           {item.id}
                         </td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Video size={16} color="var(--text-muted)" />
-                            <span style={{ fontWeight: 500 }}>{item.cameraName}</span>
+                          <div className="admin-cell-camera">
+                            <Video size={16} className="admin-camera-icon" />
+                            <span>{item.cameraName}</span>
                             {item.isFavorite && (
-                              <Star size={14} fill="#f59e0b" color="#f59e0b" />
+                              <button
+                                type="button"
+                                className="admin-star-btn"
+                                onClick={(e) => toggleZoneFavorite(item.id, e)}
+                                title="Favorite camera"
+                              >
+                                <Star size={14} fill="var(--warning, #f59e0b)" color="var(--warning, #f59e0b)" />
+                              </button>
                             )}
                           </div>
                         </td>
-                        <td style={{ color: 'var(--text-muted)' }}>{item.streamingUrl}</td>
-                        <td style={{ color: 'var(--text-muted)' }}>{item.zone}</td>
-                        <td style={{ color: 'var(--text-muted)' }}>{item.useCase}</td>
+                        <td style={{ maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.streamingUrl}>
+                          <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                            {item.streamingUrl}
+                          </span>
+                        </td>
+                        <td style={{ color: 'var(--text-main)', fontSize: '13px', fontWeight: 500 }}>
+                          {item.zone}
+                        </td>
+                        <td>
+                          <span style={{ color: 'var(--primary)', fontWeight: 600, fontSize: '12.5px' }}>
+                            {item.useCase}
+                          </span>
+                        </td>
                         <td>
                           <div className="admin-detection-cell">
                             <span className={`admin-status-pill ${item.detectionActive ? 'active' : 'inactive'}`}>
@@ -1248,7 +1726,7 @@ export function AdministrationPage({
                 {paginatedZoneRecords.map(item => (
                   <div key={item.id} className="admin-grid-card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#4338ca' }}>{item.id}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--primary)' }}>{item.id}</span>
                       <div className="admin-detection-cell">
                         <span className={`admin-status-pill ${item.detectionActive ? 'active' : 'inactive'}`}>
                           {item.detectionActive ? 'Active' : 'Inactive'}
@@ -1418,13 +1896,13 @@ export function AdministrationPage({
                     <table className="admin-table">
                       <thead>
                         <tr>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Use Case ID</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Use Case Name</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Assigned Camera</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>AI Vision Model</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Sensitivity</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Status</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+                          <th className="admin-th">Use Case ID</th>
+                          <th className="admin-th">Use Case Name</th>
+                          <th className="admin-th">Assigned Camera</th>
+                          <th className="admin-th">AI Vision Model</th>
+                          <th className="admin-th">Sensitivity</th>
+                          <th className="admin-th">Status</th>
+                          <th className="admin-th" style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1459,57 +1937,99 @@ export function AdministrationPage({
               </>
             )}
 
-            {/* SUBTAB: AI Models */}
+            {/* SUBTAB: AI Models (Matching Reference Table Image) */}
             {aiSubTab === 'models' && (
-              <div className="admin-table-wrapper" style={{ marginTop: '12px' }}>
+              <div className="admin-table-wrapper" style={{ marginTop: '4px' }}>
                 <table className="admin-table">
                   <thead>
                     <tr>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>AI Model</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Category</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Sensitivity</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>Monitored Feeds</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600 }}>State</th>
-                      <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Toggle</th>
+                      <th className="admin-th" style={{ width: '110px' }}>ID</th>
+                      <th 
+                        className="admin-th admin-th-sortable" 
+                        style={{ width: '22%' }}
+                        onClick={() => setAiModelSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                        title={`Sort by Use Case (${aiModelSortOrder === 'asc' ? 'Descending' : 'Ascending'})`}
+                      >
+                        <div className="admin-th-content">
+                          <span>AI Detection Use Case</span>
+                          <span style={{ fontSize: '13px', fontWeight: 600 }}>{aiModelSortOrder === 'asc' ? '\u2191' : '\u2193'}</span>
+                        </div>
+                      </th>
+                      <th className="admin-th" style={{ width: '18%' }}>Model File</th>
+                      <th className="admin-th" style={{ width: '16%' }}>Detection Accuracy</th>
+                      <th className="admin-th" style={{ width: '28%' }}>Description</th>
+                      <th className="admin-th" style={{ width: '110px' }}>Uploaded On</th>
+                      <th className="admin-th" style={{ width: '70px', textAlign: 'right' }}>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {aiModels.map(model => (
+                    {sortedAiModels.map(model => (
                       <tr key={model.id}>
-                        <td style={{ fontWeight: 600 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <BrainCircuit size={16} color="var(--primary)" />
-                            <span>{model.name}</span>
+                        <td style={{ color: 'var(--text-secondary)', fontWeight: 500, fontSize: '13px' }}>
+                          {model.id}
+                        </td>
+                        <td>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '13.5px' }}>
+                              {model.name}
+                            </span>
+                            {model.isFavorite ? (
+                              <span
+                                style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}
+                                onClick={(e) => toggleAiModelFavorite(model.id, e)}
+                                title="Remove from favorites"
+                              >
+                                <Star 
+                                  size={14} 
+                                  fill="#f59e0b" 
+                                  color="#f59e0b" 
+                                  style={{ flexShrink: 0 }}
+                                />
+                              </span>
+                            ) : model.hasStar ? (
+                              <span
+                                style={{ display: 'inline-flex', alignItems: 'center', cursor: 'pointer' }}
+                                onClick={(e) => toggleAiModelFavorite(model.id, e)}
+                                title="Add to favorites"
+                              >
+                                <Star 
+                                  size={14} 
+                                  color="var(--text-muted, #94a3b8)" 
+                                  style={{ flexShrink: 0 }}
+                                />
+                              </span>
+                            ) : null}
                           </div>
                         </td>
                         <td>
-                          <Badge variant="neutral">{model.category}</Badge>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+                            {model.modelFile}
+                          </span>
                         </td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ flex: 1, minWidth: '80px', height: '6px', background: 'var(--border-light)', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ width: `${model.sensitivity}%`, height: '100%', background: 'var(--primary)', borderRadius: '3px' }} />
-                            </div>
-                            <span style={{ fontSize: '12px', fontWeight: 600 }}>{model.sensitivity}%</span>
-                          </div>
+                          <span className="admin-accuracy-badge">
+                            {model.accuracy}%
+                          </span>
                         </td>
-                        <td>{model.assignedCameras} Streams</td>
                         <td>
-                          <Badge variant={model.isEnabled ? 'success' : 'neutral'}>
-                            {model.isEnabled ? 'ENABLED' : 'PAUSED'}
-                          </Badge>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.4 }}>
+                            {model.description}
+                          </span>
+                        </td>
+                        <td>
+                          <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+                            {model.uploadedOn}
+                          </span>
                         </td>
                         <td style={{ textAlign: 'right' }}>
-                          <label className="admin-toggle-switch" style={{ display: 'inline-block' }}>
-                            <input
-                              type="checkbox"
-                              checked={model.isEnabled}
-                              onChange={() => {
-                                setAiModels(prev => prev.map(m => m.id === model.id ? { ...m, isEnabled: !m.isEnabled } : m));
-                              }}
-                            />
-                            <span className="admin-toggle-slider" />
-                          </label>
+                          <button
+                            type="button"
+                            className="admin-action-btn admin-btn-dots"
+                            title="Actions"
+                            aria-label={`Actions for ${model.name}`}
+                          >
+                            <MoreVertical size={16} />
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -1608,17 +2128,17 @@ export function AdministrationPage({
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Item Name</th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Type</th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>
-                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <th className="admin-th">Item Name</th>
+                    <th className="admin-th">Type</th>
+                    <th className="admin-th">
+                      <div className="admin-th-content">
                         <span>Deleted Date</span>
-                        <span>↓</span>
+                        <span className="admin-sort-indicator">↓</span>
                       </div>
                     </th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Days Remaining</th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Original Location</th>
-                    {recycleItems.length > 0 && <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Actions</th>}
+                    <th className="admin-th">Days Remaining</th>
+                    <th className="admin-th">Original Location</th>
+                    {recycleItems.length > 0 && <th className="admin-th" style={{ textAlign: 'right' }}>Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -1674,68 +2194,382 @@ export function AdministrationPage({
           </div>
         )}
 
-        {/* TAB 5: NVR MANAGEMENT */}
+        {/* TAB 5: NVR MANAGEMENT (Two-Column Configuration Layout) */}
         {activeTab === 'nvr' && (
-          <div className="admin-tab-pane">
-            <div className="admin-table-wrapper">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>NVR Device</th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>IP Address</th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Channels Active</th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>Storage Utilization</th>
-                    <th style={{ color: '#4338ca', fontWeight: 600 }}>State</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {nvrs.map(nvr => (
-                    <tr key={nvr.id}>
-                      <td style={{ fontWeight: 600 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <HardDrive size={16} color="var(--primary)" />
-                          <span>{nvr.name}</span>
-                        </div>
-                      </td>
-                      <td style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '12.5px' }}>{nvr.ip}</td>
-                      <td><strong>{nvr.channelsUsed}</strong> / {nvr.totalChannels} Channels</td>
-                      <td>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxWidth: '200px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
-                            <span>{nvr.storageUsedTB} TB used</span>
-                            <span>{nvr.totalStorageTB} TB total</span>
-                          </div>
-                          <div style={{ width: '100%', height: '6px', background: 'var(--border-light)', borderRadius: '3px', overflow: 'hidden' }}>
-                            <div 
-                              style={{ 
-                                width: `${(nvr.storageUsedTB / nvr.totalStorageTB) * 100}%`, 
-                                height: '100%', 
-                                background: 'var(--primary)', 
-                                borderRadius: '3px' 
-                              }} 
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <Badge variant={nvr.status === 'online' ? 'success' : 'danger'}>
-                          {nvr.status.toUpperCase()}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <div className="admin-tab-pane" style={{ overflowY: 'auto' }}>
+            {nvrFeedback && (
+              <div className={`nvr-feedback-banner ${nvrFeedback.type}`}>
+                {nvrFeedback.message}
+              </div>
+            )}
+
+            <div className="nvr-layout-grid">
+              
+              {/* LEFT CARD: NVR CONFIGURATION */}
+              <div className="nvr-card">
+                <div className="nvr-card-header">
+                  <h3 className="nvr-card-title">NVR Configuration</h3>
+                  <button
+                    type="button"
+                    className="nvr-btn-add-icon"
+                    onClick={() => {
+                      setNewNvrName('');
+                      setNewNvrIp('');
+                      setNewNvrBrand('Hikvision');
+                      setNewNvrError('');
+                      setIsAddNvrModalOpen(true);
+                    }}
+                    title="Add NVR"
+                    aria-label="Add NVR"
+                  >
+                    <Plus size={18} strokeWidth={2.4} />
+                  </button>
+                </div>
+
+                <div className="nvr-form-body">
+                  <div className="nvr-table-section">
+                    <div className="admin-table-wrapper" style={{ maxHeight: '490px', overflowY: 'auto', flex: 1, minHeight: 0 }}>
+                      <table className="admin-table">
+                        <thead>
+                          <tr>
+                            <th className="admin-th admin-th-checkbox">
+                              <input
+                                type="checkbox"
+                                className="admin-table-checkbox"
+                                checked={areAllNvrsSelected}
+                                onChange={handleToggleAllNvrs}
+                                title="Select all NVRs"
+                                aria-label="Select all NVRs"
+                              />
+                            </th>
+                            <th className="admin-th">NVR Name</th>
+                            <th className="admin-th">NVR IP</th>
+                            <th className="admin-th">NVR Brand</th>
+                            <th className="admin-th" style={{ width: '60px', textAlign: 'right' }}>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {nvrs.length === 0 ? (
+                            <tr>
+                              <td colSpan={5} style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>
+                                No NVR systems configured. Click the + button above to add one.
+                              </td>
+                            </tr>
+                          ) : (
+                            nvrs.map(n => {
+                              const isSelected = selectedNvrIds.includes(n.id);
+                              const isCurrent = n.id === selectedNvrId;
+                              return (
+                                <tr 
+                                  key={n.id} 
+                                  className={isSelected || isCurrent ? 'selected' : ''}
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={() => setSelectedNvrId(n.id)}
+                                >
+                                  <td className="admin-td admin-td-checkbox" onClick={e => e.stopPropagation()}>
+                                    <input
+                                      type="checkbox"
+                                      className="admin-table-checkbox"
+                                      checked={isSelected}
+                                      onChange={() => handleToggleNvr(n.id)}
+                                      aria-label={`Select ${n.name}`}
+                                    />
+                                  </td>
+                                  <td>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                                      <HardDrive size={15} style={{ color: isCurrent ? 'var(--primary)' : 'var(--text-muted)', flexShrink: 0 }} />
+                                      <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{n.name}</span>
+                                      {isCurrent && (
+                                        <Badge variant="primary">Active</Badge>
+                                      )}
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <span style={{ fontFamily: 'var(--font-mono, monospace)', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                      {n.ip}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <span style={{ fontSize: '13px', color: 'var(--text-main)' }}>
+                                      {n.brand || 'Hikvision'}
+                                    </span>
+                                  </td>
+                                  <td style={{ textAlign: 'right' }} onClick={e => e.stopPropagation()}>
+                                    <button
+                                      type="button"
+                                      className="admin-action-btn delete"
+                                      onClick={() => setNvrToDelete(n)}
+                                      title="Delete NVR"
+                                      aria-label={`Delete ${n.name}`}
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT CARD: STORAGE CONFIGURATION */}
+              <div className="nvr-card">
+                <div className="nvr-card-header">
+                  <h3 className="nvr-card-title">Storage Configuration</h3>
+                  <Badge variant={selectedNvr.status === 'online' ? 'success' : 'danger'}>
+                    {selectedNvr.status.toUpperCase()}
+                  </Badge>
+                </div>
+
+                {/* Circular Storage Usage Indicator (Matching Reference Image) */}
+                <div className="nvr-storage-gauge-wrap">
+                  <div className="nvr-storage-gauge-svg-container">
+                    <svg viewBox="0 0 180 180" className="nvr-storage-gauge-svg">
+                      {/* Base Track Ring */}
+                      <circle
+                        cx="90"
+                        cy="90"
+                        r="68"
+                        fill="none"
+                        stroke="color-mix(in srgb, var(--text-main) 8%, transparent)"
+                        strokeWidth="13"
+                      />
+                      {/* Segment 1: Red/Pink (Left) */}
+                      <circle
+                        cx="90"
+                        cy="90"
+                        r="68"
+                        fill="none"
+                        stroke="#f43f5e"
+                        strokeWidth="13"
+                        strokeDasharray="62 365"
+                        strokeDashoffset="120"
+                        strokeLinecap="round"
+                      />
+                      {/* Segment 2: Orange (Top-Left) */}
+                      <circle
+                        cx="90"
+                        cy="90"
+                        r="68"
+                        fill="none"
+                        stroke="#f97316"
+                        strokeWidth="13"
+                        strokeDasharray="62 365"
+                        strokeDashoffset="50"
+                        strokeLinecap="round"
+                      />
+                      {/* Segment 3: Yellow/Gold (Top-Right & Right) */}
+                      <circle
+                        cx="90"
+                        cy="90"
+                        r="68"
+                        fill="none"
+                        stroke="#eab308"
+                        strokeWidth="13"
+                        strokeDasharray="145 282"
+                        strokeDashoffset="-20"
+                        strokeLinecap="round"
+                      />
+                      {/* Segment 4: Vibrant Blue (Bottom) */}
+                      <circle
+                        cx="90"
+                        cy="90"
+                        r="68"
+                        fill="none"
+                        stroke="#3b82f6"
+                        strokeWidth="13"
+                        strokeDasharray="70 357"
+                        strokeDashoffset="-180"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+
+                    <div className="nvr-gauge-center-content">
+                      <div className="nvr-gauge-num">
+                        <span>{selectedNvr.storageUsedGB ?? 150}</span>
+                        <span className="nvr-gauge-unit">GB</span>
+                      </div>
+                      <span className="nvr-gauge-subtext">
+                        of {selectedNvr.totalStorageGB ?? 500} GB ({Math.min(100, Math.round(((selectedNvr.storageUsedGB ?? 150) / (selectedNvr.totalStorageGB ?? 500)) * 100))}%)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Storage Settings: 3 Fields in Exact Order */}
+                <div className="nvr-storage-settings-group">
+                  {/* 1. Files Retention Period */}
+                  <TextField
+                    label="Files Retention Period"
+                    value={retentionDays}
+                    onChange={(e) => {
+                      setRetentionDays(e.target.value);
+                      if (nvrErrors.retention) setNvrErrors(prev => ({ ...prev, retention: undefined }));
+                    }}
+                    error={nvrErrors.retention}
+                    placeholder="e.g. 30"
+                  />
+
+                  {/* 2. Storage Full Threshold */}
+                  <TextField
+                    label="Storage Full Threshold (%)"
+                    value={storageThreshold}
+                    onChange={(e) => {
+                      setStorageThreshold(e.target.value);
+                      if (nvrErrors.threshold) setNvrErrors(prev => ({ ...prev, threshold: undefined }));
+                    }}
+                    error={nvrErrors.threshold}
+                    placeholder="e.g. 90"
+                  />
+
+                  {/* 3. FIFO delete at threshold (%) */}
+                  <TextField
+                    label="FIFO delete at threshold (%)"
+                    value={fifoDelete}
+                    onChange={(e) => {
+                      setFifoDelete(e.target.value);
+                      if (nvrErrors.fifo) setNvrErrors(prev => ({ ...prev, fifo: undefined }));
+                    }}
+                    error={nvrErrors.fifo}
+                    placeholder="e.g. 10"
+                  />
+                </div>
+
+                {/* Action Buttons: Save Settings & Delete All Recordings */}
+                <div className="nvr-storage-actions">
+                  <Button
+                    variant="primary"
+                    onClick={handleSaveNvrSettings}
+                    className="nvr-btn-save"
+                  >
+                    Save Settings
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => setIsDeleteModalOpen(true)}
+                    className="nvr-btn-delete"
+                  >
+                    Delete All Recordings
+                  </Button>
+                </div>
+
+              </div>
+
             </div>
 
-            {/* Pagination footer */}
-            <div className="admin-pagination">
-              <RowsPerPageSelector
-                value={5}
-                onChange={() => {}}
-                options={[5, 10, 15, 25]}
-              />
-            </div>
+            {/* Explicit Confirmation Modal for Delete All Recordings */}
+            <Modal
+              isOpen={isDeleteModalOpen}
+              onClose={() => setIsDeleteModalOpen(false)}
+              title="Delete All Recordings"
+              icon={<AlertTriangle size={20} color="var(--danger, #ef4444)" />}
+              maxWidth="460px"
+              footer={
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                  <Button variant="secondary" onClick={() => setIsDeleteModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleConfirmDeleteRecordings}>
+                    Confirm Delete
+                  </Button>
+                </div>
+              }
+            >
+              <div style={{ padding: '6px 0', color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.5 }}>
+                <p style={{ margin: '0 0 10px' }}>
+                  Are you sure you want to delete all surveillance recordings from <strong>{selectedNvr.name}</strong>?
+                </p>
+                <p style={{ margin: 0, color: 'var(--danger, #ef4444)', fontSize: '13px', fontWeight: 500 }}>
+                  ⚠️ This action is permanent and cannot be undone. All video history on this NVR will be erased.
+                </p>
+              </div>
+            </Modal>
+
+            {/* Add NVR Modal */}
+            <Modal
+              isOpen={isAddNvrModalOpen}
+              onClose={() => setIsAddNvrModalOpen(false)}
+              title="Add NVR System"
+              icon={<Plus size={20} color="var(--primary)" />}
+              maxWidth="460px"
+              footer={
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                  <Button variant="secondary" onClick={() => setIsAddNvrModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="primary" onClick={handleAddNvr}>
+                    Add NVR
+                  </Button>
+                </div>
+              }
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '6px 0' }}>
+                {newNvrError && (
+                  <div style={{ color: 'var(--danger, #ef4444)', fontSize: '13px', fontWeight: 500 }}>
+                    {newNvrError}
+                  </div>
+                )}
+                <TextField
+                  label="NVR Name"
+                  value={newNvrName}
+                  onChange={(e) => {
+                    setNewNvrName(e.target.value);
+                    if (newNvrError) setNewNvrError('');
+                  }}
+                  placeholder="e.g. NVR-Warehouse-03"
+                />
+                <TextField
+                  label="NVR IP Address"
+                  value={newNvrIp}
+                  onChange={(e) => {
+                    setNewNvrIp(e.target.value);
+                    if (newNvrError) setNewNvrError('');
+                  }}
+                  placeholder="e.g. 192.168.1.103"
+                />
+                <div className="nvr-field-group">
+                  <CustomSmoothDropdown
+                    label="NVR Brand"
+                    value={newNvrBrand}
+                    onChange={setNewNvrBrand}
+                    options={NVR_BRAND_OPTIONS}
+                  />
+                </div>
+              </div>
+            </Modal>
+
+            {/* Confirmation Modal for Delete Single NVR Row */}
+            <Modal
+              isOpen={!!nvrToDelete}
+              onClose={() => setNvrToDelete(null)}
+              title="Delete NVR"
+              icon={<AlertTriangle size={20} color="var(--danger, #ef4444)" />}
+              maxWidth="440px"
+              footer={
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                  <Button variant="secondary" onClick={() => setNvrToDelete(null)}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={handleConfirmDeleteSingleNvr}>
+                    Delete
+                  </Button>
+                </div>
+              }
+            >
+              <div style={{ padding: '6px 0', color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.5 }}>
+                <p style={{ margin: '0 0 8px' }}>
+                  Are you sure you want to delete NVR <strong>{nvrToDelete?.name}</strong> ({nvrToDelete?.ip})?
+                </p>
+                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '12.5px' }}>
+                  This will remove the NVR configuration from the system.
+                </p>
+              </div>
+            </Modal>
+
           </div>
         )}
 
@@ -1859,12 +2693,12 @@ export function AdministrationPage({
                     <table className="admin-table">
                       <thead>
                         <tr>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>User</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Email</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>System Role</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Account Status</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600 }}>Last Active</th>
-                          <th style={{ color: '#4338ca', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+                          <th className="admin-th">User</th>
+                          <th className="admin-th">Email</th>
+                          <th className="admin-th">System Role</th>
+                          <th className="admin-th">Account Status</th>
+                          <th className="admin-th">Last Active</th>
+                          <th className="admin-th" style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
                       </thead>
                       <tbody>

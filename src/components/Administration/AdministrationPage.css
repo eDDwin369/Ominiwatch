@@ -329,57 +329,155 @@
   transform: translateY(0);
 }
 
-/* Table Design */
+/* ========================================================
+   CARDLESS MODERN TABLE (Reports Reference Design)
+   ======================================================== */
 .admin-table-wrapper {
   width: 100%;
   flex: 1;
   min-height: 0;
   overflow-x: auto;
-  overflow-y: hidden;
-  border-radius: 10px;
-  border: 1px solid var(--border-light);
-  background: var(--brand-card-surface, var(--bg-card, #ffffff));
-  box-shadow: var(--card-shadow, 0 2px 10px rgba(0, 0, 0, 0.04));
-  display: flex;
-  flex-direction: column;
+  overflow-y: auto;
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0;
+  display: block;
 }
 
 .admin-table {
   width: 100%;
-  border-collapse: collapse;
+  min-width: 820px;
+  border-collapse: separate;
+  border-spacing: 0;
   text-align: left;
-  font-size: 13px;
+  font-family: var(--app-font-family);
+  font-size: var(--font-size-body-sm, 13.5px);
+  background: transparent;
+}
+
+/* Header Row (Reports Reference Banner Style) */
+.admin-table thead tr {
+  background: var(--table-header-bg, color-mix(in srgb, var(--primary, #2563eb) 12%, var(--page-bg, #ffffff)));
+  transition: background-color 0.2s ease;
 }
 
 .admin-table th {
-  background: var(--nested-bg, color-mix(in srgb, var(--text-main) 3%, transparent));
-  color: var(--primary);
-  font-size: 11.5px;
+  background: transparent;
+  color: var(--table-header-text, var(--primary));
+  font-family: var(--app-font-family);
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.2px;
-  padding: 9px 14px;
+  letter-spacing: -0.1px;
+  padding: 12px 18px;
+  border-top: none;
   border-bottom: 1px solid var(--border-light);
   white-space: nowrap;
-}
-
-.admin-table td {
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text-main);
   vertical-align: middle;
+}
+
+.admin-table thead tr th:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  padding-left: 18px;
+}
+
+.admin-table thead tr th:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding-right: 18px;
+}
+
+/* Sortable column header */
+.admin-th-sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.admin-th-sortable:hover {
+  color: var(--primary-hover, var(--primary));
+}
+
+.admin-th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-sort-indicator {
+  display: inline-flex;
+  align-items: center;
   font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--primary);
+  opacity: 0.9;
+  transition: transform 0.15s ease;
 }
 
-.admin-table tr:last-child td {
-  border-bottom: none;
-}
-
+/* Table Body Rows & Cells */
 .admin-table tbody tr {
+  background: transparent;
   transition: background-color 0.15s ease;
 }
 
 .admin-table tbody tr:hover {
-  background: color-mix(in srgb, var(--primary) 4%, transparent);
+  background: var(--table-row-hover, color-mix(in srgb, var(--primary) 4%, transparent));
+}
+
+.admin-table td {
+  padding: 12px 18px;
+  border-top: none;
+  border-bottom: var(--table-row-divider, 1px solid var(--border-light));
+  color: var(--text-main);
+  vertical-align: middle;
+  font-size: var(--font-size-body-sm, 13.5px);
+  background: transparent;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: var(--table-row-divider, 1px solid var(--border-light));
+}
+
+.admin-cell-id {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.admin-cell-camera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: var(--text-main);
+  font-size: 13.5px;
+}
+
+.admin-cell-muted {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.admin-star-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--warning, #f59e0b);
+  transition: transform 0.15s ease;
+}
+
+.admin-star-btn:hover {
+  transform: scale(1.2);
 }
 
 /* Camera Name Cell */
@@ -731,37 +829,42 @@
 .admin-status-pill {
   display: inline-flex;
   align-items: center;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 11.5px;
-  font-weight: 500;
-  min-width: 58px;
   justify-content: center;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 60px;
+  line-height: 1.4;
+  transition: all 0.2s ease;
 }
 
 .admin-status-pill.active {
-  background: rgba(16, 185, 129, 0.12);
-  color: #059669;
+  background: var(--status-active-bg, color-mix(in srgb, var(--success, #10b981) 14%, transparent));
+  color: var(--status-active-text, var(--success, #059669));
 }
 
 .admin-status-pill.inactive {
-  background: rgba(156, 163, 175, 0.15);
-  color: #6b7280;
+  background: var(--status-inactive-bg, color-mix(in srgb, var(--text-muted, #94a3b8) 16%, transparent));
+  color: var(--status-inactive-text, var(--text-muted, #64748b));
 }
 
+/* Modern Pill Toggle Switch */
 .admin-toggle-switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  width: 38px;
+  height: 22px;
   cursor: pointer;
   flex-shrink: 0;
+  user-select: none;
 }
 
 .admin-toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
+  position: absolute;
 }
 
 .admin-toggle-slider {
@@ -770,10 +873,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #cbd5e1;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: var(--toggle-track-bg, color-mix(in srgb, var(--text-main, #0f172a) 16%, transparent));
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 9999px;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme-mode="dark"] .admin-toggle-slider {
@@ -783,23 +885,23 @@
 .admin-toggle-slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
+  height: 16px;
+  width: 16px;
   left: 3px;
   bottom: 3px;
-  background-color: #ffffff;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  background-color: var(--toggle-thumb-bg, #ffffff);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   border-radius: 50%;
-  box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .admin-toggle-switch input:checked + .admin-toggle-slider {
-  background: var(--toggle-active-bg, var(--dash-brand-gradient, linear-gradient(90deg, #d97706 0%, #16a34a 100%))) !important;
-  box-shadow: var(--toggle-active-shadow, 0 2px 8px color-mix(in srgb, var(--primary, #10b981) 25%, transparent));
+  background: var(--toggle-active-bg, var(--primary, #2563eb)) !important;
+  box-shadow: var(--toggle-active-shadow, 0 2px 8px color-mix(in srgb, var(--primary, #2563eb) 25%, transparent));
 }
 
 .admin-toggle-switch input:checked + .admin-toggle-slider:before {
-  transform: translateX(20px);
+  transform: translateX(16px);
 }
 
 /* Empty Bin Button */
@@ -856,3 +958,461 @@
   margin: 0;
 }
 
+
+
+/* ========================================================
+   NVR MANAGEMENT (Two-Column Configuration Layout)
+   ======================================================== */
+.nvr-layout-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(330px, 380px);
+  gap: 20px;
+  width: 100%;
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .nvr-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nvr-card {
+  background: var(--brand-card-surface, var(--bg-card, #ffffff));
+  border: var(--card-border, 1px solid var(--border-light));
+  border-radius: var(--radius-lg, 14px);
+  padding: 22px 24px;
+  box-shadow: var(--card-shadow, 0 2px 10px rgba(0, 0, 0, 0.04));
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.nvr-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.nvr-card-title {
+  margin: 0;
+  font-family: var(--app-heading-family, var(--app-font-family));
+  font-size: var(--h3-size, 17px);
+  font-weight: var(--h3-weight, 600);
+  color: var(--text-main);
+  letter-spacing: -0.2px;
+}
+
+.nvr-btn-add-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--btn-color, var(--primary, #2563eb));
+  color: var(--btn-text, #ffffff);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.nvr-btn-add-icon:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.nvr-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+}
+
+.nvr-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nvr-field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.nvr-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.nvr-input-unit-suffix {
+  position: absolute;
+  right: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.nvr-storage-gauge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0 16px;
+}
+
+.nvr-storage-gauge-svg-container {
+  position: relative;
+  width: 175px;
+  height: 175px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nvr-storage-gauge-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.06));
+}
+
+.nvr-gauge-center-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.nvr-gauge-num {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  letter-spacing: -0.5px;
+}
+
+.nvr-gauge-unit {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: 3px;
+}
+
+.nvr-gauge-subtext {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+.nvr-storage-settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 6px;
+  flex: 1;
+}
+
+.nvr-storage-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 22px;
+  border-top: 1px solid var(--border-light);
+}
+
+.nvr-storage-actions .app-btn {
+  flex: 1;
+  height: 38px;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nvr-btn-save {
+  background: var(--btn-color, var(--primary));
+  color: var(--btn-text, #ffffff);
+  border: none;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 30%, transparent);
+}
+
+.nvr-btn-save:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.nvr-btn-delete {
+  background: color-mix(in srgb, var(--danger, #ef4444) 14%, transparent);
+  color: var(--danger, #ef4444);
+  border: 1px solid color-mix(in srgb, var(--danger, #ef4444) 30%, transparent);
+}
+
+.nvr-btn-delete:hover {
+  background: var(--danger, #ef4444);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.nvr-feedback-banner {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  animation: figmaFadeIn 0.2s ease;
+}
+
+.nvr-feedback-banner.success {
+  background: color-mix(in srgb, var(--success, #10b981) 14%, transparent);
+  color: var(--success, #059669);
+  border: 1px solid color-mix(in srgb, var(--success, #10b981) 30%, transparent);
+}
+
+
+/* ========================================================
+   NVR TABLE & REFERENCE TABLE STYLES (Matching Reference Header & Checkbox)
+   ======================================================== */
+.nvr-form-grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .nvr-form-grid-3col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nvr-table-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.nvr-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.nvr-table-tabs {
+  display: inline-flex;
+  align-items: center;
+  background: color-mix(in srgb, var(--text-main) 6%, transparent);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.nvr-tab-pill {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--app-font-family);
+}
+
+.nvr-tab-pill:hover {
+  color: var(--text-main);
+}
+
+.nvr-tab-pill.active {
+  background: var(--bg-surface, #ffffff);
+  color: var(--primary);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.nvr-table-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.nvr-selection-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+/* Table Checkbox (Pixel-matched to reference image) */
+.admin-table-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--border-medium, #cbd5e1);
+  border-radius: 4px;
+  background-color: var(--bg-surface, #ffffff);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  position: relative;
+  transition: all 0.15s ease;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.admin-table-checkbox:hover {
+  border-color: var(--primary, #2563eb);
+}
+
+.admin-table-checkbox:checked {
+  background-color: var(--primary, #2563eb);
+  border-color: var(--primary, #2563eb);
+}
+
+.admin-table-checkbox:checked::after {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.admin-th-checkbox,
+.admin-td-checkbox {
+  width: 44px;
+  min-width: 44px;
+  max-width: 44px;
+  text-align: center !important;
+  vertical-align: middle !important;
+  padding-left: 14px !important;
+  padding-right: 10px !important;
+}
+
+/* Status Dot Styles (Aligned with reference image) */
+.admin-status-dot-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.admin-status-dot {
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.admin-status-dot-cell.online,
+.admin-status-dot-cell.recording,
+.admin-status-dot-cell.active {
+  color: #10b981;
+}
+.admin-status-dot.online,
+.admin-status-dot.recording,
+.admin-status-dot.active {
+  background-color: #10b981;
+}
+
+.admin-status-dot-cell.standby,
+.admin-status-dot-cell.idle,
+.admin-status-dot-cell.part-time {
+  color: #f59e0b;
+}
+.admin-status-dot.standby,
+.admin-status-dot.idle,
+.admin-status-dot.part-time {
+  background-color: #f59e0b;
+}
+
+.admin-status-dot-cell.contract {
+  color: #3b82f6;
+}
+.admin-status-dot.contract {
+  background-color: #3b82f6;
+}
+
+.admin-status-dot-cell.offline,
+.admin-status-dot-cell.suspended {
+  color: #94a3b8;
+}
+.admin-status-dot.offline,
+.admin-status-dot.suspended {
+  background-color: #94a3b8;
+}
+
+/* AI Models Table Specific Styles */
+.admin-accuracy-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  background: color-mix(in srgb, var(--primary, #2563eb) 14%, transparent);
+  color: var(--primary, #2563eb);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  letter-spacing: -0.1px;
+}
+
+.admin-btn-dots {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.admin-btn-dots:hover {
+  background: color-mix(in srgb, var(--text-main) 8%, transparent);
+  color: var(--text-main);
+}
