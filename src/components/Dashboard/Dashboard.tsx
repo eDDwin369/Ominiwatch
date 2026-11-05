@@ -439,7 +439,7 @@ export function Dashboard({
                 {currentView === 'overview' || currentView === 'oomni-watch' ? (
                   <OomniWatchPage onNavigate={handleSetCurrentView} />
                 ) : currentView === 'live-monitoring' ? (
-                  <LiveMonitoringPage />
+                  <LiveMonitoringPage onNavigate={handleSetCurrentView} />
                 ) : currentView === 'ai-analysis' ? (
                   <AIAnalysisPage />
                 ) : currentView === 'flashback' ? (

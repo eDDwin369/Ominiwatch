@@ -2584,3 +2584,63 @@
 }
 
 
+
+
+/* Vision Toolbar & Segmented View Mode Toggle (Grid / List) */
+.vision-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  width: 100%;
+}
+
+.vision-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.vision-view-toggle,
+.admin-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: var(--nested-bg, color-mix(in srgb, var(--text-main) 4%, transparent));
+  border: 1px solid var(--border-light);
+  border-radius: calc(var(--radius-unit, 1px) * 10);
+  padding: 3px;
+  gap: 2px;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.vision-view-btn,
+.admin-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: calc(var(--radius-unit, 1px) * 6);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vision-view-btn:hover:not(.active),
+.admin-view-btn:hover:not(.active) {
+  color: var(--text-main);
+  background: color-mix(in srgb, var(--text-main) 6%, transparent);
+}
+
+.vision-view-btn.active,
+.admin-view-btn.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--primary) 35%, transparent);
+}

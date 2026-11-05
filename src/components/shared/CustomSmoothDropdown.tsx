@@ -4,11 +4,12 @@ import { Check, ChevronDown } from 'lucide-react';
 import './CustomSmoothDropdown.css';
 
 interface CustomSmoothDropdownProps {
-  label: string;
+  label?: string;
   value: string;
   options: { label: string; value: string }[];
   onChange: (val: string) => void;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 interface MenuPos {
@@ -26,7 +27,7 @@ interface MenuPos {
  * off the trigger's rect so it floats above any scrollable/clipping ancestor
  * (e.g. a modal body) instead of growing that ancestor's scroll area.
  */
-export function CustomSmoothDropdown({ label, value, options, onChange, className = '' }: CustomSmoothDropdownProps) {
+export function CustomSmoothDropdown({ label, value, options, onChange, className = '', icon }: CustomSmoothDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [menuPos, setMenuPos] = useState<MenuPos | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -68,10 +69,11 @@ export function CustomSmoothDropdown({ label, value, options, onChange, classNam
     <div className={`tf-field ${className}`}>
       <div className={`tf-wrapper ${isOpen ? 'tf-focused' : ''}`} ref={dropdownRef}>
         <fieldset className="tf-outline" aria-hidden="true">
-          <legend className="tf-legend">{label}</legend>
+          {label ? <legend className="tf-legend">{label}</legend> : null}
         </fieldset>
-        <button type="button" className="tf-select" onClick={() => setIsOpen((o) => !o)}>
-          {selectedOption?.label || value}
+        <button type="button" className="tf-select" onClick={() => setIsOpen((o) => !o)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {icon && <span style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-secondary, #64748b)', flexShrink: 0 }}>{icon}</span>}
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selectedOption?.label || value}</span>
         </button>
         <ChevronDown size={14} className={`tf-chevron figma-smooth-arrow ${isOpen ? 'open' : ''}`} />
 

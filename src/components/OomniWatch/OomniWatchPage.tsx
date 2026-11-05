@@ -1,12 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { 
-  MoreVertical, 
-  Video, 
-  Camera, 
-  Radio, 
-  Eye, 
-  Settings, 
+import {
+  MoreVertical,
+  Video,
+  Camera,
+  Radio,
+  Eye,
+  Settings,
   Trash2,
   Play,
   Pause,
@@ -18,7 +18,10 @@ import {
   Info,
   Check,
   CheckCircle2,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Menu,
+  LayoutGrid,
+  Calendar
 } from 'lucide-react';
 import { Card } from '../shared/Card';
 import { PageHeader } from '../shared/PageHeader';
@@ -33,6 +36,7 @@ export interface CameraItem {
   name: string;
   type: '360°' | 'PTZ' | 'Fixed';
   location: 'Indoor' | 'Outdoor';
+  zone?: string;
   hasStream: boolean;
   streamText?: string;
   resolution: string;
@@ -50,6 +54,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Cafeteria Counter',
     type: 'Fixed',
     location: 'Indoor',
+    zone: 'Cafeteria & Dining',
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
@@ -61,6 +66,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Chennai Rooftop 360',
     type: '360°',
     location: 'Outdoor',
+    zone: 'Rooftop Perimeter',
     hasStream: true,
     resolution: '4K UHD',
     fps: 30,
@@ -75,6 +81,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Loading Dock',
     type: 'Fixed',
     location: 'Outdoor',
+    zone: 'Logistics Bay North',
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
@@ -86,6 +93,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Main Gate PTZ',
     type: 'PTZ',
     location: 'Outdoor',
+    zone: 'Main Entrance Gate',
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '4K UHD',
@@ -97,6 +105,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Perimeter East',
     type: 'Fixed',
     location: 'Outdoor',
+    zone: 'East Boundary Fence',
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
@@ -108,6 +117,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Server Room',
     type: 'Fixed',
     location: 'Indoor',
+    zone: 'Data Center Vault',
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '4K UHD',
@@ -119,6 +129,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Street PTZ',
     type: 'PTZ',
     location: 'Outdoor',
+    zone: 'West Crossroad',
     hasStream: true,
     resolution: '4K UHD',
     fps: 30,
@@ -129,6 +140,7 @@ const INITIAL_CAMERAS: CameraItem[] = [
     name: 'Warehouse Aisle',
     type: 'Fixed',
     location: 'Indoor',
+    zone: 'Central Warehouse',
     hasStream: false,
     streamText: 'No 360° stream',
     resolution: '1080p FHD',
@@ -137,23 +149,31 @@ const INITIAL_CAMERAS: CameraItem[] = [
   }
 ];
 
-const FILTER_OPTIONS = [
+const CAMERA_OPTIONS = [
   { label: 'All Cameras', value: 'all' },
-  { label: 'Chennai Rooftop 360', value: 'Chennai Rooftop 360' },
-  { label: 'Street PTZ', value: 'Street PTZ' },
-  { label: 'Server Room', value: 'Server Room' },
-  { label: 'Warehouse Aisle', value: 'Warehouse Aisle' },
-  { label: 'Main Gate PTZ', value: 'Main Gate PTZ' },
   { label: 'Cafeteria Counter', value: 'Cafeteria Counter' },
+  { label: 'Chennai Rooftop 360', value: 'Chennai Rooftop 360' },
   { label: 'Loading Dock', value: 'Loading Dock' },
-  { label: 'Perimeter East', value: 'Perimeter East' }
+  { label: 'Main Gate PTZ', value: 'Main Gate PTZ' },
+  { label: 'Perimeter East', value: 'Perimeter East' },
+  { label: 'Server Room', value: 'Server Room' },
+  { label: 'Street PTZ', value: 'Street PTZ' },
+  { label: 'Warehouse Aisle', value: 'Warehouse Aisle' }
 ];
 
-interface OomniWatchPageProps {
+export interface OomniWatchPageProps {
   onNavigate?: (view: string, options?: any) => void;
+  title?: string;
+  subtitle?: string;
+  icon?: React.ReactNode;
 }
 
-export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps = {}) {
+export function OomniWatchPage({
+  onNavigate: _onNavigate,
+  title,
+  subtitle,
+  icon
+}: OomniWatchPageProps = {}) {
   const [cameras, setCameras] = useState<CameraItem[]>(INITIAL_CAMERAS);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -205,7 +225,7 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
     }));
     setEditCamera(null);
   };
-  
+
   // Action Menu Portal State
   const [activeMenu, setActiveMenu] = useState<{ id: string; top: number; left: number } | null>(null);
   const [selectedCameraForModal, setSelectedCameraForModal] = useState<CameraItem | null>(null);
@@ -231,16 +251,19 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
     });
   };
 
-  // Filter cameras based on search query and dropdown selection
+  // Filter cameras based on search query and camera filter
   const filteredCameras = useMemo(() => {
     return cameras.filter(cam => {
       // Search matching
-      const matchesSearch = !searchQuery || cam.name.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      // Camera filter matching
-      const matchesFilter = filterType === 'all' || cam.name.toLowerCase() === filterType.toLowerCase();
+      const matchesSearch = !searchQuery.trim() ||
+        cam.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (cam.zone && cam.zone.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        cam.location.toLowerCase().includes(searchQuery.toLowerCase());
 
-      return matchesSearch && matchesFilter;
+      // Camera filter matching
+      const matchesCamera = filterType === 'all' || cam.name.toLowerCase() === filterType.toLowerCase();
+
+      return matchesSearch && matchesCamera;
     });
   }, [cameras, searchQuery, filterType]);
 
@@ -277,41 +300,44 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
     <div className="figma-account-settings-page-wrapper" style={{ paddingBottom: '24px' }}>
       <div className="figma-account-settings-container">
         {/* Page Header conforming to Account Settings */}
-        <PageHeader 
-          title="Cameras" 
-          icon={<Camera size={20} />}
+        <PageHeader
+          title={title || "Cameras"}
+          subtitle={subtitle}
+          icon={icon || <Camera size={20} />}
           actions={
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             </div>
           }
         />
 
-        {/* Filter & Search Bar matching Account Settings controls */}
-        <div 
+        {/* Omni Watch Toolbar: ONLY Search Bar & All Cameras Dropdown */}
+        <div
+          className="vision-toolbar"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: '14px',
-            marginBottom: '16px'
+            gap: '12px',
+            marginBottom: '18px'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            {/* Search Input */}
-            <SearchField 
+          <div className="vision-toolbar-left" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {/* 1. Search Bar */}
+            <SearchField
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onClear={() => setSearchQuery('')}
               placeholder="Search camera..."
             />
 
-            {/* Camera Filter Dropdown */}
-            <div style={{ minWidth: '200px' }}>
+            {/* 2. All Cameras Dropdown */}
+            <div style={{ minWidth: '150px' }}>
               <CustomSmoothDropdown
-                label="Camera Filter"
+                label="All Cameras"
                 value={filterType}
                 onChange={(val) => setFilterType(val)}
-                options={FILTER_OPTIONS}
+                options={CAMERA_OPTIONS}
               />
             </div>
           </div>
@@ -319,103 +345,103 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
 
         {/* Camera Cards Grid */}
         {filteredCameras.length > 0 ? (
-          <div className="camera-grid">
-            {filteredCameras.map((cam) => (
-              <Card 
-                key={cam.id} 
-                className="camera-card"
-                onClick={() => {
-                  setSelectedCameraForModal(cam);
-                  setModalMode('stream');
-                }}
-              >
-                {/* Camera Preview Area */}
-                <div className={`camera-preview-box ${cam.hasStream ? 'is-live' : 'is-offline'}`}>
-                  {/* Subtle Vignette Gradient Overlay */}
-                  <div className="camera-preview-overlay" />
+            <div className="camera-grid">
+              {filteredCameras.map((cam) => (
+                <Card
+                  key={cam.id}
+                  className="camera-card"
+                  onClick={() => {
+                    setSelectedCameraForModal(cam);
+                    setModalMode('stream');
+                  }}
+                >
+                  {/* Camera Preview Area */}
+                  <div className={`camera-preview-box ${cam.hasStream ? 'is-live' : 'is-offline'}`}>
+                    {/* Subtle Vignette Gradient Overlay */}
+                    <div className="camera-preview-overlay" />
 
-                  {/* Status Badge */}
-                  <div className={`camera-stream-badge ${cam.hasStream ? 'live' : 'offline'}`}>
-                    <span className="camera-stream-dot" />
-                    <span>{cam.hasStream ? 'LIVE' : 'OFFLINE'}</span>
-                  </div>
+                    {/* Status Badge */}
+                    <div className={`camera-stream-badge ${cam.hasStream ? 'live' : 'offline'}`}>
+                      <span className="camera-stream-dot" />
+                      <span>{cam.hasStream ? 'LIVE' : 'OFFLINE'}</span>
+                    </div>
 
-                  {/* Camera Profile Badge (Right Top) */}
-                  <div className="camera-type-badge">
-                    {cam.type}
-                  </div>
+                    {/* Camera Profile Badge (Right Top) */}
+                    <div className="camera-type-badge">
+                      {cam.type}
+                    </div>
 
-                  {/* Center Content Placeholder */}
-                  {cam.hasStream ? (
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '8px',
-                      zIndex: 1
-                    }}>
+                    {/* Center Content Placeholder */}
+                    {cam.hasStream ? (
                       <div style={{
-                        width: '44px',
-                        height: '44px',
-                        borderRadius: '50%',
-                        background: 'color-mix(in srgb, var(--primary) 18%, transparent)',
-                        border: '1.5px solid var(--primary)',
                         display: 'flex',
+                        flexDirection: 'column',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'var(--primary)',
-                        boxShadow: '0 0 16px color-mix(in srgb, var(--primary) 25%, transparent)'
+                        gap: '8px',
+                        zIndex: 1
                       }}>
-                        <Video size={20} style={{ color: 'var(--primary)' }} />
+                        <div style={{
+                          width: '44px',
+                          height: '44px',
+                          borderRadius: '50%',
+                          background: 'color-mix(in srgb, var(--primary) 18%, transparent)',
+                          border: '1.5px solid var(--primary)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'var(--primary)',
+                          boxShadow: '0 0 16px color-mix(in srgb, var(--primary) 25%, transparent)'
+                        }}>
+                          <Video size={20} style={{ color: 'var(--primary)' }} />
+                        </div>
+                        <span style={{ fontSize: '11.5px', color: 'color-mix(in srgb, var(--primary) 85%, white)', fontWeight: 600, letterSpacing: '0.3px' }}>
+                          {cam.resolution} • {cam.fps} FPS
+                        </span>
                       </div>
-                      <span style={{ fontSize: '11.5px', color: 'color-mix(in srgb, var(--primary) 85%, white)', fontWeight: 600, letterSpacing: '0.3px' }}>
-                        {cam.resolution} • {cam.fps} FPS
-                      </span>
-                    </div>
-                  ) : (
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '6px',
-                      color: 'var(--text-muted)',
-                      zIndex: 1
-                    }}>
-                      <Camera size={34} style={{ opacity: 0.35, strokeWidth: 1.5 }} />
-                      <span style={{ fontSize: '12px', fontWeight: 500, letterSpacing: '0.2px' }}>
-                        {cam.streamText || 'No 360° stream'}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card Info Section */}
-                <div className="camera-card-info">
-                  <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
-                    <div className="camera-name-text" title={cam.name}>
-                      {cam.name}
-                    </div>
-                    <div className="camera-sub-text">
-                      <span>{cam.location}</span>
-                      <span>•</span>
-                      <span>{cam.type}</span>
-                    </div>
+                    ) : (
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '6px',
+                        color: 'var(--text-muted)',
+                        zIndex: 1
+                      }}>
+                        <Camera size={34} style={{ opacity: 0.35, strokeWidth: 1.5 }} />
+                        <span style={{ fontSize: '12px', fontWeight: 500, letterSpacing: '0.2px' }}>
+                          {cam.streamText || 'No 360° stream'}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
-                  <button
-                    className="camera-menu-btn"
-                    title="Camera options"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleOpenMenu(cam.id, e);
-                    }}
-                  >
-                    <MoreVertical size={16} />
-                  </button>
-                </div>
-              </Card>
-            ))}
-          </div>
+                  {/* Card Info Section */}
+                  <div className="camera-card-info">
+                    <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
+                      <div className="camera-name-text" title={cam.name}>
+                        {cam.name}
+                      </div>
+                      <div className="camera-sub-text">
+                        <span>{cam.location}</span>
+                        <span>•</span>
+                        <span>{cam.type}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      className="camera-menu-btn"
+                      title="Camera options"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenMenu(cam.id, e);
+                      }}
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                  </div>
+                </Card>
+              ))}
+            </div>
         ) : (
           <Card style={{ padding: '64px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div style={{
@@ -539,17 +565,17 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
         >
           {modalMode === 'stream' ? (
             <div className="liveview-card">
-              
+
               {/* Panoramic Viewport Area */}
-              <div 
+              <div
                 className="liveview-viewport"
                 onClick={handleViewportClick}
               >
                 {/* Simulated / Real Camera Live Feed */}
                 <img
                   src={selectedCameraForModal.name === 'Chennai Rooftop 360' ? '/images/chennai-rooftop-360.png' : (
-                    selectedCameraForModal.hasStream 
-                      ? '/images/chennai-rooftop-360.png' 
+                    selectedCameraForModal.hasStream
+                      ? '/images/chennai-rooftop-360.png'
                       : '/images/live-digital-twin.png'
                   )}
                   alt={selectedCameraForModal.name}
@@ -575,7 +601,7 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
                 </div>
 
                 {/* Top-Right Floating Control Bar (Glassmorphism) */}
-                <div 
+                <div
                   className="liveview-controls-bar"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -681,9 +707,9 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
                     className="liveview-icon-btn"
                     onClick={() => {
                       if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen().catch(() => {});
+                        document.documentElement.requestFullscreen().catch(() => { });
                       } else {
-                        document.exitFullscreen().catch(() => {});
+                        document.exitFullscreen().catch(() => { });
                       }
                     }}
                     title="Toggle Fullscreen"
@@ -710,7 +736,7 @@ export function OomniWatchPage({ onNavigate: _onNavigate }: OomniWatchPageProps 
                 </button>
 
                 {/* Interactive Blue PTZ Focal Target Ring on Ground */}
-                <div 
+                <div
                   className="liveview-focal-target"
                   style={{ left: `${targetPos.x}%`, top: `${targetPos.y}%` }}
                 >
