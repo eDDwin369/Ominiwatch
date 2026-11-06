@@ -1,0 +1,304 @@
+/* ========================================================
+   RADIAL ALERT DIAL CONTROLLER (3 Option Variants)
+   ======================================================== */
+
+.radial-dial-inline-widget {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  user-select: none;
+  flex-shrink: 0;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+}
+
+/* OPTION 1: Ultra-Compact Native Dial (115px) */
+.radial-dial-inline-widget.option1-compact {
+  width: 115px;
+  height: 115px;
+}
+
+.radial-dial-inline-widget.option1-compact .radial-dial-svg-container {
+  width: 115px;
+  height: 115px;
+}
+
+/* OPTION 2: Focus HUD with Hover-Expand (95px -> scaled on hover) */
+.radial-dial-inline-widget.option2-hud {
+  width: 95px;
+  height: 95px;
+  border-radius: 50%;
+  position: relative;
+  z-index: 25;
+}
+
+.radial-dial-inline-widget.option2-hud:hover {
+  z-index: 1000;
+}
+
+.radial-dial-inline-widget.option2-hud .radial-dial-svg-container {
+  width: 95px;
+  height: 95px;
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top right;
+}
+
+.radial-dial-inline-widget.option2-hud:hover .radial-dial-svg-container {
+  /* Scale 2.5: transforms downwards and leftwards so it never gets cropped under the header */
+  transform: translateY(18px) scale(2.5);
+  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.35));
+  z-index: 1000;
+}
+
+/* Common SVG properties */
+.radial-dial-svg-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.radial-dial-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Center Tactile Button Group */
+.radial-center-button-group {
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: 190px 190px;
+}
+
+.radial-center-button-group:hover .radial-center-disc {
+  filter: brightness(1.08);
+}
+
+.radial-center-button-group:hover .radial-center-glow-ring {
+  opacity: 0.85;
+  stroke-width: 3.5;
+}
+
+.radial-center-button-group:active {
+  transform: scale(0.93);
+}
+
+.radial-center-disc {
+  transition: fill 0.28s ease, filter 0.2s ease;
+}
+
+.radial-center-title {
+  user-select: none;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+.radial-center-sub {
+  user-select: none;
+  pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.radial-center-icon-foreign,
+.radial-center-cycle-foreign {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Middle Detection Icons */
+.radial-icon-group {
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.16s ease;
+  transform-origin: center;
+}
+
+.radial-icon-group:hover .radial-icon-node-bg {
+  fill: color-mix(in srgb, var(--text-main) 14%, transparent);
+  stroke: color-mix(in srgb, var(--text-main) 30%, transparent);
+}
+
+.radial-icon-group:active {
+  transform: scale(0.91);
+}
+
+.radial-icon-wrapper {
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.radial-icon-group:hover .radial-icon-wrapper {
+  transform: scale(1.15);
+}
+
+/* Active Wedge */
+.radial-active-wedge {
+  transition: d 0.28s cubic-bezier(0.4, 0, 0.2, 1), fill 0.28s ease;
+  pointer-events: none;
+}
+
+/* Outer Boundary Border */
+.radial-outer-boundary {
+  pointer-events: none;
+  transition: stroke 0.25s ease;
+}
+
+/* ========================================================
+   OPTION 3: HORIZONTAL MINI-DIAL CAPSULE
+   ======================================================== */
+.dial-option3-capsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 3px 6px;
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--text-main) 3%, var(--bg-card, #ffffff));
+  border: 1px solid var(--border-light, #e2e8f0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.dial-option3-priority-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dial-option3-priority-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.dial-option3-priority-btn:active {
+  transform: scale(0.96);
+}
+
+.dial-option3-priority-text {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.dial-option3-priority-count {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dial-option3-cycle-icon {
+  opacity: 0.8;
+}
+
+.dial-option3-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border-light, #e2e8f0);
+  margin: 0 2px;
+}
+
+.dial-option3-chips-list {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dial-option3-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-main, #334155);
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dial-option3-chip:hover:not(.active) {
+  background: color-mix(in srgb, var(--text-main) 6%, transparent);
+}
+
+.dial-option3-chip.active {
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.dial-option3-chip-icon {
+  display: flex;
+  align-items: center;
+}
+
+.dial-option3-chip-name {
+  font-size: 11px;
+}
+
+.dial-option3-chip-count {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 9999px;
+  line-height: 1.2;
+}
+
+/* ========================================================
+   BOTTOM OPTION SWITCHER PILL (1, 2, 3)
+   ======================================================== */
+.live-option-switcher-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.live-option-switcher-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 9999px;
+  background: var(--bg-card, #ffffff);
+  border: 1px solid var(--border-light, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  gap: 3px;
+}
+
+.live-option-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.live-option-btn:hover:not(.active) {
+  color: var(--text-main, #1e293b);
+  background: color-mix(in srgb, var(--text-main) 4%, transparent);
+}
+
+.live-option-btn.active {
+  background: var(--primary, #10b981);
+  color: #ffffff;
+  box-shadow: 0 1px 4px color-mix(in srgb, var(--primary, #10b981) 35%, transparent);
+}

@@ -1,19 +1,19 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Radio, 
-  Video, 
-  Camera, 
-  LayoutGrid, 
-  LayoutList, 
-  Play, 
-  Pause, 
-  Maximize, 
-  Bell, 
-  SlidersHorizontal, 
-  ChevronDown, 
+import {
+  Radio,
+  Video,
+  Camera,
+  LayoutGrid,
+  LayoutList,
+  Play,
+  Pause,
+  Maximize,
+  Bell,
+  SlidersHorizontal,
+  ChevronDown,
   ChevronLeft,
-  Check, 
-  CheckCircle2, 
+  Check,
+  CheckCircle2,
   RotateCcw,
   Eye,
   X,
@@ -21,7 +21,12 @@ import {
   AlertTriangle,
   AlertCircle,
   ShieldAlert,
-  Info
+  Info,
+  User,
+  ShieldCheck,
+  ScanFace,
+  ScanLine,
+  Car
 } from 'lucide-react';
 import { Card } from '../shared/Card';
 import { PageHeader } from '../shared/PageHeader';
@@ -29,6 +34,7 @@ import { Badge } from '../shared/Badge';
 import { SearchField } from '../shared/SearchField';
 import { CustomSmoothDropdown } from '../shared/CustomSmoothDropdown';
 import { Modal } from '../shared/Modal';
+import { RadialAlertDial, DIAL_USE_CASES, PRIORITY_CONFIG, AlertPriorityId, DEFAULT_PRIORITY_USE_CASE } from './RadialAlertDial';
 import './LiveMonitoringPage.css';
 import '../AccountSettings/AccountSettings.css';
 import '../shared/SharedUI.css';
@@ -45,6 +51,7 @@ export interface LiveCameraItem {
   fps: number;
   description?: string;
   rtspUrl?: string;
+  feedUrl?: string;
   defaultPan?: number;
   defaultTilt?: number;
   zoomLevel?: string;
@@ -57,8 +64,8 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     type: 'Fixed',
     location: 'Indoor',
     zone: 'Cafeteria & Dining',
-    hasStream: false,
-    streamText: 'No 360° stream',
+    hasStream: true,
+    feedUrl: '/assets/frames/frame_0012.jpg',
     resolution: '1080p FHD',
     fps: 30,
     description: 'Indoor coverage of the cafeteria checkout counter and staff transit line.'
@@ -70,6 +77,7 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     location: 'Outdoor',
     zone: 'Rooftop Perimeter',
     hasStream: true,
+    feedUrl: '/images/chennai-rooftop-360.png',
     resolution: '4K UHD',
     fps: 30,
     description: 'High-altitude panoramic optical surveillance covering the entire building perimeter.',
@@ -84,8 +92,8 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     type: 'Fixed',
     location: 'Outdoor',
     zone: 'Logistics Bay North',
-    hasStream: false,
-    streamText: 'No 360° stream',
+    hasStream: true,
+    feedUrl: '/assets/frames/frame_0036.jpg',
     resolution: '1080p FHD',
     fps: 30,
     description: 'Exterior logistics entrance and pallet offloading platform monitoring.'
@@ -96,8 +104,8 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     type: 'PTZ',
     location: 'Outdoor',
     zone: 'Main Entrance Gate',
-    hasStream: false,
-    streamText: 'No 360° stream',
+    hasStream: true,
+    feedUrl: '/assets/frames/frame_0060.jpg',
     resolution: '4K UHD',
     fps: 60,
     description: 'Primary vehicular entry and security turnstile pan-tilt tracking node.'
@@ -108,8 +116,8 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     type: 'Fixed',
     location: 'Outdoor',
     zone: 'East Boundary Fence',
-    hasStream: false,
-    streamText: 'No 360° stream',
+    hasStream: true,
+    feedUrl: '/assets/frames/frame_0084.jpg',
     resolution: '1080p FHD',
     fps: 30,
     description: 'Eastern facility boundary surveillance fence and intrusion monitoring.'
@@ -120,8 +128,8 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     type: 'Fixed',
     location: 'Indoor',
     zone: 'Data Center Vault',
-    hasStream: false,
-    streamText: 'No 360° stream',
+    hasStream: true,
+    feedUrl: '/assets/frames/frame_0108.jpg',
     resolution: '4K UHD',
     fps: 60,
     description: 'High-security data center and server vault biometric entrance.'
@@ -133,6 +141,7 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     location: 'Outdoor',
     zone: 'West Crossroad',
     hasStream: true,
+    feedUrl: '/assets/frames/frame_0024.jpg',
     resolution: '4K UHD',
     fps: 30,
     description: 'Street-facing PTZ camera with active highway license plate optical tracking.'
@@ -143,15 +152,14 @@ const INITIAL_LIVE_CAMERAS: LiveCameraItem[] = [
     type: 'Fixed',
     location: 'Indoor',
     zone: 'Central Warehouse',
-    hasStream: false,
-    streamText: 'No 360° stream',
+    hasStream: true,
+    feedUrl: '/assets/frames/frame_0072.jpg',
     resolution: '1080p FHD',
     fps: 30,
     description: 'Aisle B3 high-bay pallet racking and forklift operations surveillance.'
   }
 ];
 
-export type AlertPriorityId = 'critical' | 'high' | 'medium' | 'low';
 
 export interface AlertTypeItem {
   id: string;
@@ -266,13 +274,33 @@ const TIME_FILTER_OPTIONS = [
   { label: 'Past 7 Days', value: '7d' }
 ];
 
+// Render prominent detection icon by usecase id
+const renderDetectionIcon = (id: string, size = 28) => {
+  switch (id) {
+    case 'person':
+      return <User size={size} strokeWidth={2.2} />;
+    case 'fire-smoke':
+      return <Flame size={size} strokeWidth={2.2} />;
+    case 'ppe':
+      return <ShieldCheck size={size} strokeWidth={2.2} />;
+    case 'face':
+      return <ScanFace size={size} strokeWidth={2.2} />;
+    case 'anpr':
+      return <ScanLine size={size} strokeWidth={2.2} />;
+    case 'vehicle':
+      return <Car size={size} strokeWidth={2.2} />;
+    default:
+      return <Flame size={size} strokeWidth={2.2} />;
+  }
+};
+
 export interface LiveMonitoringPageProps {
   onNavigate?: (view: string, options?: any) => void;
 }
 
 export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPageProps = {}) {
   const [cameras] = useState<LiveCameraItem[]>(INITIAL_LIVE_CAMERAS);
-  
+
   // UI Version Switcher: Version 1 (Sidebar) vs Version 2 (Horizontal)
   const [uiVersion, setUiVersion] = useState<'v1' | 'v2'>('v1');
 
@@ -283,15 +311,18 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
   const [zoneFilter, setZoneFilter] = useState('all');
   const [timeFilter, setTimeFilter] = useState('all');
 
-  // Version 1 (Sidebar) States
-  const [isAlertSidebarOpen, setIsAlertSidebarOpen] = useState(false);
-  const [v1SelectedPriority, setV1SelectedPriority] = useState<AlertPriorityId>('critical');
-  const [v1SelectedAlertTypeId, setV1SelectedAlertTypeId] = useState<string | null>(null);
+  // Option Switcher (1, 2, 3) & Radial Alert Dial States
+  const [alertUiOption, setAlertUiOption] = useState<1 | 2 | 3>(1);
+  const [selectedPriority, setSelectedPriority] = useState<AlertPriorityId>('critical');
+  // Default to 'fire-smoke' alert filter on initial load
+  const [selectedUseCaseId, setSelectedUseCaseId] = useState<string | null>('fire-smoke');
 
-  // Version 2 (Horizontal Interface) States
-  const [v2SelectedPriority, setV2SelectedPriority] = useState<AlertPriorityId>('critical');
-  const [v2IsCategoryRowVisible, setV2IsCategoryRowVisible] = useState(false);
-  const [v2SelectedCategory, setV2SelectedCategory] = useState<string | null>(null); // 'all-priority' | alertTypeId | null
+  // Handle priority change from center dial button (auto-selects default alert for that priority)
+  const handlePriorityChange = (newPriority: AlertPriorityId) => {
+    setSelectedPriority(newPriority);
+    const defaultUseCase = DEFAULT_PRIORITY_USE_CASE[newPriority] || 'fire-smoke';
+    setSelectedUseCaseId(defaultUseCase);
+  };
 
   // Live Stream Viewport Modal State
   const [selectedCameraForModal, setSelectedCameraForModal] = useState<LiveCameraItem | null>(null);
@@ -303,100 +334,16 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
   const [isAlertActive, setIsAlertActive] = useState<boolean>(false);
   const [isSubStream, setIsSubStream] = useState<boolean>(false);
 
-  // Total alert count
-  const totalAlertCount = useMemo(() => {
-    return PRIORITY_CATEGORIES.reduce((acc, cat) => acc + cat.count, 0);
-  }, []);
+  // Active priority meta configuration
+  const activePriorityMeta = useMemo(() => {
+    return PRIORITY_CONFIG[selectedPriority] || PRIORITY_CONFIG.critical;
+  }, [selectedPriority]);
 
-  // V1 active priority category
-  const v1ActivePriorityCategory = useMemo(() => {
-    return PRIORITY_CATEGORIES.find(c => c.id === v1SelectedPriority) || PRIORITY_CATEGORIES[0];
-  }, [v1SelectedPriority]);
-
-  // V2 active priority category
-  const v2ActivePriorityCategory = useMemo(() => {
-    return PRIORITY_CATEGORIES.find(c => c.id === v2SelectedPriority) || PRIORITY_CATEGORIES[0];
-  }, [v2SelectedPriority]);
-
-  // V1 active selected alert type object
-  const v1ActiveSelectedAlertType = useMemo(() => {
-    if (!v1SelectedAlertTypeId) return null;
-    for (const cat of PRIORITY_CATEGORIES) {
-      const found = cat.alertTypes.find(t => t.id === v1SelectedAlertTypeId);
-      if (found) return { ...found, category: cat };
-    }
-    return null;
-  }, [v1SelectedAlertTypeId]);
-
-  // V2 active selected alert item
-  const v2ActiveSelectedAlertItem = useMemo(() => {
-    if (!v2SelectedCategory) return null;
-    if (v2SelectedCategory === 'all-priority') {
-      return {
-        id: 'all-priority',
-        name: `All ${v2ActivePriorityCategory.label.toLowerCase()}`,
-        count: v2ActivePriorityCategory.count,
-        category: v2ActivePriorityCategory,
-        cameraIds: Array.from(new Set(v2ActivePriorityCategory.alertTypes.flatMap(t => t.cameraIds)))
-      };
-    }
-    const found = v2ActivePriorityCategory.alertTypes.find(t => t.id === v2SelectedCategory);
-    if (found) return { ...found, category: v2ActivePriorityCategory };
-    return null;
-  }, [v2SelectedCategory, v2ActivePriorityCategory]);
-
-  // Close sidebar on ESC
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (isAlertSidebarOpen) setIsAlertSidebarOpen(false);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isAlertSidebarOpen]);
-
-  // V1: Open sidebar with critical selected by default
-  const handleOpenV1Sidebar = () => {
-    if (!v1SelectedAlertTypeId) {
-      setV1SelectedPriority('critical');
-    }
-    setIsAlertSidebarOpen(true);
-  };
-
-  // V1: Click on alert type row
-  const handleToggleV1AlertType = (alertItem: AlertTypeItem, categoryId: AlertPriorityId) => {
-    if (v1SelectedAlertTypeId === alertItem.id) {
-      setV1SelectedAlertTypeId(null);
-    } else {
-      setV1SelectedAlertTypeId(alertItem.id);
-      setV1SelectedPriority(categoryId);
-    }
-  };
-
-  // V2: Click on horizontal priority item
-  const handleSelectV2Priority = (priorityId: AlertPriorityId) => {
-    setV2SelectedPriority(priorityId);
-    setV2IsCategoryRowVisible(true);
-    // Reset category selection on priority change to "all-priority" as shown in reference image
-    setV2SelectedCategory('all-priority');
-  };
-
-  // V2: Click on category pill
-  const handleSelectV2CategoryPill = (categoryId: string) => {
-    if (v2SelectedCategory === categoryId) {
-      // Toggle off to null
-      setV2SelectedCategory(null);
-    } else {
-      setV2SelectedCategory(categoryId);
-    }
-  };
-
-  // V2: Click "< All priorities"
-  const handleV2ResetToAllPriorities = () => {
-    setV2SelectedCategory(null);
-    setV2IsCategoryRowVisible(false);
-  };
+  // Active selected detection use case item
+  const activeSelectedUseCase = useMemo(() => {
+    if (!selectedUseCaseId) return null;
+    return DIAL_USE_CASES.find(u => u.id === selectedUseCaseId) || null;
+  }, [selectedUseCaseId]);
 
   const handleViewportClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -409,19 +356,12 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
     });
   };
 
-  // Filter cameras based on search, dropdowns, AND active alert filter (V1 or V2)
+  // Filter cameras based on search, dropdowns, AND radial detection alert filter
   const filteredCameras = useMemo(() => {
     return cameras.filter(cam => {
-      // 1. Alert filter check
-      if (uiVersion === 'v1') {
-        if (v1ActiveSelectedAlertType) {
-          if (!v1ActiveSelectedAlertType.cameraIds.includes(cam.id)) return false;
-        }
-      } else {
-        // Version 2
-        if (v2ActiveSelectedAlertItem) {
-          if (!v2ActiveSelectedAlertItem.cameraIds.includes(cam.id)) return false;
-        }
+      // 1. Detection Use Case alert filter
+      if (activeSelectedUseCase) {
+        if (!activeSelectedUseCase.cameraIds.includes(cam.id)) return false;
       }
 
       // 2. Search query
@@ -451,302 +391,185 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
 
       return true;
     });
-  }, [cameras, uiVersion, v1ActiveSelectedAlertType, v2ActiveSelectedAlertItem, searchQuery, cameraFilter, zoneFilter, timeFilter]);
+  }, [cameras, activeSelectedUseCase, searchQuery, cameraFilter, zoneFilter, timeFilter]);
 
   const handleResetAllFilters = () => {
     setSearchQuery('');
     setCameraFilter('all');
     setZoneFilter('all');
     setTimeFilter('all');
-    setV1SelectedAlertTypeId(null);
-    setV2SelectedCategory(null);
-    setV2IsCategoryRowVisible(false);
-  };
-
-  // Helper for priority icons
-  const renderPriorityIcon = (id: AlertPriorityId, size = 18) => {
-    switch (id) {
-      case 'critical':
-        return <Flame size={size} />;
-      case 'high':
-        return <AlertTriangle size={size} />;
-      case 'medium':
-        return <AlertCircle size={size} />;
-      case 'low':
-        return <CheckCircle2 size={size} />;
-    }
+    setSelectedUseCaseId(null);
   };
 
   return (
     <div className="figma-account-settings-page-wrapper" style={{ paddingBottom: '32px' }}>
       <div className="figma-account-settings-container">
-        
+
         {/* Page Header */}
-        <PageHeader 
-          title="Live Monitoring" 
-          subtitle="Real-time multi-channel optical feeds and camera monitoring"
+        <PageHeader
+          title="Live Monitoring"
+          subtitle=""
           icon={<Radio size={20} />}
           actions={
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              {/* Version 1 Trigger Button (Preserved completely) */}
-              {uiVersion === 'v1' && (
-                <button
-                  type="button"
-                  className="live-alert-trigger-btn"
-                  onClick={handleOpenV1Sidebar}
-                  title="Open Active Alerts Panel"
-                  aria-label="Active Alerts"
-                >
-                  <div className="live-alert-bell-wrapper">
-                    <Bell size={16} />
-                    <span className="live-alert-pulse-dot" />
-                  </div>
-                  <span className="live-alert-badge-count">{totalAlertCount}</span>
-                  <span className="live-alert-btn-text">Active Alerts</span>
-                </button>
-              )}
-
-              <Badge variant="success">All Feeds Online</Badge>
             </div>
           }
         />
 
-        {/* VERSION 2: HORIZONTAL ALERT INTERFACE (Matching Reference Screenshot) */}
-        {uiVersion === 'v2' && (
-          <div className="live-v2-horizontal-card">
-            {/* Top Row: Priority Summary */}
-            <div className="live-v2-priority-row">
-              {PRIORITY_CATEGORIES.map((cat) => {
-                const isSelected = v2SelectedPriority === cat.id;
-                return (
-                  <div
-                    key={cat.id}
-                    className={`live-v2-priority-item ${isSelected ? 'selected' : ''}`}
-                    onClick={() => handleSelectV2Priority(cat.id)}
-                    style={{
-                      borderColor: isSelected ? cat.borderColor : 'transparent',
-                      backgroundColor: isSelected ? cat.bgColor : undefined
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') handleSelectV2Priority(cat.id);
-                    }}
-                  >
-                    <div className="live-v2-priority-left">
-                      <span className="live-v2-priority-dot" style={{ backgroundColor: cat.color }} />
-                      <span 
-                        className="live-v2-priority-label"
-                        style={{ color: isSelected ? cat.color : 'var(--text-main)' }}
-                      >
-                        {cat.label}
-                      </span>
-                    </div>
-
-                    <div className="live-v2-priority-right">
-                      {cat.newCount && (
-                        <span 
-                          className="live-v2-new-badge"
-                          style={{
-                            backgroundColor: cat.id === 'critical' ? cat.color : colorMix(cat.color, 16),
-                            color: cat.id === 'critical' ? '#ffffff' : cat.color
-                          }}
-                        >
-                          {cat.newCount} NEW
-                        </span>
-                      )}
-                      <span className="live-v2-priority-count">
-                        {cat.count}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Bottom Row: Expandable Alert Category Row (revealed on priority click) */}
-            {v2IsCategoryRowVisible && (
-              <div className="live-v2-category-row">
-                {/* Back to All Priorities */}
-                <button
-                  type="button"
-                  className="live-v2-all-priorities-btn"
-                  onClick={handleV2ResetToAllPriorities}
-                  title="Clear alert category filter"
-                >
-                  <ChevronLeft size={14} />
-                  <span>All priorities</span>
-                </button>
-
-                <div className="live-v2-divider" />
-
-                {/* All [Selected Priority] Pill */}
-                <button
-                  type="button"
-                  className={`live-v2-category-pill ${v2SelectedCategory === 'all-priority' ? 'selected' : ''}`}
-                  onClick={() => handleSelectV2CategoryPill('all-priority')}
-                  style={{
-                    backgroundColor: v2SelectedCategory === 'all-priority' ? v2ActivePriorityCategory.color : undefined,
-                    borderColor: v2SelectedCategory === 'all-priority' ? v2ActivePriorityCategory.borderColor : undefined
-                  }}
-                >
-                  <span>All {v2ActivePriorityCategory.label.toLowerCase()}</span>
-                  <span className="live-v2-category-pill-count">{v2ActivePriorityCategory.count}</span>
-                </button>
-
-                {/* Category Pills for Selected Priority */}
-                {v2ActivePriorityCategory.alertTypes.map((alertItem) => {
-                  const isPillSelected = v2SelectedCategory === alertItem.id;
-                  return (
-                    <button
-                      key={alertItem.id}
-                      type="button"
-                      className={`live-v2-category-pill ${isPillSelected ? 'selected' : ''}`}
-                      onClick={() => handleSelectV2CategoryPill(alertItem.id)}
-                      style={{
-                        backgroundColor: isPillSelected ? v2ActivePriorityCategory.color : undefined,
-                        borderColor: isPillSelected ? v2ActivePriorityCategory.borderColor : undefined
-                      }}
-                      title={`Filter cameras by ${alertItem.name}`}
-                    >
-                      <span>{alertItem.name}</span>
-                      <span className="live-v2-category-pill-count">{alertItem.count}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* SINGLE COMPACT, WELL-ALIGNED TOOLBAR */}
-        <div 
-          className="vision-toolbar"
+        {/* TOOLBAR CONTROLS & INLINE RADIAL ALERT DIAL */}
+        <div
+          className="live-monitoring-top-controls"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '12px',
-            marginBottom: '18px'
+            gap: '16px',
+            marginBottom: '16px',
+            flexWrap: 'wrap'
           }}
         >
-          <div className="vision-toolbar-left" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-            {/* 1. Search Bar */}
-            <SearchField 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onClear={() => setSearchQuery('')}
-              placeholder="Search camera..."
+          {/* Left: Toolbar Filters */}
+          <div
+            className="vision-toolbar"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '12px',
+              flex: 1,
+              marginBottom: 0
+            }}
+          >
+            <div className="vision-toolbar-left" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              {/* 1. Search Bar */}
+              <SearchField
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onClear={() => setSearchQuery('')}
+                placeholder="Search camera..."
+              />
+
+              {/* 2. Grid / List View Toggle */}
+              <div className="vision-view-toggle" role="group" aria-label="View mode toggle">
+                <button
+                  type="button"
+                  className={`vision-view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                  onClick={() => setViewMode('grid')}
+                  title="Grid View"
+                  aria-label="Grid View"
+                >
+                  <LayoutGrid size={16} />
+                </button>
+                <button
+                  type="button"
+                  className={`vision-view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                  title="List View"
+                  aria-label="List View"
+                >
+                  <LayoutList size={16} />
+                </button>
+              </div>
+
+              {/* 3. All Cameras Dropdown */}
+              <div style={{ minWidth: '150px' }}>
+                <CustomSmoothDropdown
+                  label="All Cameras"
+                  value={cameraFilter}
+                  onChange={(val) => setCameraFilter(val)}
+                  options={CAMERA_FILTER_OPTIONS}
+                />
+              </div>
+
+              {/* 4. All Zones Dropdown */}
+              <div style={{ minWidth: '150px' }}>
+                <CustomSmoothDropdown
+                  label="All Zones"
+                  value={zoneFilter}
+                  onChange={(val) => setZoneFilter(val)}
+                  options={ZONE_FILTER_OPTIONS}
+                />
+              </div>
+
+              {/* 5. All Time Dropdown */}
+              <div style={{ minWidth: '135px' }}>
+                <CustomSmoothDropdown
+                  label="All Time"
+                  value={timeFilter}
+                  onChange={(val) => setTimeFilter(val)}
+                  options={TIME_FILTER_OPTIONS}
+                />
+              </div>
+
+              {/* Active Alert Filter Chip */}
+              {activeSelectedUseCase && (
+                <div
+                  className="live-active-filter-chip"
+                  style={{
+                    borderColor: activePriorityMeta.color,
+                    backgroundColor: activePriorityMeta.bgLight
+                  }}
+                >
+                  <span
+                    className="live-active-filter-dot"
+                    style={{ backgroundColor: activePriorityMeta.color }}
+                  />
+                  <span style={{ fontSize: '12.5px' }}>
+                    Alert: <strong>{activeSelectedUseCase.name}</strong> ({filteredCameras.length} {filteredCameras.length === 1 ? 'Camera' : 'Cameras'})
+                  </span>
+                  <button
+                    type="button"
+                    className="live-active-filter-clear"
+                    onClick={() => setSelectedUseCaseId(null)}
+                    title="Clear alert filter"
+                    aria-label="Clear alert filter"
+                  >
+                    <X size={13} />
+                  </button>
+                </div>
+              )}
+
+              {/* BOTTOM OPTION SWITCHER PILL (1, 2, 3) */}
+              <div className="live-option-switcher-container">
+                <div className="live-option-switcher-pill" role="group" aria-label="Dial Design Options">
+                  <button
+                    type="button"
+                    className={`live-option-btn ${alertUiOption === 1 ? 'active' : ''}`}
+                    onClick={() => setAlertUiOption(1)}
+                    title="Option 1: Ultra-compact native circular dial (~115px)"
+                  >
+                    <span>Option 1: Compact Dial (115px)</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`live-option-btn ${alertUiOption === 2 ? 'active' : ''}`}
+                    onClick={() => setAlertUiOption(2)}
+                    title="Option 2: Focus HUD (Expands on hover to 132px)"
+                  >
+                    <span>Option 2: Focus HUD (Hover-Expand)</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`live-option-btn ${alertUiOption === 3 ? 'active' : ''}`}
+                    onClick={() => setAlertUiOption(3)}
+                    title="Option 3: Horizontal Mini-Dial Capsule (~38px height)"
+                  >
+                    <span>Option 3: Horizontal Capsule</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Inline Radial Alert Dial (Variant 1, 2, or 3) */}
+          <div className="live-monitoring-dial-wrapper">
+            <RadialAlertDial
+              variant={alertUiOption}
+              selectedPriority={selectedPriority}
+              onPriorityChange={handlePriorityChange}
+              selectedUseCaseId={selectedUseCaseId}
+              onSelectUseCase={(id) => setSelectedUseCaseId(id)}
             />
-
-            {/* 2. Grid / List View Toggle */}
-            <div className="vision-view-toggle" role="group" aria-label="View mode toggle">
-              <button
-                type="button"
-                className={`vision-view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                onClick={() => setViewMode('grid')}
-                title="Grid View"
-                aria-label="Grid View"
-              >
-                <LayoutGrid size={16} />
-              </button>
-              <button
-                type="button"
-                className={`vision-view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                onClick={() => setViewMode('list')}
-                title="List View"
-                aria-label="List View"
-              >
-                <LayoutList size={16} />
-              </button>
-            </div>
-
-            {/* 3. All Cameras Dropdown */}
-            <div style={{ minWidth: '150px' }}>
-              <CustomSmoothDropdown
-                label="All Cameras"
-                value={cameraFilter}
-                onChange={(val) => setCameraFilter(val)}
-                options={CAMERA_FILTER_OPTIONS}
-              />
-            </div>
-
-            {/* 4. All Zones Dropdown */}
-            <div style={{ minWidth: '150px' }}>
-              <CustomSmoothDropdown
-                label="All Zones"
-                value={zoneFilter}
-                onChange={(val) => setZoneFilter(val)}
-                options={ZONE_FILTER_OPTIONS}
-              />
-            </div>
-
-            {/* 5. All Time Dropdown */}
-            <div style={{ minWidth: '135px' }}>
-              <CustomSmoothDropdown
-                label="All Time"
-                value={timeFilter}
-                onChange={(val) => setTimeFilter(val)}
-                options={TIME_FILTER_OPTIONS}
-              />
-            </div>
-
-            {/* Active Alert Filter Chip for V1 */}
-            {uiVersion === 'v1' && v1ActiveSelectedAlertType && (
-              <div 
-                className="live-active-filter-chip"
-                style={{
-                  borderColor: v1ActiveSelectedAlertType.category.color,
-                  backgroundColor: v1ActiveSelectedAlertType.category.bgColor
-                }}
-              >
-                <span 
-                  className="live-active-filter-dot" 
-                  style={{ backgroundColor: v1ActiveSelectedAlertType.category.color }} 
-                />
-                <span style={{ fontSize: '12.5px' }}>
-                  Alert: <strong>{v1ActiveSelectedAlertType.name}</strong> ({filteredCameras.length} {filteredCameras.length === 1 ? 'Camera' : 'Cameras'})
-                </span>
-                <button
-                  type="button"
-                  className="live-active-filter-clear"
-                  onClick={() => setV1SelectedAlertTypeId(null)}
-                  title="Clear alert filter"
-                  aria-label="Clear alert filter"
-                >
-                  <X size={13} />
-                </button>
-              </div>
-            )}
-
-            {/* Active Alert Filter Chip for V2 */}
-            {uiVersion === 'v2' && v2ActiveSelectedAlertItem && (
-              <div 
-                className="live-active-filter-chip"
-                style={{
-                  borderColor: v2ActiveSelectedAlertItem.category.color,
-                  backgroundColor: v2ActiveSelectedAlertItem.category.bgColor
-                }}
-              >
-                <span 
-                  className="live-active-filter-dot" 
-                  style={{ backgroundColor: v2ActiveSelectedAlertItem.category.color }} 
-                />
-                <span style={{ fontSize: '12.5px' }}>
-                  Alert: <strong>{v2ActiveSelectedAlertItem.name}</strong> ({filteredCameras.length} {filteredCameras.length === 1 ? 'Camera' : 'Cameras'})
-                </span>
-                <button
-                  type="button"
-                  className="live-active-filter-clear"
-                  onClick={() => setV2SelectedCategory(null)}
-                  title="Clear alert filter"
-                  aria-label="Clear alert filter"
-                >
-                  <X size={13} />
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
@@ -755,98 +578,103 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
           viewMode === 'grid' ? (
             /* GRID VIEW */
             <div className="camera-grid">
-              {filteredCameras.map((cam) => (
-                <Card 
-                  key={cam.id} 
-                  className="camera-card"
-                  onClick={() => setSelectedCameraForModal(cam)}
-                >
-                  {/* Camera Preview Box */}
-                  <div className={`camera-preview-box ${cam.hasStream ? 'is-live' : 'is-offline'}`}>
-                    <div className="camera-preview-overlay" />
+              {filteredCameras.map((cam) => {
+                const cameraUseCase = activeSelectedUseCase || DIAL_USE_CASES.find(u => u.cameraIds.includes(cam.id)) || DIAL_USE_CASES[1];
+                return (
+                  <Card
+                    key={cam.id}
+                    className={`camera-card priority-${selectedPriority}`}
+                    onClick={() => setSelectedCameraForModal(cam)}
+                  >
+                    {/* Camera Preview Box */}
+                    <div className="camera-preview-box is-live">
+                      {/* Actual Dummy Camera Feed Image */}
+                      <img 
+                        src={cam.feedUrl || '/assets/frames/frame_0000.jpg'} 
+                        alt={cam.name} 
+                        className="camera-feed-image" 
+                      />
 
-                    {/* Stream Live Badge */}
-                    <div className={`camera-stream-badge ${cam.hasStream ? 'live' : 'offline'}`}>
-                      <span className="camera-stream-dot" />
-                      <span>{cam.hasStream ? 'LIVE' : 'OFFLINE'}</span>
-                    </div>
+                      {/* CCTV Edge Shading Overlay */}
+                      <div className="camera-preview-overlay" />
 
-                    {/* Camera Profile Badge */}
-                    <div className="camera-type-badge">
-                      {cam.type}
-                    </div>
-
-                    {/* Center Optical Placeholder */}
-                    {cam.hasStream ? (
-                      <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '8px',
-                        zIndex: 1
-                      }}>
-                        <div style={{
-                          width: '44px',
-                          height: '44px',
-                          borderRadius: '50%',
-                          background: 'color-mix(in srgb, var(--primary) 18%, transparent)',
-                          border: '1.5px solid var(--primary)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: 'var(--primary)',
-                          boxShadow: '0 0 16px color-mix(in srgb, var(--primary) 25%, transparent)'
-                        }}>
-                          <Video size={20} style={{ color: 'var(--primary)' }} />
+                      {/* Top Bar HUD: Stream Live Badge & Detection Alert Chip & Type Badge */}
+                      <div className="camera-preview-top-hud">
+                        <div className="camera-stream-badge live">
+                          <span className="camera-stream-dot" />
+                          <span>LIVE</span>
                         </div>
-                        <span style={{ fontSize: '11.5px', color: 'color-mix(in srgb, var(--primary) 85%, white)', fontWeight: 600, letterSpacing: '0.3px' }}>
+
+                        {/* Detection Alert Badge (Corner-aligned, non-intrusive) */}
+                        <div 
+                          className="camera-feed-alert-chip"
+                          style={{
+                            backgroundColor: activePriorityMeta.color,
+                            boxShadow: `0 2px 8px ${activePriorityMeta.glow}`
+                          }}
+                        >
+                          {renderDetectionIcon(cameraUseCase.id, 13)}
+                          <span>{cameraUseCase.name}</span>
+                        </div>
+
+                        {/* Camera Profile Badge */}
+                        <div className="camera-type-badge">
+                          {cam.type}
+                        </div>
+                      </div>
+
+                      {/* Bottom Bar HUD (CCTV OSD: Camera ID & Live Specs) */}
+                      <div className="camera-preview-bottom-hud">
+                        <span className="camera-cctv-label">
+                          {cam.id.toUpperCase()} // {cam.name.toUpperCase()}
+                        </span>
+                        <span className="camera-cctv-specs">
                           {cam.resolution} • {cam.fps} FPS
                         </span>
                       </div>
-                    ) : (
-                      <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '6px',
-                        color: 'var(--text-muted)',
-                        zIndex: 1
-                      }}>
-                        <Camera size={34} style={{ opacity: 0.35, strokeWidth: 1.5 }} />
-                        <span style={{ fontSize: '12px', fontWeight: 500, letterSpacing: '0.2px' }}>
-                          {cam.streamText || 'No 360° stream'}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Card Info Details */}
-                  <div className="camera-card-info">
-                    <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
-                      <div className="camera-name-text" title={cam.name}>
-                        {cam.name}
-                      </div>
-                      <div className="camera-sub-text">
-                        <span>{cam.zone}</span>
-                        <span>•</span>
-                        <span>{cam.location}</span>
-                      </div>
                     </div>
 
-                    <button
-                      type="button"
-                      className="camera-menu-btn"
-                      title="Inspect Live Stream"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedCameraForModal(cam);
-                      }}
-                    >
-                      <Eye size={16} />
-                    </button>
-                  </div>
-                </Card>
-              ))}
+                    {/* Card Info Details */}
+                    <div className="camera-card-info">
+                      <div style={{ minWidth: 0, flex: 1, paddingRight: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+                          <div className="camera-name-text" title={cam.name}>
+                            {cam.name}
+                          </div>
+                          <span 
+                            className="camera-info-alert-tag"
+                            style={{
+                              backgroundColor: activePriorityMeta.bgLight,
+                              borderColor: activePriorityMeta.color,
+                              color: activePriorityMeta.color
+                            }}
+                          >
+                            {renderDetectionIcon(cameraUseCase.id, 12)}
+                            <span>{cameraUseCase.shortName}</span>
+                          </span>
+                        </div>
+                        <div className="camera-sub-text">
+                          <span>{cam.zone}</span>
+                          <span>•</span>
+                          <span>{cam.location}</span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="camera-menu-btn"
+                        title="Inspect Live Stream"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCameraForModal(cam);
+                        }}
+                      >
+                        <Eye size={16} />
+                      </button>
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
           ) : (
             /* LIST (TABLE) VIEW */
@@ -864,33 +692,52 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCameras.map((cam) => (
-                    <tr 
-                      key={cam.id}
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => setSelectedCameraForModal(cam)}
-                    >
-                      <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <div style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '6px',
-                            background: cam.hasStream ? 'color-mix(in srgb, var(--primary) 15%, transparent)' : 'color-mix(in srgb, var(--text-muted) 12%, transparent)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: cam.hasStream ? 'var(--primary)' : 'var(--text-muted)',
-                            flexShrink: 0
-                          }}>
-                            <Video size={16} />
+                  {filteredCameras.map((cam) => {
+                    const cameraUseCase = activeSelectedUseCase || DIAL_USE_CASES.find(u => u.cameraIds.includes(cam.id)) || DIAL_USE_CASES[1];
+                    return (
+                      <tr
+                        key={cam.id}
+                        className={`priority-${selectedPriority}`}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setSelectedCameraForModal(cam)}
+                      >
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{
+                              width: '34px',
+                              height: '34px',
+                              borderRadius: '8px',
+                              background: activePriorityMeta.bgLight,
+                              border: `1.5px solid ${activePriorityMeta.color}`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: activePriorityMeta.color,
+                              boxShadow: `0 0 10px ${activePriorityMeta.glow}`,
+                              flexShrink: 0
+                            }}>
+                              {renderDetectionIcon(cameraUseCase.id, 18)}
+                            </div>
+                            <div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '13.5px' }}>{cam.name}</span>
+                                <span 
+                                  className="camera-info-alert-tag"
+                                  style={{
+                                    backgroundColor: activePriorityMeta.bgLight,
+                                    borderColor: activePriorityMeta.color,
+                                    color: activePriorityMeta.color,
+                                    fontSize: '10px',
+                                    padding: '1px 5px'
+                                  }}
+                                >
+                                  {cameraUseCase.shortName}
+                                </span>
+                              </div>
+                              <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>ID: {cam.id.toUpperCase()}</div>
+                            </div>
                           </div>
-                          <div>
-                            <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '13.5px' }}>{cam.name}</div>
-                            <div style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>ID: {cam.id.toUpperCase()}</div>
-                          </div>
-                        </div>
-                      </td>
+                        </td>
                       <td>
                         <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 500 }}>
                           {cam.zone}
@@ -950,7 +797,8 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
                         </button>
                       </td>
                     </tr>
-                  ))}
+                  );
+                })}
                 </tbody>
               </table>
             </div>
@@ -989,240 +837,32 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
           </Card>
         )}
 
-        {/* VERSION 1: ALERT SIDEBAR OVERLAY (Preserved completely) */}
-        {uiVersion === 'v1' && (
-          <>
-            <div 
-              className={`live-alert-backdrop ${isAlertSidebarOpen ? 'open' : ''}`}
-              onClick={() => setIsAlertSidebarOpen(false)}
-              aria-hidden={!isAlertSidebarOpen}
-            />
-
-            <aside 
-              className={`live-alert-sidebar ${isAlertSidebarOpen ? 'open' : ''}`}
-              aria-label="Active Alerts Panel"
-            >
-              {/* Sidebar Header */}
-              <div className="live-alert-sidebar-header">
-                <div className="live-alert-sidebar-title-group">
-                  <h3 className="live-alert-sidebar-title">Active Alerts</h3>
-                  <span className="live-alert-sidebar-subtitle">
-                    {totalAlertCount} real-time optical alerts logged
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  className="live-alert-close-btn"
-                  onClick={() => setIsAlertSidebarOpen(false)}
-                  title="Close alerts panel"
-                  aria-label="Close alerts panel"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              {/* Sidebar Scrollable Body */}
-              <div className="live-alert-sidebar-body">
-                
-                {/* Priority Categories */}
-                <div>
-                  <div className="live-alert-section-header" style={{ marginBottom: '10px' }}>
-                    <span className="live-alert-section-title">Priority Categories</span>
-                  </div>
-
-                  <div className="live-priority-grid">
-                    {PRIORITY_CATEGORIES.map((cat) => {
-                      const isSelected = v1SelectedPriority === cat.id;
-                      return (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          className={`live-priority-card ${isSelected ? 'active' : ''}`}
-                          onClick={() => {
-                            setV1SelectedPriority(cat.id);
-                            if (v1ActiveSelectedAlertType && v1ActiveSelectedAlertType.category.id !== cat.id) {
-                              setV1SelectedAlertTypeId(null);
-                            }
-                          }}
-                          style={{
-                            borderColor: isSelected ? cat.borderColor : 'var(--border-light)',
-                            backgroundColor: isSelected ? cat.bgColor : undefined
-                          }}
-                        >
-                          <div className="live-priority-card-top">
-                            <div 
-                              className="live-priority-icon-pill"
-                              style={{
-                                backgroundColor: colorMix(cat.color, 15),
-                                color: cat.color
-                              }}
-                            >
-                              {renderPriorityIcon(cat.id, 16)}
-                            </div>
-                            <span className="live-priority-count" style={{ color: cat.color }}>
-                              {cat.count}
-                            </span>
-                          </div>
-                          <span className="live-priority-label" style={{ color: isSelected ? cat.color : 'var(--text-main)' }}>
-                            {cat.label} Priority
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Selected Priority Visual Connection & Hero Banner */}
-                <div 
-                  className="live-priority-banner"
-                  style={{
-                    borderColor: v1ActivePriorityCategory.borderColor,
-                    backgroundColor: v1ActivePriorityCategory.bgColor
-                  }}
-                >
-                  <div 
-                    className="live-prominent-icon-container"
-                    style={{
-                      backgroundColor: v1ActivePriorityCategory.color,
-                      boxShadow: `0 0 16px 2px ${v1ActivePriorityCategory.color}50`
-                    }}
-                  >
-                    {renderPriorityIcon(v1ActivePriorityCategory.id, 24)}
-                  </div>
-                  <div className="live-priority-banner-info">
-                    <div className="live-priority-banner-title">
-                      {v1ActivePriorityCategory.label} Priority ({v1ActivePriorityCategory.count} Alerts)
-                    </div>
-                    <div className="live-priority-banner-sub">
-                      Select an alert type below to filter relevant camera feeds
-                    </div>
-                  </div>
-                </div>
-
-                {/* Alert Category List for Selected Priority */}
-                <div>
-                  <div className="live-alert-section-header" style={{ marginBottom: '10px' }}>
-                    <span className="live-alert-section-title">
-                      {v1ActivePriorityCategory.label} Alert Types
-                    </span>
-                    {v1SelectedAlertTypeId && (
-                      <button
-                        type="button"
-                        onClick={() => setV1SelectedAlertTypeId(null)}
-                        style={{
-                          border: 'none',
-                          background: 'transparent',
-                          color: 'var(--primary)',
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          padding: 0
-                        }}
-                      >
-                        Clear Filter
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="live-alert-types-list">
-                    {v1ActivePriorityCategory.alertTypes.map((alertItem) => {
-                      const isRowSelected = v1SelectedAlertTypeId === alertItem.id;
-                      return (
-                        <div
-                          key={alertItem.id}
-                          className={`live-alert-type-row ${isRowSelected ? 'selected' : ''}`}
-                          onClick={() => handleToggleV1AlertType(alertItem, v1ActivePriorityCategory.id)}
-                          style={{
-                            '--row-priority-color': v1ActivePriorityCategory.color
-                          } as React.CSSProperties}
-                          role="button"
-                          tabIndex={0}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              handleToggleV1AlertType(alertItem, v1ActivePriorityCategory.id);
-                            }
-                          }}
-                          title={`Click to filter cameras associated with ${alertItem.name}`}
-                        >
-                          <div className="live-alert-type-left">
-                            <span 
-                              className="live-alert-type-bullet"
-                              style={{ backgroundColor: v1ActivePriorityCategory.color }}
-                            />
-                            <span className="live-alert-type-name">
-                              {alertItem.name}
-                            </span>
-                          </div>
-
-                          <div className="live-alert-type-right">
-                            <span className="live-alert-type-count">
-                              {alertItem.count}
-                            </span>
-                            {isRowSelected && (
-                              <Check size={16} className="live-alert-check-icon" />
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Sidebar Footer */}
-              <div className="live-alert-sidebar-footer">
-                <span className="live-alert-footer-status">
-                  {v1ActiveSelectedAlertType ? (
-                    <>Filtering: <strong>{v1ActiveSelectedAlertType.name}</strong> ({filteredCameras.length} {filteredCameras.length === 1 ? 'cam' : 'cams'})</>
-                  ) : (
-                    <>Showing all {cameras.length} cameras</>
-                  )}
-                </span>
-
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {v1ActiveSelectedAlertType && (
-                    <button
-                      type="button"
-                      className="figma-btn-cancel"
-                      onClick={() => setV1SelectedAlertTypeId(null)}
-                      style={{ height: '32px', padding: '0 10px', fontSize: '12px' }}
-                    >
-                      Clear Filter
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    className="figma-btn-primary"
-                    onClick={() => setIsAlertSidebarOpen(false)}
-                    style={{ height: '32px', padding: '0 14px', fontSize: '12px' }}
-                  >
-                    Done
-                  </button>
-                </div>
-              </div>
-            </aside>
-          </>
-        )}
-
-        {/* COMPACT PILL SWITCHER: VERSION 1 / VERSION 2 (Section 1) */}
-        <div className="live-version-switcher-container">
-          <div className="live-version-switcher-pill" role="group" aria-label="Alert UI Version Switcher">
+        {/* BOTTOM OPTION SWITCHER PILL (1, 2, 3) */}
+        <div className="live-option-switcher-container">
+          <div className="live-option-switcher-pill" role="group" aria-label="Dial Design Options">
             <button
               type="button"
-              className={`live-version-btn ${uiVersion === 'v1' ? 'active' : ''}`}
-              onClick={() => setUiVersion('v1')}
-              title="Switch to Version 1 (Right-side Alert Sidebar)"
+              className={`live-option-btn ${alertUiOption === 1 ? 'active' : ''}`}
+              onClick={() => setAlertUiOption(1)}
+              title="Option 1: Ultra-compact native circular dial (~115px)"
             >
-              <span>Version 1 (Alert Sidebar)</span>
+              <span>Option 1: Compact Dial (115px)</span>
             </button>
             <button
               type="button"
-              className={`live-version-btn ${uiVersion === 'v2' ? 'active' : ''}`}
-              onClick={() => setUiVersion('v2')}
-              title="Switch to Version 2 (Horizontal Alert Interface)"
+              className={`live-option-btn ${alertUiOption === 2 ? 'active' : ''}`}
+              onClick={() => setAlertUiOption(2)}
+              title="Option 2: Focus HUD (Expands on hover to 132px)"
             >
-              <span>Version 2 (Horizontal Interface)</span>
+              <span>Option 2: Focus HUD (Hover-Expand)</span>
+            </button>
+            <button
+              type="button"
+              className={`live-option-btn ${alertUiOption === 3 ? 'active' : ''}`}
+              onClick={() => setAlertUiOption(3)}
+              title="Option 3: Horizontal Mini-Dial Capsule (~38px height)"
+            >
+              <span>Option 3: Horizontal Capsule</span>
             </button>
           </div>
         </div>
@@ -1295,7 +935,7 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
               </div>
 
               {/* Viewport Canvas Simulation */}
-              <div 
+              <div
                 style={{
                   position: 'relative',
                   width: '100%',
@@ -1380,7 +1020,7 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
                     </button>
 
                     {isCameraDropdownOpen && (
-                      <div 
+                      <div
                         style={{
                           position: 'absolute',
                           top: 'calc(100% + 4px)',
@@ -1425,6 +1065,36 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
                         ))}
                       </div>
                     )}
+
+                    {/* BOTTOM OPTION SWITCHER PILL (1, 2, 3) */}
+                    <div className="live-option-switcher-container">
+                      <div className="live-option-switcher-pill" role="group" aria-label="Dial Design Options">
+                        <button
+                          type="button"
+                          className={`live-option-btn ${alertUiOption === 1 ? 'active' : ''}`}
+                          onClick={() => setAlertUiOption(1)}
+                          title="Option 1: Ultra-compact native circular dial (~115px)"
+                        >
+                          <span>Option 1: Compact Dial (115px)</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`live-option-btn ${alertUiOption === 2 ? 'active' : ''}`}
+                          onClick={() => setAlertUiOption(2)}
+                          title="Option 2: Focus HUD (Expands on hover to 132px)"
+                        >
+                          <span>Option 2: Focus HUD (Hover-Expand)</span>
+                        </button>
+                        <button
+                          type="button"
+                          className={`live-option-btn ${alertUiOption === 3 ? 'active' : ''}`}
+                          onClick={() => setAlertUiOption(3)}
+                          title="Option 3: Horizontal Mini-Dial Capsule (~38px height)"
+                        >
+                          <span>Option 3: Horizontal Capsule</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   {/* PTZ Coordinates Badge */}
@@ -1519,9 +1189,9 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
                         e.stopPropagation();
                         const el = e.currentTarget.closest('.modal-content') || document.documentElement;
                         if (!document.fullscreenElement) {
-                          el.requestFullscreen?.().catch(() => {});
+                          el.requestFullscreen?.().catch(() => { });
                         } else {
-                          document.exitFullscreen?.().catch(() => {});
+                          document.exitFullscreen?.().catch(() => { });
                         }
                       }}
                       style={{
@@ -1560,6 +1230,36 @@ export function LiveMonitoringPage({ onNavigate: _onNavigate }: LiveMonitoringPa
             </div>
           </Modal>
         )}
+
+        {/* BOTTOM OPTION SWITCHER PILL (1, 2, 3) */}
+        <div className="live-option-switcher-container">
+          <div className="live-option-switcher-pill" role="group" aria-label="Dial Design Options">
+            <button
+              type="button"
+              className={`live-option-btn ${alertUiOption === 1 ? 'active' : ''}`}
+              onClick={() => setAlertUiOption(1)}
+              title="Option 1: Ultra-compact native circular dial (~115px)"
+            >
+              <span>Option 1: Compact Dial (115px)</span>
+            </button>
+            <button
+              type="button"
+              className={`live-option-btn ${alertUiOption === 2 ? 'active' : ''}`}
+              onClick={() => setAlertUiOption(2)}
+              title="Option 2: Focus HUD (Expands on hover to 132px)"
+            >
+              <span>Option 2: Focus HUD (Hover-Expand)</span>
+            </button>
+            <button
+              type="button"
+              className={`live-option-btn ${alertUiOption === 3 ? 'active' : ''}`}
+              onClick={() => setAlertUiOption(3)}
+              title="Option 3: Horizontal Mini-Dial Capsule (~38px height)"
+            >
+              <span>Option 3: Horizontal Capsule</span>
+            </button>
+          </div>
+        </div>
 
       </div>
     </div>
